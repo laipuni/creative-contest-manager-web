@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>참여확인증</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Noto Serif KR', serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .certificate-container {
+            width: 900px;
+            height: 650px;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .certificate-border {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            bottom: 25px;
+            border: 2px solid #c9a96a;
+            box-shadow: inset 0 0 0 1px #c9a96a;
+        }
+
+        .certificate-inner {
+            position: absolute;
+            top: 35px;
+            left: 35px;
+            right: 35px;
+            bottom: 35px;
+            border: 1px solid #e0cea0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+            background-image: url('/api/placeholder/150/150');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 350px;
+            background-blend-mode: lighten;
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+
+        .certificate-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .certificate-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #2a3b4c;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .certificate-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        .certificate-content {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .content-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .recipient-name {
+            font-size: 36px;
+            font-weight: 600;
+            color: #2a3b4c;
+            margin: 30px 0;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #c9a96a;
+            padding-bottom: 10px;
+            width: 80%;
+            text-align: center;
+        }
+
+        .certificate-footer {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .certificate-date, .certificate-serial {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .signature {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        .signature-line {
+            width: 200px;
+            border-top: 1px solid #333;
+            margin-top: 10px;
+            padding-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            color: #555;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #c9a96a;
+        }
+
+        .top-left {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .top-right {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .bottom-left {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .bottom-right {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .seal {
+            position: absolute;
+            right: 80px;
+            bottom: 110px;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-15deg);
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .seal::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px dashed #c9a96a;
+            border-radius: 50%;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        .seal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            mix-blend-mode: multiply;
+        }
+
+        .seal-text {
+            position: absolute;
+            z-index: 1;
+            color: #96774c;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+<div class="seal">
+    <video autoPlay={true} muted={true} loop={true} width="150">
+        <source src="/video/loading-animation.mp4" type="video/mp4"/>
+    </video>
+</div>
+<div class="certificate-container">
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
+
+    <div class="certificate-border">
+        <div class="certificate-inner">
+            <div class="certificate-header">
+                <div class="certificate-title">참여확인증</div>
+                <div class="certificate-subtitle">Certificate of Completion</div>
+            </div>
+
+            <div class="certificate-content">
+                <p class="content-text">
+                    아래 명시된 교육과정을 성공적으로 이수하였기에 이 참여확인증을 수여합니다.
+                </p>
+                <div class="recipient-name" th:text="${name}">홍길동</div>
+                <p class="content-text">
+                    본 과정을 통해 보여준 열정과 노력에 깊은 감사를 표하며,<br>
+                    앞으로의 발전과 성공을 진심으로 기원합니다.
+                </p>
+            </div>
+
+            <div class="signature">
+                <div class="signature-line">교육 담당자</div>
+                <div class="signature-line">대표이사</div>
+            </div>
+
+            <div class="certificate-footer">
+                <div class="certificate-date" th:text="${date}">2024년 3월 1일 - 2024년 3월 24일</div>
+                <div class="certificate-serial" th:text="'일련번호: ' + ${serialNumber}">일련번호: ABC123456789</div>
+            </div>
+
+            <div class="seal">
+                <img src="/images/test_signature.png" class="seal-image">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
