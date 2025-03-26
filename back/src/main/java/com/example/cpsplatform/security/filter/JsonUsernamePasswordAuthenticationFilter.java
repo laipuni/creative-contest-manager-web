@@ -1,6 +1,6 @@
 package com.example.cpsplatform.security.filter;
 
-import com.example.cpsplatform.exception.InvalidRequestException;
+import com.example.cpsplatform.exception.security.InvalidRequestException;
 import com.example.cpsplatform.security.domain.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

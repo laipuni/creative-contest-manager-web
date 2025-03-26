@@ -1,7 +1,8 @@
 package com.example.cpsplatform.security.provider;
 
-import com.example.cpsplatform.exception.LoginFailedException;
-import com.example.cpsplatform.exception.SignupNotCompletedException;
+import com.example.cpsplatform.exception.security.LoginFailedException;
+import com.example.cpsplatform.exception.security.LoginLockedException;
+import com.example.cpsplatform.exception.security.SignupNotCompletedException;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -30,7 +31,7 @@ public class UsernamePasswordAuthenticationTokenProvider implements Authenticati
 
         if(!securityMember.isAccountNonLocked()){
             //계정이 잠겼을 경우
-            //todo 계정이 잠겼다는 예외 발생
+            throw new LoginLockedException();
         }
 
         if(!passwordEncoder.matches(password,securityMember.getPassword())){

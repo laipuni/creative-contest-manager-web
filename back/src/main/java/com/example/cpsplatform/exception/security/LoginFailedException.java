@@ -1,6 +1,8 @@
-package com.example.cpsplatform.exception;
+package com.example.cpsplatform.exception.security;
 
-public class LoginFailedException extends RuntimeException {
+import org.springframework.security.core.AuthenticationException;
+
+public class LoginFailedException extends AuthenticationException {
     public LoginFailedException(final String message) {
         super(message);
     }
