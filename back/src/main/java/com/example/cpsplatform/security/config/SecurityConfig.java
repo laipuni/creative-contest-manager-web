@@ -6,6 +6,7 @@ import com.example.cpsplatform.security.handler.CustomAuthenticationFailHandler;
 import com.example.cpsplatform.security.handler.CustomAuthenticationSuccessHandler;
 import com.example.cpsplatform.security.provider.UsernamePasswordAuthenticationTokenProvider;
 import com.example.cpsplatform.security.service.CustomUserDetailService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,11 +29,16 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class SecurityConfig {
 
     public static final String COOKIES_JSESSIONID = "JSESSIONID";
+    public static final String USERNAME_VALUE = "username";
+    public static final String PASSWORD_VALUE = "password";
+
 
     @Autowired
     MemberRepository memberRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -42,6 +49,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/api/admin/**").hasRole("ADMIN"); // 어드민만 접근가능
                 })
+                .httpBasic(AbstractHttpConfigurer::disable) //
+                .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers(
                                     "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate"
@@ -92,7 +101,7 @@ public class SecurityConfig {
     }
 
     public AuthenticationFailureHandler customAuthenticationFailureHandler(){
-        return new CustomAuthenticationFailHandler();
+        return new CustomAuthenticationFailHandler(objectMapper);
     }
 
 }
