@@ -1,4 +1,4 @@
-package com.example.cpsplatform.exception;
+package com.example.cpsplatform.exception.controller.dto;
 
 import lombok.AccessLevel;
 import lombok.Builder;
