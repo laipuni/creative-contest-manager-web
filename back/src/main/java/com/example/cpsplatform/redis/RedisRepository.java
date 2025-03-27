@@ -2,11 +2,8 @@ package com.example.cpsplatform.redis;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.Callable;
@@ -17,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisRepository {
 
-    private final RedisTemplate<String,Object> redisTemplate;
+    private final RedisTemplate<String,String> redisTemplate;
 
-    public Object handleException(Callable<?> callable){
+    public String handleException(Callable<String> callable){
         try {
             return callable.call();
         } catch (Exception e){
@@ -28,38 +25,38 @@ public class RedisRepository {
         }
     }
 
-    public Object getData(final String key){
+    public String getData(final String key){
         return handleException(() ->{
-            ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+            ValueOperations<String, String> operations = redisTemplate.opsForValue();
             return operations.get(key);
         });
     }
 
-    public boolean setData(final String key, final Object value){
-        return (boolean) handleException(() ->{
-            ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+    public String setData(final String key, final String value){
+        return handleException(() ->{
+            ValueOperations<String, String> operations = redisTemplate.opsForValue();
             log.info("Successfully set data for key: {}", key);
             operations.set(key,value);
-            return true;
+            return value;
         });
     }
 
-    public boolean setDataWithTTL(final String key, final Object value, final long ttl, final TimeUnit timeUnit){
-        return (boolean) handleException(() ->{
-            ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+    public String setDataWithTTL(final String key, final String value, final long ttl, final TimeUnit timeUnit){
+        return handleException(() ->{
+            ValueOperations<String, String> operations = redisTemplate.opsForValue();
             log.info("Successfully set data with TTL for key: {} (TTL: {} {})", key, ttl, timeUnit);
             operations.set(key,value,ttl,timeUnit);
-            return true;
+            return value;
         });
     }
 
-    public boolean deleteData(final String key){
-        return (boolean) handleException(() ->{
+    public String deleteData(final String key){
+        return handleException(() ->{
             if(redisTemplate.hasKey(key)){
                 redisTemplate.delete(key);
                 log.info("Successfully deleted data for key: {}", key);
             }
-            return true;
+            return null;
         });
     }
 }
