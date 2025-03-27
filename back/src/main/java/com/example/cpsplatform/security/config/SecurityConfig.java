@@ -6,6 +6,7 @@ import com.example.cpsplatform.security.handler.CustomAuthenticationFailHandler;
 import com.example.cpsplatform.security.handler.CustomAuthenticationSuccessHandler;
 import com.example.cpsplatform.security.provider.UsernamePasswordAuthenticationTokenProvider;
 import com.example.cpsplatform.security.service.CustomUserDetailService;
+import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,8 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    LoginFailService loginFailService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -97,11 +100,11 @@ public class SecurityConfig {
     }
 
     public AuthenticationSuccessHandler customAuthenticationSuccessHandler(){
-        return new CustomAuthenticationSuccessHandler();
+        return new CustomAuthenticationSuccessHandler(loginFailService);
     }
 
     public AuthenticationFailureHandler customAuthenticationFailureHandler(){
-        return new CustomAuthenticationFailHandler(objectMapper);
+        return new CustomAuthenticationFailHandler(objectMapper,loginFailService);
     }
 
 }
