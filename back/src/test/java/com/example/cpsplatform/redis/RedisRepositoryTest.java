@@ -10,11 +10,14 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.example.cpsplatform.security.service.RedisLoginFailService.LOGIN_FAIL_COUNT_PREFIX;
+import static com.example.cpsplatform.security.service.RedisLoginFailService.LOGIN_LOCK_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class RedisRepositoryTest {
+
+    public static final String expectedKey = "예상키";
 
     @Autowired
     RedisRepository redisRepository;
@@ -22,11 +25,16 @@ class RedisRepositoryTest {
     @Autowired
     StringRedisTemplate redisTemplate;
 
+    @BeforeEach
+    void tearUp(){
+        redisTemplate.delete(LOGIN_FAIL_COUNT_PREFIX + expectedKey);
+        redisTemplate.delete(LOGIN_LOCK_PREFIX + expectedKey);
+    }
+
     @DisplayName("해당 키로 저장된 값을 조회한다.")
     @Test
     void getData(){
         //given
-        String expectedKey = "예상키";
         String expectedValue = "예상값";
 
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
@@ -40,7 +48,6 @@ class RedisRepositoryTest {
     @DisplayName("키와 값을 저장한다")
     @Test
     void setData() {
-        String expectedKey = "예상키";
         String expectedValue = "예상값";
 
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
@@ -56,7 +63,6 @@ class RedisRepositoryTest {
     @DisplayName("ttl을 지정한 키와 값은 지정된 시간 후 삭제된다.")
     @Test
     void setDataExpire() throws InterruptedException {
-        String expectedKey = "예상키";
         String expectedValue = "예상값";
         long duration = 1;
 
@@ -74,7 +80,6 @@ class RedisRepositoryTest {
     @DisplayName("key값을 받아 해당 키와 값를 삭제한다.")
     @Test
     void deleteData(){
-        String expectedKey = "예상키";
         String expectedValue = "예상값";
 
         ValueOperations<String, String> operations = redisTemplate.opsForValue();

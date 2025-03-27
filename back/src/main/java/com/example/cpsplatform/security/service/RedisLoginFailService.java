@@ -3,6 +3,7 @@ package com.example.cpsplatform.security.service;
 import com.example.cpsplatform.redis.RedisRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -46,12 +47,10 @@ public class RedisLoginFailService implements LoginFailService{
     
     private long incrementLoginFailCount(final String loginId){
         String key = LOGIN_FAIL_COUNT_PREFIX + loginId;
-        Long count = Long.parseLong(redisRepository.getData(key));
-        if(count == null){
-            //로그인 실패 횟수가 저장이 안된 경우
-            count = 1L;
-        } else{
-            count++;
+        String value = redisRepository.getData(key);
+        Long count = 1L;
+        if(StringUtils.hasText(value)){
+            count = Long.parseLong(value) + 1;
             redisRepository.deleteData(key);
         }
         redisRepository.setDataWithTTL(key, String.valueOf(count),LOGIN_FAIL_COUNT_TTL, TimeUnit.MINUTES);
