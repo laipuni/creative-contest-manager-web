@@ -1,6 +1,6 @@
 import './App.css';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Main from "./main";
+import Main from "./mainPage/main";
 import NotFound from "./notFound/notFound";
 
 function App() {
@@ -8,6 +8,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
           <Routes>
+              <Route path="/" element={<Main />}></Route>
               <Route path="*" element={<NotFound />}></Route>
           </Routes>
       </BrowserRouter>
