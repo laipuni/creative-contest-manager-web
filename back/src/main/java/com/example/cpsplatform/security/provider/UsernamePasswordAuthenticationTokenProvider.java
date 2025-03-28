@@ -4,6 +4,7 @@ import com.example.cpsplatform.exception.security.LoginFailedException;
 import com.example.cpsplatform.exception.security.LoginLockedException;
 import com.example.cpsplatform.exception.security.SignupNotCompletedException;
 import com.example.cpsplatform.security.domain.SecurityMember;
+import com.example.cpsplatform.security.service.LoginFailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,10 +18,13 @@ public class UsernamePasswordAuthenticationTokenProvider implements Authenticati
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final LoginFailService loginFailService;
 
-    public UsernamePasswordAuthenticationTokenProvider(final UserDetailsService userDetailsService, final PasswordEncoder passwordEncoder) {
+    public UsernamePasswordAuthenticationTokenProvider(final UserDetailsService userDetailsService
+            , final PasswordEncoder passwordEncoder,final LoginFailService loginFailService) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
+        this.loginFailService = loginFailService;
     }
 
     @Override
@@ -29,7 +33,7 @@ public class UsernamePasswordAuthenticationTokenProvider implements Authenticati
         String password = (String) authentication.getCredentials();
         SecurityMember securityMember = (SecurityMember) userDetailsService.loadUserByUsername(loginId);
 
-        if(!securityMember.isAccountNonLocked()){
+        if(loginFailService.isLockedAccount(loginId)){
             //계정이 잠겼을 경우
             throw new LoginLockedException();
         }

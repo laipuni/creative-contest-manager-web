@@ -1,6 +1,7 @@
 package com.example.cpsplatform.security.filter;
 
 import com.example.cpsplatform.exception.security.InvalidRequestException;
+import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,8 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
+
+import static com.example.cpsplatform.security.config.SecurityConfig.USERNAME_VALUE;
 
 @Slf4j
 public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -41,6 +44,9 @@ public class JsonUsernamePasswordAuthenticationFilter extends AbstractAuthentica
                         loginRequest.getUsername(),
                         loginRequest.getPassword()
                 );
+
+        request.setAttribute(USERNAME_VALUE,loginRequest.getUsername());
+
         return getAuthenticationManager().authenticate(authRequest);
     }
 

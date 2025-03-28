@@ -20,7 +20,7 @@ public class RedisRepository {
         try {
             return callable.call();
         } catch (Exception e){
-            log.error("Redis operation failed: {}", e.getMessage(), e);
+            log.error("Redis operation failed: {}", e.getMessage());
             throw new IllegalStateException("서버에 문제가 생겨 해당서비스를 이용할 수 없습니다. 죄송합니다.",e);
         }
     }

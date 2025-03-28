@@ -77,7 +77,7 @@ public class SecurityConfig {
     }
 
     public AuthenticationProvider usernamePasswordAuthenticationTokenProvider(){
-        return new UsernamePasswordAuthenticationTokenProvider(userDetailsService(),passwordEncoder);
+        return new UsernamePasswordAuthenticationTokenProvider(userDetailsService(),passwordEncoder,loginFailService);
     }
 
     public UserDetailsService userDetailsService(){
