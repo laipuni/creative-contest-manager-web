@@ -38,7 +38,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (csrfToken != null) {
             response.setHeader("X-CSRF-TOKEN", csrfToken.getToken());  // 응답 헤더에 CSRF 토큰 전달
         }
-
+        response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
     }

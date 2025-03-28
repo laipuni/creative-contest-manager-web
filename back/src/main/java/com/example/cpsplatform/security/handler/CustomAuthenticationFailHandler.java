@@ -34,6 +34,7 @@ public class CustomAuthenticationFailHandler implements AuthenticationFailureHan
             loginFailService.failLogin(username);
             log.warn("로그인 실패 - IP: {}, Username: {}, 이유: {}", clientIp, username, exception.getMessage());
         }
+        response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ApiErrorResponse<Object> apiErrorResponse = ApiErrorResponse.of(HttpStatus.UNAUTHORIZED, exception.getMessage(), null);
