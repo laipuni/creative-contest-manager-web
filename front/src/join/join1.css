@@ -233,3 +233,27 @@
     flex-grow: 0;
 
 }
+
+.join1-button {
+
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+    color: white;
+    font-family: 'Roboto-Bold';
+    font-size: 16px;
+
+    width: 96px;
+    height: 40px;
+    background: blue;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}

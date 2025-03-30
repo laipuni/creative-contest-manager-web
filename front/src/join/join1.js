@@ -1,7 +1,28 @@
-import React from 'react';
+import React, {useState} from 'react';
 import SubHeader from '../components/subHeader/subHeader'
 import './join1.css'
+import {useNavigate} from "react-router-dom";
 const Join1 = () => {
+    const [isChecked, setIsChecked] = useState(false);
+    const navigate = useNavigate();
+
+    const handleCheckbox = () => {
+        setIsChecked(!isChecked);
+    };
+
+    const handleNextPage = () => {
+        if (isChecked) {
+            navigate('/');
+        }
+        else {
+            alert('약관에 동의하셔야 합니다.')
+        }
+    };
+
+    const handleExit = () => {
+        navigate('/');
+    };
+
     return (
         <div className="join1-page-container">
             <SubHeader />
@@ -111,8 +132,19 @@ const Join1 = () => {
                             이 약관은 2011년 04월부터 시행합니다.</p>
                     </div>
                     <div className="join1-buttonbox">
-                        <div className="join1-buttonbox-upper"></div>
-                        <div className="join1-buttonbox-lower"></div>
+                        <div className="join1-buttonbox-upper">
+                            <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={handleCheckbox}/>
+                            <p className="join1-upper-text">위 약관에 동의합니다.</p>
+                        </div>
+                        <div className="join1-buttonbox-lower">
+                            <button className="join1-button" onClick={handleNextPage}>확인</button>
+                            <button className="join1-button"
+                                    style={{background: 'lightgray', color: 'black'}}
+                                    onClick={handleExit}>나가기</button>
+                        </div>
                     </div>
                 </div>
             </div>
