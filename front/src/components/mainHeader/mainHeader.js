@@ -1,6 +1,7 @@
 import React from 'react';
 import './mainHeader.css'
 import '../../styles/styles.css'
+import logo from '../../styles/images/trophy.png'
 import { Link } from 'react-router-dom'
 const MainHeader = () => {
     return (
@@ -24,7 +25,21 @@ const MainHeader = () => {
                     </div>
                 </div>
             </div>
-            <div className="main-header-bot"></div>
+            <div className="main-header-bot">
+                <Link to="/" className="main-header-logo">
+                    <img src={logo} alt="logo" className="main-logo-image"/>
+                    <p className="main-logo-text">Creative Problem<br />Solving Festival</p>
+                </Link>
+                <div className="main-header-bot-right">
+                    <div className="main-header-bot-textbox">
+                        <p className="main-header-bot-text">시험안내</p>
+                        <span className="main-header-bot-circle"></span>
+                        <p className="main-header-bot-text">문제풀이</p>
+                        <span className="main-header-bot-circle"></span>
+                        <p className="main-header-bot-text">QnA</p>
+                    </div>
+                </div>
+            </div>
             <div className="main-header-line"></div>
         </div>
     )

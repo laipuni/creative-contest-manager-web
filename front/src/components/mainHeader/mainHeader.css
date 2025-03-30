@@ -13,6 +13,7 @@
     order: 0;
     align-self: stretch;
     flex-grow: 0;
+
 }
 
 .main-header-top {
@@ -84,6 +85,142 @@
 
 }
 
+.main-header-logo {
+    /* logo */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+    gap: 0px;
+
+    width: 17%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    text-decoration: none;
+
+}
+
+.main-logo-image {
+    /* Icon Container */
+
+    margin: 0;
+    width: 15%;
+    height: 35%;
+    object-fit: contain;
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.main-logo-text {
+    /* Creative Problem Solving Festival */
+
+    margin: 0;
+    width: 85%;
+    height: fit-content;
+
+    font-family: 'Roboto', serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 110%;
+    /* or 22px */
+
+    /* CoolGray/60 */
+    color: #697077;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 1;
+
+}
+
+.main-header-bot-right {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 10px;
+    gap: 10px;
+    width: 75%;
+    height: 90%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.main-header-bot-textbox {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px;
+    gap: 10px;
+
+    width: 30%;
+    height: 30%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.main-header-bot-text {
+    width: fit-content;
+    height: fit-content;
+
+    font-family: 'BMHanna', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 110%;
+    /* or 26px */
+
+    color: #21272A;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.main-header-bot-circle {
+
+    width: 5px;
+    height: 5px;
+
+    background: #21272A;
+
+    /* Inside auto layout */
+    flex: none;
+    flex-grow: 0;
+
+}
 .main-header-line {
 
     margin: 0 auto;
