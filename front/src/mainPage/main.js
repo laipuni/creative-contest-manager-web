@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import MainHeader from "../components/mainHeader/mainHeader";
 import "./main.css"
 import '../styles/styles.css'
@@ -8,6 +8,10 @@ import info from "../styles/images/main_profile_certificate.png"
 import practice from "../styles/images/main_practice_test.png"
 import big_logo from "../styles/images/main_big_picture.png"
 const Main = () => {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
     return (
         <div className="main-page-container">
             <div className="main-content-container">
