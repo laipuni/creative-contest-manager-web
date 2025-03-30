@@ -17,7 +17,7 @@ const MainHeader = () => {
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <p className="main-header-menu-item-text">JOIN</p>
+                        <Link to="/join" className="main-header-menu-item-text">JOIN</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
