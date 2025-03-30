@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom'
 import './subHeader.css'
 const SubHeader = () => {
     return (
-        <div className="main-header-container">
-            <div className="main-header-top">
+        <div className="main-header-container" style={{height: 'fit-content'}}>
+            <div className="main-header-top" style={{height: '35px'}}>
                 <Link to="/" className="sub-header-logo">
                     <img src={logo} alt="logo" className="main-logo-image" style={{width: '34px', height: '30px'}}/>
                     <p className="main-logo-text"
