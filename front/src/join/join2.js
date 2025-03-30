@@ -29,7 +29,7 @@ const Join2 = () => {
         const idRegex = /^[a-zA-Z][a-zA-Z0-9]{3,9}$/;
         if (!idRegex.test(userId)) {
             setIsDuplicate(true);
-            setIdErrorMessage('아이디는 영어로 시작하고 영어와 숫자만 4~10자리로 입력해야 합니다.');
+            setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~10자리로 입력해야 합니다.');
         }
         else if(exampleIds.includes(userId)) {
             setIsDuplicate(true);
@@ -63,25 +63,41 @@ const Join2 = () => {
                             <div className="join2-main-border-left">
                                 <p className="join2-left-text">* 아이디</p>
                             </div>
-                            <div className="join2-main-border-right"></div>
+                            <div className="join2-main-border-right">
+                                <div className="join2-right-row">
+                                    <input
+                                        className="join2-id-input"
+                                        type="text"
+                                        value={userId}
+                                        onChange={handleIdChange}
+                                    />
+                                    <button className="join2-id-button" type="button" onClick={handleIdCheck}>
+                                        중복 확인
+                                    </button>
+                                    {idErrorMessage && <p className="error-message"
+                                                          style={{color: 'red'}}>{idErrorMessage}</p>}
+                                    {!isDuplicate && !idErrorMessage &&
+                                        <p className="error-message" style={{color: 'green'}}>사용 가능한 아이디입니다.</p>}
+                                </div>
+                                <p className="join2-id-info">
+                                    회원ID는 가입 후 바꾸실 수 없으니 신중하게 결정 해 주세요.
+                                    <br /><span style={{color: '#2489DC'}}> 영문자로 시작하는 4~12자의 영문과 숫자를 사용하시고
+                                </span> 여백없이 입력해 주세요.</p>
+                            </div>
                         </div>
                         <div className="join2-main-border">
                             <div className="join2-main-border-left">
-                                <p className="join2-left-text">* 아이디</p>
+                                <p className="join2-left-text">* 비밀번호</p>
                             </div>
                             <div className="join2-main-border-right">
                                 <div className="join2-right-row">
                                     <input
-                                        type="text"
+                                        className="join2-id-input"
+                                        type="password"
                                         value={userId}
                                         onChange={handleIdChange}
-                                        placeholder="아이디를 입력하세요"
                                     />
-                                    <button type="button" onClick={handleIdCheck}>
-                                        중복 확인
-                                    </button>
-                                    {idErrorMessage && <p style={{ color: 'red' }}>{idErrorMessage}</p>}
-                                    {!isDuplicate && !idErrorMessage && <p style={{ color: 'green' }}>사용 가능한 아이디입니다.</p>}
+                                    <p className="error-message">영문자, 숫자 조합 4~8자 이하를 입력하세요.</p>
                                 </div>
                             </div>
                         </div>
