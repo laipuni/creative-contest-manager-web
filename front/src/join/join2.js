@@ -14,6 +14,7 @@ const Join2 = () => {
     /*--------------비밀번호--------------*/
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
     /*--------------이름--------------*/
     const [name, setName] = useState('');
     /*--------------생일--------------*/
@@ -107,11 +108,21 @@ const Join2 = () => {
 
     /*------------------- 비밀번호 기능 ----------------*/
     const handlePasswordChange = (e) => {
+        const newPassword = e.target.value;
         setPassword(e.target.value);
+        if(passwordCheck === newPassword)
+            setPasswordErrorMessage('✅');
+        else
+            setPasswordErrorMessage('❌');
     }
 
     const handlePasswordChange2 = (e) => {
-        setPasswordCheck(e.target.value);
+        const newPasswordCheck = e.target.value;
+        setPasswordCheck(newPasswordCheck);
+        if(password === newPasswordCheck)
+            setPasswordErrorMessage('✅');
+        else
+            setPasswordErrorMessage('❌');
     }
 
     /*-------------------기타 input field 기능 ----------------*/
@@ -286,6 +297,7 @@ const Join2 = () => {
                                         maxLength="8"
                                         pattern="^[a-zA-Z][a-zA-Z0-9]{3,7}$"
                                     />
+                                    {password && <p className="info-message">{passwordErrorMessage}</p>}
                                 </div>
                             </div>
                         </div>
