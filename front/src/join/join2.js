@@ -31,6 +31,11 @@ const Join2 = () => {
     const [last, setLast] = useState('');
     const middleInputRef = useRef(null);
     const lastInputRef = useRef(null);
+
+    /*--------------이메일------------------*/
+    const [emailId, setEmailId] = useState('');
+    const [emailDomain, setEmailDomain] = useState('');
+    const emailInputRef = useRef(null);
     //
     const navigate = useNavigate();
 
@@ -167,6 +172,30 @@ const Join2 = () => {
     const handleLastChange = (e) => {
         setLast(e.target.value);
     };
+
+    /*------------------- 이메일 기능 ----------------*/
+    const handleEmailIdChange = (e) => {
+        setEmailId(e.target.value);
+    }
+
+    const handleEmailDomainChange = (e) => {
+        const selectedDomain = e.target.value;
+        setEmailDomain(selectedDomain);
+
+        if (selectedDomain === '') {
+            emailInputRef.current.focus();
+        } else {
+            setEmailDomain(selectedDomain);
+        }
+    };
+
+    const handleEmailCheck = () => {
+        if(!emailId || !emailDomain) {
+            alert('이메일을 입력해주세요.')
+            return;
+        }
+        const email = emailId + emailDomain;
+    }
 
     return (
         <div className="join2-page-container">
@@ -365,7 +394,7 @@ const Join2 = () => {
                                 <p className="join2-left-text">* 휴대폰 번호</p>
                             </div>
                             <div className="join2-main-border-right">
-                                <div className="join2-right-row">
+                                <div className="join2-right-row" style={{gap:'5px'}}>
                                     <select
                                         className="join2-id-input"
                                         style={{width: '10%'}}
@@ -379,6 +408,7 @@ const Join2 = () => {
                                         <option value="018">018</option>
                                         <option value="019">019</option>
                                     </select>
+                                    <p className="info-message2">-</p>
                                     <input
                                         className="join2-id-input"
                                         style={{width: '15%'}}
@@ -391,6 +421,7 @@ const Join2 = () => {
                                         pattern="\d{4}"
                                         title="숫자만 입력하세요."
                                     />
+                                    <p className="info-message2">-</p>
                                     <input
                                         className="join2-id-input"
                                         style={{width: '15%'}}
@@ -408,28 +439,39 @@ const Join2 = () => {
                         </div>
                         <div className="join2-main-border">
                             <div className="join2-main-border-left">
-                                <p className="join2-left-text">* 아이디</p>
+                                <p className="join2-left-text">* 이메일</p>
                             </div>
                             <div className="join2-main-border-right">
-                                <div className="join2-right-row">
+                                <div className="join2-right-row" style={{gap:'5px'}}>
                                     <input
                                         className="join2-id-input"
                                         type="text"
-                                        value={userId}
-                                        onChange={handleIdChange}
+                                        value={emailId}
+                                        onChange={handleEmailIdChange}
                                     />
-                                    <button className="join2-id-button" type="button" onClick={handleIdCheck}>
-                                        중복 확인
+                                    <p className="info-message2">@</p>
+                                    <input
+                                        className="join2-id-input"
+                                        type="text"
+                                        value={emailDomain}
+                                        onChange={handleEmailDomainChange}
+                                        ref={emailInputRef}
+                                    />
+                                    <select
+                                        className="join2-id-input"
+                                        style={{width: 'fit-content', height: 'fit-content', fontSize: '11px'}}
+                                        value={emailDomain}
+                                        onChange={handleEmailDomainChange}>
+                                        <option value="">직접 입력</option>
+                                        <option value="gmail.com">gmail.com</option>
+                                        <option value="naver.com">naver.com</option>
+                                        <option value="hanmail.net">hanmail.net</option>
+                                        <option value="nate.com">nate.com</option>
+                                    </select>
+                                    <button className="join2-id-button" type="button" onClick={handleEmailCheck}>
+                                        인증하기
                                     </button>
-                                    {idErrorMessage && <p className="info-message"
-                                                          style={{color: 'red'}}>{idErrorMessage}</p>}
-                                    {!isDuplicate && !idErrorMessage &&
-                                        <p className="info-message" style={{color: 'green'}}>사용 가능한 아이디입니다.</p>}
                                 </div>
-                                <p className="join2-id-info">
-                                    회원ID는 가입 후 바꾸실 수 없으니 신중하게 결정 해 주세요.
-                                    <br/><span style={{color: '#2489DC'}}> 영문자로 시작하는 4~12자의 영문과 숫자를 사용하시고
-                                </span> 여백없이 입력해 주세요.</p>
                             </div>
                         </div>
                     </div>
