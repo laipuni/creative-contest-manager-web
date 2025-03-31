@@ -36,8 +36,17 @@ const Join2 = () => {
     const [emailId, setEmailId] = useState('');
     const [emailDomain, setEmailDomain] = useState('');
     const emailInputRef = useRef(null);
+
+    /*--------------직업------------------*/
+    const [job, setJob] = useState('');
     //
     const navigate = useNavigate();
+
+    /*--------------학교(소속)------------------------*/
+    const [workPlace, setWorkPlace] = useState('');
+
+    /*--------------학년(부서)------------------------*/
+    const [detailJob, setDetailJob] = useState('');
 
     /*------------------- 회원가입 & 나가기 버튼 기능----------------*/
     const handleSignup = (e) => {
@@ -110,9 +119,13 @@ const Join2 = () => {
         setBirthday(e.target.value);
     }
 
-    const handleGenderChange = (event) => {
-        setGender(event.target.value);
+    const handleGenderChange = (e) => {
+        setGender(e.target.value);
     };
+
+    const handleJobChange = (e) => {
+        setJob(e.target.value);
+    }
 
     /*------------------- 주소찾기 기능 ----------------*/
     const handleComplete = (data) => {
@@ -196,6 +209,8 @@ const Join2 = () => {
         }
         const email = emailId + emailDomain;
     }
+
+
 
     return (
         <div className="join2-page-container">
@@ -394,7 +409,7 @@ const Join2 = () => {
                                 <p className="join2-left-text">* 휴대폰 번호</p>
                             </div>
                             <div className="join2-main-border-right">
-                                <div className="join2-right-row" style={{gap:'5px'}}>
+                                <div className="join2-right-row" style={{gap: '5px'}}>
                                     <select
                                         className="join2-id-input"
                                         style={{width: '10%'}}
@@ -442,7 +457,7 @@ const Join2 = () => {
                                 <p className="join2-left-text">* 이메일</p>
                             </div>
                             <div className="join2-main-border-right">
-                                <div className="join2-right-row" style={{gap:'5px'}}>
+                                <div className="join2-right-row" style={{gap: '5px'}}>
                                     <input
                                         className="join2-id-input"
                                         type="text"
@@ -471,6 +486,114 @@ const Join2 = () => {
                                     <button className="join2-id-button" type="button" onClick={handleEmailCheck}>
                                         인증하기
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="join2-main-border">
+                            <div className="join2-main-border-left">
+                                <p className="join2-left-text">* 직업</p>
+                            </div>
+                            <div className="join2-main-border-right">
+                                <div className="join2-right-row">
+                                    <select
+                                        className="join2-id-input"
+                                        value={job}
+                                        onChange={handleJobChange}
+                                        required>
+                                        <option value="">---</option>
+                                        <option value="s_elementary">초등학생</option>
+                                        <option value="s_middle">중학생</option>
+                                        <option value="s_high">고등학생</option>
+                                        <option value="s_university">대학생</option>
+                                        <option value="p_IT">컴퓨터/인터넷</option>
+                                        <option value="p_press">언론</option>
+                                        <option value="p_official">공무원</option>
+                                        <option value="p_soldier">군인</option>
+                                        <option value="p_service">서비스업</option>
+                                        <option value="p_art">예술</option>
+                                        <option value="p_etc">기타</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="join2-main-border">
+                            <div className="join2-main-border-left">
+                                {!job && <p className="join2-left-text">* 학교(소속)</p>}
+                                {job.startsWith('s') && <p className="join2-left-text">* 학교</p>}
+                                {job.startsWith('p') && <p className="join2-left-text">* 소속</p>}
+                            </div>
+                            <div className="join2-main-border-right">
+                                <div className="join2-right-row">
+                                    <input
+                                        className="join2-id-input"
+                                        value={workPlace}
+                                        onChange={(e) => {setWorkPlace(e.target.value)}}
+                                        required>
+                                    </input>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="join2-main-border">
+                            <div className="join2-main-border-left">
+                                {!job && <p className="join2-left-text">* 학년(부서)</p>}
+                                {job.startsWith('s') && <p className="join2-left-text">* 학년</p>}
+                                {job.startsWith('p') && <p className="join2-left-text">* 부서</p>}
+                            </div>
+                            <div className="join2-main-border-right">
+                                <div className="join2-right-row">
+                                    {job && job.startsWith('s') ? (
+                                        <select className="join2-id-input" value={detailJob}
+                                                onChange={(e) => {
+                                                    setDetailJob(e.target.value)
+                                                }}>
+                                            <option value="">---</option>
+                                            {job.startsWith('s_elementary') && (
+                                                <>
+                                                    {[1, 2, 3, 4, 5, 6].map((grade) => (
+                                                        <option key={grade} value={grade}>
+                                                            {grade}학년
+                                                        </option>
+                                                    ))}
+                                                </>
+                                            )}
+                                            {(job.startsWith('s_middle') || job.startsWith('s_high')) && (
+                                                <>
+                                                    {[1, 2, 3].map((grade) => (
+                                                        <option key={grade} value={grade}>
+                                                            {grade}학년
+                                                        </option>
+                                                    ))}
+                                                </>
+                                            )}
+                                            {job.startsWith('s_university') && (
+                                                <>
+                                                    {[1, 2, 3, 4].map((grade) => (
+                                                        <option key={grade} value={grade}>
+                                                            {grade}학년
+                                                        </option>
+                                                    ))}
+                                                    <option value="기타">기타</option>
+                                                </>
+                                            )}
+                                        </select>
+                                    ) : job && job.startsWith('p') ? (
+                                        <input
+                                            type="text"
+                                            className="join2-id-input"
+                                            value={detailJob}
+                                            onChange={(e) => {
+                                                setDetailJob(e.target.value)
+                                            }}
+                                        />
+                                    ) : (
+                                        <select className="join2-id-input" value={detailJob}
+                                                onChange={(e) => {
+                                                    setDetailJob(e.target.value)
+                                                }}>
+                                            <option value="">---</option>
+                                        </select>
+                                    )}
                                 </div>
                             </div>
                         </div>
