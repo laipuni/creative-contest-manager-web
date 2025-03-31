@@ -299,7 +299,6 @@
 
     width: 100%;
     height: fit-content;
-
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
@@ -308,7 +307,6 @@
 
     color: #000000;
     text-align: left;
-
     /* Inside auto layout */
     flex: none;
     order: 1;

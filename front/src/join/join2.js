@@ -1,24 +1,37 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import './join2.css'
 import SubHeader from "../components/subHeader/subHeader";
 import {useNavigate} from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
 
 const Join2 = () => {
+    /*--------------아이디--------------*/
     const [userId, setUserId] = useState('');
     const [isDuplicate, setIsDuplicate] = useState(true);
     const [idErrorMessage, setIdErrorMessage] = useState('');
     const exampleIds = ['user1', 'user2'];
+    /*--------------비밀번호--------------*/
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
+    /*--------------이름--------------*/
     const [name, setName] = useState('');
+    /*--------------생일--------------*/
     const [birthday, setBirthday] = useState('');
+    /*--------------성별--------------*/
     const [gender, setGender] = useState('');
+    /*--------------주소--------------*/
     const [postcode, setPostcode] = useState('');
     const [address, setAddress] = useState('');
     const [detailAddress, setDetailAddress] = useState('');
     const [extraAddress, setExtraAddress] = useState('');
     const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+    /*--------------휴대폰번호--------------*/
+    const [prefix, setPrefix] = useState('010'); // 기본값 010
+    const [middle, setMiddle] = useState('');
+    const [last, setLast] = useState('');
+    const middleInputRef = useRef(null);
+    const lastInputRef = useRef(null);
+    //
     const navigate = useNavigate();
 
     /*------------------- 회원가입 & 나가기 버튼 기능----------------*/
@@ -32,6 +45,17 @@ const Join2 = () => {
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
+
+        if(!address){
+            alert('주소를 등록해주세요.');
+            return;
+        }
+
+        if(!detailAddress){
+            alert('상세주소를 등록해주세요.');
+            return;
+        }
+
 
         navigate('/');
 
@@ -131,6 +155,18 @@ const Join2 = () => {
         cursor: 'pointer',
     };
 
+    /*------------------- 휴대폰번호 기능(post시 prefix, middle, last 합치기) ----------------*/
+    const handleMiddleChange = (e) => {
+        const value = e.target.value;
+        setMiddle(value);
+        if (value.length === 4) {
+            lastInputRef.current.focus(); // 4자리 입력 시 다음 칸으로 이동
+        }
+    };
+
+    const handleLastChange = (e) => {
+        setLast(e.target.value);
+    };
 
     return (
         <div className="join2-page-container">
@@ -321,6 +357,79 @@ const Join2 = () => {
                                         <DaumPostcode onComplete={handleComplete} style={{flexGrow: 1}}/>
                                     </div>
                                 </div>}
+
+                            </div>
+                        </div>
+                        <div className="join2-main-border">
+                            <div className="join2-main-border-left">
+                                <p className="join2-left-text">* 휴대폰 번호</p>
+                            </div>
+                            <div className="join2-main-border-right">
+                                <div className="join2-right-row">
+                                    <select
+                                        className="join2-id-input"
+                                        style={{width: '10%'}}
+                                        value={prefix}
+                                        onChange={(e) => setPrefix(e.target.value)}
+                                        required>
+                                        <option value="010">010</option>
+                                        <option value="011">011</option>
+                                        <option value="016">016</option>
+                                        <option value="017">017</option>
+                                        <option value="018">018</option>
+                                        <option value="019">019</option>
+                                    </select>
+                                    <input
+                                        className="join2-id-input"
+                                        style={{width: '15%'}}
+                                        type="tel"
+                                        value={middle}
+                                        onChange={handleMiddleChange}
+                                        required
+                                        maxLength="4"
+                                        ref={middleInputRef}
+                                        pattern="\d{4}"
+                                        title="숫자만 입력하세요."
+                                    />
+                                    <input
+                                        className="join2-id-input"
+                                        style={{width: '15%'}}
+                                        type="tel"
+                                        value={last}
+                                        onChange={handleLastChange}
+                                        required
+                                        maxLength="4"
+                                        ref={lastInputRef}
+                                        pattern="\d{4}"
+                                        title="숫자만 입력하세요."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="join2-main-border">
+                            <div className="join2-main-border-left">
+                                <p className="join2-left-text">* 아이디</p>
+                            </div>
+                            <div className="join2-main-border-right">
+                                <div className="join2-right-row">
+                                    <input
+                                        className="join2-id-input"
+                                        type="text"
+                                        value={userId}
+                                        onChange={handleIdChange}
+                                    />
+                                    <button className="join2-id-button" type="button" onClick={handleIdCheck}>
+                                        중복 확인
+                                    </button>
+                                    {idErrorMessage && <p className="info-message"
+                                                          style={{color: 'red'}}>{idErrorMessage}</p>}
+                                    {!isDuplicate && !idErrorMessage &&
+                                        <p className="info-message" style={{color: 'green'}}>사용 가능한 아이디입니다.</p>}
+                                </div>
+                                <p className="join2-id-info">
+                                    회원ID는 가입 후 바꾸실 수 없으니 신중하게 결정 해 주세요.
+                                    <br/><span style={{color: '#2489DC'}}> 영문자로 시작하는 4~12자의 영문과 숫자를 사용하시고
+                                </span> 여백없이 입력해 주세요.</p>
                             </div>
                         </div>
                     </div>
