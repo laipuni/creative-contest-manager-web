@@ -34,27 +34,31 @@ function EmailVerificationModal({ onClose, onVerify }) {
     };
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <span className="close" onClick={onClose}>&times;</span>
-                <h2>이메일 인증</h2>
-                <input
-                    type="text"
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    placeholder="이메일 주소를 입력하세요."
-                />
-                <button onClick={handleSendVerification}>인증 메일 받기</button>
+        <div className="email-modal">
+            <span className="email-modal-close" onClick={onClose}>&times;</span>
+            <h2>이메일 인증</h2>
+            <div className="email-modal-content">
+                <div className="email-inner-container">
+                    <input
+                        type="text"
+                        className="email-input"
+                        value={emailInput}
+                        onChange={(e) => setEmailInput(e.target.value)}
+                        placeholder="이메일 주소를 입력하세요."
+                    />
+                    <button className="email-button" onClick={handleSendVerification}>인증 메일 받기</button>
+                </div>
                 {isVerificationSent && (
-                    <>
+                    <div className="email-inner-container" style={{background: 'lightgray', borderRadius: '10px', height: '100px', padding: '5px'}}>
                         <input
                             type="text"
+                            className="email-input"
                             value={verificationCode}
                             onChange={(e) => setVerificationCode(e.target.value)}
                             placeholder="인증 코드를 입력하세요."
                         />
-                        <button onClick={handleVerify}>인증</button>
-                    </>
+                        <button className="email-button" onClick={handleVerify}>인증</button>
+                    </div>
                 )}
                 {verificationMessage && <p className="verification-message">{verificationMessage}</p>}
             </div>
