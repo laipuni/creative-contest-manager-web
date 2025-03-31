@@ -69,6 +69,11 @@ const Join2 = () => {
             return;
         }
 
+        if(!email){
+            alert('인증을 통해 이메일을 등록해주세요.')
+            return;
+        }
+
 
         navigate('/');
 
@@ -314,6 +319,7 @@ const Join2 = () => {
                                         type="text"
                                         value={birthday}
                                         onChange={handleBirthdayChange}
+                                        maxLength="8"
                                         required
                                         pattern="\d{8}"
                                         title="YYYYMMDD 형식의 8자리 숫자를 입력하세요."
@@ -507,18 +513,18 @@ const Join2 = () => {
                             </div>
                         </div>
                         <div className="join2-main-border">
-                            <div className="join2-main-border-left">
+                            <div className="join2-main-border-left" style={{borderBottom: 'none'}}>
                                 {!job && <p className="join2-left-text">* 학년(부서)</p>}
                                 {job.startsWith('s') && <p className="join2-left-text">* 학년</p>}
                                 {job.startsWith('p') && <p className="join2-left-text">* 부서</p>}
                             </div>
-                            <div className="join2-main-border-right">
+                            <div className="join2-main-border-right" style={{borderBottom: 'none'}}>
                                 <div className="join2-right-row">
                                     {job && job.startsWith('s') ? (
                                         <select className="join2-id-input" value={detailJob}
                                                 onChange={(e) => {
                                                     setDetailJob(e.target.value)
-                                                }}>
+                                                }} required>
                                             <option value="">---</option>
                                             {job.startsWith('s_elementary') && (
                                                 <>
@@ -554,12 +560,15 @@ const Join2 = () => {
                                             type="text"
                                             className="join2-id-input"
                                             value={detailJob}
+                                            required
                                             onChange={(e) => {
                                                 setDetailJob(e.target.value)
                                             }}
                                         />
                                     ) : (
-                                        <select className="join2-id-input" value={detailJob}
+                                        <select className="join2-id-input"
+                                                required
+                                                value={detailJob}
                                                 onChange={(e) => {
                                                     setDetailJob(e.target.value)
                                                 }}>
