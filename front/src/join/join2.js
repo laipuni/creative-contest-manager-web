@@ -3,6 +3,7 @@ import './join2.css'
 import SubHeader from "../components/subHeader/subHeader";
 import {useNavigate} from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
+import EmailVerificationModal from '../components/modals/emailVerificationModal';
 
 const Join2 = () => {
     /*--------------아이디--------------*/
@@ -33,10 +34,8 @@ const Join2 = () => {
     const lastInputRef = useRef(null);
 
     /*--------------이메일------------------*/
-    const [emailId, setEmailId] = useState('');
-    const [emailDomain, setEmailDomain] = useState('');
-    const emailInputRef = useRef(null);
-
+    const [email, setEmail] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     /*--------------직업------------------*/
     const [job, setJob] = useState('');
     //
@@ -187,28 +186,18 @@ const Join2 = () => {
     };
 
     /*------------------- 이메일 기능 ----------------*/
-    const handleEmailIdChange = (e) => {
-        setEmailId(e.target.value);
-    }
-
-    const handleEmailDomainChange = (e) => {
-        const selectedDomain = e.target.value;
-        setEmailDomain(selectedDomain);
-
-        if (selectedDomain === '') {
-            emailInputRef.current.focus();
-        } else {
-            setEmailDomain(selectedDomain);
-        }
-    };
 
     const handleEmailCheck = () => {
-        if(!emailId || !emailDomain) {
-            alert('이메일을 입력해주세요.')
-            return;
-        }
-        const email = emailId + emailDomain;
-    }
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleVerifyEmail = (verifiedEmail) => {
+        setEmail(verifiedEmail);
+    };
 
 
 
@@ -453,6 +442,8 @@ const Join2 = () => {
                             </div>
                         </div>
                         <div className="join2-main-border">
+                            {isModalOpen && <EmailVerificationModal onClose={handleCloseModal}
+                            onVerify={handleVerifyEmail}/>}
                             <div className="join2-main-border-left">
                                 <p className="join2-left-text">* 이메일</p>
                             </div>
@@ -461,28 +452,9 @@ const Join2 = () => {
                                     <input
                                         className="join2-id-input"
                                         type="text"
-                                        value={emailId}
-                                        onChange={handleEmailIdChange}
+                                        value={email}
+                                        readOnly
                                     />
-                                    <p className="info-message2">@</p>
-                                    <input
-                                        className="join2-id-input"
-                                        type="text"
-                                        value={emailDomain}
-                                        onChange={handleEmailDomainChange}
-                                        ref={emailInputRef}
-                                    />
-                                    <select
-                                        className="join2-id-input"
-                                        style={{width: 'fit-content', height: 'fit-content', fontSize: '11px'}}
-                                        value={emailDomain}
-                                        onChange={handleEmailDomainChange}>
-                                        <option value="">직접 입력</option>
-                                        <option value="gmail.com">gmail.com</option>
-                                        <option value="naver.com">naver.com</option>
-                                        <option value="hanmail.net">hanmail.net</option>
-                                        <option value="nate.com">nate.com</option>
-                                    </select>
                                     <button className="join2-id-button" type="button" onClick={handleEmailCheck}>
                                         인증하기
                                     </button>
