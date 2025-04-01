@@ -4,6 +4,8 @@ import SubHeader from "../components/subHeader/subHeader";
 import {useNavigate} from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
 import EmailVerificationModal from '../components/modals/emailVerificationModal';
+import axios from 'axios'
+import {domain} from '../domain'
 
 const Join2 = () => {
     /*--------------아이디--------------*/
@@ -75,8 +77,25 @@ const Join2 = () => {
             return;
         }
 
-
-        navigate('/');
+        axios.post(`${domain}/api/test`, {
+            id : userId,
+            password,
+            name,
+            birthday,
+            gender,
+            address : address + ' ' + detailAddress,
+            phoneNumber : prefix + middle + last,
+            email,
+            job,
+            workPlace,
+            detailJob
+        }, { "Content-Type": "application/json"})
+            .then((res) => {
+                navigate('/');
+            })
+            .catch((err) => {
+                alert(err.message);
+            })
 
     }
 
