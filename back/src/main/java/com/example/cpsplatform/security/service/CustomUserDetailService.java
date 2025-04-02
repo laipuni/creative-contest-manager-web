@@ -1,7 +1,7 @@
 package com.example.cpsplatform.security.service;
 
 import com.example.cpsplatform.exception.security.LoginFailedException;
-import com.example.cpsplatform.member.Member;
+import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import lombok.extern.slf4j.Slf4j;
