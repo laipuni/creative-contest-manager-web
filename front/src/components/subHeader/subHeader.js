@@ -27,7 +27,7 @@ const SubHeader = () => {
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <p className="main-header-menu-item-text">ADMIN</p>
+                        <Link to="/admin-login" className="main-header-menu-item-text">ADMIN</Link>
                     </div>
                 </div>
             </div>
