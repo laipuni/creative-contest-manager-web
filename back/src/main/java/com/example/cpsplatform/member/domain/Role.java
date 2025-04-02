@@ -1,4 +1,4 @@
-package com.example.cpsplatform.member;
+package com.example.cpsplatform.member.domain;
 
 import lombok.*;
 
