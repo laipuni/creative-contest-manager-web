@@ -1,0 +1,236 @@
+.main-header-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    gap: 1px;
+
+    width: 100%;
+    height: 100px;
+
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.main-header-top {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 22px;
+    width: 100%;
+    height: 30%;
+    background: rgba(0, 0, 0, 0.02);
+    border-bottom: 1px solid #DDE1E6;
+}
+
+.main-header-menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0px; /* 메뉴 간 간격 조정 */
+    width: 100%;
+}
+
+.main-header-menu-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    gap: 8px;
+    height: auto;
+}
+
+.main-header-menu-item-text {
+    font-family: 'Roboto', serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 100%;
+    color: #21272A;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.main-header-menu-item-line {
+    width: 1px;
+    height: 16px;
+    background-color: #000000;
+}
+
+
+.main-header-bot {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding: 10px;
+    gap: 10px;
+    background-color: white;
+    margin: 0 auto;
+    width: 75%;
+    height: 60%;
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.main-header-logo {
+    /* logo */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+    gap: 0px;
+
+    width: 17%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    text-decoration: none;
+
+}
+
+.main-logo-image {
+    /* Icon Container */
+
+    margin: 0;
+    width: 15%;
+    height: 35%;
+    object-fit: contain;
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.main-logo-text {
+    /* Creative Problem Solving Festival */
+
+    margin: 0;
+    width: 85%;
+    height: fit-content;
+
+    font-family: 'Roboto', serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 110%;
+    /* or 22px */
+
+    /* CoolGray/60 */
+    color: #697077;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 1;
+
+}
+
+.main-header-bot-right {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 10px;
+    gap: 10px;
+    width: 75%;
+    height: 90%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.main-header-bot-textbox {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px;
+    gap: 10px;
+
+    width: 30%;
+    height: 30%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.main-header-bot-text {
+    width: fit-content;
+    height: fit-content;
+
+    font-family: 'BMHanna', serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 110%;
+    /* or 26px */
+
+    color: #21272A;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.main-header-bot-circle {
+
+    width: 5px;
+    height: 5px;
+
+    background: #21272A;
+
+    /* Inside auto layout */
+    flex: none;
+    flex-grow: 0;
+
+}
+.main-header-line {
+
+    margin: 0 auto;
+    width: 75%;
+    height: 0px;
+
+    border: 1px solid rgba(0, 0, 0, 0.43);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+}

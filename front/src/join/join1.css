@@ -1,0 +1,257 @@
+.join-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0px;
+
+    position: relative;
+    width: 100%;
+    min-width: 850px;
+    height: 100%;
+
+
+}
+
+.join-content-container {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+    gap: 20px;
+
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+
+
+}
+
+.join1-title {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 0px;
+    margin: 0 auto;
+    width: 60%;
+    height: fit-content;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+
+}
+
+.join1-title-text {
+    /* login_title_text */
+
+    width: 100%;
+    height: fit-content;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 50%;
+    padding: 0px 0px;
+
+    /* CoolGray/90 */
+    color: #21272A;
+    text-align: left;
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.join1-subtitle {
+
+    margin: 0 auto;
+    width: 60%;
+    height: fit-content;
+    padding: 10px 10px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 110%;
+    text-align: left;
+    /* or 22px */
+
+    color: #FF9A26;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.join1-mainbox {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    margin: 0 auto;
+    width: 60%;
+    height: 100%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 1;
+
+}
+
+.join1-textbox {
+
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding: 0px 13px;
+    gap: 10px;
+    overflow-y: auto;
+    width: 100%;
+    height: 500px;
+
+    border: 1px solid rgba(0, 0, 0, 0.5);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 1;
+
+
+}
+
+.join1-textbox-text {
+
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 110%;
+    /* or 12px */
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+
+
+}
+
+.join1-buttonbox{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+
+    width: 100%;
+    height: 100%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.join1-buttonbox-upper{
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+
+    width: 100%;
+    height: 40%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.join1-buttonbox-lower{
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+
+    width: 100%;
+    height: 40%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.join1-button {
+
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+    color: white;
+    font-family: 'Roboto-Bold';
+    font-size: 16px;
+    border: none;
+    width: 96px;
+    height: 40px;
+    background: blue;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}

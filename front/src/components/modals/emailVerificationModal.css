@@ -1,0 +1,89 @@
+.email-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    border: 2px solid #bbb;
+}
+
+.email-modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+.email-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.email-inner-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0px;
+    gap: 20px;
+
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.email-input-container, .verification-container {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.email-input, .verification-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #999;
+    border-radius: 6px;
+}
+
+.email-button {
+    font-size: 12px;
+    width: 30%;
+    height: fit-content;
+    padding: 5px 5px;
+    background-color: #007aff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.verification-container {
+    background: #d9d9d9;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #aaa;
+}
+
+.verification-message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: red;
+}
