@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -47,7 +48,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf ->
                         csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // session 기반이라 csrf 체크를 해야함
-                                .ignoringRequestMatchers("/api/auth/login") // 로그인 api는 csrf 없게 설정
+                                .ignoringRequestMatchers("/api/auth/login")
                 )
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/api/admin/**").hasRole("ADMIN"); // 어드민만 접근가능
@@ -55,11 +56,13 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable) //
                 .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
                 .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers(
+                    authorize.requestMatchers(HttpMethod.GET,
                                     "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate"
                             ).permitAll() // 해당 url들은 접근가능
-                            .anyRequest()
-                            .authenticated(); // 나머지 url은 인증 필요
+                            .requestMatchers(HttpMethod.POST,
+                                    "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code"
+                            ).permitAll()
+                            .anyRequest().authenticated(); // 나머지 url은 인증 필요
                 })
 
                 .logout(logout ->
