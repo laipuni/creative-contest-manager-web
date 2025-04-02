@@ -30,11 +30,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse<Map<String, String>> handleValidationException(MethodArgumentNotValidException ex) {
+    public ApiErrorResponse<Object> handleValidationException(MethodArgumentNotValidException ex) {
         return ApiErrorResponse.of(
                 HttpStatus.BAD_REQUEST,
                 ex.getBindingResult().getFieldErrors()
                         .get(0).getDefaultMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse<Object> RuntimeException(RuntimeException ex) {
+        return ApiErrorResponse.of(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
                 null
         );
     }
