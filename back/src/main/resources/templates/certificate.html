@@ -236,17 +236,13 @@
             </div>
 
             <div class="signature">
-                <div class="signature-line">교육 담당자</div>
-                <div class="signature-line">대표이사</div>
+                <div class="signature-line">팀명</div>
+                <div class="signature-line">소속</div>
             </div>
 
             <div class="certificate-footer">
-                <div class="certificate-date" th:text="${date}">2024년 3월 1일 - 2024년 3월 24일</div>
+                <div class="certificate-date" th:text="'대회 날짜: ' + ${date}">2024년 3월 1일 - 2024년 3월 24일</div>
                 <div class="certificate-serial" th:text="'일련번호: ' + ${serialNumber}">일련번호: ABC123456789</div>
-            </div>
-
-            <div class="seal">
-                <img src="/images/test_signature.png" class="seal-image">
             </div>
         </div>
     </div>
