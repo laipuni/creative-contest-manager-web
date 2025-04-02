@@ -20,7 +20,7 @@ public class RedisRepository {
         try {
             return callable.call();
         } catch (Exception e){
-            log.error("Redis operation failed: {}", e.getMessage());
+            log.error("Redis operation failed: {},", e.getMessage(),e.getCause());
             throw new IllegalStateException("서버에 문제가 생겨 해당서비스를 이용할 수 없습니다. 죄송합니다.",e);
         }
     }
@@ -35,8 +35,9 @@ public class RedisRepository {
     public String setData(final String key, final String value){
         return handleException(() ->{
             ValueOperations<String, String> operations = redisTemplate.opsForValue();
-            log.info("Successfully set data for key: {}", key);
+            log.info("set data for key: {}", key);
             operations.set(key,value);
+            log.info("Successfully set data for key: {}", key);
             return value;
         });
     }
@@ -44,8 +45,9 @@ public class RedisRepository {
     public String setDataWithTTL(final String key, final String value, final long ttl, final TimeUnit timeUnit){
         return handleException(() ->{
             ValueOperations<String, String> operations = redisTemplate.opsForValue();
-            log.info("Successfully set data with TTL for key: {} (TTL: {} {})", key, ttl, timeUnit);
+            log.info("set data with TTL for key: {} (TTL: {} {})", key, ttl, timeUnit);
             operations.set(key,value,ttl,timeUnit);
+            log.info("Successfully set data with TTL for key: {} (TTL: {} {})", key, ttl, timeUnit);
             return value;
         });
     }
@@ -53,6 +55,7 @@ public class RedisRepository {
     public String deleteData(final String key){
         return handleException(() ->{
             if(redisTemplate.hasKey(key)){
+                log.info("deleted data for key: {}", key);
                 redisTemplate.delete(key);
                 log.info("Successfully deleted data for key: {}", key);
             }
