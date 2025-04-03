@@ -3,6 +3,7 @@ package com.example.cpsplatform.auth.controller;
 import com.example.cpsplatform.auth.AuthService;
 import com.example.cpsplatform.auth.controller.request.AuthCodeSendRequest;
 import com.example.cpsplatform.auth.controller.request.FindIdRequest;
+import com.example.cpsplatform.auth.controller.request.PasswordSendRequest;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.member.service.RegisterService;
@@ -268,6 +269,115 @@ class AuthCodeControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.loginId").value(response.getLoginId()));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 요청할 때, 인증 코드를 수령할 사람의 정보가 없을 경우 예외로 응답한다.")
+    @Test
+    void requestPasswordAuthCodeWithNotRecipient() throws Exception {
+        //given
+        String recipient = "";
+        String senderType = "password_auth";
+        String loginId = "testId";
+
+        PasswordSendRequest request = new PasswordSendRequest(loginId,recipient,senderType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/request")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("인증 정보는 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 요청할 때, 전송 수단이 없을 경우 예외로 응답한다.")
+    @Test
+    void requestPasswordAuthCodeWithNotSenderType() throws Exception {
+        //given
+        String recipient = "email@email.com";
+        String senderType = "";
+        String loginId = "testId";
+
+        PasswordSendRequest request = new PasswordSendRequest(loginId,recipient,senderType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/request")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("전송 수단 선택은 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 요청할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void requestPasswordAuthCodeWithNotLoginId() throws Exception {
+        //given
+        String recipient = "email@email.com";
+        String senderType = "findId";
+        String loginId = "";
+
+        PasswordSendRequest request = new PasswordSendRequest(loginId,recipient,senderType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/request")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("비밀번호를 찾을 아이디는 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 요청을 받아 비밀번호 인증코드를 전송한다.")
+    @Test
+    void requestPasswordAuthCode() throws Exception {
+        //given
+        String recipient = "email@email.com";
+        String senderType = "password_auth";
+        String loginId = "testId";
+
+        PasswordSendRequest request = new PasswordSendRequest(loginId,recipient,senderType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/request")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty());
+
 
     }
 
