@@ -32,7 +32,7 @@ const MainHeader = () => {
                 </Link>
                 <div className="main-header-bot-right">
                     <div className="main-header-bot-textbox">
-                        <p className="main-header-bot-text">시험안내</p>
+                        <Link to="test-info" className="main-header-bot-text">시험안내</Link>
                         <span className="main-header-bot-circle"></span>
                         <p className="main-header-bot-text">문제풀이</p>
                         <span className="main-header-bot-circle"></span>
