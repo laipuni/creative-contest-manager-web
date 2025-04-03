@@ -50,7 +50,7 @@ const MemberLogin = () => {
                     <div className="login-joinmessage">
                         <p className="login-joinmessage-text">
                             아직 회원가입을 안하셨나요?</p>
-                        <Link to="/join" className="login-joinmessage-hyper" style={{color: 'blue'}}>
+                        <Link to="/join/policy" className="login-joinmessage-hyper" style={{color: 'blue'}}>
                             회원가입
                         </Link>
                     </div>
