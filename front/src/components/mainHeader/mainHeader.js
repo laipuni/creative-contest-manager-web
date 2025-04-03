@@ -13,15 +13,15 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <Link to="/member-login" className="main-header-menu-item-text">LOGIN</Link>
+                        <Link to="/member/login" className="main-header-menu-item-text">LOGIN</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <Link to="/join" className="main-header-menu-item-text">JOIN</Link>
+                        <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <Link to="/admin-login" className="main-header-menu-item-text">ADMIN</Link>
+                        <Link to="/admin/login" className="main-header-menu-item-text">ADMIN</Link>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                 </Link>
                 <div className="main-header-bot-right">
                     <div className="main-header-bot-textbox">
-                        <Link to="test-info" className="main-header-bot-text">시험안내</Link>
+                        <Link to="/test/info" className="main-header-bot-text">시험안내</Link>
                         <span className="main-header-bot-circle"></span>
                         <p className="main-header-bot-text">문제풀이</p>
                         <span className="main-header-bot-circle"></span>

@@ -14,11 +14,11 @@ function App() {
       <BrowserRouter>
           <Routes>
               <Route path="/" element={<Main />}></Route>
-              <Route path="join" element={<Join1 />}></Route>
-              <Route path="join2" element={<Join2 />}></Route>
-              <Route path="member-login" element={<MemberLogin />}></Route>
-              <Route path="admin-login" element={<AdminLogin />}></Route>
-              <Route path="test-info" element={<TestInfo />}></Route>
+              <Route path="join/policy" element={<Join1 />}></Route>
+              <Route path="join/register" element={<Join2 />}></Route>
+              <Route path="member/login" element={<MemberLogin />}></Route>
+              <Route path="admin/login" element={<AdminLogin />}></Route>
+              <Route path="test/info" element={<TestInfo />}></Route>
               <Route path="*" element={<NotFound />}></Route>
           </Routes>
       </BrowserRouter>
