@@ -2,8 +2,7 @@ package com.example.cpsplatform.auth.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.auth.AuthService;
-import com.example.cpsplatform.auth.controller.request.AuthCodeSendRequest;
-import com.example.cpsplatform.auth.controller.request.FindIdRequest;
+import com.example.cpsplatform.auth.controller.request.*;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.member.service.RegisterService;
 import jakarta.validation.Valid;
@@ -30,4 +29,9 @@ public class AuthController {
         return ApiResponse.ok(response);
     }
 
+    @PostMapping("/api/password-reset/request")
+    public ApiResponse<FindIdResponse> requestPasswordAuthCode(@Valid @RequestBody PasswordSendRequest request){
+        registerService.sendPasswordResetAuthCode(request.toPasswordResetCodeDto());
+        return ApiResponse.ok(null);
+    }
 }

@@ -10,6 +10,7 @@ import com.example.cpsplatform.auth.storage.AuthCodeStorage;
 import com.example.cpsplatform.auth.storage.RedisAuthCodeStorage;
 import com.example.cpsplatform.auth.strategy.AuthCodeStrategy;
 import com.example.cpsplatform.auth.strategy.FindIdAuthCodeStrategy;
+import com.example.cpsplatform.auth.strategy.PasswordAuthCodeStrategy;
 import com.example.cpsplatform.auth.strategy.RegisterAuthCodeStrategy;
 import com.example.cpsplatform.redis.RedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ public class AuthConfig {
         Map<String, AuthCodeStrategy> strategyMap = new HashMap<>();
         strategyMap.put("register",new RegisterAuthCodeStrategy());
         strategyMap.put("findId",new FindIdAuthCodeStrategy());
+        strategyMap.put("password_auth",new PasswordAuthCodeStrategy());
         return strategyMap;
     }
 
