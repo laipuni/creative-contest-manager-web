@@ -2,9 +2,13 @@ package com.example.cpsplatform.member.domain.organization.school;
 
 import com.example.cpsplatform.member.domain.organization.Organization;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue(value = "school")
 public class School extends Organization {
 

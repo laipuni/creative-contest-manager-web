@@ -3,9 +3,14 @@ package com.example.cpsplatform.member.domain.organization.company;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue(value = "company")
 public class Company extends Organization {
 
