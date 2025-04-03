@@ -9,6 +9,7 @@ import com.example.cpsplatform.auth.sender.EmailAuthCodeSender;
 import com.example.cpsplatform.auth.storage.AuthCodeStorage;
 import com.example.cpsplatform.auth.storage.RedisAuthCodeStorage;
 import com.example.cpsplatform.auth.strategy.AuthCodeStrategy;
+import com.example.cpsplatform.auth.strategy.FindIdAuthCodeStrategy;
 import com.example.cpsplatform.auth.strategy.RegisterAuthCodeStrategy;
 import com.example.cpsplatform.redis.RedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ public class AuthConfig {
     public Map<String,AuthCodeStrategy> authCodeStrategy(){
         Map<String, AuthCodeStrategy> strategyMap = new HashMap<>();
         strategyMap.put("register",new RegisterAuthCodeStrategy());
+        strategyMap.put("findId",new FindIdAuthCodeStrategy());
         return strategyMap;
     }
 

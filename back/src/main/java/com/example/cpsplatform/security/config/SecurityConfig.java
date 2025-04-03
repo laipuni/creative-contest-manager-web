@@ -64,11 +64,12 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable) //
                 .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
                 .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers(HttpMethod.GET,
+                    authorize.requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
                                     "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate"
-                            ).permitAll() // 해당 url들은 접근가능
-                            .requestMatchers(HttpMethod.POST,
-                                    "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code"
+                            ).permitAll()
+                            .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
+                                    "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code",
+                                    "/api/v1/find-id"
                             ).permitAll()
                             .anyRequest().authenticated(); // 나머지 url은 인증 필요
                 })
