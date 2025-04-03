@@ -1,6 +1,6 @@
 package com.example.cpsplatform.auth.config;
 
-import com.example.cpsplatform.auth.AuthService;
+import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.email.EmailService;
 import com.example.cpsplatform.auth.generator.AuthCodeGenerator;
 import com.example.cpsplatform.auth.generator.UUIDAuthCodeGenerator;

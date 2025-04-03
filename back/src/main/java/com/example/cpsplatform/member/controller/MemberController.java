@@ -2,7 +2,7 @@ package com.example.cpsplatform.member.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.member.controller.request.MemberRegisterReqeust;
-import com.example.cpsplatform.member.service.RegisterService;
+import com.example.cpsplatform.auth.service.RegisterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

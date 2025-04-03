@@ -1,9 +1,9 @@
 package com.example.cpsplatform.member.service;
 
-import com.example.cpsplatform.auth.AuthService;
+import com.example.cpsplatform.auth.service.AuthService;
+import com.example.cpsplatform.auth.service.RegisterService;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.exception.PasswordMismatchException;
-import com.example.cpsplatform.member.controller.request.MemberRegisterReqeust;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
@@ -16,7 +16,6 @@ import com.example.cpsplatform.member.service.dto.RegisterRequestDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +24,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest

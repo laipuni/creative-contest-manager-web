@@ -1,5 +1,6 @@
 package com.example.cpsplatform.auth;
 
+import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.storage.AuthCodeStorage;
 import com.example.cpsplatform.auth.strategy.AuthCodeStrategy;
 import com.example.cpsplatform.auth.strategy.RegisterAuthCodeStrategy;

@@ -1,26 +1,17 @@
 package com.example.cpsplatform.member.controller;
 
 import com.example.cpsplatform.member.controller.request.MemberRegisterReqeust;
-import com.example.cpsplatform.member.controller.request.OrganizationValidator;
 import com.example.cpsplatform.member.domain.Gender;
-import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
-import com.example.cpsplatform.member.service.RegisterService;
-import com.example.cpsplatform.member.service.dto.RegisterRequestDto;
+import com.example.cpsplatform.auth.service.RegisterService;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.constraints.*;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;

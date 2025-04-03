@@ -1,12 +1,12 @@
 package com.example.cpsplatform.auth.controller;
 
-import com.example.cpsplatform.auth.AuthService;
+import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.controller.request.AuthCodeSendRequest;
 import com.example.cpsplatform.auth.controller.request.FindIdRequest;
 import com.example.cpsplatform.auth.controller.request.PasswordSendRequest;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.member.repository.MemberRepository;
-import com.example.cpsplatform.member.service.RegisterService;
+import com.example.cpsplatform.auth.service.RegisterService;
 import com.example.cpsplatform.member.service.dto.FindIdDto;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;

@@ -1,4 +1,4 @@
-package com.example.cpsplatform.auth;
+package com.example.cpsplatform.auth.service;
 
 import com.example.cpsplatform.auth.generator.AuthCodeGenerator;
 import com.example.cpsplatform.auth.sender.AuthCodeSender;

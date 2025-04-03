@@ -1,9 +1,9 @@
-package com.example.cpsplatform.member.service;
+package com.example.cpsplatform.auth.service;
 
-import com.example.cpsplatform.auth.AuthService;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.exception.PasswordMismatchException;
 import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.service.MemberService;
 import com.example.cpsplatform.member.service.dto.FindIdDto;
 import com.example.cpsplatform.member.service.dto.PasswordResetCodeDto;
 import com.example.cpsplatform.member.service.dto.RegisterRequestDto;
