@@ -42,7 +42,7 @@ class MemberRepositoryTest {
                 .email("email@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("010xxxxxxxx")
+                .phoneNumber("01012341234")
                 .name("사람 이름")
                 .organization(school)
                 .build();
@@ -53,8 +53,44 @@ class MemberRepositoryTest {
 
         //then
         assertThat(result).isNotNull()
-                .extracting("loginId","password","role")
-                .containsExactly(member.getLoginId(),member.getPassword(),member.getRole());
+                .extracting("loginId","password","role","birth",
+                        "email","address","gender","phoneNumber","name","organization")
+                .containsExactly(member.getLoginId(),member.getPassword(),member.getRole(),
+                        member.getBirth(),member.getEmail(),member.getAddress(),member.getGender(),member.getPhoneNumber(),
+                        member.getName(),member.getOrganization());
+    }
+
+    @DisplayName("해당 이메일의 유저를 단건 조회한다.")
+    @Test
+    void findMemberByEmail(){
+        //given
+        Address address = new Address("street","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        String email = "email@email.com";
+        Member member = Member.builder()
+                .loginId("loginId")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email(email)
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        memberRepository.save(member);
+        //when
+        Member result = memberRepository.findMemberByEmail(email).get();
+
+        //then
+        assertThat(result).isNotNull()
+                .extracting("loginId","password","role","birth",
+                        "email","address","gender","phoneNumber","name","organization")
+                .containsExactly(member.getLoginId(),member.getPassword(),member.getRole(),
+                        member.getBirth(),member.getEmail(),member.getAddress(),member.getGender(),member.getPhoneNumber(),
+                        member.getName(),member.getOrganization());
     }
 
 }
