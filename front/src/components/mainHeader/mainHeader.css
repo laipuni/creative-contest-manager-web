@@ -191,7 +191,7 @@
 .main-header-bot-text {
     width: fit-content;
     height: fit-content;
-
+    text-decoration: none;
     font-family: 'BMHanna', serif;
     font-style: normal;
     font-weight: 400;
