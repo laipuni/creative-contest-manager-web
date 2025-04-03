@@ -3,7 +3,7 @@ import './mainHeader.css'
 import '../../styles/styles.css'
 import logo from '../../styles/images/trophy.png'
 import { Link } from 'react-router-dom'
-const MainHeader = () => {
+const MainHeader = ({underbarWidth = "75%"}) => {
     return (
         <div className="main-header-container">
             <div className="main-header-top">
@@ -40,7 +40,7 @@ const MainHeader = () => {
                     </div>
                 </div>
             </div>
-            <div className="main-header-line"></div>
+            <div className="main-header-line" style={{width: underbarWidth}}></div>
         </div>
     )
 }
