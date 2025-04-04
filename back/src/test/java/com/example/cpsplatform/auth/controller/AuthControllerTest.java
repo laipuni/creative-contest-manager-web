@@ -1,11 +1,8 @@
 package com.example.cpsplatform.auth.controller;
 
-import com.example.cpsplatform.auth.controller.request.PasswordConfirmRequest;
+import com.example.cpsplatform.auth.controller.request.*;
 import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
 import com.example.cpsplatform.auth.service.AuthService;
-import com.example.cpsplatform.auth.controller.request.AuthCodeSendRequest;
-import com.example.cpsplatform.auth.controller.request.FindIdRequest;
-import com.example.cpsplatform.auth.controller.request.PasswordSendRequest;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.auth.service.PasswordResetService;
 import com.example.cpsplatform.auth.service.PasswordResetSessionService;
@@ -531,6 +528,174 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.session").value(session));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void resetPasswordWithNotSession() throws Exception {
+        //given
+        String session = "";
+        String loginId = "loginId";
+        String resetPassword = "password";
+        String confirmPassword = "password";
+
+        PasswordResetRequest request = new PasswordResetRequest(session,loginId,resetPassword,confirmPassword);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("유효하지 않는 접근입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void resetPasswordWithNotLoginId() throws Exception {
+        //given
+        String session = "session";
+        String loginId = "";
+        String resetPassword = "password";
+        String confirmPassword = "password";
+
+        PasswordResetRequest request = new PasswordResetRequest(session,loginId,resetPassword,confirmPassword);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("비밀번호를 재설정 할 아이디는 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void resetPasswordWithNotResetPassword() throws Exception {
+        //given
+        String session = "session";
+        String loginId = "loginId";
+        String resetPassword = "";
+        String confirmPassword = "password";
+
+        PasswordResetRequest request = new PasswordResetRequest(session,loginId,resetPassword,confirmPassword);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("비밀번호는 4-8자 이내여야 합니다"));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void resetPasswordWithInvalidResetPassword() throws Exception {
+        //given
+        String session = "session";
+        String loginId = "loginId";
+        String resetPassword = "resetPassword1234"; // 4~8자의 범위를 넘는 비밀번호
+        String confirmPassword = "resetPassword1234";
+
+        PasswordResetRequest request = new PasswordResetRequest(session,loginId,resetPassword,confirmPassword);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("비밀번호는 4-8자 이내여야 합니다"));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void resetPasswordWithNotConfirmPassword() throws Exception {
+        //given
+        String session = "session";
+        String loginId = "loginId";
+        String resetPassword = "password";
+        String confirmPassword = "";
+
+        PasswordResetRequest request = new PasswordResetRequest(session,loginId,resetPassword,confirmPassword);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("비밀번호확인은 필수입니다"));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void resetPassword() throws Exception {
+        //given
+        String session = "session";
+        String loginId = "loginId";
+        String resetPassword = "password";
+        String confirmPassword = "password";
+
+        PasswordResetRequest request = new PasswordResetRequest(session,loginId,resetPassword,confirmPassword);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty());
 
     }
 }
