@@ -8,6 +8,7 @@ import MemberLogin from "./login/member/memberLogin";
 import AdminLogin from "./login/admin/adminLogin";
 import TestInfo from "./testRegister/testInfo/testInfo";
 import RegisterInfo from "./testRegister/registerInfo/registerInfo";
+import RegisterTeam from "./testRegister/registerInfo/registerTeam";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="admin/login" element={<AdminLogin />}></Route>
               <Route path="test/info" element={<TestInfo />}></Route>
               <Route path="register/info" element={<RegisterInfo />}></Route>
+              <Route path="register/team" element={<RegisterTeam />}></Route>
               <Route path="*" element={<NotFound />}></Route>
           </Routes>
       </BrowserRouter>
