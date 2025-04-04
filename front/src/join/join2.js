@@ -611,7 +611,7 @@ const Join2 = () => {
                     </div>
                     <div className="join1-buttonbox-lower">
                         <button className="join1-button" type="submit">가입하기</button>
-                        <button className="join1-button"
+                        <button className="join1-button" type="button"
                                 style={{background: 'lightgray', color: 'black'}}
                                 onClick={handleExit}>나가기
                         </button>
