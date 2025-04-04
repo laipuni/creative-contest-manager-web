@@ -88,4 +88,10 @@ public class Member extends BaseEntity {
     public String getRoleName(){
         return this.role.getName();
     }
+
+    public void changePassword(final String newPassword){
+        if(newPassword != null){
+            this.password = newPassword;
+        }
+    }
 }

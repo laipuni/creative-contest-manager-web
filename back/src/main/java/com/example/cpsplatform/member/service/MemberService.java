@@ -37,4 +37,12 @@ public class MemberService {
                     return new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
                 });
     }
+
+    public Member findMemberByLoginId(final String loginId){
+        return memberRepository.findMemberByLoginId(loginId)
+                .orElseThrow(() -> {
+                    log.debug("아이디({})에 해당하는 유저 조회 실패",loginId);
+                    return new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
+                });
+    }
 }
