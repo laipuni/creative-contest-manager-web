@@ -14,7 +14,7 @@ const Sidebar = () => {
                     예선시험 안내
                 </Link>
                 <Link to="/register/info" className={`sidebar-text 
-                ${location.pathname === "/register/info" ? "active" : ""}`}>예선시험 접수</Link>
+    ${["/register/info", "/register/team"].includes(location.pathname) ? "active" : ""}`}>예선시험 접수</Link>
             </div>
             <div className="sidebar-underline"></div>
             <p className="sidebar-title">문제 풀기</p>

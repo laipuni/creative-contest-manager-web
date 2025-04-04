@@ -50,6 +50,7 @@ const RegisterTeam = () => {
                                     <div className="registerTeam-bot-line"></div>
                                     <input className="registerTeam-bot-input" type="text"
                                            value={teamName}
+                                           required
                                            minLength='2' maxLength='7'
                                            onChange={(e) => setTeamName(e.target.value)}
                                     ></input>
