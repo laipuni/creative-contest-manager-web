@@ -53,11 +53,11 @@ const Main = () => {
                             <div className="bento-bot-left">
                                 <div className="bento-bot-left-upper">
                                     <div className="bento-content-textbox" style={{width: '50%'}}>
-                                        <p className="bento-content-title" style={{color: '#2B72F5', fontSize: 32}}>
-                                            내 정보
+                                        <p className="bento-content-title" style={{fontSize: 32}}>
+                                            <span style={{color: '#2B72F5'}}>증명서</span>&nbsp;발급
                                         </p>
                                         <p className="bento-content-subtitle">
-                                            내 <span style={{color: '#2B72F5'}}>정보를 수정</span>하고<br/>
+                                            예선 참가/합격<br/>
                                             <span style={{color: '#2B72F5'}}>증명서</span>를 발급해요
                                         </p>
                                     </div>
@@ -68,11 +68,11 @@ const Main = () => {
                                 <div className="bento-bot-left-lower">
                                     <div className="bento-content-textbox" style={{width: '50%'}}>
                                         <p className="bento-content-title" style={{fontSize: 32}}>
-                                            <span style={{color: '#3D2FFC', fontSize: 32}}>연습문제</span>&nbsp;풀기
+                                            <span style={{color: '#3D2FFC', fontSize: 32}}>기출문제</span>&nbsp;풀기
                                         </p>
                                         <p className="bento-content-subtitle">
                                             실전에 대비해<br/>
-                                            <span style={{color: '#3D2FFC'}}>연습문제</span>를 풀어봐요
+                                            <span style={{color: '#3D2FFC'}}>기출문제</span>를 풀어봐요
                                         </p>
                                     </div>
                                     <div className="bento-image-container">
