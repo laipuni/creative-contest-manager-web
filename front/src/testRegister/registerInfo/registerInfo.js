@@ -1,12 +1,49 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './registerInfo.css';
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import trophyLogo from "../../styles/images/test_info_logo.png";
 import {Link} from "react-router-dom";
+import {format} from 'date-fns'
+import apiClient from "../../templates/apiClient";
 
-const registerInfo = () => {
+//출력 예시
+const exampleData = {
+    teamName: "챌린저 팀",
+    registerNum: "20250404-001",
+    registerDate: "2025-04-04T15:00:00.000Z",
+    leaderName: "김철수",
+    leaderEmail: "leader@example.com"
+};
+
+const RegisterInfo = () => {
+    const [teamName, setTeamName] = useState('');
+    const [registerNum, setRegisterNum] = useState('');
+    const [registerDate, setRegisterDate] = useState('');
+    const [leaderName, setLeaderName] = useState('');
+    const [leaderEmail, setLeaderEmail] = useState('');
+
+    useEffect(() => {
+        setTeamName(exampleData.teamName);
+        setRegisterNum(exampleData.registerNum);
+        setRegisterDate(format(new Date(exampleData.registerDate), 'yyyy-MM-dd'));
+        setLeaderName(exampleData.leaderName);
+        setLeaderEmail(exampleData.leaderEmail);
+    }, []);
+
+    /*-----------------접수 내역 가져오기---------
+    apiClient.get('/api/register/info'})
+        .then((res)=>{
+            setTeamName(res.data.teamName);
+            setRegisterNum(res.data.registerNum);
+            setRegisterDate(format(new Date(res.data.registerDate), 'yyyy-MM-dd'))
+            setLeaderName(res.data.leaderName)
+            setLeaderEmail(res.data.leaderEmail)
+        });
+
+     */
+
     return (
         <div className="testInfo-page-container">
             <div className="testInfo-page-inner-container">
@@ -30,13 +67,12 @@ const registerInfo = () => {
                                     <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">팀장(이메일)</p>
                                 </div>
-                                <div className="registerInfo-bot-content">
-                                    <p className="registerInfo-bot-text">팀명</p>
-                                    <p className="registerInfo-bot-text">팀명</p>
-                                    <p className="registerInfo-bot-text">팀명</p>
-                                    <p className="registerInfo-bot-text">팀명</p>
-
-                                </div>
+                                {teamName && <div className="registerInfo-bot-content">
+                                    <p className="registerInfo-bot-text">{teamName}</p>
+                                    <p className="registerInfo-bot-text">{registerNum}</p>
+                                    <p className="registerInfo-bot-text">{registerDate}</p>
+                                    <p className="registerInfo-bot-text">{leaderName}({leaderEmail})</p>
+                                </div>}
                                 <div className="registerInfo-bot-buttonbox">
                                     <Link to="/" className="registerInfo-bot-button">접수하기</Link>
                                 </div>
@@ -46,7 +82,8 @@ const registerInfo = () => {
                 </div>
             </div>
         </div>
-    )};
+    )
+};
 
 
-export default registerInfo;
+export default RegisterInfo;
