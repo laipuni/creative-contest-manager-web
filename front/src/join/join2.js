@@ -4,8 +4,7 @@ import SubHeader from "../components/subHeader/subHeader";
 import {useNavigate} from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
 import EmailVerificationModal from '../components/modals/emailVerificationModal';
-import axios from 'axios'
-import {domain} from '../domain'
+import apiClient from "../templates/apiClient";
 
 const Join2 = () => {
     /*--------------아이디--------------*/
@@ -76,15 +75,15 @@ const Join2 = () => {
             alert('인증을 통해 이메일을 등록해주세요.')
             return;
         }
-
-        axios.post(`${domain}/api/test`, {
-            id : userId,
+        /*------------------rest api-------------
+        axios.post(`${domain}/api/v1/members`, {
+            loginId : userId,
             password,
             name,
             birthday,
             gender,
             address : address + ' ' + detailAddress,
-            phoneNumber : prefix + middle + last,
+            phoneNumber : phoneNumber,
             email,
             job,
             workPlace,
@@ -96,7 +95,7 @@ const Join2 = () => {
             .catch((err) => {
                 alert(err.message);
             })
-
+        */
     }
 
     const handleExit = () => {
