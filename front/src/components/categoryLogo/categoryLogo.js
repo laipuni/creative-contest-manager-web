@@ -3,7 +3,7 @@ import '../../styles/styles.css'
 import React from 'react'
 import trophy from '../../styles/images/test_info_logo.png'
 
-const CategoryLogo = ({logoTitle="예선시험 안내", imgSrc=trophy}) => {
+const CategoryLogo = ({logoTitle, imgSrc}) => {
     return (
         <div className="categoryLogo-container">
             <div className="categoryLogo-textbox">
