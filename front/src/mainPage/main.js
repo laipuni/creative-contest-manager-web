@@ -7,6 +7,7 @@ import test from "../styles/images/main_real_test.png"
 import info from "../styles/images/main_profile_certificate.png"
 import practice from "../styles/images/main_practice_test.png"
 import big_logo from "../styles/images/main_big_picture.png"
+import {Link} from "react-router-dom";
 const Main = () => {
 
     useEffect(() => {
@@ -19,7 +20,7 @@ const Main = () => {
                 <div className="main-content">
                     <div className="main-content-bento">
                         <div className="bento-top">
-                            <div className="bento-top-content">
+                            <Link to="/register/info" className="bento-top-content">
                                 <div className="bento-content-textbox">
                                     <p className="bento-content-title">
                                         예선시험&nbsp;<span style={{color: 'rgba(255, 13, 13, 0.81)'}}>접수</span>
@@ -32,7 +33,7 @@ const Main = () => {
                                 <div className="bento-image-container">
                                     <img src={team} alt="logo" className="bento-image"/>
                                 </div>
-                            </div>
+                            </Link>
                             <div className="bento-top-content" style={{background: "rgba(89, 167, 255, 0.36)"}}>
                                 <div className="bento-content-textbox">
                                     <p className="bento-content-title">
