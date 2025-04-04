@@ -12,7 +12,7 @@ const Join1 = () => {
 
     const handleNextPage = () => {
         if (isChecked) {
-            navigate('/join2');
+            navigate('/join/register');
         }
         else {
             alert('약관에 동의하셔야 합니다.')
