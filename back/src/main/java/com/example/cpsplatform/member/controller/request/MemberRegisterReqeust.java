@@ -6,7 +6,7 @@ import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.domain.organization.company.Company;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
-import com.example.cpsplatform.member.service.dto.RegisterRequestDto;
+import com.example.cpsplatform.auth.service.dto.RegisterRequestDto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 

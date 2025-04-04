@@ -1,10 +1,12 @@
 package com.example.cpsplatform.auth.controller;
 
 import com.example.cpsplatform.ApiResponse;
-import com.example.cpsplatform.auth.AuthService;
+import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
+import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.controller.request.*;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
-import com.example.cpsplatform.member.service.RegisterService;
+import com.example.cpsplatform.auth.service.PasswordResetService;
+import com.example.cpsplatform.auth.service.RegisterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final RegisterService registerService;
+    private final PasswordResetService passwordResetService;
     @PostMapping("/api/v1/send-auth-code")
     public ApiResponse<Object> sendAuthCode(@Valid @RequestBody AuthCodeSendRequest request){
         authService.sendAuthCode(request.getRecipient(), request.getSenderType(), request.getStrategyType());
@@ -30,8 +33,14 @@ public class AuthController {
     }
 
     @PostMapping("/api/password-reset/request")
-    public ApiResponse<FindIdResponse> requestPasswordAuthCode(@Valid @RequestBody PasswordSendRequest request){
-        registerService.sendPasswordResetAuthCode(request.toPasswordResetCodeDto());
+    public ApiResponse<Object> requestPasswordAuthCode(@Valid @RequestBody PasswordSendRequest request){
+        passwordResetService.sendPasswordResetAuthCode(request.toPasswordResetCodeDto());
         return ApiResponse.ok(null);
+    }
+
+    @PostMapping("/api/password-reset/confirm")
+    public ApiResponse<PasswordConfirmResponse> confirmPasswordAuthCode(@Valid @RequestBody PasswordConfirmRequest request){
+        PasswordConfirmResponse response = passwordResetService.confirmPasswordAuthCode(request.toPasswordConfirmDto());
+        return ApiResponse.ok(response);
     }
 }

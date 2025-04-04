@@ -11,4 +11,5 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "auth.authcode")
 public class AuthCodeProperties {
     long timeout = 5; // 기본값 설정 가능
+    long passwordResetSessionTimeout = 10;
 }

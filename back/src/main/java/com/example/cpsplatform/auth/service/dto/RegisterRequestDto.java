@@ -1,8 +1,9 @@
-package com.example.cpsplatform.member.service.dto;
+package com.example.cpsplatform.auth.service.dto;
 
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.organization.Organization;
+import com.example.cpsplatform.member.service.dto.MemberSaveDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

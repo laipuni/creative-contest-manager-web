@@ -1,6 +1,6 @@
 package com.example.cpsplatform.auth.controller.request;
 
-import com.example.cpsplatform.member.service.dto.FindIdDto;
+import com.example.cpsplatform.auth.service.dto.FindIdDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

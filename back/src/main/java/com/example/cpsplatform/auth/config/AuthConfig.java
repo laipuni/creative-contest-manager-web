@@ -6,6 +6,8 @@ import com.example.cpsplatform.auth.generator.AuthCodeGenerator;
 import com.example.cpsplatform.auth.generator.UUIDAuthCodeGenerator;
 import com.example.cpsplatform.auth.sender.AuthCodeSender;
 import com.example.cpsplatform.auth.sender.EmailAuthCodeSender;
+import com.example.cpsplatform.auth.service.PasswordResetSessionService;
+import com.example.cpsplatform.auth.service.RedisPasswordResetSessionService;
 import com.example.cpsplatform.auth.storage.AuthCodeStorage;
 import com.example.cpsplatform.auth.storage.RedisAuthCodeStorage;
 import com.example.cpsplatform.auth.strategy.AuthCodeStrategy;
@@ -46,6 +48,11 @@ public class AuthConfig {
                 authCodeStrategy(),
                 authCodeGenerator()
         );
+    }
+
+    @Bean
+    public PasswordResetSessionService passwordResetSessionService(){
+        return new RedisPasswordResetSessionService(redisRepository);
     }
 
     @Bean

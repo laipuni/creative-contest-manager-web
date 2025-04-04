@@ -1,4 +1,4 @@
-package com.example.cpsplatform.member.service.dto;
+package com.example.cpsplatform.auth.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
