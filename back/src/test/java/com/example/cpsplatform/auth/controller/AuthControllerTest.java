@@ -1,13 +1,18 @@
 package com.example.cpsplatform.auth.controller;
 
+import com.example.cpsplatform.auth.controller.request.PasswordConfirmRequest;
+import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.controller.request.AuthCodeSendRequest;
 import com.example.cpsplatform.auth.controller.request.FindIdRequest;
 import com.example.cpsplatform.auth.controller.request.PasswordSendRequest;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
+import com.example.cpsplatform.auth.service.PasswordResetService;
+import com.example.cpsplatform.auth.service.PasswordResetSessionService;
+import com.example.cpsplatform.auth.service.dto.PasswordConfirmDto;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.auth.service.RegisterService;
-import com.example.cpsplatform.member.service.dto.FindIdDto;
+import com.example.cpsplatform.auth.service.dto.FindIdDto;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +28,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Import(SecurityConfig.class)
 @WebMvcTest(AuthController.class)
-class AuthCodeControllerTest {
+class AuthControllerTest {
 
     @MockitoBean
     AuthService authService;
@@ -54,7 +61,8 @@ class AuthCodeControllerTest {
     @MockitoBean
     RegisterService registerService;
 
-
+    @MockitoBean
+    PasswordResetService passwordResetService;
 
     @DisplayName("인증코드를 수령할 사람의 정보, 전송 수단, 인증 수단을 값을 받는다.")
     @Test
@@ -381,4 +389,148 @@ class AuthCodeControllerTest {
 
     }
 
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void confirmPasswordAuthCodeWithNotLoginId() throws Exception {
+        //given
+        String loginId = "";
+        String recipient = "email@email.com";
+        String senderType = "email";
+        String authCode = "authCode";
+
+        PasswordConfirmRequest request = new PasswordConfirmRequest(loginId,recipient,senderType,authCode);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/confirm")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("비밀번호를 찾을 아이디는 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 정보가 없을 경우 예외로 응답한다.")
+    @Test
+    void confirmPasswordAuthCodeWithrecipient() throws Exception {
+        //given
+        String loginId = "loginId";
+        String recipient = "";
+        String senderType = "email";
+        String authCode = "authCode";
+
+        PasswordConfirmRequest request = new PasswordConfirmRequest(loginId,recipient,senderType,authCode);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/confirm")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("인증 정보는 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 전송 수단 정보가 없을 경우 예외로 응답한다.")
+    @Test
+    void confirmPasswordAuthCodeWithNotSenderType() throws Exception {
+        //given
+        String loginId = "loginId";
+        String recipient = "email@email.com";
+        String senderType = "";
+        String authCode = "authCode";
+
+        PasswordConfirmRequest request = new PasswordConfirmRequest(loginId,recipient,senderType,authCode);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/confirm")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("전송 수단 선택은 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인할 때, 인증 코드를 수령할 사람의 아이디가 없을 경우 예외로 응답한다.")
+    @Test
+    void confirmPasswordAuthCodeWithNotAuthCode() throws Exception {
+        //given
+        String loginId = "loginId";
+        String recipient = "email@email.com";
+        String senderType = "email";
+        String authCode = "";
+
+        PasswordConfirmRequest request = new PasswordConfirmRequest(loginId,recipient,senderType,authCode);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/confirm")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("인증 코드는 필수입니다."));
+
+    }
+
+    @DisplayName("비밀번호 재설정 인증 코드를 확인하고 비밀번호 재설정 세션을 반환한다.")
+    @Test
+    void confirmPasswordAuthCode() throws Exception {
+        //given
+        String loginId = "loginId";
+        String recipient = "email@email.com";
+        String senderType = "email";
+        String authCode = "authCode";
+        PasswordConfirmRequest request = new PasswordConfirmRequest(loginId,recipient,senderType,authCode);
+        String content = objectMapper.writeValueAsString(request);
+
+        String session = UUID.randomUUID().toString();
+        PasswordConfirmResponse response = new PasswordConfirmResponse(session);
+
+        Mockito.when(passwordResetService.confirmPasswordAuthCode(Mockito.any(PasswordConfirmDto.class)))
+                        .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/password-reset/confirm")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.session").value(session));
+
+    }
 }
