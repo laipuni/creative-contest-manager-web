@@ -1,11 +1,33 @@
-import './testInfo.css'
-import React from 'react'
+import './testInfo.css';
+import React, {useEffect, useState} from 'react';
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import trophyLogo from "../../styles/images/test_info_logo.png";
+import {format} from 'date-fns';
+import apiClient from "../../templates/apiClient";
 
 const TestInfo = () => {
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    //시험 일정 가정(TODO - api 호출로 변경)
+    useEffect(() => {
+        const start = "2025-04-04T15:00:00.000Z";
+        const end = "2025-04-10T15:00:00.000Z"
+        setStartDate(format(new Date(start), 'yyyy-MM-dd'));
+        setEndDate(format(new Date(end), 'yyyy-MM-dd'));
+    }, [])
+    /*-----------------시험 일정 받아오기------------
+    apiClient.get('/api/v1/test/date')
+        .then((res) => {
+            const start = new Date(res.data.startDate);
+            const end = new Date(res.data.finalDate);
+            setStartDate(start);
+            setEndDate(end);
+        });
+     */
+
     return (
         <div className="testInfo-page-container">
             <div className="testInfo-page-inner-container">
@@ -19,8 +41,15 @@ const TestInfo = () => {
                                 <div className="testInfo-textbox">
                                     <p className="testInfo-title">기간</p>
                                     <div className="testInfo-line"></div>
-                                    <p className="testInfo-description"
-                                       style={{color: '#FFA220', fontSize: '25px', fontWeight: '700'}}>추후 공지예정</p>
+                                    {startDate && endDate && <p className="testInfo-description"
+                                                                style={{
+                                                                    color: '#FFA220',
+                                                                    fontSize: '25px',
+                                                                    fontWeight: '700'
+                                                                }}>{startDate} &nbsp;~&nbsp; {endDate}</p>}
+                                    {!startDate && <p className="testInfo-description"
+                                                      style={{color: '#FFA220', fontSize: '25px', fontWeight: '700'}}>추후
+                                        공지예정</p>}
                                 </div>
                                 <div className="testInfo-underline"></div>
                             </div>
