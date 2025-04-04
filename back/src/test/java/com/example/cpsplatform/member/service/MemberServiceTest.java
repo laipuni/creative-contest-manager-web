@@ -49,7 +49,7 @@ class MemberServiceTest {
         String name = "name";
         LocalDate birth = LocalDate.of(2000,1,1);
         Gender gender = Gender.MAN;
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         String phoneNumber = "010xxxxXXXX";
         String email = "email@email.com";
         School school = new School("xx초등학교", StudentType.ELEMENTARY,1);

@@ -493,6 +493,30 @@ class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
+    @DisplayName("도시가 비어있을 경우, 예외가 발생한다.")
+    @Test
+    void registerWithEmptyCity() throws Exception {
+        //given
+        MemberRegisterReqeust request = getValidMemberRequest();
+        request.setCity(""); // 빈 도시명
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        post("/api/v1/members")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(BAD_REQUEST.value()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("도시명은 필수입니다"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
     @DisplayName("우편번호가 비어있을 경우, 예외가 발생한다.")
     @Test
     void registerWithEmptyZipCode() throws Exception {

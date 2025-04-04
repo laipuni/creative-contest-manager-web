@@ -14,15 +14,19 @@ public class Address {
     @Column(nullable = false, name = "address_steet")
     private String street;
 
-    @Column(nullable = false, name = "address_zip_code", length = 20)
+    @Column(nullable = false, name = "address_city")
+    private String city;
+
+    @Column(nullable = false, name = "address_zip_code")
     private String zipCode;
 
     @Column(nullable = false, name = "address_detail")
     private String detail;
 
-    public Address(final String street, final String zipCode, final String detail) {
+    public Address(final String street,final String city, final String zipCode, final String detail) {
         this.street = street;
         this.zipCode = zipCode;
+        this.city = city;
         this.detail = detail;
     }
 }

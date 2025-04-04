@@ -42,6 +42,9 @@ public class MemberRegisterReqeust {
     @NotBlank(message = "도로명 주소는 필수입니다")
     private String street;
 
+    @NotBlank(message = "도시명은 필수입니다")
+    private String city;
+
     @NotBlank(message = "우편번호는 필수입니다")
     private String zipCode;
 
@@ -67,7 +70,7 @@ public class MemberRegisterReqeust {
     private String position;
 
     public RegisterRequestDto toRegisterRequest(){
-        Address address = new Address(street,zipCode,detail);
+        Address address = new Address(street,city,zipCode,detail);
         StudentType studentType = StudentType.findStudentTypeBy(organizationType);
         Organization organization = getOrganization(studentType);
         return new RegisterRequestDto(loginId,password,confirmPassword,

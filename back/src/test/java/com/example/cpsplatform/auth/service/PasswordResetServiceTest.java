@@ -85,7 +85,7 @@ class PasswordResetServiceTest {
     @Test
     void resetPassword(){
         //given
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         Member member = Member.builder()
                 .loginId(testId)

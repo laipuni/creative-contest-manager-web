@@ -52,7 +52,7 @@ class RegisterServiceTest {
         String name = "name";
         LocalDate birth = LocalDate.of(2000,1,1);
         Gender gender = Gender.MAN;
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         String phoneNumber = "010xxxxXXXX";
         String email = "email@email.com";
         String confirmEmailCode = "authCode";
@@ -74,7 +74,7 @@ class RegisterServiceTest {
     @Test
     void findId(){
         //given
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         String email = "email@email.com";
         Member member = Member.builder()
