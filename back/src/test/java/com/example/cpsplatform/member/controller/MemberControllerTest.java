@@ -669,6 +669,7 @@ class MemberControllerTest {
         request.setPassword("pass1234");
         request.setConfirmPassword("pass1234");
         request.setName("홍길동");
+        request.setCity("도시");
         request.setBirth(LocalDate.of(1990, 1, 1));
         request.setGender(Gender.MAN);
         request.setStreet("테스트 도로명 주소");
