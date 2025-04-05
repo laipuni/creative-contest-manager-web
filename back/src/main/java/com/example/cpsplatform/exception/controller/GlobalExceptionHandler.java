@@ -1,5 +1,6 @@
 package com.example.cpsplatform.exception.controller;
 
+import com.example.cpsplatform.exception.CryptoException;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,14 +17,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalStateException.class)
+    @ExceptionHandler(CryptoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiErrorResponse<Object> IllegalStateException(IllegalStateException e){
-        log.error(e.getMessage());
+    public ApiErrorResponse<Object> handleCryptoException(CryptoException e) {
+        log.error("암호화 처리 중 예외 발생", e);
         //todo 개발자에게 해당 에러를 전송해야 함
         return ApiErrorResponse.of(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                e.getMessage(),
+                "서버에 문제가 생겨 해당서비스를 이용할 수 없습니다. 죄송합니다.",
+                null
+        );
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse<Object> illegalStateException(IllegalStateException e){
+        log.error("서버 내부 오류 발생", e);
+        //todo 개발자에게 해당 에러를 전송해야 함
+        return ApiErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "서버에 문제가 생겨 해당서비스를 이용할 수 없습니다. 죄송합니다.",
                 null
         );
     }
@@ -31,17 +44,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse<Object> handleValidationException(MethodArgumentNotValidException ex) {
+        String defaultMessage = ex.getBindingResult().getFieldErrors()
+                .get(0).getDefaultMessage();
+        log.trace("{}",defaultMessage);
         return ApiErrorResponse.of(
                 HttpStatus.BAD_REQUEST,
-                ex.getBindingResult().getFieldErrors()
-                        .get(0).getDefaultMessage(),
+                defaultMessage,
                 null
         );
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse<Object> RuntimeException(RuntimeException ex) {
+    public ApiErrorResponse<Object> runtimeException(RuntimeException ex) {
+        log.trace("{}",ex.getMessage());
         return ApiErrorResponse.of(
                 HttpStatus.BAD_REQUEST,
                 ex.getMessage(),

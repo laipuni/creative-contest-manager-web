@@ -45,8 +45,8 @@ public class Member extends BaseEntity {
     @Embedded
     private Address address;
 
-    @Column(nullable = false, name = "phone_number", unique = true, length = 25)
-    private String phoneNumber; // 010-xxxx-xxxx X, 010xxxxXXXX O
+    @Column(nullable = false, name = "phone_number", unique = true)
+    private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     private Organization organization;

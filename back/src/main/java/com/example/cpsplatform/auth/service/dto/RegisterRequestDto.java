@@ -4,6 +4,7 @@ import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.service.dto.MemberSaveDto;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,7 +20,10 @@ public class RegisterRequestDto {
     private String name;
     private LocalDate birth;
     private Gender gender;
-    private Address address;
+    private String street;
+    private String city;
+    private String zipCode;
+    private String detail;
     private String phoneNumber;
     private String email;
     private String confirmAuthCode;
@@ -31,10 +35,6 @@ public class RegisterRequestDto {
 
     public MemberSaveDto toMemberSaveDto(){
         return new MemberSaveDto(loginId,password,name,birth,gender,
-                address,phoneNumber,email,organization);
-    }
-
-    public void encodingPassword(final String encodingPassword){
-        this.password = encodingPassword;
+                street,city,zipCode,detail,phoneNumber,email,organization);
     }
 }

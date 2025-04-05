@@ -70,11 +70,10 @@ public class MemberRegisterReqeust {
     private String position;
 
     public RegisterRequestDto toRegisterRequest(){
-        Address address = new Address(street,city,zipCode,detail);
         StudentType studentType = StudentType.findStudentTypeBy(organizationType);
         Organization organization = getOrganization(studentType);
         return new RegisterRequestDto(loginId,password,confirmPassword,
-                name,birth,gender,address,phoneNumber,email,confirmEmailCode,organization);
+                name,birth,gender,street,city,zipCode,detail,phoneNumber,email,confirmEmailCode,organization);
     }
 
     private Organization getOrganization(final StudentType studentType){
