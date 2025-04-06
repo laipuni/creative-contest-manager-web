@@ -27,6 +27,7 @@ const Join2 = () => {
     const [address, setAddress] = useState('');
     const [detailAddress, setDetailAddress] = useState('');
     const [extraAddress, setExtraAddress] = useState('');
+    const [sido, setSido] = useState('');
     const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
     /*--------------휴대폰번호--------------*/
     const [prefix, setPrefix] = useState('010'); // 기본값 010
@@ -75,6 +76,7 @@ const Join2 = () => {
             alert('인증을 통해 이메일을 등록해주세요.')
             return;
         }
+
         /*------------------rest api-------------
         axios.post(`${domain}/api/v1/members`, {
             loginId : userId,
@@ -87,7 +89,8 @@ const Join2 = () => {
             email,
             job,
             workPlace,
-            detailJob
+            detailJob,
+            sido
         }, { "Content-Type": "application/json"})
             .then((res) => {
                 navigate('/');
@@ -164,6 +167,7 @@ const Join2 = () => {
     const handleComplete = (data) => {
         let fullAddress = data.address;
         let extraAddress = '';
+        const sido = data.sido;
 
         if (data.addressType === 'R') {
             if (data.bname !== '') {
@@ -178,6 +182,7 @@ const Join2 = () => {
         setPostcode(data.zonecode);
         setAddress(fullAddress);
         setExtraAddress(extraAddress);
+        setSido(sido);
         setIsPostcodeOpen(false);
     };
 
