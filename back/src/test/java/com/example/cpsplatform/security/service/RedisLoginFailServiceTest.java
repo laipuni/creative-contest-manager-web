@@ -40,7 +40,7 @@ class RedisLoginFailServiceTest {
     void failLoginWithFirstFailed(){
         //given
         //when
-        loginFailService.failLogin(loginId);
+        loginFailService.failLogin(loginId,"testIp");
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         //then
         assertThat(redisTemplate.hasKey(LOGIN_FAIL_COUNT_PREFIX + loginId)).isTrue();
@@ -55,7 +55,7 @@ class RedisLoginFailServiceTest {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         operations.set(LOGIN_FAIL_COUNT_PREFIX + loginId, failCount);
         //when
-        loginFailService.failLogin(loginId);
+        loginFailService.failLogin(loginId,"testIp");
         long count = Long.parseLong(operations.get(LOGIN_FAIL_COUNT_PREFIX + loginId));
         //then
         assertThat(redisTemplate.hasKey(LOGIN_FAIL_COUNT_PREFIX + loginId)).isTrue();
@@ -71,7 +71,7 @@ class RedisLoginFailServiceTest {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         operations.set(LOGIN_FAIL_COUNT_PREFIX + loginId, failCountStr);
         //when
-        loginFailService.failLogin(loginId);
+        loginFailService.failLogin(loginId,"testIp");
         //then
         assertThat(redisTemplate.hasKey(LOGIN_FAIL_COUNT_PREFIX + loginId)).isFalse();
         assertThat(redisTemplate.hasKey(LOGIN_LOCK_PREFIX + loginId)).isTrue();
