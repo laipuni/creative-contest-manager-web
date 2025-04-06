@@ -17,7 +17,7 @@ public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "login_id",nullable = false,unique = true,updatable = false,length = 12)
     private String loginId;
