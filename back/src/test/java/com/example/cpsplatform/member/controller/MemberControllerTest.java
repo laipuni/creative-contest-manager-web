@@ -4,11 +4,13 @@ import com.example.cpsplatform.member.controller.request.MemberRegisterReqeust;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.auth.service.RegisterService;
+import com.example.cpsplatform.member.service.MemberService;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -23,6 +25,7 @@ import java.time.LocalDate;
 import static com.example.cpsplatform.member.domain.organization.school.StudentType.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,6 +45,10 @@ class MemberControllerTest {
 
     @MockitoBean
     RegisterService registerService;
+
+    @MockitoBean
+    MemberService memberService;
+
 
     @Autowired
     MockMvc mockMvc;
@@ -661,6 +668,27 @@ class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(BAD_REQUEST.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("학년(부서)는 필수입니다"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("학년(부서)가 비어있을 경우, 예외가 발생한다.")
+    @Test
+    void checkLoginId() throws Exception {
+        //given
+        String loginId = "loginId";
+        Mockito.when(memberService.isUsernameExists(Mockito.anyString()))
+                        .thenReturn(true);
+        //when
+        //then
+        mockMvc.perform(
+                        get("/api/check-id")
+                                .param("loginId", loginId)
+                                .with(csrf())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(200))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isBoolean());
     }
 
     private MemberRegisterReqeust getValidMemberRequest() {

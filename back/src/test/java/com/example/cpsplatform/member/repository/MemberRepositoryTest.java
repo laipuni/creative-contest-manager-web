@@ -6,6 +6,7 @@ import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -133,4 +134,32 @@ class MemberRepositoryTest {
                         member.getName(),member.getOrganization());
     }
 
+    @DisplayName("해당아이디의 유저가 존재하는지 확인한다.")
+    @Test
+    void existsByLoginId(){
+        //given
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        String email = "email@email.com";
+        String loginId = "loginId";
+        Member member = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email(email)
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        memberRepository.save(member);
+
+        //when
+        boolean result = memberRepository.existsByLoginId(loginId);
+        //then
+        assertThat(result).isTrue();
+    }
 }

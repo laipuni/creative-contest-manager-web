@@ -65,7 +65,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
-                                    "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate"
+                                    "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate","/api/check-id"
                             ).permitAll()
                             .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
                                     "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code",
