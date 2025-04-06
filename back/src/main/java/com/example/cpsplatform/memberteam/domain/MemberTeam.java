@@ -1,4 +1,4 @@
-package com.example.cpsplatform.MemberTeam.domain;
+package com.example.cpsplatform.memberteam.domain;
 
 import com.example.cpsplatform.BaseEntity;
 import com.example.cpsplatform.member.domain.Member;
