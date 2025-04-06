@@ -30,7 +30,7 @@ class MemberRepositoryTest {
 
     @BeforeEach
     void tearUp(){
-        memberRepository.deleteAll();
+        memberRepository.deleteAllInBatch();
     }
 
     @DisplayName("해당 아이디의 유저를 단건 조회한다.")

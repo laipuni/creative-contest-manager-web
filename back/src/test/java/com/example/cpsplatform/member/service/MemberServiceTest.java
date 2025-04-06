@@ -40,9 +40,8 @@ class MemberServiceTest {
 
     @BeforeEach
     void tearUp(){
-        memberRepository.deleteAll();
+        memberRepository.deleteAllInBatch();
     }
-
 
     @DisplayName("저장할 회원의 정보를 받아서 회원을 저장한다.")
     @Test
