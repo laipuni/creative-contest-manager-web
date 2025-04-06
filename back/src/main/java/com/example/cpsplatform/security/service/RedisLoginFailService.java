@@ -1,12 +1,15 @@
 package com.example.cpsplatform.security.service;
 
 import com.example.cpsplatform.redis.RedisRepository;
+import com.example.cpsplatform.redis.aop.annotaion.RedissonLock;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class RedisLoginFailService implements LoginFailService{
 
@@ -28,15 +31,19 @@ public class RedisLoginFailService implements LoginFailService{
     }
 
     @Override
-    public void failLogin(final String loginId) {
+    @RedissonLock(prefix = "login:fail", key = "#loginId")
+    public void failLogin(final String loginId, final String clientIp) {
         if (isLockedAccount(loginId)){
             //이미 잠긴 유저일 경우
+            log.info("[LOGIN LOCK] 잠긴 계정의 로그인 실패 시도 - loginId : {}, ip : {}", loginId,clientIp);
             return;
         }
         long count = incrementLoginFailCount(loginId);
+        log.info("[LOGIN FAIL] {}번째 실패 - loginId : {}, ip : {}", count, loginId,clientIp);
         if (count >= failCount){
             //지정된 로그인 실패 횟수를 넘은 경우
             setLoginLock(loginId);
+            log.warn("[LOGIN LOCK] 로그인 실패가 {}회 초과되어 계정을 잠급니다. loginId: {}, ip : {}", failCount, loginId,clientIp);
         }
     }
 
@@ -63,7 +70,8 @@ public class RedisLoginFailService implements LoginFailService{
     }
 
     @Override
-    public void successLogin(final String loginId) {
+    public void successLogin(final String loginId, final String clientIp) {
+        log.info("[LOGIN SUCCESS] loginId: {}, ip : {}", loginId, clientIp);
         redisRepository.deleteData(LOGIN_LOCK_PREFIX + loginId);
     }
 }

@@ -10,6 +10,7 @@ import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,11 @@ class PasswordResetServiceTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void tearUp(){
+        memberRepository.deleteAll();
+    }
 
     @DisplayName("비밀번호를 재설정할 때, 비밀번호 재설정 세션이 유효하지 않다면 예외가 발생한다.")
     @Test
@@ -85,7 +91,7 @@ class PasswordResetServiceTest {
     @Test
     void resetPassword(){
         //given
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         Member member = Member.builder()
                 .loginId(testId)

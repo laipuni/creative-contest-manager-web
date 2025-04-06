@@ -14,6 +14,7 @@ import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.auth.service.dto.FindIdDto;
 import com.example.cpsplatform.auth.service.dto.RegisterRequestDto;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -41,6 +42,10 @@ class RegisterServiceTest {
     @MockitoBean
     AuthService authService;
 
+    @BeforeEach
+    void tearUp(){
+        memberRepository.deleteAll();
+    }
 
     @DisplayName("비밀번호 확인과 비밀번호가 다를 경우, 예외가 발생한다.")
     @Test
@@ -52,7 +57,10 @@ class RegisterServiceTest {
         String name = "name";
         LocalDate birth = LocalDate.of(2000,1,1);
         Gender gender = Gender.MAN;
-        Address address = new Address("street","zipCode","detail");
+        String street = "street";
+        String city = "city";
+        String zipCode = "zipCode";
+        String detail = "detail";
         String phoneNumber = "010xxxxXXXX";
         String email = "email@email.com";
         String confirmEmailCode = "authCode";
@@ -60,7 +68,7 @@ class RegisterServiceTest {
 
         RegisterRequestDto request = new RegisterRequestDto(
                 loginId, password, confirmPassword, name, birth, gender,
-                address, phoneNumber, email, confirmEmailCode, school
+                street,city,zipCode,detail, phoneNumber, email, confirmEmailCode, school
         );
 
         //when
@@ -74,7 +82,7 @@ class RegisterServiceTest {
     @Test
     void findId(){
         //given
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         String email = "email@email.com";
         Member member = Member.builder()

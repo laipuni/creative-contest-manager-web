@@ -45,7 +45,7 @@ public class AuthController {
     }
 
     @PostMapping("/api/password-reset")
-    public ApiResponse<FindIdResponse> resetPassword(@Valid @RequestBody PasswordResetRequest request){
+    public ApiResponse<Object> resetPassword(@Valid @RequestBody PasswordResetRequest request){
         passwordResetService.resetPassword(request.toResetPasswordDto());
         return ApiResponse.ok(null);
     }

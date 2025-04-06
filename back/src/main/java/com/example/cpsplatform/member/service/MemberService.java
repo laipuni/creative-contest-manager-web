@@ -3,8 +3,10 @@ package com.example.cpsplatform.member.service;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.member.service.dto.MemberSaveDto;
+import com.example.cpsplatform.security.encoder.CryptoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final CryptoService cryptoService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void save(final MemberSaveDto saveDto){
-        memberRepository.save(saveDto.toEntity());
+        memberRepository.save(saveDto.toEntity(cryptoService,passwordEncoder));
         log.info("{} 유저 회원가입",saveDto.getLoginId());
     }
 

@@ -30,7 +30,7 @@ class MemberRepositoryTest {
 
     @BeforeEach
     void tearUp(){
-        memberRepository.deleteAll();
+        memberRepository.deleteAllInBatch();
     }
 
     @DisplayName("해당 아이디의 유저를 단건 조회한다.")
@@ -38,7 +38,7 @@ class MemberRepositoryTest {
     void findMemberByLoginId(){
         //given
         String loginId = "loginId";
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         Member member = Member.builder()
                 .loginId(loginId)
@@ -70,7 +70,7 @@ class MemberRepositoryTest {
     @Test
     void findMemberByEmail(){
         //given
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         String email = "email@email.com";
         Member member = Member.builder()
@@ -103,7 +103,7 @@ class MemberRepositoryTest {
     @Test
     void findMemberByEmailAndLoginId(){
         //given
-        Address address = new Address("street","zipCode","detail");
+        Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         String email = "email@email.com";
         String loginId = "loginId";

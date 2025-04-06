@@ -18,7 +18,6 @@ public class RegisterService {
 
     private final MemberService memberService;
     private final AuthService authService;
-    private final PasswordEncoder passwordEncoder;
 
     public void register(RegisterRequestDto request){
         if(request.isPasswordsMatch()){
@@ -28,9 +27,8 @@ public class RegisterService {
 
         boolean result = authService.verifyAuthCode(
                 request.getEmail(), request.getConfirmAuthCode(), REGISTER_AUTH);
-        if(result){ //인증 코드가 적절한 경우
-            //비밀번호 암호화
-            request.encodingPassword(passwordEncoder.encode(request.getPassword()));
+        if(result){
+            //인증 코드가 적절한 경우
             memberService.save(request.toMemberSaveDto());
         }
     }
