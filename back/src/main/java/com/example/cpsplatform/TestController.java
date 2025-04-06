@@ -16,16 +16,16 @@ public class TestController {
     @GetMapping("/api/test")
     public ApiResponse<Object> testGet(@RequestParam(value = "request",defaultValue = "") String request){
         log.info("it's just a get test, request = {}", request);
-        String body = apiService.getTest(request);
-        log.info("receive Ai server Response response = {} ", body);
-        return ApiResponse.ok(body);
+//        String body = apiService.getTest(request);
+//        log.info("receive Ai server Response response = {} ", body);
+        return ApiResponse.ok(null);
     }
 
     @PostMapping("/api/test")
     public ApiResponse<Object> testPost(@Valid @RequestBody TestRequest request){
         log.info("it's just a post test, request = {}", request);
-        TestResponse body = apiService.postTest(request);
-        log.info("receive Ai server Response response = {} ", body);
-        return ApiResponse.ok(body);
+//        TestResponse body = apiService.postTest(request);
+//        log.info("receive Ai server Response response = {} ", body);
+        return ApiResponse.ok(null);
     }
 }
