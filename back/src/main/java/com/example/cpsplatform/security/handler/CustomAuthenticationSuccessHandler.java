@@ -29,8 +29,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String loginId = (String) request.getAttribute(USERNAME_VALUE);
         String clientIp = request.getRemoteUser();
         if(loginId != null){
-            loginFailService.successLogin(loginId);
-            log.info("로그인 성공 - IP: {}, Username: {}", clientIp, loginId);
+            loginFailService.successLogin(loginId,clientIp);
         }
 
         // CSRF 토큰을 클라이언트로 응답 헤더에 추가

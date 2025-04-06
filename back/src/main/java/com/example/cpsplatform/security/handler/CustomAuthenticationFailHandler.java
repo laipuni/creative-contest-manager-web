@@ -31,8 +31,7 @@ public class CustomAuthenticationFailHandler implements AuthenticationFailureHan
         String clientIp = request.getRemoteAddr();
         String username = (String) request.getAttribute(USERNAME_VALUE);
         if(username != null){
-            loginFailService.failLogin(username);
-            log.warn("로그인 실패 - IP: {}, Username: {}, 이유: {}", clientIp, username, exception.getMessage());
+            loginFailService.failLogin(username,clientIp);
         }
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
