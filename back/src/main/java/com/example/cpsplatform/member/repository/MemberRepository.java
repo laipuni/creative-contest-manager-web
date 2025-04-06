@@ -16,4 +16,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     @EntityGraph(attributePaths = "organization")
     Optional<Member> findMemberByEmailAndLoginId(String email,String loginId);
 
+    boolean existsByLoginId(String LoginId);
+
 }
