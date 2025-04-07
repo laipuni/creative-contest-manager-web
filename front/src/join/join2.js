@@ -58,6 +58,9 @@ const Join2 = () => {
 
     /*------------------- 회원가입 & 나가기 버튼 기능----------------*/
     const handleSignup = (e) => {
+        if(job.startsWith('s')){
+            setWorkPlace(selectedSchool.schoolName);
+        }
         e.preventDefault();
         if(isDuplicate) {
             alert('아이디를 다시 확인해주세요.');
@@ -109,11 +112,10 @@ const Join2 = () => {
         }, )
             .then((res) => {
                 if(res.data.code === 200){
-                    navigate('/member-login')
+                    navigate('/member/login')
                 }
             })
             .catch((err)=>{
-                alert(err.message);
                 }
             )
     }
@@ -399,8 +401,8 @@ const Join2 = () => {
                                         onChange={handleGenderChange}
                                         required>
                                         <option value="">---</option>
-                                        <option value="남자">남자</option>
-                                        <option value="여자">여자</option>
+                                        <option value="MAN">남자</option>
+                                        <option value="WOMAN">여자</option>
                                     </select>
                                 </div>
                             </div>
