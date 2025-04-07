@@ -538,17 +538,17 @@ const Join2 = () => {
                                         onChange={handleJobChange}
                                         required>
                                         <option value="">---</option>
-                                        <option value="s_elementary">초등학생</option>
-                                        <option value="s_middle">중학생</option>
-                                        <option value="s_high">고등학생</option>
-                                        <option value="s_university">대학생</option>
-                                        <option value="p_IT">컴퓨터/인터넷</option>
-                                        <option value="p_press">언론</option>
-                                        <option value="p_official">공무원</option>
-                                        <option value="p_soldier">군인</option>
-                                        <option value="p_service">서비스업</option>
-                                        <option value="p_art">예술</option>
-                                        <option value="p_etc">기타</option>
+                                        <option value="s_초등학생">초등학생</option>
+                                        <option value="s_중학생">중학생</option>
+                                        <option value="s_고등학생">고등학생</option>
+                                        <option value="s_대학생">대학생</option>
+                                        <option value="p_컴퓨터/인터넷">컴퓨터/인터넷</option>
+                                        <option value="p_언론">언론</option>
+                                        <option value="p_공무원">공무원</option>
+                                        <option value="p_군인">군인</option>
+                                        <option value="p_서비스업">서비스업</option>
+                                        <option value="p_예술">예술</option>
+                                        <option value="p_기타">기타</option>
 
                                     </select>
                                 </div>
@@ -586,6 +586,7 @@ const Join2 = () => {
                                                                onClose={() => {
                                                                    setSchoolModalOpen(false)
                                                                }}
+                                                               level={job}
                                                                onSelectSchool={(school) => setSelectedSchool(school)}/>
                                         </>}
                                     {job.startsWith('p') &&
@@ -614,7 +615,7 @@ const Join2 = () => {
                                                     setDetailJob(e.target.value)
                                                 }} required>
                                             <option value="">---</option>
-                                            {job.startsWith('s_elementary') && (
+                                            {job.startsWith('s_초등학생') && (
                                                 <>
                                                     {[1, 2, 3, 4, 5, 6].map((grade) => (
                                                         <option key={grade} value={grade}>
@@ -623,7 +624,7 @@ const Join2 = () => {
                                                     ))}
                                                 </>
                                             )}
-                                            {(job.startsWith('s_middle') || job.startsWith('s_high')) && (
+                                            {(job.startsWith('s_중학생') || job.startsWith('s_고등학생')) && (
                                                 <>
                                                     {[1, 2, 3].map((grade) => (
                                                         <option key={grade} value={grade}>
@@ -632,7 +633,7 @@ const Join2 = () => {
                                                     ))}
                                                 </>
                                             )}
-                                            {job.startsWith('s_university') && (
+                                            {job.startsWith('s_대학생') && (
                                                 <>
                                                     {[1, 2, 3, 4].map((grade) => (
                                                         <option key={grade} value={grade}>

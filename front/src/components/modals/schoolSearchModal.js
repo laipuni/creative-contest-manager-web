@@ -11,7 +11,7 @@ const gubunOptions = [
     { label: '기타', value: 'alte_list' },
 ];
 
-const SchoolSearchModal = ({ isOpen, onClose, onSelectSchool }) => {
+const SchoolSearchModal = ({ isOpen, onClose, onSelectSchool, level }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [resultList, setResultList] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -19,6 +19,28 @@ const SchoolSearchModal = ({ isOpen, onClose, onSelectSchool }) => {
     const [thisPage, setThisPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const perPage = 10;
+
+    useEffect(() => {
+        if (level) {
+            switch (level) {
+                case 's_초등학생':
+                    setGubun('elem_list');
+                    break;
+                case 's_중학생':
+                    setGubun('midd_list');
+                    break;
+                case 's_고등학생':
+                    setGubun('high_list');
+                    break;
+                case 's_대학생':
+                    setGubun('univ_list');
+                    break;
+                default:
+                    setGubun('alte_list');
+                    break;
+            }
+        }
+    }, [level]);
 
     const handleSearch = async () => {
         setLoading(true);
