@@ -14,7 +14,7 @@ function EmailVerificationModal({ onClose, onVerify }) {
     }, [emailInput])
 
     const handleSendVerification = () => {
-        const emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*$/;
         if (!emailRegex.test(emailInput)) {
             setVerificationMessage('유효한 이메일 주소를 입력해주세요.');
             return;
