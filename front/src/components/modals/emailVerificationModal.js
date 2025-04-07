@@ -21,7 +21,7 @@ function EmailVerificationModal({ onClose, onVerify }) {
                 setIsVerificationSent(true);
                 setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
             })
-            .catch()
+            .catch((err) => {})
 
     };
 
@@ -37,7 +37,7 @@ function EmailVerificationModal({ onClose, onVerify }) {
                     setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
                 }
             })
-            .catch()
+            .catch((err)=>{})
     };
 
     return (
@@ -56,7 +56,7 @@ function EmailVerificationModal({ onClose, onVerify }) {
                     <button type="button" className="email-button" onClick={handleSendVerification}>인증 메일 받기</button>
                 </div>
                 {isVerificationSent && (
-                    <div className="email-inner-container" style={{background: 'lightgray', borderRadius: '10px', height: '100px', padding: '5px'}}>
+                    <div className="email-inner-container" style={{background: 'lightgray', borderRadius: '10px', width: '300px', height: '50px', padding: '10px 30px'}}>
                         <input
                             type="text"
                             className="email-input"
