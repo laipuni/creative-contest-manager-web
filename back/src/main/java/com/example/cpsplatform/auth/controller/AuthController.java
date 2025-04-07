@@ -20,9 +20,16 @@ public class AuthController {
     private final AuthService authService;
     private final RegisterService registerService;
     private final PasswordResetService passwordResetService;
+
     @PostMapping("/api/v1/send-auth-code")
     public ApiResponse<Object> sendAuthCode(@Valid @RequestBody AuthCodeSendRequest request){
         authService.sendAuthCode(request.getRecipient(), request.getSenderType(), request.getStrategyType());
+        return ApiResponse.ok(null);
+    }
+
+    @PostMapping("/api/verify-register-code")
+    public ApiResponse<Object> verifyAuthCode(@Valid @RequestBody AuthCodeVerifyRequest request){
+        authService.verifySignupEmail(request.getRecipient(), request.getAuthCode(), request.getStrategyType());
         return ApiResponse.ok(null);
     }
 
