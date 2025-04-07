@@ -57,9 +57,6 @@ public class MemberRegisterReqeust {
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다")
     private String email;
 
-    @NotBlank(message = "이메일 인증 코드는 필수입니다")
-    private String confirmEmailCode;
-
     @NotBlank(message = "직업은 필수입니다")
     private String organizationType;
 
@@ -73,7 +70,7 @@ public class MemberRegisterReqeust {
         StudentType studentType = StudentType.findStudentTypeBy(organizationType);
         Organization organization = getOrganization(studentType);
         return new RegisterRequestDto(loginId,password,confirmPassword,
-                name,birth,gender,street,city,zipCode,detail,phoneNumber,email,confirmEmailCode,organization);
+                name,birth,gender,street,city,zipCode,detail,phoneNumber,email,organization);
     }
 
     private Organization getOrganization(final StudentType studentType){

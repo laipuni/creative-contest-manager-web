@@ -572,30 +572,6 @@ class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
-    @DisplayName("이메일 인증 코드가 비어있을 경우, 예외가 발생한다.")
-    @Test
-    void registerWithEmptyConfirmEmailCode() throws Exception {
-        //given
-        MemberRegisterReqeust request = getValidMemberRequest();
-        request.setConfirmEmailCode(""); // 빈 이메일 인증 코드
-        String content = objectMapper.writeValueAsString(request);
-
-        //when
-        //then
-        mockMvc.perform(
-                        post("/api/v1/members")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .with(csrf())
-                                .content(content)
-                )
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(BAD_REQUEST.value()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이메일 인증 코드는 필수입니다"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
-    }
-
     @DisplayName("직업이 비어있을 경우, 예외가 발생한다.")
     @Test
     void registerWithEmptyOrganizationType() throws Exception {
@@ -705,7 +681,6 @@ class MemberControllerTest {
         request.setDetail("상세주소 101호");
         request.setPhoneNumber("01012345678");
         request.setEmail("test@example.com");
-        request.setConfirmEmailCode("123456");
         request.setOrganizationType("초등학생");
         request.setOrganizationName("xx학교");
         request.setPosition("1");

@@ -63,12 +63,11 @@ class RegisterServiceTest {
         String detail = "detail";
         String phoneNumber = "010xxxxXXXX";
         String email = "email@email.com";
-        String confirmEmailCode = "authCode";
         School school = new School("xx초등학교", StudentType.ELEMENTARY,1);
 
         RegisterRequestDto request = new RegisterRequestDto(
                 loginId, password, confirmPassword, name, birth, gender,
-                street,city,zipCode,detail, phoneNumber, email, confirmEmailCode, school
+                street,city,zipCode,detail, phoneNumber, email, school
         );
 
         //when
