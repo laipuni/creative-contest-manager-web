@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './emailVerificationModal.css';
+import apiClient from "../../templates/apiClient";
 
 function EmailVerificationModal({ onClose, onVerify }) {
     const [emailInput, setEmailInput] = useState('');
@@ -15,22 +16,28 @@ function EmailVerificationModal({ onClose, onVerify }) {
         }
 
         // 인증 메일 전송 로직 (서버 API 호출)
-        setIsVerificationSent(true);
-        setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
+        apiClient.post('/api/v1/send-auth-code', {recipient: emailInput, senderType: 'email', strategyType: 'register'})
+            .then((res) => {
+                setIsVerificationSent(true);
+                setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
+            })
+            .catch()
+
     };
 
     const handleVerify = () => {
         // 인증 코드 확인 로직 (서버 API 호출)
-
-        // 인증 성공/실패 가정 (실제로는 서버 응답에 따라 처리)
-        const isVerified = true; // 성공 가정
-
-        if (isVerified) {
-            onVerify(emailInput);
-            onClose();
-        } else {
-            setVerificationMessage('인증에 실패했습니다. 이메일을 다시 확인해주세요.');
-        }
+        apiClient.post('/api/verify-register-code', {recipient: emailInput, authcode: verificationCode, strategyType: 'register'})
+            .then((res)=>{
+                if (res.data.code === 200) {
+                    onVerify(emailInput);
+                    onClose();
+                }
+                else {
+                    setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
+                }
+            })
+            .catch()
     };
 
     return (
