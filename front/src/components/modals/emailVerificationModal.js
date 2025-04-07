@@ -27,7 +27,7 @@ function EmailVerificationModal({ onClose, onVerify }) {
 
     const handleVerify = () => {
         // 인증 코드 확인 로직 (서버 API 호출)
-        apiClient.post('/api/verify-register-code', {recipient: emailInput, authcode: verificationCode, strategyType: 'register'})
+        apiClient.post('/api/verify-register-code', {recipient: emailInput, authCode: verificationCode, strategyType: 'register'})
             .then((res)=>{
                 if (res.data.code === 200) {
                     onVerify(emailInput);
