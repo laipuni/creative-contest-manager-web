@@ -76,28 +76,39 @@ const Join2 = () => {
             return;
         }
 
-        /*------------------rest api-------------
-        axios.post(`${domain}/api/v1/members`, {
+        function changeBirth() {
+            const year = parseInt(birthday.slice(0, 4), 10);
+            const month = parseInt(birthday.slice(4, 6), 10) - 1;
+            const day = parseInt(birthday.slice(6, 8), 10);
+            return new Date(year, month, day);
+        }
+
+        apiClient.post('/api/v1/members', {
             loginId : userId,
             password,
+            confirmPassword: passwordCheck,
             name,
-            birthday,
+            birth: changeBirth(),
             gender,
-            address : address + ' ' + detailAddress,
-            phoneNumber : phoneNumber,
+            street: postcode,
+            city: sido,
+            zipCode: address,
+            detail: detailAddress,
+            phoneNumber : prefix+middle+last,
             email,
-            job,
-            workPlace,
-            detailJob,
-            sido
-        }, { "Content-Type": "application/json"})
+            organizationType: job,
+            organizationName: workPlace,
+            position: detailJob,
+        }, )
             .then((res) => {
-                navigate('/');
+                if(res.data.code === 200){
+                    navigate('/member-login')
+                }
             })
-            .catch((err) => {
+            .catch((err)=>{
                 alert(err.message);
-            })
-        */
+                }
+            )
     }
 
     const handleExit = () => {
@@ -381,8 +392,8 @@ const Join2 = () => {
                                         onChange={handleGenderChange}
                                         required>
                                         <option value="">---</option>
-                                        <option value="male">남성</option>
-                                        <option value="femaie">여성</option>
+                                        <option value="남자">남자</option>
+                                        <option value="여자">여자</option>
                                     </select>
                                 </div>
                             </div>
