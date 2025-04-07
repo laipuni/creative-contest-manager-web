@@ -11,7 +11,6 @@ const Join2 = () => {
     const [userId, setUserId] = useState('');
     const [isDuplicate, setIsDuplicate] = useState(true);
     const [idErrorMessage, setIdErrorMessage] = useState('');
-    const exampleIds = ['user1', 'user2'];
     /*--------------비밀번호--------------*/
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
@@ -117,13 +116,20 @@ const Join2 = () => {
             setIsDuplicate(true);
             setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~10자리로 입력해야 합니다.');
         }
-        else if(exampleIds.includes(userId)) {
-            setIsDuplicate(true);
-            setIdErrorMessage('이미 사용 중인 아이디입니다.')
-        }
         else {
-            setIsDuplicate(false);
-            setIdErrorMessage('');
+            apiClient.get('/api/check-id', {loginId: userId})
+                .then((res) => {
+                    const result = res.data.data;
+                    if (result) {
+                        setIsDuplicate(true);
+                        setIdErrorMessage('이미 사용 중인 아이디입니다.')
+                    }
+                    else {
+                        setIsDuplicate(false);
+                        setIdErrorMessage('');
+                    }
+                })
+                .catch((err) => {})
         }
     }
 
