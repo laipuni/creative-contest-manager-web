@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class Address {
 
-    @Column(nullable = false, name = "address_steet")
+    @Column(nullable = false, name = "address_street")
     private String street;
 
     @Column(nullable = false, name = "address_city")
