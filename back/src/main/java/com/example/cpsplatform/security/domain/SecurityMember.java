@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class SecurityMember extends User {
 
-    private int userSeq;
+    private Long userSeq;
 
     public SecurityMember(final Member member) {
         super(member.getLoginId(), member.getPassword(), getAuthorize(member));

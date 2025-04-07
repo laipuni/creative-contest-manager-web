@@ -10,10 +10,7 @@ import com.example.cpsplatform.auth.service.PasswordResetSessionService;
 import com.example.cpsplatform.auth.service.RedisPasswordResetSessionService;
 import com.example.cpsplatform.auth.storage.AuthCodeStorage;
 import com.example.cpsplatform.auth.storage.RedisAuthCodeStorage;
-import com.example.cpsplatform.auth.strategy.AuthCodeStrategy;
-import com.example.cpsplatform.auth.strategy.FindIdAuthCodeStrategy;
-import com.example.cpsplatform.auth.strategy.PasswordAuthCodeStrategy;
-import com.example.cpsplatform.auth.strategy.RegisterAuthCodeStrategy;
+import com.example.cpsplatform.auth.strategy.*;
 import com.example.cpsplatform.redis.RedisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +58,7 @@ public class AuthConfig {
         strategyMap.put("register",new RegisterAuthCodeStrategy());
         strategyMap.put("findId",new FindIdAuthCodeStrategy());
         strategyMap.put("password_auth",new PasswordAuthCodeStrategy());
+        strategyMap.put("signup_verify",new SignUpVerifyStrategy());
         return strategyMap;
     }
 

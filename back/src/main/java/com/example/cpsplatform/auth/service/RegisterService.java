@@ -7,10 +7,7 @@ import com.example.cpsplatform.member.service.MemberService;
 import com.example.cpsplatform.auth.service.dto.FindIdDto;
 import com.example.cpsplatform.auth.service.dto.RegisterRequestDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static com.example.cpsplatform.auth.config.AuthConfig.REGISTER_AUTH;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class RegisterService {
         }
 
         boolean result = authService.verifyAuthCode(
-                request.getEmail(), request.getConfirmAuthCode(), REGISTER_AUTH);
+                request.getEmail(), request.getEmail(), "signup_verify");
         if(result){
             //인증 코드가 적절한 경우
             memberService.save(request.toMemberSaveDto());

@@ -26,7 +26,6 @@ public class RegisterRequestDto {
     private String detail;
     private String phoneNumber;
     private String email;
-    private String confirmAuthCode;
     private Organization organization;
 
     public boolean isPasswordsMatch(){
