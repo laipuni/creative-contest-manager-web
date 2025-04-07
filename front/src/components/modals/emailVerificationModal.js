@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import './emailVerificationModal.css';
 import apiClient from "../../templates/apiClient";
 
@@ -7,6 +7,11 @@ function EmailVerificationModal({ onClose, onVerify }) {
     const [verificationCode, setVerificationCode] = useState('');
     const [isVerificationSent, setIsVerificationSent] = useState(false);
     const [verificationMessage, setVerificationMessage] = useState(''); // 인증 결과 메시지 상태 추가
+    const [isSending, setIsSending] = useState(false);
+
+    useEffect(() => {
+        setVerificationMessage('');
+    }, [emailInput])
 
     const handleSendVerification = () => {
         const emailRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/;
@@ -14,7 +19,7 @@ function EmailVerificationModal({ onClose, onVerify }) {
             setVerificationMessage('유효한 이메일 주소를 입력해주세요.');
             return;
         }
-
+        setIsSending(true);
         // 인증 메일 전송 로직 (서버 API 호출)
         apiClient.post('/api/v1/send-auth-code', {recipient: emailInput, senderType: 'email', strategyType: 'register'})
             .then((res) => {
@@ -22,6 +27,9 @@ function EmailVerificationModal({ onClose, onVerify }) {
                 setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
             })
             .catch((err) => {})
+            .finally(()=>{
+                setIsSending(false);
+            })
 
     };
 
@@ -53,7 +61,12 @@ function EmailVerificationModal({ onClose, onVerify }) {
                         onChange={(e) => setEmailInput(e.target.value)}
                         placeholder="이메일 주소를 입력하세요."
                     />
-                    <button type="button" className="email-button" onClick={handleSendVerification}>인증 메일 받기</button>
+                    <button type="button" className="email-button"
+                            onClick={handleSendVerification} disabled={isSending}>{isSending ? (
+                        <span className="spinner" />
+                    ) : (
+                        '인증 메일 받기'
+                    )}</button>
                 </div>
                 {isVerificationSent && (
                     <div className="email-inner-container" style={{background: 'lightgray', borderRadius: '10px', width: '300px', height: '50px', padding: '10px 30px'}}>
