@@ -103,7 +103,7 @@ const Join2 = () => {
             detail: detailAddress,
             phoneNumber : prefix+middle+last,
             email,
-            organizationType: job,
+            organizationType: job.slice(2),
             organizationName: workPlace,
             position: detailJob,
         }, )
