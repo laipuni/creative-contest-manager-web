@@ -5,6 +5,7 @@ import {useNavigate} from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
 import EmailVerificationModal from '../components/modals/emailVerificationModal';
 import apiClient from "../templates/apiClient";
+import SchoolSearchModal from "../components/modals/schoolSearchModal";
 
 const Join2 = () => {
     /*--------------아이디--------------*/
@@ -45,6 +46,12 @@ const Join2 = () => {
 
     /*--------------학교(소속)------------------------*/
     const [workPlace, setWorkPlace] = useState('');
+    const [schoolModalOpen, setSchoolModalOpen] = useState(false);
+    const [selectedSchool, setSelectedSchool] = useState({
+        schoolName: '',
+        region: '',
+        estType: ''
+    });
 
     /*--------------학년(부서)------------------------*/
     const [detailJob, setDetailJob] = useState('');
@@ -555,12 +562,41 @@ const Join2 = () => {
                             </div>
                             <div className="join2-main-border-right">
                                 <div className="join2-right-row">
-                                    <input
+                                    {!job && <input
                                         className="join2-id-input"
-                                        value={workPlace}
-                                        onChange={(e) => {setWorkPlace(e.target.value)}}
-                                        required>
-                                    </input>
+                                        readOnly
+                                        value={" ---"}
+                                        required/>
+                                    }
+                                    {job.startsWith('s') &&
+                                        <>
+                                            <input
+                                                className="join2-id-input"
+                                                value={selectedSchool?.schoolName}
+                                                readOnly
+                                                required>
+                                            </input>
+                                            <button className="join2-id-button"
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSchoolModalOpen(true)
+                                                    }}>학교 검색
+                                            </button>
+                                            <SchoolSearchModal isOpen={schoolModalOpen}
+                                                               onClose={() => {
+                                                                   setSchoolModalOpen(false)
+                                                               }}
+                                                               onSelectSchool={(school) => setSelectedSchool(school)}/>
+                                        </>}
+                                    {job.startsWith('p') &&
+                                        <input
+                                            className="join2-id-input"
+                                            value={workPlace}
+                                            onChange={(e) => {
+                                                setWorkPlace(e.target.value)
+                                            }}
+                                            required>
+                                        </input>}
                                 </div>
                             </div>
                         </div>
