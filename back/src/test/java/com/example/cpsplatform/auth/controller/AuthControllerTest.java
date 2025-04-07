@@ -165,6 +165,114 @@ class AuthControllerTest {
 
     }
 
+    @DisplayName("인증코드를 수령할 사람의 정보가 없을 경우 예외로 응답한다.")
+    @Test
+    void verifyAuthCodeWithNotRecipient() throws Exception {
+        //given
+        String recipient = "";
+        String authCode = "1234";
+        String strategyType = "register";
+
+        AuthCodeVerifyRequest request = new AuthCodeVerifyRequest(recipient,authCode,strategyType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/verify-register-code")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("인증 정보는 필수입니다."));
+
+    }
+
+    @DisplayName("인증코드를 수령할 사람의 정보가 없을 경우 예외로 응답한다.")
+    @Test
+    void verifyAuthCodeWithNotAuthCode() throws Exception {
+        //given
+        String recipient = "email@email.com";
+        String authCode = "";
+        String strategyType = "register";
+
+        AuthCodeVerifyRequest request = new AuthCodeVerifyRequest(recipient,authCode,strategyType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/verify-register-code")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("인증코드는 필수입니다."));
+
+    }
+
+    @DisplayName("인증코드를 수령할 사람의 정보가 없을 경우 예외로 응답한다.")
+    @Test
+    void verifyAuthCodeWithNotStrategyType() throws Exception {
+        //given
+        String recipient = "email@email.com";
+        String authCode = "1234";
+        String strategyType = "";
+
+        AuthCodeVerifyRequest request = new AuthCodeVerifyRequest(recipient,authCode,strategyType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/verify-register-code")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("인증 수단은 필수입니다."));
+
+    }
+
+    @DisplayName("인증코드를 수령할 사람의 정보가 없을 경우 예외로 응답한다.")
+    @Test
+    void verifyAuthCode() throws Exception {
+        //given
+        String recipient = "email@email.com";
+        String authCode = "1234";
+        String strategyType = "register";
+
+        AuthCodeVerifyRequest request = new AuthCodeVerifyRequest(recipient,authCode,strategyType);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/api/verify-register-code")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+    }
+
     @DisplayName("아이디 찾기 요청을 받았을 때, 인증코드를 수령할 사람의 정보가 없을 경우 예외로 응답한다.")
     @Test
     void findLoginIdWithNotRecipient() throws Exception {
