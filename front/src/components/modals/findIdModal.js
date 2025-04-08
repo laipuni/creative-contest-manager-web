@@ -48,7 +48,7 @@ function FindIdModal({ onClose }) {
                 setIsVerified(true);
             })
             .catch((err)=>{
-                setVerificationMessage('유효하지 않은 인증코드입니다.')
+                setVerificationMessage(err.response.data.message);
             })
     };
 
