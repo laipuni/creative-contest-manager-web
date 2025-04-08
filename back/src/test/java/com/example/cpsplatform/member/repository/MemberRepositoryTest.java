@@ -162,4 +162,36 @@ class MemberRepositoryTest {
         //then
         assertThat(result).isTrue();
     }
+
+    @DisplayName("해당아이디의 유저가 존재하지 않을 경우 false 반환한다.")
+    @Test
+    void existsByLoginIdWithNotExist(){
+        //given
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        String email = "email@email.com";
+        String loginId = "loginId";
+        Member member = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email(email)
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        String invalidLoginId = "InvalidLoginId";
+
+
+        memberRepository.save(member);
+
+        //when
+        boolean result = memberRepository.existsByLoginId(invalidLoginId);
+        //then
+        assertThat(result).isFalse();
+    }
 }

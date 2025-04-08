@@ -646,7 +646,7 @@ class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 
-    @DisplayName("학년(부서)가 비어있을 경우, 예외가 발생한다.")
+    @DisplayName("로그인 아이디가 중복인지 체크한다.")
     @Test
     void checkLoginId() throws Exception {
         //given
