@@ -22,14 +22,7 @@ public class ContestCreateDto {
     private LocalDateTime contestEndAt;
 
     public Contest toEntity(){
-        return Contest.builder()
-                .title(title)
-                .season(season)
-                .description(description)
-                .registrationStartAt(registrationStartAt)
-                .registrationEndAt(registrationEndAt)
-                .startTime(contestStartAt)
-                .endTime(contestEndAt)
-                .build();
+        return Contest.of(title,description,season,registrationStartAt,
+                registrationEndAt,contestStartAt,contestEndAt);
     }
 }

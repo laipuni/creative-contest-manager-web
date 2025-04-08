@@ -55,6 +55,22 @@ public class Contest extends BaseEntity {
         this.endTime = endTime;
     }
 
+    public static Contest of(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
+                             final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime){
+        validRegistrationAt(registrationEndAt,registrationStartAt);
+        validStartAndEndAt(startTime, endTime);
+
+        return Contest.builder()
+                .title(title)
+                .description(description)
+                .season(season)
+                .registrationStartAt(registrationStartAt)
+                .registrationEndAt(registrationEndAt)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+    }
+
     public void updateContest(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
                               final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime){
         validRegistrationAt(registrationEndAt,registrationStartAt);
@@ -69,13 +85,13 @@ public class Contest extends BaseEntity {
         this.endTime = endTime == null ? this.endTime : endTime;
     }
 
-    private void validStartAndEndAt(LocalDateTime startTime, LocalDateTime endTime) {
+    private static void validStartAndEndAt(LocalDateTime startTime, LocalDateTime endTime) {
         if (endTime.isBefore(startTime)) {
             throw new IllegalArgumentException("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
         }
     }
 
-    private void validRegistrationAt(LocalDateTime registrationEndAt,final LocalDateTime registrationStartAt) {
+    private static void validRegistrationAt(LocalDateTime registrationEndAt,final LocalDateTime registrationStartAt) {
         if (registrationEndAt.isBefore(registrationStartAt)) {
             throw new IllegalArgumentException("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
         }
