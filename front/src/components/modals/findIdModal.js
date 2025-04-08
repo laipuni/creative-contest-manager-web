@@ -39,19 +39,17 @@ function FindIdModal({ onClose }) {
 
     const handleVerify = () => {
         // 인증 코드 확인 로직 (서버 API 호출)
-        apiClient.post('/api/v1/find-id', {recipient: emailInput, authCode: verificationCode, senderType: 'email'})
+        apiClient.post('/api/v1/find-id', {recipient: emailInput, authCode: verificationCode, senderType: 'email'},
+            {skipErrorHandler: true})
             .then((res)=>{
-                if (res.data) {
-                    setFindedId(res.data.data.loginId)
-                    setVerificationMessage('');
-                    setIsVerificationSent(false);
-                    setIsVerified(true);
-                }
-                else {
-                    setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
-                }
+                setFindedId(res.data.data.loginId)
+                setVerificationMessage('');
+                setIsVerificationSent(false);
+                setIsVerified(true);
             })
-            .catch((err)=>{})
+            .catch((err)=>{
+                setVerificationMessage('유효하지 않은 인증코드입니다.')
+            })
     };
 
     function handleClose() {
