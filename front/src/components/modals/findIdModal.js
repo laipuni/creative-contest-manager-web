@@ -13,6 +13,7 @@ function FindIdModal({ onClose }) {
 
     useEffect(() => {
         setVerificationMessage('');
+        setIsVerificationSent(false);
     }, [emailInput])
 
     const handleSendVerification = () => {
@@ -65,6 +66,7 @@ function FindIdModal({ onClose }) {
                     <input
                         type="text"
                         className="email-input"
+                        disabled={isVerified}
                         value={emailInput}
                         onChange={(e) => setEmailInput(e.target.value)}
                         placeholder="이메일 주소를 입력하세요."
