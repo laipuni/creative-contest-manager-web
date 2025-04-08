@@ -1,9 +1,9 @@
 package com.example.cpsplatform.contest.admin;
 
-import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.admin.aop.AdminLogProxy;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
+import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -404,5 +403,52 @@ class ContestAdminControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회를 삭제요청을 받아 대회를 삭제한다.")
+    @Test
+    void deleteContestWithNullContestId() throws Exception {
+        // given
+        DeleteContestRequest request = new DeleteContestRequest(1L);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        // when & then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/api/admin/contests")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회를 삭제요청을 받았을 때, 삭제할 대회의 정보가 없을 경우 예외가 발생한다.")
+    @Test
+    void deleteContest() throws Exception {
+        // given
+        DeleteContestRequest request = new DeleteContestRequest(null);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        // when & then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/api/admin/contests")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("삭제할 대회의 정보는 필수입니다."));
+    }
+
 
 }

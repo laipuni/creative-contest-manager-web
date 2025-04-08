@@ -1,8 +1,10 @@
 package com.example.cpsplatform.contest.admin.service;
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
+import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.DuplicateDataException;
@@ -129,5 +131,36 @@ class ContestAdminServiceTest {
                         updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt);
     }
 
+    @Transactional
+    @DisplayName("수정할 대회가 존재하지 않으면 예외가 발생한다.")
+    @Test
+    void deleteContest(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.plusDays(1);
+        LocalDateTime registrationEndAt= now.plusDays(2);
+        LocalDateTime contestStartAt = now.plusDays(3);
+        LocalDateTime contestEndAt = now.plusDays(4);
+        //contest 생성
+        Contest contest = Contest.builder()
+                .title("title")
+                .description("대회 설명")
+                .season(1)
+                .registrationStartAt(registrationStartAt)
+                .registrationEndAt(registrationEndAt)
+                .startTime(contestStartAt)
+                .endTime(contestEndAt)
+                .build();
+
+        contestRepository.save(contest);
+
+        ContestDeleteDto request = new ContestDeleteDto(contest.getId());
+
+        //when
+        contestAdminService.deleteContest(request);
+        List<Contest> result = contestRepository.findAll();
+        //then
+        assertThat(result).hasSize(0);
+    }
 
 }
