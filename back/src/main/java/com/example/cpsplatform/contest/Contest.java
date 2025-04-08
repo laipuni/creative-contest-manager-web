@@ -10,11 +10,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@SQLDelete(sql = "UPDATE Contest SET deleted = true WHERE id=?")
+@SQLRestriction("deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Contest extends BaseEntity {
 
@@ -43,6 +48,8 @@ public class Contest extends BaseEntity {
     @Column(nullable = false,name = "end_date")
     private LocalDateTime endTime;
 
+    private boolean deleted;
+
     @Builder
     private Contest(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
                    final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime) {
@@ -53,6 +60,7 @@ public class Contest extends BaseEntity {
         this.registrationEndAt = registrationEndAt;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.deleted = false;
     }
 
     public static Contest of(final String title, final String description, final int season, final LocalDateTime registrationStartAt,

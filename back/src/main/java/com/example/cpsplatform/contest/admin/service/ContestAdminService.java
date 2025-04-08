@@ -2,6 +2,7 @@ package com.example.cpsplatform.contest.admin.service;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
+import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,11 @@ public class ContestAdminService {
         );
 
         log.info("[ADMIN] 대회 변경: id={}", contest.getId());
+    }
+
+    @Transactional
+    public void deleteContest(ContestDeleteDto deleteDto) {
+        contestRepository.deleteById(deleteDto.getContestId());
+        log.info("[ADMIN] 대회 삭제: id={}", deleteDto.getContestId());
     }
 }

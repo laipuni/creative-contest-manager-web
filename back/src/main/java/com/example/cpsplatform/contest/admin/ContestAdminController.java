@@ -3,6 +3,7 @@ package com.example.cpsplatform.contest.admin;
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
+import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
 import com.example.cpsplatform.exception.DuplicateDataException;
@@ -42,4 +43,10 @@ public class ContestAdminController {
         return ApiResponse.ok(null);
     }
 
+    @AdminLog
+    @DeleteMapping
+    public ApiResponse<Object> deleteContest(@Valid @RequestBody DeleteContestRequest request){
+        contestAdminService.deleteContest(request.toContestDeleteDto());
+        return ApiResponse.ok(null);
+    }
 }
