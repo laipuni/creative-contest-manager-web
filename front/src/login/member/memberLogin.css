@@ -194,8 +194,9 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: flex-end;
     padding: 0px;
-    gap: 16px;
+    gap: 10px;
     width: 80%;
     height: fit-content;
 
@@ -212,10 +213,10 @@
 
 .login-forgotpw-text {
     /* forgot_password */
-
-    width: 100%;
+    all: unset;
+    cursor: pointer;
+    width: fit-content;
     height: fit-content;
-
     /* Body/S */
     font-family: 'Roboto';
     font-style: normal;
@@ -223,16 +224,13 @@
     font-size: 12px;
     line-height: 140%;
     /* identical to box height, or 20px */
-    text-align: right;
+    text-align: left;
 
     /* Primary/90 */
     color: #001D6C;
 
 
-    /* Inside auto layout */
-    flex: none;
-    order: 0;
-    flex-grow: 1;
+
 
 }
 

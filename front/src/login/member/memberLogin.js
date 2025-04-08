@@ -5,9 +5,11 @@ import SubHeader from "../../components/subHeader/subHeader";
 import locker from "../../styles/images/locker.png"
 import {Link, useNavigate} from "react-router-dom";
 import apiClient from "../../templates/apiClient";
+import FindIdModal from "../../components/modals/findIdModal";
 const MemberLogin = () => {
     const [userId, setUserId] = useState('')
     const [password, setPassword] = useState('')
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleSignup = (e) => {
@@ -18,6 +20,10 @@ const MemberLogin = () => {
                 navigate('/');
             })
             .catch((err)=>{})
+    }
+
+    function handleClose() {
+        setIsModalOpen(false);
     }
 
 
@@ -49,7 +55,12 @@ const MemberLogin = () => {
                                    required
                             />
                             <div className="login-forgotpw">
-                                <p className="login-forgotpw-text">비밀번호 찾기</p>
+                                <button type="button"
+                                        onClick={()=>{setIsModalOpen(true)}}
+                                        className="login-forgotpw-text">아이디 찾기</button>
+                                {isModalOpen && <FindIdModal onClose={handleClose} /> }
+                                <p className="login-forgotpw-text" style={{color: 'black'}}>/</p>
+                                <button type="button" className="login-forgotpw-text">비밀번호 찾기</button>
                             </div>
                             <button type="submit" className="login-button">로그인</button>
                         </div>
