@@ -3,16 +3,24 @@ import './memberLogin.css'
 import "../../styles/styles.css"
 import SubHeader from "../../components/subHeader/subHeader";
 import locker from "../../styles/images/locker.png"
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import apiClient from "../../templates/apiClient";
 const MemberLogin = () => {
     const [userId, setUserId] = useState('')
     const [password, setPassword] = useState('')
-    function handleSignup() {
-        /*----------rest api------------
+    const navigate = useNavigate();
+
+    const handleSignup = (e) => {
+        e.preventDefault();
+        /*----------rest api------------*/
         apiClient.post('/api/auth/login', {username: userId, password})
-         */
+            .then((res)=>{
+                navigate('/');
+            })
+            .catch((err)=>{})
     }
+
+
     return (
         <div className="login-page-container">
             <SubHeader />
