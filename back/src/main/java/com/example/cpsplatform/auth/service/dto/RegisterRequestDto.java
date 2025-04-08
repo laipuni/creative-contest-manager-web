@@ -26,11 +26,10 @@ public class RegisterRequestDto {
     private String detail;
     private String phoneNumber;
     private String email;
-    private String confirmAuthCode;
     private Organization organization;
 
-    public boolean isPasswordsMatch(){
-        return password.equals(confirmPassword);
+    public boolean isMismatchPasswords(){
+        return !password.equals(confirmPassword);
     }
 
     public MemberSaveDto toMemberSaveDto(){

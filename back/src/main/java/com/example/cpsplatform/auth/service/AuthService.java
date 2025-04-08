@@ -68,4 +68,15 @@ public class AuthService {
         return true;
     }
 
+    public void verifySignupEmail(final String recipient, final String authCode, final String strategyType){
+        verifyAuthCode(recipient,authCode,strategyType);
+        AuthCodeStrategy authCodeStrategy = strategyMap.get("signup_verify");
+        if(authCodeStrategy == null){
+            //해당 인증 수단은 존재하지 않는다면 예외 발생
+            throw new UnsupportedAuthenticationTypeException();
+        }
+        String key = authCodeStrategy.createKey(recipient);
+        authCodeStorage.storeAuthCode(key,recipient);
+    }
+
 }

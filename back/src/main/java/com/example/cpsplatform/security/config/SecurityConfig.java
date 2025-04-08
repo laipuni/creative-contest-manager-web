@@ -70,7 +70,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
                                     "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code",
                                     "/api/v1/find-id", "/api/password-reset/request","/api/password-reset/confirm",
-                                    "/api/password-reset"
+                                    "/api/password-reset","/api/verify-register-code"
                             ).permitAll()
                             .anyRequest().authenticated(); // 나머지 url은 인증 필요
                 })

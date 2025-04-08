@@ -28,6 +28,12 @@ public class Contest extends BaseEntity {
     @Column(nullable = false,unique = true)
     private int season;
 
+    @Column(nullable = false,name = "registration_start_at")
+    private LocalDateTime registrationStartAt;
+
+    @Column(nullable = false,name = "registration_end_at")
+    private LocalDateTime registrationEndAt;
+
     @Column(nullable = false,name = "start_date")
     private LocalDateTime startTime;
 
@@ -35,13 +41,14 @@ public class Contest extends BaseEntity {
     private LocalDateTime endTime;
 
     @Builder
-    private Contest(final String title, final String description, final int season, final LocalDateTime startTime, final LocalDateTime endTime) {
+    private Contest(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
+                   final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime) {
         this.title = title;
         this.description = description;
         this.season = season;
+        this.registrationStartAt = registrationStartAt;
+        this.registrationEndAt = registrationEndAt;
         this.startTime = startTime;
         this.endTime = endTime;
     }
-
-
 }
