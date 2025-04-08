@@ -9,7 +9,8 @@ function App() {
     useEffect(() => {
         axios.get("/api/csrf")
             .then((data) => {
-            });
+            })
+            .catch((error) => {alert(error.message)});
     }, []);
 
   return (
