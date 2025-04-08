@@ -9,8 +9,15 @@ import AdminLogin from "./login/admin/adminLogin";
 import TestInfo from "./testRegister/testInfo/testInfo";
 import RegisterInfo from "./testRegister/registerInfo/registerInfo";
 import RegisterTeam from "./testRegister/registerInfo/registerTeam";
+import {useEffect} from "react";
+import axios from "axios";
 
 function App() {
+    useEffect(() => {
+        axios.get("/api/csrf")
+            .then((data) => {
+            });
+    }, []);
   return (
     <div className="App">
       <BrowserRouter>
