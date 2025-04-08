@@ -137,7 +137,8 @@ const Join2 = () => {
             setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~10자리로 입력해야 합니다.');
         }
         else {
-            apiClient.get('/api/check-id', {loginId: userId})
+            apiClient.get('/api/check-id', {
+                params: {loginId: userId}})
                 .then((res) => {
                     const result = res.data.data;
                     if (result) {
