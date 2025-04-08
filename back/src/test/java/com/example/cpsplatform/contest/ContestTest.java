@@ -14,6 +14,77 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ContestTest {
 
     @Transactional
+    @DisplayName("대회를 생성한다.")
+    @Test
+    void createContest(){
+        //given
+        String title = "title";
+        int season = 1;
+        String description ="대회 설명";
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.plusDays(1);
+        LocalDateTime registrationEndAt= now.plusDays(2);
+        LocalDateTime contestStartAt = now.plusDays(3);
+        LocalDateTime contestEndAt = now.plusDays(4);
+
+        //when
+        //then
+        Contest contest = Contest.of(title,description,season,registrationStartAt,
+                registrationEndAt,contestStartAt,contestEndAt);
+
+        //then
+        assertThat(contest)
+                .extracting("title", "season", "description", "registrationStartAt", "registrationEndAt",
+                        "startTime","endTime")
+                .containsExactly(title,season,description,registrationStartAt,
+                        registrationEndAt,contestStartAt,contestEndAt);
+    }
+
+    @Transactional
+    @DisplayName("대회를 생성할 때, 마감 시간이 시작 시간보다 앞일 경우 예외가 발생한다.")
+    @Test
+    void createContestWithEndAtisBeforeStartAt(){
+        //given
+        String title = "title";
+        int season = 1;
+        String description ="대회 설명";
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.plusDays(1);
+        LocalDateTime registrationEndAt= now.plusDays(2);
+        LocalDateTime contestStartAt = now.plusDays(4);
+        LocalDateTime contestEndAt = now.plusDays(3); //대회 마감시간이 시작보다 앞이도록 설정
+
+        //when
+        //then
+        assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
+                registrationEndAt,contestStartAt,contestEndAt))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageMatching("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
+    }
+
+    @Transactional
+    @DisplayName("대회를 생성할 때, 점수 마감 시간이 접수 시작 시간보다 앞일 경우 예외가 발생한다.")
+    @Test
+    void createContestWithRegistrationEndAtisBeforeStartAt(){
+        //given
+        String title = "title";
+        int season = 1;
+        String description ="대회 설명";
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.plusDays(2);
+        LocalDateTime registrationEndAt= now.plusDays(1);
+        LocalDateTime contestStartAt = now.plusDays(3);
+        LocalDateTime contestEndAt = now.plusDays(4); //대회 마감시간이 시작보다 앞이도록 설정
+
+        //when
+        //then
+        assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
+                registrationEndAt,contestStartAt,contestEndAt))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageMatching("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
+    }
+
+    @Transactional
     @DisplayName("대회의 정보를 수정한다.")
     @Test
     void updateContest(){
