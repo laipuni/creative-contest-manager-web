@@ -30,7 +30,7 @@ public class MemberService {
         return memberRepository.findMemberByEmail(email)
                 .orElseThrow(() -> {
                     log.debug("이메일이 {}인 유저 조회 실패",email);
-                    return new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
+                    return new IllegalArgumentException("가입되지 않은 이메일입니다.");
                 });
     }
 
@@ -38,7 +38,7 @@ public class MemberService {
         return memberRepository.findMemberByEmailAndLoginId(email,loginId)
                 .orElseThrow(() -> {
                     log.debug("이메일({})과 아이디({})에 해당하는 유저 조회 실패",email,loginId);
-                    return new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
+                    return new IllegalArgumentException("이메일이나 아이디를 다시 확인해주세요.");
                 });
     }
 
