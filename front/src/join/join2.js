@@ -112,7 +112,12 @@ const Join2 = () => {
         }, )
             .then((res) => {
                 if(res.data.code === 200){
-                    navigate('/member/login')
+                    //로그인 바로 진행
+                    apiClient.post('/api/auth/login', {username: userId, password})
+                        .then((res)=>{
+                            navigate('/');
+                        })
+                        .catch((err)=>{})
                 }
             })
             .catch((err)=>{
