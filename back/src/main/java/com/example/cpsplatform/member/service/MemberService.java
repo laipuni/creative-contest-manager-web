@@ -27,27 +27,21 @@ public class MemberService {
     }
 
     public Member findMemberByEmail(final String email) {
+        log.debug("이메일이 {}인 유저 조회 시도", email);
         return memberRepository.findMemberByEmail(email)
-                .orElseThrow(() -> {
-                    log.debug("이메일이 {}인 유저 조회 실패",email);
-                    return new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
-                });
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
     }
 
-    public Member findMemberByEmailAndLoginId(final String email,final String loginId) {
-        return memberRepository.findMemberByEmailAndLoginId(email,loginId)
-                .orElseThrow(() -> {
-                    log.debug("이메일({})과 아이디({})에 해당하는 유저 조회 실패",email,loginId);
-                    return new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
-                });
+    public Member findMemberByEmailAndLoginId(final String email, final String loginId) {
+        log.debug("이메일({})과 아이디({})에 해당하는 유저 조회 시도", email, loginId);
+        return memberRepository.findMemberByEmailAndLoginId(email, loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
     }
 
     public Member findMemberByLoginId(final String loginId){
+        log.debug("아이디({})에 해당하는 유저 조회 시도", loginId);
         return memberRepository.findMemberByLoginId(loginId)
-                .orElseThrow(() -> {
-                    log.debug("아이디({})에 해당하는 유저 조회 실패",loginId);
-                    return new IllegalArgumentException("해당 유저는 존재하지 않습니다.");
-                });
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
     }
 
     public boolean isUsernameExists(String username) {
