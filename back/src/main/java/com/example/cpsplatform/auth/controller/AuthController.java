@@ -27,8 +27,15 @@ public class AuthController {
         return ApiResponse.ok(null);
     }
 
+    @PostMapping("/api/v1/send-register-code")
+    public ApiResponse<Object> sendRegisterAuthCode(@Valid @RequestBody RegisterAuthCodeSendRequest request){
+        //todo 해당 정보로 가입한 유저가 있는지 확인해야 함
+        authService.sendAuthCode(request.getRecipient(), request.getSenderType(), request.getStrategyType());
+        return ApiResponse.ok(null);
+    }
+
     @PostMapping("/api/verify-register-code")
-    public ApiResponse<Object> verifyAuthCode(@Valid @RequestBody AuthCodeVerifyRequest request){
+    public ApiResponse<Object> verifyRegisterAuthCode(@Valid @RequestBody AuthCodeVerifyRequest request){
         authService.verifySignupEmail(request.getRecipient(), request.getAuthCode(), request.getStrategyType());
         return ApiResponse.ok(null);
     }
