@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './join2.css'
 import SubHeader from "../components/subHeader/subHeader";
 import {useNavigate} from "react-router-dom";
@@ -8,6 +8,14 @@ import apiClient from "../templates/apiClient";
 import SchoolSearchModal from "../components/modals/schoolSearchModal";
 
 const Join2 = () => {
+    const navigate = useNavigate();
+    /*-------------앞 페이지 항목 동의 여부------------*/
+    useEffect(() => {
+        const isChecked = sessionStorage.getItem("isChecked");
+        if (isChecked !== "true") {
+            navigate('/join/policy');
+        }
+    }, []);
     /*--------------아이디--------------*/
     const [userId, setUserId] = useState('');
     const [isDuplicate, setIsDuplicate] = useState(true);
@@ -42,7 +50,6 @@ const Join2 = () => {
     /*--------------직업------------------*/
     const [job, setJob] = useState('');
     //
-    const navigate = useNavigate();
 
     /*--------------학교(소속)------------------------*/
     const [workPlace, setWorkPlace] = useState('');
