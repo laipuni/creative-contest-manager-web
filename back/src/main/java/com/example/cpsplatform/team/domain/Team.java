@@ -35,6 +35,10 @@ public class Team extends BaseEntity {
     private Boolean winner = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leader_id", nullable = false)
+    private Member leader;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contest_id", nullable = false)
     private Contest contest;
 
