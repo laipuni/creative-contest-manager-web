@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import {Routes, Route, useLocation, useNavigate} from "react-router-dom";
 import Join2 from "../join/join2";
 import Main from "../mainPage/main";
 import Join1 from "../join/join1";
@@ -12,12 +12,21 @@ import NotFound from "../notFound/notFound";
 
 function AppRoutes() {
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const isJoinPath = location.pathname.startsWith("/join");
+        const authenticatedPaths = ["/register/team"];
+        const isAuthenticatedPath = authenticatedPaths.includes(location.pathname);
         if (!isJoinPath) {
             sessionStorage.removeItem("isChecked");
         }
+        if (isAuthenticatedPath) {
+            if (localStorage.getItem("isAuthenticated") !== "true"){
+                navigate('/member/login', {replace: true});
+            }
+        }
+
     }, [location]);
 
     return (
