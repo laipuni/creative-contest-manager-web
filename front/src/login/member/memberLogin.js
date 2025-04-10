@@ -3,7 +3,7 @@ import './memberLogin.css'
 import "../../styles/styles.css"
 import SubHeader from "../../components/subHeader/subHeader";
 import locker from "../../styles/images/locker.png"
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import apiClient from "../../templates/apiClient";
 import FindIdModal from "../../components/modals/findIdModal";
 import FindPwModal from "../../components/modals/findPwModal";
@@ -13,6 +13,8 @@ const MemberLogin = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPwModalOpen, setIsPwModalOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const redirectPath = location.state?.from || '/';
 
     const handleSignup = (e) => {
         e.preventDefault();
@@ -20,7 +22,7 @@ const MemberLogin = () => {
         apiClient.post('/api/auth/login', {username: userId, password}, {skipErrorHandler: true})
             .then((res)=>{
                 localStorage.setItem("isAuthenticated", "true");
-                navigate('/');
+                navigate(redirectPath, {replace: true});
             })
             .catch((err)=>{
                 alert(err.response.data.message);

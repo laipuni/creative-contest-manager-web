@@ -23,7 +23,7 @@ function AppRoutes() {
         }
         if (isAuthenticatedPath) {
             if (localStorage.getItem("isAuthenticated") !== "true"){
-                navigate('/member/login', {replace: true});
+                navigate('/member/login', {replace: true, state: {from: location.pathname}});
             }
         }
 
