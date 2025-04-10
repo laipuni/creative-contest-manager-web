@@ -96,4 +96,26 @@ class TeamControllerTest {
                 .andExpect(jsonPath("$.code").value(200));
     }
 
+    @DisplayName("팀명이 6자를 초과하면 에러가 발생한다(400 에러).")
+    @WithMockUser(username = "yi", roles = "USER")
+    @Test
+    void create_team_name_over_six() throws Exception {
+        // given
+        CreateTeamRequest request = new CreateTeamRequest(
+                "일이삼사오육칠", // 7자 이상
+                1L,
+                List.of("one", "two")
+        );
+
+        // when & then
+        mockMvc.perform(post("/api/team")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400));
+    }
+
+
 }

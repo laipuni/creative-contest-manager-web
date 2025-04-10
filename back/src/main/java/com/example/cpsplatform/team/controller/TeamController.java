@@ -5,6 +5,7 @@ import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.team.controller.request.CreateTeamRequest;
 import com.example.cpsplatform.team.service.TeamService;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class TeamController {
     private final TeamService teamService;
 
     @PostMapping("/api/team")
-    public ApiResponse<Long> createTeam(@RequestBody CreateTeamRequest createTeamRequest,
+    public ApiResponse<Long> createTeam(@RequestBody @Valid CreateTeamRequest createTeamRequest,
                                     @AuthenticationPrincipal SecurityMember securityMember)
     {
         String leaderId = securityMember.getUsername();
