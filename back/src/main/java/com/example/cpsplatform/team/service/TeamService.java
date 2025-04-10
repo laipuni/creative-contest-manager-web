@@ -9,6 +9,7 @@ import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,32 +28,41 @@ public class TeamService {
 
     @Transactional
     public Long createTeam(String leaderId, TeamCreateDto createDto){
-        Member leader = memberRepository.findMemberByLoginId(leaderId).orElseThrow();// 없으면 예외
-
+        Member leader = memberRepository.findMemberByLoginId(leaderId)
+                .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
         validateMemberDuplication(leader);
-        //중복 참가 확인 필요, 팀원들 아이디 존재유무 확인 필요
-        Team team = Team.builder()
+
+        Team team = buildTeam(createDto, leader);
+        teamRepository.save(team);
+        memberTeamRepository.save(MemberTeam.of(leader, team));
+
+        validateTeamSize(createDto.getMemberIds());
+        addMembersToTeam(createDto.getMemberIds(), team);
+        return team.getId();
+    }
+
+    private void addMembersToTeam(List<String> memberIds, Team team) {
+        for (String loginId : memberIds) {
+            Member member = memberRepository.findMemberByLoginId(loginId)
+                    .orElseThrow(()->new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
+            validateMemberDuplication(member);
+            memberTeamRepository.save(MemberTeam.of(member, team));
+        }
+    }
+
+    private Team buildTeam(TeamCreateDto createDto, Member leader) {
+        return Team.builder()
                 .name(createDto.getTeamName())
                 .winner(false)
                 .contest(getContestById(createDto.getContestId()))
                 .leader(leader)
                 .build();
+    }
 
-        teamRepository.save(team);
-        memberTeamRepository.save(MemberTeam.of(leader, team)); // 팀장도 memberteam에 저장
-
-        if (createDto.getMemberIds().size() > 2) {
+    private void validateTeamSize(List<String> memberIds) {
+        if (memberIds.size() > 2) {
             throw new IllegalArgumentException("팀원은 최대 2명까지 등록할 수 있습니다.");
         }
-
-        for (String loginId : createDto.getMemberIds()) {
-            Member member = memberRepository.findMemberByLoginId(loginId)
-                    .orElseThrow();
-            validateMemberDuplication(member);
-            memberTeamRepository.save(MemberTeam.of(member, team));
-        }
-
-        return team.getId();
     }
 
     private void validateMemberDuplication(Member member){
