@@ -12,6 +12,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
             .then((res)=>{
                 localStorage.removeItem("isAuthenticated");
                 setIsAuthenticated(null);
+                window.location.reload();
                 //csrf 토큰 다시 얻어오기
                 axios.get("/api/csrf")
                     .then((data) => {
