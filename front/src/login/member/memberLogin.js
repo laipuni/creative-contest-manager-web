@@ -17,11 +17,14 @@ const MemberLogin = () => {
     const handleSignup = (e) => {
         e.preventDefault();
         /*----------rest api------------*/
-        apiClient.post('/api/auth/login', {username: userId, password})
+        apiClient.post('/api/auth/login', {username: userId, password}, {skipErrorHandler: true})
             .then((res)=>{
+                localStorage.setItem("isAuthenticated", "true");
                 navigate('/');
             })
-            .catch((err)=>{})
+            .catch((err)=>{
+                alert(err.response.data.message);
+            })
     }
 
     function handleClose() {
