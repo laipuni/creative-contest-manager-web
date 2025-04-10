@@ -8,6 +8,7 @@ import com.example.cpsplatform.security.provider.UsernamePasswordAuthenticationT
 import com.example.cpsplatform.security.service.CustomUserDetailService;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,6 +78,9 @@ public class SecurityConfig {
 
                 .logout(logout ->
                         logout.logoutUrl("/api/auth/logout") // 로그아웃 api url
+                                .logoutSuccessHandler((request, response, authentication) -> {
+                                    response.setStatus(HttpServletResponse.SC_OK);
+                                })
                                 .invalidateHttpSession(true)  // 로그아웃 시 저장된 세션을
                                 .deleteCookies(COOKIES_JSESSIONID) // 브라우저 세션 제거
                 )
