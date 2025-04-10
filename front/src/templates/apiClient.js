@@ -34,11 +34,15 @@ apiClient.interceptors.request.use(config => {
 apiClient.interceptors.response.use(response => {
     return response; // 정상 응답은 그대로 반환
 }, error => {
+    const config = error.config;
+    if (config && config.skipErrorHandler) {
+        return Promise.reject(error);
+    }
     if (error.response) {
         // HTTP 상태 코드에 따른 에러 메시지 처리
         switch (error.response.status) {
             case 400:
-                alert('잘못된 요청입니다. 입력 값을 확인해주세요.');
+                alert(error.response.data.message);
                 break;
             case 401:
                 alert('인증되지 않은 요청입니다. 다시 로그인해주세요.');
@@ -59,7 +63,6 @@ apiClient.interceptors.response.use(response => {
         // 네트워크 오류 또는 서버가 응답하지 않는 경우
         alert('서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.');
     }
-
     return Promise.reject(error);
 });
 
