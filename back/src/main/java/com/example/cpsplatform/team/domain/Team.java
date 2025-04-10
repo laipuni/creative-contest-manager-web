@@ -58,4 +58,10 @@ public class Team extends BaseEntity {
                 .contest(contest)
                 .build();
     }
+
+    public void updateTeamName(String newName) {
+        if (newName != null && !newName.isBlank()) {
+            this.name = newName;
+        }
+    }
 }

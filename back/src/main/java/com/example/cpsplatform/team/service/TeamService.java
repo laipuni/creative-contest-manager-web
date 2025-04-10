@@ -9,6 +9,7 @@ import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
+import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,33 @@ public class TeamService {
         return team.getId();
     }
 
+    @Transactional
+    public void updateTeam(Long teamId, TeamUpdateDto updateDto, String loginId){
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new IllegalArgumentException("해당 팀은 존재하지 않습니다."));
+        validateTeamLeader(team, loginId);
+
+        team.updateTeamName(updateDto.getTeamName());
+        memberTeamRepository.deleteAllByTeamExceptLeader(team, team.getLeader());
+        addMembersToTeam(updateDto.getMemberIds(), team);
+    }
+
+    @Transactional
+    public void deleteTeam(Long teamId, String loginId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new IllegalArgumentException("해당 팀은 존재하지 않습니다."));
+        validateTeamLeader(team, loginId);
+
+        memberTeamRepository.deleteAllByTeam(team);
+        teamRepository.delete(team);
+    }
+
+    private void validateTeamLeader(Team team, String leaderId) {
+        if (!team.getLeader().getLoginId().equals(leaderId)) {
+            throw new IllegalArgumentException("팀장만 수정 또는 삭제할 수 있습니다.");
+        }
+    }
+
     private void addMembersToTeam(List<String> memberIds, Team team) {
         for (String loginId : memberIds) {
             Member member = memberRepository.findMemberByLoginId(loginId)
@@ -60,7 +88,7 @@ public class TeamService {
     }
 
     private void validateTeamSize(List<String> memberIds) {
-        if (memberIds.size() > 2) {
+        if (memberIds.isEmpty() || memberIds.size() > 2) {
             throw new IllegalArgumentException("팀원은 최대 2명까지 등록할 수 있습니다.");
         }
     }
