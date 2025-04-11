@@ -211,11 +211,11 @@
     /* Auto layout */
     text-decoration: none;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     margin-top: 50px;
-    padding: 20px 0px;
+    padding: 10px 0px;
     gap: 10px;
 
     width: 20%;
@@ -240,5 +240,20 @@
     color: #000000;
 
 
+
+}
+
+.submit-rocket-img {
+    /* Frame 44 */
+
+    width: 34px;
+    height: 56px;
+
+    transform: rotate(17deg);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
 
 }

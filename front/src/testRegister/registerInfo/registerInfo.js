@@ -7,6 +7,7 @@ import trophyLogo from "../../styles/images/test_info_logo.png";
 import {Link} from "react-router-dom";
 import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
+import rocket from "../../styles/images/solve_icon.png";
 
 //출력 예시
 const exampleData = {
@@ -74,7 +75,9 @@ const RegisterInfo = () => {
                                     <p className="registerInfo-bot-text">{leaderName}({leaderEmail})</p>
                                 </div>}
                                 <div className="registerInfo-bot-buttonbox">
-                                    <Link to="/register/team" className="registerInfo-bot-button">접수하기</Link>
+                                    <Link to="/register/team" className="registerInfo-bot-button">
+                                        <img src={rocket} alt='rocket' className="submit-rocket-img"/>
+                                        접수하기</Link>
                                 </div>
                             </div>
                         </div>
