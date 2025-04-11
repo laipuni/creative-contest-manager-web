@@ -2,7 +2,7 @@ import React from 'react'
 import './testQuiz.css'
 import '../../styles/styles.css'
 
-const TestQuiz = ({quizTitle, value, onChange}) => {
+const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange}) => {
     const maxLength = 500;
     return (
         <div className="quiz-container">
@@ -16,9 +16,39 @@ const TestQuiz = ({quizTitle, value, onChange}) => {
                 <div className="quiz-file-box">
                     <p className="quiz-normal-text">첨부파일</p>
                     <div className="quiz-vertical-line"></div>
+                    {!fileVal &&
+                        <p className="quiz-normal-text" style={{fontSize: '12px'}}>등록된 파일 없음</p>}
+                    {fileVal && (
+                        <>
+                            <a
+                                href={URL.createObjectURL(fileVal)}
+                                download={fileVal.name}
+                                style={{ display: 'inline-block',
+                                    width: '15%',
+                                    overflow: 'hidden',
+                                    whiteSpace: 'nowrap',
+                                    textOverflow: 'ellipsis',
+                                    color: '#000000',
+                                    fontFamily: 'Roboto',
+                                    fontWeight: 400,
+                                    fontSize: '12px',
+                                    }}
+                            >
+                                {fileVal.name}
+                            </a>
+                        </>
+                    )}
                     <input
-                        className="quiz-filename" value={'1조_1번_예선답안.pdf'} readOnly></input>
-                    <button type="button" className="quiz-file-button">등록</button>
+                        type="file"
+                        accept=".pdf"
+                        onChange={fileOnChange}
+                        className="quiz-filename"id="file-upload"
+                        style={{ display: "none" }}
+                    />
+                    {/* 사용자에게 보일 버튼 */}
+                    <label htmlFor="file-upload" className="quiz-file-button">
+                        파일 등록
+                    </label>
                 </div>
                 <div className="quiz-underline" style={{marginTop: '-10px', order:'0'}}></div>
                 <div className="quiz-text-box">
@@ -28,8 +58,8 @@ const TestQuiz = ({quizTitle, value, onChange}) => {
                         <textarea
                             className="quiz-solveText"
                             maxLength={maxLength}
-                            value={value}
-                            onChange={onChange}
+                            value={textVal}
+                            onChange={textOnChange}
                             placeholder='텍스트로 답을 입력하세요.'
                             wrap="hard"
                         ></textarea>
@@ -37,7 +67,7 @@ const TestQuiz = ({quizTitle, value, onChange}) => {
                     <div className="quiz-text-lowerbox">
                         <p className="quiz-text-lowerinfo">※ 텍스트는 500자 이내로 작성되어야 합니다</p>
                         <p className="quiz-text-limit">
-                            {value.length} / {maxLength}자
+                            {textVal.length} / {maxLength}자
                         </p>
                     </div>
                 </div>
