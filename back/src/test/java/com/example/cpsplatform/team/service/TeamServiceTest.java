@@ -62,7 +62,7 @@ class TeamServiceTest {
         Long resultTeamId = teamService.createTeam(leaderId, dto);
 
         // then
-        verify(memberTeamRepository, times(3)).save(any(MemberTeam.class));
+        verify(memberTeamRepository, times(1)).save(any(MemberTeam.class));
         verify(teamRepository).save(any(Team.class));
     }
 

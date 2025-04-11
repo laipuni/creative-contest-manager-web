@@ -86,7 +86,7 @@ class TeamControllerTest {
         Mockito.when(teamService.createTeam(any(), any())).thenReturn(100L);
 
         // when & then
-        mockMvc.perform(post("/api/team")
+        mockMvc.perform(post("/api/teams")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(request)))
@@ -108,7 +108,7 @@ class TeamControllerTest {
         );
 
         // when & then
-        mockMvc.perform(post("/api/team")
+        mockMvc.perform(post("/api/teams")
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf())
                         .content(objectMapper.writeValueAsString(request)))
