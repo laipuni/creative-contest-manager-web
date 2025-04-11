@@ -35,14 +35,14 @@ const TestSubmit = () => {
         setFile(file);
     }
 
-    /*---------------답안 제출---------
     const handleSubmit = (e) => {
         e.preventDefault();
         apiClient.post('/api/v1/test/submit',
             {
                     text1, text2, file1, file2
             })
-    }*/
+    }
+
     return (
         <div className="testInfo-page-container">
             <div className="testInfo-page-inner-container">
@@ -51,10 +51,10 @@ const TestSubmit = () => {
                     <Sidebar/>
                     <form onSubmit={handleSubmit} className="testInfo-main-container">
                         <TestQuiz quizTitle='문제 1 (공통문제)' textVal={text1} textOnChange={(e) => setText1(e.target.value)}
-                                  fileVal={file1} fileOnChange={(e) => handleFileChange(e, setFile1)}/>
+                                  fileVal={file1} fileOnChange={(e) => handleFileChange(e, setFile1)} quiz={quiz1}/>
                         <TestQuiz quizTitle={'문제 2(' + level + ')'} textVal={text2}
                                   textOnChange={(e) => setText2(e.target.value)}
-                                  fileVal={file2} fileOnChange={(e) => handleFileChange(e, setFile2)}/>
+                                  fileVal={file2} fileOnChange={(e) => handleFileChange(e, setFile2)} quiz={quiz2}/>
                         <div className="registerInfo-bot-buttonbox">
                             <button className="registerInfo-bot-button">
                                 <img src={rocket} alt='rocket' className="submit-rocket-img"/>제출하기</button>

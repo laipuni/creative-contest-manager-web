@@ -2,13 +2,15 @@ import React from 'react'
 import './testQuiz.css'
 import '../../styles/styles.css'
 
-const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange}) => {
+const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz}) => {
     const maxLength = 500;
     return (
         <div className="quiz-container">
             <div className="quiz-titlebox">
                 <p className="quiz-title-text">{quizTitle}</p>
-                <button type="button" className="quiz-title-button">📄</button>
+                {quiz &&
+                <a href={URL.createObjectURL(quiz)}
+                   download={quiz.name} className="quiz-title-button">📄</a>}
             </div>
             <p className="quiz-info-text">※ 문제 우측의 파일 모양 아이콘을 눌러 다운로드하세요</p>
             <div className="quiz-underline"></div>
