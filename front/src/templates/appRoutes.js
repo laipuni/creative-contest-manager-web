@@ -19,8 +19,8 @@ function AppRoutes() {
 
     useEffect(() => {
         const isJoinPath = location.pathname.startsWith("/join");
-        const authenticatedPaths = ["/register/team", "/member/profile", "/test/realTest/*"];
-        const isAuthenticatedPath = authenticatedPaths.includes(location.pathname);
+        const authenticatedPaths = ["/register/team", "/member/profile", "/test/realTest"];
+        const isAuthenticatedPath = authenticatedPaths.some(path => location.pathname.startsWith(path));
         if (!isJoinPath) {
             sessionStorage.removeItem("isChecked");
         }
