@@ -1,6 +1,6 @@
 package com.example.cpsplatform.member.controller;
 
-import com.example.cpsplatform.member.controller.request.MemberRegisterReqeust;
+import com.example.cpsplatform.member.controller.request.MemberRegisterRequest;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.auth.service.RegisterService;
@@ -60,7 +60,7 @@ class MemberControllerTest {
     @Test
     void registerWithNotNumberGrade() throws Exception {
         //given
-        MemberRegisterReqeust reqeust = getValidMemberRequest();
+        MemberRegisterRequest reqeust = getValidMemberRequest();
         reqeust.setOrganizationType("초등학생");
         reqeust.setOrganizationName("xxx초등학교");
         reqeust.setPosition("1학년");
@@ -87,7 +87,7 @@ class MemberControllerTest {
     @Test
     void registerWithElementary() throws Exception {
         //given
-        MemberRegisterReqeust reqeust = getValidMemberRequest();
+        MemberRegisterRequest reqeust = getValidMemberRequest();
         reqeust.setOrganizationType("초등학생");
         reqeust.setOrganizationName("xxx초등학교");
         reqeust.setPosition("15");
@@ -113,7 +113,7 @@ class MemberControllerTest {
     @Test
     void registerWithMiddle() throws Exception {
         //given
-        MemberRegisterReqeust reqeust = getValidMemberRequest();
+        MemberRegisterRequest reqeust = getValidMemberRequest();
         reqeust.setOrganizationType("중학생");
         reqeust.setOrganizationName("xxx중학교");
         reqeust.setPosition("15");
@@ -139,7 +139,7 @@ class MemberControllerTest {
     @Test
     void registerWithHigh() throws Exception {
         //given
-        MemberRegisterReqeust reqeust = getValidMemberRequest();
+        MemberRegisterRequest reqeust = getValidMemberRequest();
         reqeust.setOrganizationType("고등학생");
         reqeust.setOrganizationName("xxx고등학교");
         reqeust.setPosition("15");
@@ -165,7 +165,7 @@ class MemberControllerTest {
     @Test
     void registerWithCollege() throws Exception {
         //given
-        MemberRegisterReqeust reqeust = getValidMemberRequest();
+        MemberRegisterRequest reqeust = getValidMemberRequest();
         reqeust.setOrganizationType("대학생");
         reqeust.setOrganizationName("xxx대학교");
         reqeust.setPosition("15");
@@ -191,7 +191,7 @@ class MemberControllerTest {
     @Test
     void registerWithShortLoginId() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setLoginId("abc"); // 4자 미만
         String content = objectMapper.writeValueAsString(request);
 
@@ -215,7 +215,7 @@ class MemberControllerTest {
     @Test
     void registerWithLongLoginId() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setLoginId("abcdefghijklmn"); // 12자 초과
         String content = objectMapper.writeValueAsString(request);
 
@@ -239,7 +239,7 @@ class MemberControllerTest {
     @Test
     void registerWithInvalidLoginIdCharacters() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setLoginId("test@user"); // 특수문자 포함
         String content = objectMapper.writeValueAsString(request);
 
@@ -263,7 +263,7 @@ class MemberControllerTest {
     @Test
     void registerWithNotConfirmPassword() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setConfirmPassword("");
         String content = objectMapper.writeValueAsString(request);
 
@@ -287,7 +287,7 @@ class MemberControllerTest {
     @Test
     void registerWithNullBirthDate() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setBirth(null); // 미래 날짜
         String content = objectMapper.writeValueAsString(request);
 
@@ -311,7 +311,7 @@ class MemberControllerTest {
     @Test
     void registerWithFutureBirthDate() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setBirth(LocalDate.now().plusYears(1)); // 미래 날짜
         String content = objectMapper.writeValueAsString(request);
 
@@ -336,7 +336,7 @@ class MemberControllerTest {
     @Test
     void registerWithInvalidPhoneNumber() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setPhoneNumber("01112345678"); // 010으로 시작하지 않음
         String content = objectMapper.writeValueAsString(request);
 
@@ -360,7 +360,7 @@ class MemberControllerTest {
     @Test
     void registerWithInvalidEmail() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setEmail("invalid-email"); // @ 없음
         String content = objectMapper.writeValueAsString(request);
 
@@ -384,7 +384,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyRequiredField() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setName(""); // 이름 없음
         String content = objectMapper.writeValueAsString(request);
 
@@ -408,7 +408,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyConfirmPassword() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setConfirmPassword(""); // 빈 비밀번호확인
         String content = objectMapper.writeValueAsString(request);
 
@@ -432,7 +432,7 @@ class MemberControllerTest {
     @Test
     void registerWithNullBirth() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setBirth(null); // null 생년월일
         String content = objectMapper.writeValueAsString(request);
 
@@ -456,7 +456,7 @@ class MemberControllerTest {
     @Test
     void registerWithNullGender() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setGender(null); // null 성별
         String content = objectMapper.writeValueAsString(request);
 
@@ -480,7 +480,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyStreet() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setStreet(""); // 빈 도로명 주소
         String content = objectMapper.writeValueAsString(request);
 
@@ -504,7 +504,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyCity() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setCity(""); // 빈 도시명
         String content = objectMapper.writeValueAsString(request);
 
@@ -528,7 +528,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyZipCode() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setZipCode(""); // 빈 우편번호
         String content = objectMapper.writeValueAsString(request);
 
@@ -552,7 +552,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyDetail() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setDetail(""); // 빈 상세주소
         String content = objectMapper.writeValueAsString(request);
 
@@ -576,7 +576,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyOrganizationType() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setOrganizationType(""); // 빈 직업
         String content = objectMapper.writeValueAsString(request);
 
@@ -600,7 +600,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyOrganizationName() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setOrganizationName(""); // 빈 학교(소속) 이름
         String content = objectMapper.writeValueAsString(request);
 
@@ -624,7 +624,7 @@ class MemberControllerTest {
     @Test
     void registerWithEmptyPosition() throws Exception {
         //given
-        MemberRegisterReqeust request = getValidMemberRequest();
+        MemberRegisterRequest request = getValidMemberRequest();
         request.setOrganizationType("컴퓨터");
         request.setOrganizationName("xx전자");
         request.setPosition(""); // 빈 학년(부서)
@@ -667,8 +667,8 @@ class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isBoolean());
     }
 
-    private MemberRegisterReqeust getValidMemberRequest() {
-        MemberRegisterReqeust request = new MemberRegisterReqeust();
+    private MemberRegisterRequest getValidMemberRequest() {
+        MemberRegisterRequest request = new MemberRegisterRequest();
         request.setLoginId("testuser");
         request.setPassword("pass1234");
         request.setConfirmPassword("pass1234");

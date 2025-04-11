@@ -1,7 +1,7 @@
 package com.example.cpsplatform.member.controller;
 
 import com.example.cpsplatform.ApiResponse;
-import com.example.cpsplatform.member.controller.request.MemberRegisterReqeust;
+import com.example.cpsplatform.member.controller.request.MemberRegisterRequest;
 import com.example.cpsplatform.auth.service.RegisterService;
 import com.example.cpsplatform.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -16,7 +16,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/api/v1/members")
-    public ApiResponse<Object> register(@Valid @RequestBody MemberRegisterReqeust reqeust){
+    public ApiResponse<Object> register(@Valid @RequestBody MemberRegisterRequest reqeust){
         registerService.register(reqeust.toRegisterRequest());
         return ApiResponse.ok(null);
     }
