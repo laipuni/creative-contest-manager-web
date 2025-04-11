@@ -8,6 +8,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
 import java.util.List;
@@ -61,6 +62,17 @@ public class TeamService {
 
         memberTeamRepository.deleteAllByTeam(team);
         teamRepository.delete(team);
+    }
+
+    public List<MyTeamInfoDto> getMyTeamInfo(String loginId){
+        Member member = memberRepository.findMemberByLoginId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
+
+        return memberTeamRepository.findAllByMember(member)
+                .stream().map(MemberTeam::getTeam)
+                .map(team -> new MyTeamInfoDto(
+                        team.getId(), team.getName(), team.getLeader().getLoginId(), team.getCreatedAt()
+                )).toList();
     }
 
     private void validateTeamLeader(Team team, String leaderId) {
