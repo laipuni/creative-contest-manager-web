@@ -64,7 +64,7 @@ const TestSubmitInfo = () => {
                                     <p className="registerInfo-bot-text">{registerCnt}</p>
                                 </div>}
                                 <div className="registerInfo-bot-buttonbox">
-                                    <Link to="/register/team" className="registerInfo-bot-button">
+                                    <Link to="/test/realTest/submit" className="registerInfo-bot-button">
                                         <img src={rocket} alt='rocket' className="submit-rocket-img"/>문제풀기</Link>
                                 </div>
                             </div>

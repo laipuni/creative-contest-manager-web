@@ -11,6 +11,7 @@ import RegisterTeam from "../testRegister/registerInfo/registerTeam";
 import NotFound from "../notFound/notFound";
 import MyProfile from "../auth/myProfile";
 import TestSubmitInfo from "../testTake/realTest/testSubmitInfo";
+import TestSubmit from "../testTake/realTest/testSubmit";
 
 function AppRoutes() {
     const location = useLocation();
@@ -43,6 +44,7 @@ function AppRoutes() {
             <Route path="register/team" element={<RegisterTeam />}></Route>
             <Route path="member/profile" element={<MyProfile />}></Route>
             <Route path="test/realTest/info" element={<TestSubmitInfo />}></Route>
+            <Route path="test/realTest/submit" element={<TestSubmit />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );
