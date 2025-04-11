@@ -64,4 +64,10 @@ public class Team extends BaseEntity {
             this.name = newName;
         }
     }
+
+    public void isNotTeamLeader(Team team, String leaderId) {
+        if (!team.getLeader().getLoginId().equals(leaderId)) {
+            throw new IllegalArgumentException("팀장만 수정 또는 삭제할 수 있습니다.");
+        }
+    }
 }
