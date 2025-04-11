@@ -1,0 +1,351 @@
+.quiz-container {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 30px;
+    gap: 10px;
+    margin: 0 auto;
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-titlebox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 0px;
+    gap: 10px;
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-title-text {
+
+    /* 문제 1 (공통문제) */
+
+    width: fit-content;
+    height: fit-content;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 32px;
+    color: #000000;
+    line-height: 0%;
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+
+}
+
+.quiz-title-button {
+    all: unset;
+    cursor: pointer;
+    width: fit-content;
+    height: 41px;
+    font-size: 30px;
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.quiz-info-text {
+    /* ※ 우측의 파일모양 아이콘을 눌러 문제를 다운로드하세요 */
+
+    width: fit-content;
+    height: fit-content;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 0%;
+    /* identical to box height, or 22px */
+
+    color: #FF0000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.quiz-underline {
+    /* Line 4 */
+
+    width: 100%;
+    height: 0px;
+
+    border: 1px solid rgba(0, 0, 0, 0.43);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-mainbox {
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px 0px;
+    gap: 10px;
+    width: 100%;
+    height: fit-content;
+
+    border: 1px solid #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 3;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-file-box {
+    /* Frame 50 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    gap: 20px;
+
+    width: 100%;
+    height: fit-content;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-normal-text {
+    /* 첨부파일 */
+    width: 10%;
+    height: fit-content;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 0%;
+    /* or 22px */
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    flex-grow: 0;
+
+}
+
+.quiz-filename {
+    border: none;
+    width: 10%;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 0%;
+    /* or 22px */
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    flex-grow: 0;
+
+}
+
+.quiz-vertical-line {
+    width: 0px;
+    margin-top: 4px;
+    height: 20px; /* 원하는 높이로 조절 */
+    border: 1px solid rgba(0, 0, 0, 0.43);
+
+    /* Inside auto layout */
+    flex: none;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-file-button {
+    /* Frame 40 */
+
+    box-sizing: border-box;
+    cursor: pointer;
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 3px 0px;
+
+    width: 5%;
+    height: 50%;
+    color: white;
+    background: #2E38FF;
+    border: 1px solid #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    flex-grow: 0;
+
+}
+
+.quiz-text-box {
+    /* Frame 51 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 0px;
+
+    width: 100%;
+    height: 230px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-text-upperbox {
+    /* Frame 53 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 30px;
+    width: 100%;
+    height: 182px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-solveText {
+    /* Frame 52 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    text-align: left;
+    vertical-align: top;
+    padding: 0px 5px;
+    gap: 10px;
+
+    width: 80%;
+    height: 100%;
+
+    border: 1px solid #000000;
+    resize: none;
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    font-family: 'Roboto';
+    font-size: 14px;
+
+}
+
+.quiz-text-lowerbox {
+    /* Frame 48 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 160px;
+    gap: 0px;
+    width: 80%;
+    height: fit-content;
+
+    justify-content: space-between;
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.quiz-text-lowerinfo {
+    /* ※ 텍스트는 500자 이내로 작성되어야 합니다 */
+
+    width: fit-content;
+    height: fit-content;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 0%;
+    /* or 22px */
+
+    color: #FF0000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.quiz-text-limit {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 110%;
+    color: black;
+
+    flex: none;
+}
