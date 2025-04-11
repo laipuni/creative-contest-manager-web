@@ -52,7 +52,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                                 <div className="main-header-menu-item-line"></div>
                             </div>
                             <div className="main-header-menu-item">
-                                <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
+                                <Link to="/member/profile" className="main-header-menu-item-text">MYPAGE</Link>
                                 <div className="main-header-menu-item-line"></div>
                             </div>
                             <div className="main-header-menu-item">
