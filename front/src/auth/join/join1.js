@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import SubHeader from '../components/subHeader/subHeader'
+import SubHeader from '../../components/subHeader/subHeader'
 import './join1.css'
 import {useNavigate} from "react-router-dom";
 const Join1 = () => {

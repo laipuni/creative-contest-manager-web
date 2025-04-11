@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './join2.css'
-import SubHeader from "../components/subHeader/subHeader";
+import SubHeader from "../../components/subHeader/subHeader";
 import {useNavigate} from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
-import EmailVerificationModal from '../components/modals/emailVerificationModal';
-import apiClient from "../templates/apiClient";
-import SchoolSearchModal from "../components/modals/schoolSearchModal";
+import EmailVerificationModal from '../../components/modals/emailVerificationModal';
+import apiClient from "../../templates/apiClient";
+import SchoolSearchModal from "../../components/modals/schoolSearchModal";
 
 const Join2 = () => {
     const navigate = useNavigate();

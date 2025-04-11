@@ -1,10 +1,10 @@
 import {Routes, Route, useLocation, useNavigate} from "react-router-dom";
-import Join2 from "../join/join2";
+import Join2 from "../auth/join/join2";
 import Main from "../mainPage/main";
-import Join1 from "../join/join1";
+import Join1 from "../auth/join/join1";
 import {useEffect} from "react";
-import MemberLogin from "../login/member/memberLogin";
-import AdminLogin from "../login/admin/adminLogin";
+import MemberLogin from "../auth/login/member/memberLogin";
+import AdminLogin from "../auth/login/admin/adminLogin";
 import TestInfo from "../testRegister/testInfo/testInfo";
 import RegisterInfo from "../testRegister/registerInfo/registerInfo";
 import RegisterTeam from "../testRegister/registerInfo/registerTeam";

@@ -1,12 +1,12 @@
 import React, {useState} from 'react'
 import './memberLogin.css'
-import "../../styles/styles.css"
-import SubHeader from "../../components/subHeader/subHeader";
-import locker from "../../styles/images/locker.png"
+import "../../../styles/styles.css"
+import SubHeader from "../../../components/subHeader/subHeader";
+import locker from "../../../styles/images/locker.png"
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import apiClient from "../../templates/apiClient";
-import FindIdModal from "../../components/modals/findIdModal";
-import FindPwModal from "../../components/modals/findPwModal";
+import apiClient from "../../../templates/apiClient";
+import FindIdModal from "../../../components/modals/findIdModal";
+import FindPwModal from "../../../components/modals/findPwModal";
 const MemberLogin = () => {
     const [userId, setUserId] = useState('')
     const [password, setPassword] = useState('')

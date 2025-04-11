@@ -1,9 +1,9 @@
 import React, {useState} from 'react'
 import '../member/memberLogin.css'
-import "../../styles/styles.css"
-import SubHeader from "../../components/subHeader/subHeader";
-import locker from "../../styles/images/locker.png"
-import apiClient from "../../templates/apiClient";
+import "../../../styles/styles.css"
+import SubHeader from "../../../components/subHeader/subHeader";
+import locker from "../../../styles/images/locker.png"
+import apiClient from "../../../templates/apiClient";
 const AdminLogin = () => {
     const [userId, setUserId] = useState('')
     const [password, setPassword] = useState('')
