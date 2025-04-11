@@ -19,7 +19,8 @@ const Sidebar = () => {
             <div className="sidebar-underline"></div>
             <p className="sidebar-title">문제 풀기</p>
             <div className="sidebar-content">
-                <Link to = "/" className="sidebar-text">예선문제 풀기</Link>
+                <Link to = "/test/realTest/info" className={`sidebar-text ${location.pathname === "/test/realTest/info" ? "active" : ""}`}>
+                    예선문제 풀기</Link>
                 <Link t0 = "/" className="sidebar-text">기출문제 풀기</Link>
             </div>
             <div className="sidebar-underline"></div>

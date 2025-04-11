@@ -10,6 +10,7 @@ import RegisterInfo from "../testRegister/registerInfo/registerInfo";
 import RegisterTeam from "../testRegister/registerInfo/registerTeam";
 import NotFound from "../notFound/notFound";
 import MyProfile from "../auth/myProfile";
+import TestSubmitInfo from "../testTake/realTest/testSubmitInfo";
 
 function AppRoutes() {
     const location = useLocation();
@@ -17,7 +18,7 @@ function AppRoutes() {
 
     useEffect(() => {
         const isJoinPath = location.pathname.startsWith("/join");
-        const authenticatedPaths = ["/register/team", "/member/profile"];
+        const authenticatedPaths = ["/register/team", "/member/profile", "/test/realTest/*"];
         const isAuthenticatedPath = authenticatedPaths.includes(location.pathname);
         if (!isJoinPath) {
             sessionStorage.removeItem("isChecked");
@@ -41,6 +42,7 @@ function AppRoutes() {
             <Route path="register/info" element={<RegisterInfo />}></Route>
             <Route path="register/team" element={<RegisterTeam />}></Route>
             <Route path="member/profile" element={<MyProfile />}></Route>
+            <Route path="test/realTest/info" element={<TestSubmitInfo />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );

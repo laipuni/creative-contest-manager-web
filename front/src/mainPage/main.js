@@ -34,7 +34,7 @@ const Main = () => {
                                     <img src={team} alt="logo" className="bento-image"/>
                                 </div>
                             </Link>
-                            <div className="bento-top-content" style={{background: "rgba(89, 167, 255, 0.36)"}}>
+                            <Link to="/test/realTest/info" className="bento-top-content" style={{background: "rgba(89, 167, 255, 0.36)"}}>
                                 <div className="bento-content-textbox">
                                     <p className="bento-content-title">
                                         <span style={{color: '#3D2FFC'}}>예선문제</span>&nbsp;풀기
@@ -47,7 +47,7 @@ const Main = () => {
                                 <div className="bento-image-container">
                                     <img src={test} alt="test" className="bento-image"/>
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                         <div className="bento-bot">
                             <div className="bento-bot-left">
