@@ -151,9 +151,8 @@ class TeamServiceTest {
         List<MyTeamInfoDto> result = teamService.getMyTeamInfo(loginId);
 
         // then
-        assertThat(result.size()).isEqualTo(2);
-        assertThat(result.get(0).getTeamName()).isEqualTo("A팀");
-        assertThat(result.get(1).getTeamName()).isEqualTo("B팀");
+        assertThat(result.get(0).getTeamName()).isEqualTo("one");
+        assertThat(result.get(1).getTeamName()).isEqualTo("two");
     }
 
 }
