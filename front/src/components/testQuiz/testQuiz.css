@@ -174,7 +174,7 @@
 
 .quiz-filename {
     border: none;
-    width: 10%;
+    width: 20%;
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
@@ -208,18 +208,17 @@
     /* Frame 40 */
 
     box-sizing: border-box;
-    cursor: pointer;
     /* Auto layout */
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     padding: 3px 0px;
-
+    font-size: 10px;
     width: 5%;
     height: 50%;
-    color: white;
-    background: #2E38FF;
+    color: black;
+    background: whitesmoke;
     border: 1px solid #000000;
 
     /* Inside auto layout */
