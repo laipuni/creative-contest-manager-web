@@ -68,8 +68,8 @@ public class TeamService {
         Member member = memberRepository.findMemberByLoginId(loginId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
 
-        return memberTeamRepository.findAllByMember(member.getLoginId())
-                .stream().map(MemberTeam::getTeam)
+        return teamRepository.findTeamByMemberLoginId(member.getLoginId())
+                .stream()
                 .map(team -> new MyTeamInfoDto(
                         team.getId(), team.getName(), team.getLeader().getLoginId(), team.getCreatedAt()
                 )).toList();

@@ -18,7 +18,4 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     @Modifying
     @Query("DELETE FROM MemberTeam mt WHERE mt.team = :team AND mt.member != :leader")
     void deleteAllByTeamExceptLeader(@Param("team") Team team, @Param("leader") Member leader);
-
-    @EntityGraph(attributePaths = {"team", "team.leader"})
-    List<MemberTeam> findAllByMember(String memberId);
 }

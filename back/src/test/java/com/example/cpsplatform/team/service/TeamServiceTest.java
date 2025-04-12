@@ -141,11 +141,8 @@ class TeamServiceTest {
         Team team1 = Team.builder().name("one").leader(member).build();
         Team team2 = Team.builder().name("two").leader(member).build();
 
-        MemberTeam memberTeam1 = MemberTeam.of(member, team1);
-        MemberTeam memberTeam2 = MemberTeam.of(member, team2);
-
         when(memberRepository.findMemberByLoginId(loginId)).thenReturn(Optional.of(member));
-        when(memberTeamRepository.findAllByMember(loginId)).thenReturn(List.of(memberTeam1, memberTeam2));
+        when(teamRepository.findTeamByMemberLoginId(loginId)).thenReturn(List.of(team1, team2));
 
         // when
         List<MyTeamInfoDto> result = teamService.getMyTeamInfo(loginId);
