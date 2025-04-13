@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     boolean existsByMember(Member member);
     void deleteAllByTeam(Team team);
+    List<MemberTeam> findAllByTeamId(Long teamId);
 
     @Modifying
     @Query("DELETE FROM MemberTeam mt WHERE mt.team = :team AND mt.member != :leader")

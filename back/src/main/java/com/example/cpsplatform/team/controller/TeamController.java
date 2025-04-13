@@ -1,12 +1,14 @@
 package com.example.cpsplatform.team.controller;
 
 import com.example.cpsplatform.ApiResponse;
+import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.exception.DuplicateDataException;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.team.controller.request.CreateTeamRequest;
 import com.example.cpsplatform.team.controller.request.DeleteTeamRequest;
 import com.example.cpsplatform.team.controller.request.UpdateTeamRequest;
 import com.example.cpsplatform.team.service.TeamService;
+import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import jakarta.validation.Valid;
@@ -55,7 +57,7 @@ public class TeamController {
         }
     }
 
-    @DeleteMapping("/api/teams/")
+    @DeleteMapping("/api/teams")
     public ApiResponse<Void> deleteTeam(@RequestBody @Valid DeleteTeamRequest deleteTeamRequest,
                                         @AuthenticationPrincipal SecurityMember securityMember) {
         teamService.deleteTeam(deleteTeamRequest.getTeamId(), securityMember.getUsername());
@@ -67,4 +69,12 @@ public class TeamController {
         List<MyTeamInfoDto> myTeamInfo= teamService.getMyTeamInfo(securityMember.getUsername());
         return ApiResponse.ok(myTeamInfo);
     }
+
+    @GetMapping("/api/contests/{contestId}/team")
+    public ApiResponse<MyTeamInfoByContestDto> getMyTeamByContest(@AuthenticationPrincipal SecurityMember securityMember,
+                                                                  @PathVariable Long contestId){
+        MyTeamInfoByContestDto myTeamInfoByContestDto = teamService.getMyTeamInfoByContest(contestId, securityMember.getUsername());
+        return ApiResponse.ok(myTeamInfoByContestDto);
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.example.cpsplatform.team.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -18,6 +18,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class TeamServiceTest {
     private MemberRepository memberRepository = mock(MemberRepository.class);
