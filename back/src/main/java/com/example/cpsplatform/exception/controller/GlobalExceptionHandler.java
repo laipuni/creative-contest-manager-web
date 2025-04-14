@@ -1,6 +1,7 @@
 package com.example.cpsplatform.exception.controller;
 
 import com.example.cpsplatform.exception.CryptoException;
+import com.example.cpsplatform.exception.FileReadException;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,18 @@ import java.util.Map;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(FileReadException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse<Object> handleFileReadException(FileReadException e) {
+        log.error("msg = {}",e.getMessage(),e);
+        //todo 개발자에게 해당 에러를 전송해야 함
+        return ApiErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e.getMessage(),
+                null
+        );
+    }
 
     @ExceptionHandler(CryptoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
