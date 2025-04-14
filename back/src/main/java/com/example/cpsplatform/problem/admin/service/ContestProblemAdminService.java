@@ -9,12 +9,17 @@ import com.example.cpsplatform.file.repository.FileRepository;
 import com.example.cpsplatform.file.service.dto.FileSaveDto;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.file.storage.FileStorage;
+import com.example.cpsplatform.problem.admin.controller.response.ContestProblemListResponse;
 import com.example.cpsplatform.problem.admin.service.dto.AddProblemDto;
 import com.example.cpsplatform.problem.domain.Problem;
+import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContestProblemAdminService {
 
+    public static final int PROBLEM_SIZE = 10;
     private static final String CONTEST_FILE_PATH_FORMAT = "/contest/%d회/%s/%d번/";
     private static final String LOG_PREFIX = "[ContestProblemAdmin]";
 
@@ -48,6 +54,12 @@ public class ContestProblemAdminService {
         //파일처리 및 업로드
         fileStorage.upload(path, fileSources);
         processAndUploadFiles(fileSources, path, problem);
+    }
+
+    public ContestProblemListResponse findContestProblemList(final Long contestId, final int page) {
+        Pageable pageable = PageRequest.of(page,PROBLEM_SIZE);
+        Page<Problem> result = problemRepository.findContestProblemsByContestAndProblemType(pageable, ProblemType.CONTEST, contestId);
+        return ContestProblemListResponse.of(result);
     }
 
     private Problem saveProblem(final AddProblemDto addProblemDto, final Contest contest) {
@@ -75,5 +87,4 @@ public class ContestProblemAdminService {
     private String generateContestFilePath(int season, Section section, int problemOrder){
         return String.format(CONTEST_FILE_PATH_FORMAT,season,section.getLabel(),problemOrder);
     }
-
 }
