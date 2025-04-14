@@ -18,7 +18,7 @@ public class ContestProblemAdminController {
     @GetMapping("v1/contests/{contestId}/problems")
     public ApiResponse<ContestProblemListResponse> getContestProblemList(
             @PathVariable("contestId") Long contestId,
-            @RequestParam("page") int page){
+            @RequestParam(value = "page",defaultValue = "0") int page){
         ContestProblemListResponse result = contestProblemAdminService.findContestProblemList(contestId, page);
         return ApiResponse.ok(result);
     }
