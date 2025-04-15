@@ -1,7 +1,8 @@
-package com.example.cpsplatform.contest.admin;
+package com.example.cpsplatform.contest.admin.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
+import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
@@ -18,6 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class ContestAdminController {
 
     private final ContestAdminService contestAdminService;
+
+    @AdminLog
+    @GetMapping
+    public ApiResponse<ContestListResponse> searchContestList(@RequestParam(value = "page",defaultValue = "0") int page){
+        ContestListResponse response = contestAdminService.searchContestList(page);
+        return ApiResponse.ok(response);
+    }
 
     @AdminLog
     @PostMapping
