@@ -3,6 +3,7 @@ package com.example.cpsplatform.contest.admin;
 import com.example.cpsplatform.admin.aop.AdminLogProxy;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.contest.admin.controller.ContestAdminController;
+import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListDto;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
@@ -121,6 +122,49 @@ class ContestAdminControllerTest {
                 .andExpect(status().isForbidden())
                 .andDo(print());
     }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 특정 대회의 상세 정보를 조회할 수 있다")
+    @Test
+    void findContestDetail() throws Exception {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        String title = "16회 창의력 경진 대회";
+        String description = "대회 설명입니다";
+        int season = 16;
+        ContestDetailResponse response = ContestDetailResponse.builder()
+                .contestId(1L)
+                .title(title)
+                .description(description)
+                .season(season)
+                .registrationStartAt(now.minusDays(5))
+                .registrationEndAt(now.minusDays(1))
+                .startTime(now)
+                .endTime(now.plusDays(1))
+                .createdAt(now.minusDays(10))
+                .updatedAt(now.minusDays(7))
+                .build();
+        Long contestId = 1L;
+        Mockito.when(contestAdminService.findContestDetail(contestId)).thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/{contestId}", contestId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.contestId").value(1L))
+                .andExpect(jsonPath("$.data.title").value(title))
+                .andExpect(jsonPath("$.data.description").value(description))
+                .andExpect(jsonPath("$.data.season").value(season))
+                .andExpect(jsonPath("$.data.registrationStartAt").exists())
+                .andExpect(jsonPath("$.data.registrationEndAt").exists())
+                .andExpect(jsonPath("$.data.startTime").exists())
+                .andExpect(jsonPath("$.data.endTime").exists())
+                .andExpect(jsonPath("$.data.createdAt").exists())
+                .andExpect(jsonPath("$.data.updatedAt").exists())
+                .andDo(print());
+    }
+
 
     @Test
     @DisplayName("인증되지 않은 사용자는 접근할 수 없다")
