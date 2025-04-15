@@ -2,6 +2,7 @@ package com.example.cpsplatform.contest.admin.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
+import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
@@ -24,6 +25,13 @@ public class ContestAdminController {
     @GetMapping
     public ApiResponse<ContestListResponse> searchContestList(@RequestParam(value = "page",defaultValue = "0") int page){
         ContestListResponse response = contestAdminService.searchContestList(page);
+        return ApiResponse.ok(response);
+    }
+
+    @AdminLog
+    @GetMapping("/{contestId}")
+    public ApiResponse<ContestDetailResponse> findContestDetail(@PathVariable("contestId")Long contestId){
+        ContestDetailResponse response = contestAdminService.findContestDetail(contestId);
         return ApiResponse.ok(response);
     }
 

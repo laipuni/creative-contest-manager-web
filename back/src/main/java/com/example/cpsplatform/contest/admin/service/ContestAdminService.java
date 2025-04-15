@@ -1,6 +1,7 @@
 package com.example.cpsplatform.contest.admin.service;
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
@@ -55,5 +56,12 @@ public class ContestAdminService {
         Pageable pageable = PageRequest.of(page,CONTEST_PAGE_SIZE);
         Page<Contest> result = contestRepository.findContestList(pageable);
         return ContestListResponse.of(result);
+    }
+
+    public ContestDetailResponse findContestDetail(final Long contestId) {
+        log.debug("대회({})를 조회 시도",contestId);
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
+        return ContestDetailResponse.of(contest);
     }
 }
