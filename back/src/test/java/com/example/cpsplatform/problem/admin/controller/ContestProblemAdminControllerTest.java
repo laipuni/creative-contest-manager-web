@@ -1,8 +1,11 @@
 package com.example.cpsplatform.problem.admin.controller;
 
+import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDetailResponse;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDto;
+import com.example.cpsplatform.problem.admin.controller.response.ContestProblemFileDto;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemListResponse;
 import com.example.cpsplatform.problem.admin.service.ContestProblemAdminService;
+import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -40,11 +44,11 @@ class ContestProblemAdminControllerTest {
         int page = 0;
 
         ContestProblemListResponse mockResponse = ContestProblemListResponse.builder()
-                .totalPage(1)        // 총 페이지 수
-                .page(page)          // 현재 페이지
-                .firstPage(0)        // 시작 페이지
-                .lastPage(0)         // 마지막 페이지
-                .size(2)             // 총 요소 수
+                .totalPage(1)
+                .page(page)
+                .firstPage(0)
+                .lastPage(0)
+                .size(2)
                 .problemList(List.of(
                         ContestProblemDto.builder()
                                 .problemId(1L)
@@ -102,6 +106,79 @@ class ContestProblemAdminControllerTest {
         //when
         //then
         mockMvc.perform(get("/api/admin/v1/contests/{contestId}/problems", contestId)
+                        .param("page", String.valueOf(page))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("대회 기출 문제 상세 조회가 성공적으로 이루어져야 한다")
+    @Test
+    void getContestProblemDetail() throws Exception {
+        // given
+        Long contestId = 1L;
+        Long problemId = 2L;
+
+        LocalDateTime now = LocalDateTime.now();
+
+        ContestProblemDetailResponse mockResponse = ContestProblemDetailResponse.builder()
+                .problemId(problemId)
+                .title("문제 제목 1")
+                .season(16)
+                .section(Section.HIGH_NORMAL)
+                .content("문제 내용입니다.")
+                .problemType(ProblemType.CONTEST)
+                .problemOrder(1)
+                .createdAt(now)
+                .updatedAt(now)
+                .fileList(List.of(
+                        ContestProblemFileDto.builder()
+                                .fileId(10L)
+                                .originalFileName("문제1_1.pdf")
+                                .createAt(now)
+                                .build()
+                ))
+                .build();
+
+        when(contestProblemAdminService.findContestProblemDetail(contestId, problemId))
+                .thenReturn(mockResponse);
+
+        // when & then
+        mockMvc.perform(get("/api/admin/v1/contests/{contestId}/problems/{problemId}", contestId, problemId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.problemId").value(problemId))
+                .andExpect(jsonPath("$.data.title").value("문제 제목 1"))
+                .andExpect(jsonPath("$.data.season").value(16))
+                .andExpect(jsonPath("$.data.section").value("HIGH_NORMAL"))
+                .andExpect(jsonPath("$.data.content").value("문제 내용입니다."))
+                .andExpect(jsonPath("$.data.problemType").value("CONTEST"))
+                .andExpect(jsonPath("$.data.problemOrder").value(1))
+                .andExpect(jsonPath("$.data.createdAt").exists())
+                .andExpect(jsonPath("$.data.updatedAt").exists())
+                .andExpect(jsonPath("$.data.fileList").isArray())
+                .andExpect(jsonPath("$.data.fileList[0].fileId").value(10))
+                .andExpect(jsonPath("$.data.fileList[0].originalFileName").value("문제1_1.pdf"))
+                .andExpect(jsonPath("$.data.fileList[0].createAt").exists());
+    }
+
+    @Test
+    @DisplayName("권한이 없는 사용자는 대회 기출 문제 상세 조회를 할 수 없다")
+    void getContestProblemDetailNotAdmin() throws Exception {
+        //given
+        Long contestId = 1L;
+        Long problemId = 2L;
+        int page = 0;
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/v1/contests/{contestId}/problems/{problemId}", contestId, problemId)
                         .param("page", String.valueOf(page))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))

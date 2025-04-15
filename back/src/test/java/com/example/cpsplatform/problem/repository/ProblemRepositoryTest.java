@@ -5,6 +5,7 @@ import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
+import jakarta.persistence.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,9 @@ class ProblemRepositoryTest {
     @Autowired
     private ContestRepository contestRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     private Contest contest; // 테스트에서 사용할 contest
 
     @AfterEach
@@ -55,10 +59,14 @@ class ProblemRepositoryTest {
         contestRepository.save(contest);
 
         //다양한 섹션과 순서를 가진 문제들 생성
-        createProblem("문제 1", contest, Section.COMMON, 1, ProblemType.CONTEST);
-        createProblem("문제 2", contest, Section.COMMON, 2, ProblemType.CONTEST);
-        createProblem("문제 3", contest, Section.ELEMENTARY_MIDDLE, 1, ProblemType.CONTEST);
-        createProblem("문제 4", contest, Section.HIGH_NORMAL, 1, ProblemType.CONTEST);
+        List<Problem> problems = List.of(
+                createProblem("문제 1", contest, Section.COMMON, 1, ProblemType.CONTEST),
+                createProblem("문제 2", contest, Section.COMMON, 2, ProblemType.CONTEST),
+                createProblem("문제 3", contest, Section.ELEMENTARY_MIDDLE, 1, ProblemType.CONTEST),
+                createProblem("문제 4", contest, Section.HIGH_NORMAL, 1, ProblemType.CONTEST)
+        );
+        problemRepository.saveAll(problems);
+
 
         //필터링 테스트를 위한 다른 대회의 문제 생성
         Contest anotherContest = Contest.builder()
@@ -72,12 +80,13 @@ class ProblemRepositoryTest {
                 .build();
         contestRepository.save(anotherContest);
 
-        createProblem("다른 대회 문제", anotherContest, Section.HIGH_NORMAL, 1, ProblemType.CONTEST);
-
+        Problem anotherProblem = createProblem("다른 대회 문제", anotherContest, Section.HIGH_NORMAL, 1, ProblemType.CONTEST);
+        problemRepository.save(anotherProblem);
         problemRepository.flush();
+        entityManager.clear();
     }
 
-    private void createProblem(String title, Contest contest, Section section, Integer order, ProblemType type) {
+    private Problem createProblem(String title, Contest contest, Section section, Integer order, ProblemType type) {
         Problem problem = Problem.builder()
                 .title(title)
                 .contest(contest)
@@ -86,7 +95,7 @@ class ProblemRepositoryTest {
                 .problemType(type)
                 .content("문제 설명")
                 .build();
-        problemRepository.save(problem);
+        return problem;
     }
 
     @DisplayName("대회 ID로 문제를 조회하면 섹션과 문제 순서대로 정렬되어 반환된다")
@@ -168,6 +177,36 @@ class ProblemRepositoryTest {
         assertThat(problemPage).isNotNull();
         assertThat(problemPage.getContent()).isEmpty();
         assertThat(problemPage.getTotalElements()).isEqualTo(0);
+    }
+
+    @DisplayName("대회 id와 문제 id로 대회 출제 문제를 단건 조회한다.")
+    @Test
+    void findContestProblemByContestIdAndProblemId(){
+        //given
+        String title = "단건 조회용 문제";
+        Section elementaryMiddle = Section.ELEMENTARY_MIDDLE;
+        ProblemType problemType = ProblemType.CONTEST;
+        int order = 3;
+        Problem problem = createProblem(
+                title,
+                contest,
+                elementaryMiddle,
+                order,
+                problemType
+        );
+        problemRepository.save(problem);
+
+        //when
+        Problem result = problemRepository.findContestProblemByContestIdAndProblemId(
+                problemType,
+                problem.getId(),
+                contest.getId()
+        ).get();
+
+        //then
+        assertThat(result).isNotNull()
+                .extracting("title","section","problemType","problemOrder")
+                .containsExactly(title,elementaryMiddle,problemType,order);
     }
 
 }
