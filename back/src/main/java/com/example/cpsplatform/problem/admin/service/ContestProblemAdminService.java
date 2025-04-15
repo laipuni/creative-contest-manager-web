@@ -9,6 +9,7 @@ import com.example.cpsplatform.file.repository.FileRepository;
 import com.example.cpsplatform.file.service.dto.FileSaveDto;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.file.storage.FileStorage;
+import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDetailResponse;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemListResponse;
 import com.example.cpsplatform.problem.admin.service.dto.AddProblemDto;
 import com.example.cpsplatform.problem.domain.Problem;
@@ -58,8 +59,18 @@ public class ContestProblemAdminService {
 
     public ContestProblemListResponse findContestProblemList(final Long contestId, final int page) {
         Pageable pageable = PageRequest.of(page,PROBLEM_SIZE);
+        log.debug("대회 ({})의 출제 문제(page ={}) 조회 시도",contestId,page);
         Page<Problem> result = problemRepository.findContestProblemsByContestAndProblemType(pageable, ProblemType.CONTEST, contestId);
         return ContestProblemListResponse.of(result);
+    }
+
+    public ContestProblemDetailResponse findContestProblemDetail(final Long contestId, final Long problemId) {
+        log.debug("대회 ({})의 출제 문제({})를 조회 시도",contestId,problemId);
+        Problem problem = problemRepository.findContestProblemByContestIdAndProblemId(ProblemType.CONTEST, contestId, problemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 문제는 존재하지 않습니다."));
+        log.debug("대회 ({})에 출제 문제({})의 파일 조회 시도",contestId,problemId);
+        List<File> files = fileRepository.findAllByProblemIdAndFileTypeAndNotDeleted(problemId, FileType.PROBLEM_REAL);
+        return ContestProblemDetailResponse.of(problem,files);
     }
 
     private Problem saveProblem(final AddProblemDto addProblemDto, final Contest contest) {

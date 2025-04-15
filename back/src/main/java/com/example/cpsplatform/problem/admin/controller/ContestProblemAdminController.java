@@ -2,6 +2,7 @@ package com.example.cpsplatform.problem.admin.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
+import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDetailResponse;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemListResponse;
 import com.example.cpsplatform.problem.admin.service.ContestProblemAdminService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,15 @@ public class ContestProblemAdminController {
             @RequestParam(value = "page",defaultValue = "0") int page){
         ContestProblemListResponse result = contestProblemAdminService.findContestProblemList(contestId, page);
         return ApiResponse.ok(result);
+    }
+
+    @AdminLog
+    @GetMapping("v1/contests/{contestId}/problems/{problemId}")
+    public ApiResponse<ContestProblemDetailResponse> getContestProblemDetail(
+            @PathVariable("contestId") Long contestId,
+            @PathVariable("problemId") Long problemId){
+        ContestProblemDetailResponse response = contestProblemAdminService.findContestProblemDetail(contestId,problemId);
+        return ApiResponse.ok(response);
     }
 
 }
