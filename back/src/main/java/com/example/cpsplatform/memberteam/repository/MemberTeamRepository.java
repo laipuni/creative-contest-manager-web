@@ -18,4 +18,11 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     @Modifying
     @Query("DELETE FROM MemberTeam mt WHERE mt.team = :team AND mt.member != :leader")
     void deleteAllByTeamExceptLeader(@Param("team") Team team, @Param("leader") Member leader);
+
+    @Query("select exists " +
+            "(select mt " +
+            "from MemberTeam mt " +
+            "where mt.member.loginId = :loginId " +
+            "and mt.team.contest.id = :contestId)")
+    boolean existsByContestIdAndLoginId(@Param("contestId") Long contestId, @Param("loginId") String loginId);
 }

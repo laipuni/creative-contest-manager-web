@@ -105,5 +105,9 @@ public class Contest extends BaseEntity {
         }
     }
 
+    public boolean isNotOngoing(final LocalDateTime now){
+        return now.isBefore(startTime) || now.isAfter(endTime);
+    }
+
 
 }
