@@ -1,0 +1,206 @@
+.pastTest-container {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.pastTest-top-container{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.pastTest-top-category-container{
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    gap: 20px;
+
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.pastTest-top-underline {
+    /* Line 4 */
+
+    width: 100%;
+    height: 0px;
+
+    border: 1px solid rgba(0, 0, 0, 0.43);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.pastTest-top-category {
+    /* Frame 41 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 15px;
+    gap: 10px;
+
+    width: fit-content;
+    height: fit-content;
+
+    background: #FFD95B;
+    border-radius: 50px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+
+    color: rgba(0, 0, 0, 0.97);
+
+}
+
+.pastTest-bot-container {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.pastTest-bot-title-container {
+    /* Frame 33 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 20px;
+    gap: 25px;
+    width: 96%;
+    height: fit-content;
+
+    background: rgba(0, 0, 0, 0.02);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.pastTest-bot-leftTitle {
+
+    width: 70%;
+    height: fit-content;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 0%;
+    text-align: center;
+    color: #000000;
+
+}
+
+.pastTest-bot-rightTitle {
+    width: 30%;
+    height: fit-content;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 0%;
+    text-align: center;
+    color: #000000;
+
+}
+
+.pastTest-verticalLine {
+    width: 0px;
+    height: 15px; /* 원하는 높이로 조절 */
+    border: 1px solid rgba(0, 0, 0, 0.43);
+
+}
+
+.pastTest-bot-quiz-container {
+    /* Frame 45 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+
+    width: 100%;
+    height: 62%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.pastTest-bot-file {
+    cursor: pointer;
+}
