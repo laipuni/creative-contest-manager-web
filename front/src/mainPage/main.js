@@ -65,7 +65,7 @@ const Main = () => {
                                         <img src={info} alt="info" className="bento-image"/>
                                     </div>
                                 </div>
-                                <div className="bento-bot-left-lower">
+                                <Link to='/test/pastTest' className="bento-bot-left-lower">
                                     <div className="bento-content-textbox" style={{width: '50%'}}>
                                         <p className="bento-content-title" style={{fontSize: 32}}>
                                             <span style={{color: '#3D2FFC', fontSize: 32}}>기출문제</span>&nbsp;풀기
@@ -78,7 +78,7 @@ const Main = () => {
                                     <div className="bento-image-container">
                                         <img src={practice} alt="practice" className="bento-image" style={{height: '50%'}}/>
                                     </div>
-                                </div>
+                                </Link>
                             </div>
                             <div className="bento-bot-right">
                                 <img src={big_logo} alt="big_logo" className="main-image"/>
