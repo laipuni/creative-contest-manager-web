@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import testLogo from "../../styles/images/solve_logo.png";
-import './pastTest.css'
-import '../../styles/pagination.css'
+import './pastTest.css';
+import '../../styles/pagination.css';
 
-// 예시 데이터: 파일명, 다운로드 URL, 작성 날짜 포함
+// 예시 데이터
 const exampleData = Array.from({ length: 23 }, (_, i) => ({
     id: i + 1,
     fileName: `file_${i + 1}.pdf`,
@@ -16,24 +16,15 @@ const exampleData = Array.from({ length: 23 }, (_, i) => ({
 
 const ITEMS_PER_PAGE = 10;
 
-// Pagination 컴포넌트
 function Pagination({ totalPages, currentPage, onPageChange }) {
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
+    const isDisabled = totalPages === 0;
+
     return (
         <div className="pagination">
-            <button
-                disabled={currentPage === 1}
-                onClick={() => onPageChange(1)}
-            >
-                «
-            </button>
-            <button
-                disabled={currentPage === 1}
-                onClick={() => onPageChange(currentPage - 1)}
-            >
-                ‹
-            </button>
+            <button disabled={isDisabled || currentPage === 1} onClick={() => onPageChange(1)}>«</button>
+            <button disabled={isDisabled || currentPage === 1} onClick={() => onPageChange(currentPage - 1)}>‹</button>
 
             {pages.map(page => (
                 <button
@@ -45,43 +36,55 @@ function Pagination({ totalPages, currentPage, onPageChange }) {
                 </button>
             ))}
 
-            <button
-                disabled={currentPage === totalPages}
-                onClick={() => onPageChange(currentPage + 1)}
-            >
-                ›
-            </button>
-            <button
-                disabled={currentPage === totalPages}
-                onClick={() => onPageChange(totalPages)}
-            >
-                »
-            </button>
+            <button disabled={isDisabled || currentPage === totalPages} onClick={() => onPageChange(currentPage + 1)}>›</button>
+            <button disabled={isDisabled || currentPage === totalPages} onClick={() => onPageChange(totalPages)}>»</button>
         </div>
     );
 }
 
+
 const PastTest = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(exampleData.length / ITEMS_PER_PAGE);
+    const [level, setLevel] = useState('초/중등');
+    const [testData, setTestData] = useState([]);
+    const [currentData, setCurrentData] = useState([]);
 
-    const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-    const currentData = exampleData.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+    //수준별 카테고리
+    useEffect(() => {
+        let filtered = [];
+        if (level === '초/중등') {
+            filtered = exampleData;
+        }
+        setTestData(filtered);
+        setCurrentPage(1);
+    }, [level]);
+
+    //카테고리로 데이터 변경되거나 페이지 이동
+    useEffect(() => {
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        setCurrentData(testData.slice(startIdx, startIdx + ITEMS_PER_PAGE));
+    }, [testData, currentPage]);
+
+    const totalPages = Math.ceil(testData.length / ITEMS_PER_PAGE);
+
     return (
         <div className="testInfo-page-container">
             <div className="testInfo-page-inner-container">
-                <MainHeader underbarWidth="95%"/>
+                <MainHeader underbarWidth="95%" />
                 <div className="testInfo-content-container">
-                    <Sidebar/>
+                    <Sidebar />
                     <div className="testInfo-main-container">
                         <CategoryLogo logoTitle={"기출문제 풀기"} imgSrc={testLogo} imageWidth='18%'
-                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'}/>
+                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'} />
                         <div className="pastTest-container">
                             <div className="pastTest-top-container">
                                 <div className="pastTest-top-category-container">
-                                    <div className="pastTest-top-category">초/중등</div>
-                                    <div className="pastTest-top-category">고등/일반</div>
-                                    <div className="pastTest-top-category">공통</div>
+                                    <div className="pastTest-top-category" style={{cursor: 'pointer'}}
+                                         onClick={() => setLevel('초/중등')}>초/중등</div>
+                                    <div className="pastTest-top-category" style={{cursor: 'pointer'}}
+                                         onClick={() => setLevel('고등/일반')}>고등/일반</div>
+                                    <div className="pastTest-top-category" style={{cursor: 'pointer'}}
+                                         onClick={() => setLevel('공통')}>공통</div>
                                 </div>
                                 <div className="pastTest-top-underline"></div>
                             </div>
@@ -113,11 +116,11 @@ const PastTest = () => {
                                 </div>
                                 <div className="pastTest-pagination-container">
                                     <div className="pastTest-pagination">
-                                        <Pagination
+                                        {totalPages !== 0 && <Pagination
                                             totalPages={totalPages}
                                             currentPage={currentPage}
                                             onPageChange={setCurrentPage}
-                                        />
+                                        />}
                                     </div>
                                 </div>
                             </div>
@@ -126,6 +129,7 @@ const PastTest = () => {
                 </div>
             </div>
         </div>
-    )
+    );
 }
+
 export default PastTest;
