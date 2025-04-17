@@ -206,4 +206,130 @@ class ContestTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
     }
+
+
+    @DisplayName("현재 시간이 대회 시작 시간 이전인 경우 true를 반환한다")
+    @Test
+    void isNotOngoingWithBeforeStartTime() {
+        //given
+        LocalDateTime now = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 2, 10, 0);
+        LocalDateTime endTime = LocalDateTime.of(2023, 1, 3, 10, 0);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .description("대회 설명")
+                .season(1)
+                .registrationStartAt(now.minusDays(5))
+                .registrationEndAt(now.minusDays(2))
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        //when
+        boolean result = contest.isNotOngoing(now);
+
+        //then
+        assertThat(result).isTrue();
+    }
+
+    @DisplayName("현재 시간이 대회 종료 시간 이후인 경우 true를 반환한다")
+    @Test
+    void isNotOngoingWithAfterEndTime() {
+        //given
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime endTime = LocalDateTime.of(2023, 1, 3, 10, 0);
+        LocalDateTime now = LocalDateTime.of(2023, 1, 4, 10, 0);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .description("대회 설명")
+                .season(1)
+                .registrationStartAt(startTime.minusDays(5))
+                .registrationEndAt(startTime.minusDays(2))
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        //when
+        boolean result = contest.isNotOngoing(now);
+
+        //then
+        assertThat(result).isTrue();
+    }
+
+    @DisplayName("현재 시간이 대회 시작 시간과 종료 시간 사이인 경우 false를 반환한다")
+    @Test
+    void isNotOngoingWithBetweenStartAndEndTime() {
+        //given
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime now = LocalDateTime.of(2023, 1, 2, 10, 0);
+        LocalDateTime endTime = LocalDateTime.of(2023, 1, 3, 10, 0);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .description("대회 설명")
+                .season(1)
+                .registrationStartAt(startTime.minusDays(5))
+                .registrationEndAt(startTime.minusDays(2))
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        //when
+        boolean result = contest.isNotOngoing(now);
+
+        //then
+        assertThat(result).isFalse();
+    }
+
+    @DisplayName("현재 시간이 대회 시작 시간과 정확히 같은 경우 false를 반환한다")
+    @Test
+    void isNotOngoingWithExactlyStartTime() {
+        //given
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime now = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime endTime = LocalDateTime.of(2023, 1, 3, 10, 0);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .description("대회 설명")
+                .season(1)
+                .registrationStartAt(startTime.minusDays(5))
+                .registrationEndAt(startTime.minusDays(2))
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        //when
+        boolean result = contest.isNotOngoing(now);
+
+        //then
+        assertThat(result).isFalse();
+    }
+
+    @DisplayName("현재 시간이 대회 종료 시간과 정확히 같은 경우 false를 반환한다")
+    @Test
+    void isNotOngoingWithExactlyEndTime() {
+        //given
+        LocalDateTime startTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime endTime = LocalDateTime.of(2023, 1, 3, 10, 0);
+        LocalDateTime now = LocalDateTime.of(2023, 1, 3, 10, 0);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .description("대회 설명")
+                .season(1)
+                .registrationStartAt(startTime.minusDays(5))
+                .registrationEndAt(startTime.minusDays(2))
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        //when
+        boolean result = contest.isNotOngoing(now);
+
+        //then
+        assertThat(result).isFalse();
+    }
 }
