@@ -204,3 +204,54 @@
 .pastTest-bot-file {
     cursor: pointer;
 }
+
+.pastTest-pagination-container {
+    /* Frame 46 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0px;
+
+    width: 100%;
+    height: fit-content;
+
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.pastTest-pagination {
+    /* pagination */
+
+    width: 389px;
+    height: 52px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.pastTest-list {
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.pastTest-list li {
+    margin-bottom: 8px;
+}
+
+.pastTest-file-container {
+    gap: 5px;
+    display: flex;
+    width: 160%;
+    flex-direction: row;
+}
