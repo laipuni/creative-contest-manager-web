@@ -294,6 +294,7 @@
     /* Frame */
 
     /* Auto layout */
+    text-decoration: none;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
