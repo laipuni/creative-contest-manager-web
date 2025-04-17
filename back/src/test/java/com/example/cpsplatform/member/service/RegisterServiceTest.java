@@ -53,7 +53,7 @@ class RegisterServiceTest {
         //given
         String loginId = "loginId";
         String password = "password";
-        String confirmPassword = "password";
+        String confirmPassword = "confirmPassword";
         String name = "name";
         LocalDate birth = LocalDate.of(2000,1,1);
         Gender gender = Gender.MAN;
