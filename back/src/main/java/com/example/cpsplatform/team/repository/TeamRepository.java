@@ -1,5 +1,7 @@
 package com.example.cpsplatform.team.repository;
 
+import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.team.domain.Team;
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +17,9 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
             "join mt.member m " + // mt.member.id = m.id 자동으로 쿼리 날릴때 넣어줌
             "where m.loginId = :loginId")
     List<Team> findTeamByMemberLoginId(@Param("loginId") String loginId);
+
+    @Query("SELECT t FROM MemberTeam mt " +
+            "JOIN mt.team t " +
+            "WHERE mt.member.loginId = :loginId AND t.contest.id = :contestId")
+    Optional<Team> findTeamByMemberAndContest(@Param("loginId") String loginId, @Param("contestId") Long contestId);
 }

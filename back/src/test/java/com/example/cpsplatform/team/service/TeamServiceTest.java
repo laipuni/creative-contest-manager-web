@@ -1,6 +1,6 @@
 package com.example.cpsplatform.team.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -18,6 +18,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class TeamServiceTest {
     private MemberRepository memberRepository = mock(MemberRepository.class);
@@ -148,4 +150,37 @@ class TeamServiceTest {
         assertThat(result.get(1).getTeamName()).isEqualTo("two");
     }
 
+    @DisplayName("특정 대회에 자신이 참여한 팀을 단건 조회할 수 있다.")
+    @Test
+    void getMyTeamInfoByContest(){
+        //given
+        String loginId = "yi";
+        Member member = Member.builder().loginId(loginId).build();
+
+        Long contestId = 5L;
+        Contest contest = Contest.builder().build();
+        Team team = Team.builder().name("이팀").contest(contest).leader(member).build();
+
+        ReflectionTestUtils.setField(contest, "id", contestId);
+        ReflectionTestUtils.setField(team, "id", 1L);
+
+        List<MemberTeam> memberTeams = List.of(
+                MemberTeam.of(member, team),
+                MemberTeam.of(Member.builder().loginId("kim").build(), team)
+        );
+
+        when(memberRepository.findMemberByLoginId(loginId)).thenReturn(Optional.of(member));
+        when(contestRepository.findById(contestId)).thenReturn(Optional.of(contest));
+        when(teamRepository.findTeamByMemberAndContest(loginId,contestId)).thenReturn(Optional.of(team));
+        when(memberTeamRepository.findAllByTeamId(team.getId())).thenReturn(memberTeams);
+
+        //when
+        MyTeamInfoByContestDto myTeamInfoByContestDto = teamService.getMyTeamInfoByContest(contestId, loginId);
+
+        //then
+        assertThat(myTeamInfoByContestDto.getTeamName()).isEqualTo("이팀");
+        assertThat(myTeamInfoByContestDto.getLeader().getLoginId()).isEqualTo("yi");
+        assertThat(myTeamInfoByContestDto.getTeamId()).isEqualTo(1L);
+        assertThat(myTeamInfoByContestDto.getMemberIds()).contains("yi","kim");
+    }
 }

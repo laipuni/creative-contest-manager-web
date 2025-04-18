@@ -8,11 +8,14 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -73,6 +76,27 @@ public class TeamService {
                 .map(team -> new MyTeamInfoDto(
                         team.getId(), team.getName(), team.getLeader().getLoginId(), team.getCreatedAt()
                 )).toList();
+    }
+
+    public MyTeamInfoByContestDto getMyTeamInfoByContest(Long contestId, String loginId){
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(()->new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
+        Member member = memberRepository.findMemberByLoginId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
+        Team team = teamRepository.findTeamByMemberAndContest(member.getLoginId(),contest.getId())
+                .orElseThrow(()->new IllegalArgumentException("해당하는 팀이 존재하지 않습니다."));
+
+        List<MemberTeam> memberTeams = memberTeamRepository.findAllByTeamId(team.getId());
+        List<String> memberIds = memberTeams.stream()
+                .map(mt -> mt.getMember().getLoginId())
+                .toList(); //본인이 속한 팀의 멤버들 리스트
+
+        return new MyTeamInfoByContestDto(
+                team.getId(),
+                team.getName(),
+                team.getLeader(),
+                memberIds,
+                team.getCreatedAt());
     }
 
     private void addMembersToTeam(List<String> memberIds, Team team) {
