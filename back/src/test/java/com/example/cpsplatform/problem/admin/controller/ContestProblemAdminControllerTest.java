@@ -1,5 +1,6 @@
 package com.example.cpsplatform.problem.admin.controller;
 
+import com.example.cpsplatform.problem.admin.controller.request.UpdateContestProblemRequest;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDetailResponse;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDto;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemFileDto;
@@ -7,21 +8,26 @@ import com.example.cpsplatform.problem.admin.controller.response.ContestProblemL
 import com.example.cpsplatform.problem.admin.service.ContestProblemAdminService;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +40,9 @@ class ContestProblemAdminControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @WithMockUser(roles = "ADMIN")
     @DisplayName("대회 기출 문제 목록 조회가 성공적으로 이루어져야 한다")
@@ -184,5 +193,157 @@ class ContestProblemAdminControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회 기출 문제 수정이 성공적으로 이루어져야 한다")
+    @Test
+    void updateContestProblemSuccess() throws Exception {
+        //given
+        Long contestId = 1L;
+        Long problemId = 2L;
+
+        UpdateContestProblemRequest request = new UpdateContestProblemRequest(
+                "수정된 문제 제목",
+                Section.HIGH_NORMAL,
+                "수정된 문제 내용",
+                3,
+                List.of(1L, 2L)
+        );
+
+        MockMultipartFile requestFile = new MockMultipartFile(
+                "request",
+                "",
+                "application/json",
+                objectMapper.writeValueAsString(request).getBytes()
+        );
+
+        MockMultipartFile testFile = new MockMultipartFile(
+                "multipartFiles",
+                "test-file.pdf",
+                "application/pdf",
+                "test content".getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(multipart(HttpMethod.PUT,"/api/admin/contests/{contestId}/problems/{problemId}", contestId, problemId)
+                        .file(requestFile)
+                        .file(testFile)
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200));
+
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회 기출 문제 수정 시 제목이 비어있는 경우 예외를 반환한다")
+    @Test
+    void updateContestProblemFailWithEmptyTitle() throws Exception {
+        //given
+        Long contestId = 1L;
+        Long problemId = 2L;
+
+        UpdateContestProblemRequest request = new UpdateContestProblemRequest(
+                "",  // 빈 제목
+                Section.HIGH_NORMAL,
+                "수정된 문제 내용",
+                3,
+                List.of(1L, 2L)
+        );
+
+        MockMultipartFile requestFile = new MockMultipartFile(
+                "request",
+                "",
+                "application/json",
+                objectMapper.writeValueAsString(request).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(multipart(HttpMethod.PUT,"/api/admin/contests/{contestId}/problems/{problemId}", contestId, problemId)
+                        .file(requestFile)
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("등록할 문제의 제목은 필수입니다."));
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회 기출 문제 수정 시 섹션이 null인 경우 예외를 반환한다")
+    @Test
+    void updateContestProblemFailWithNullSection() throws Exception {
+        //given
+        Long contestId = 1L;
+        Long problemId = 2L;
+
+        UpdateContestProblemRequest request = new UpdateContestProblemRequest(
+                "수정된 문제 제목",
+                null,  // null 섹션
+                "수정된 문제 내용",
+                3,
+                List.of(1L, 2L)
+        );
+
+        MockMultipartFile requestFile = new MockMultipartFile(
+                "request",
+                "",
+                "application/json",
+                objectMapper.writeValueAsString(request).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(multipart(HttpMethod.PUT,"/api/admin/contests/{contestId}/problems/{problemId}", contestId, problemId)
+                        .file(requestFile)
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("등록할 문제의 섹션은 필수입니다."));
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회 기출 문제 수정 시 문제 번호가 0 이하인 경우 예외를 반환한다")
+    @Test
+    void updateContestProblemFailWithInvalidProblemOrder() throws Exception {
+        //given
+        Long contestId = 1L;
+        Long problemId = 2L;
+
+        UpdateContestProblemRequest request = new UpdateContestProblemRequest(
+                "수정된 문제 제목",
+                Section.HIGH_NORMAL,
+                "수정된 문제 내용",
+                0,  //유효하지 않은 문제 번호
+                List.of(1L, 2L)
+        );
+
+        MockMultipartFile requestFile = new MockMultipartFile(
+                "request",
+                "",
+                "application/json",
+                objectMapper.writeValueAsString(request).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(multipart(HttpMethod.PUT,"/api/admin/contests/{contestId}/problems/{problemId}", contestId, problemId)
+                        .file(requestFile)
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("출제할 문제의 번호는 0보다 큰 수여야 합니다."));
     }
 }

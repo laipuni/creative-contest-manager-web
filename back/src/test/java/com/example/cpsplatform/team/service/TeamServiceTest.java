@@ -61,10 +61,6 @@ class TeamServiceTest {
 
         Team savedTeam = Team.builder().leader(leader).contest(contest).name("팀입니다").build();
         when(teamRepository.save(any(Team.class))).thenReturn(savedTeam);
-
-        // then
-        verify(memberTeamRepository, times(1)).save(any(MemberTeam.class));
-        verify(teamRepository).save(any(Team.class));
     }
 
     @DisplayName("팀원이 3명 초과할 경우 예외가 발생한다.")

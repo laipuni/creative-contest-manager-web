@@ -38,14 +38,10 @@ class ProblemRepositoryTest {
 
     private Contest contest; // 테스트에서 사용할 contest
 
-    @AfterEach
-    void tearDown(){
-        problemRepository.deleteAllInBatch();
-        contestRepository.deleteAllInBatch();
-    }
-
     @BeforeEach
     void tearUp() {
+        problemRepository.deleteAllInBatch();
+        contestRepository.deleteAllInBatch();
         //테스트용 Contest 생성
         contest = Contest.builder()
                 .title("테스트 대회")
