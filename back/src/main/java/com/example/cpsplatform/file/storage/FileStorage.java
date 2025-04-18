@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface FileStorage {
 
-    public void upload(String path, FileSources fileSource);
-
+    public void upload(final String path, FileSources fileSource);
+    public void delete(final String path, final String uploadFileName);
 }

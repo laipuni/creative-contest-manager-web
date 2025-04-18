@@ -2,11 +2,16 @@ package com.example.cpsplatform.problem.domain;
 
 import com.example.cpsplatform.BaseEntity;
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.file.domain.File;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -40,6 +45,9 @@ public class Problem extends BaseEntity {
 
     @Column(name = "problem_order")
     private Integer problemOrder;
+
+    @OneToMany(mappedBy = "problem",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<File> files = new HashSet<>();
 
     @Builder
     private Problem(final String title, final Contest contest, final Section section,
@@ -79,4 +87,20 @@ public class Problem extends BaseEntity {
     }
 
 
+    public void addFile(final File file) {
+        files.add(file);
+    }
+
+    public void removeFile(final File file) {
+        files.remove(file);
+        file.setProblem(null);
+    }
+
+    public void updateContestProblem(final String title, final Section section,
+                       final String content, final Integer problemOrder){
+        this.title = StringUtils.hasText(title) ? title : this.title;
+        this.section = section != null ? section : this.section;
+        this.content = content;
+        this.problemOrder = problemOrder != null ? problemOrder : this.problemOrder;
+    }
 }
