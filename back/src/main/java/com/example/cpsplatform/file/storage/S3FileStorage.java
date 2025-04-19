@@ -27,4 +27,9 @@ public class S3FileStorage implements FileStorage {
             );
         });
     }
+
+    @Override
+    public void delete(final String path, final String uploadFileName) {
+        s3Service.delete(path + uploadFileName);
+    }
 }

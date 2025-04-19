@@ -2,6 +2,10 @@ package com.example.cpsplatform.contest.admin;
 
 import com.example.cpsplatform.admin.aop.AdminLogProxy;
 import com.example.cpsplatform.auth.service.AuthService;
+import com.example.cpsplatform.contest.admin.controller.ContestAdminController;
+import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
+import com.example.cpsplatform.contest.admin.controller.response.ContestListDto;
+import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
@@ -12,6 +16,7 @@ import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -23,8 +28,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,11 +61,126 @@ class ContestAdminControllerTest {
     @MockitoBean
     ContestAdminService contestAdminService;
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 대회 목록을 조회하면 해당 페이지의 대회 목록이 반환된다")
+    @Test
+    void searchContestList() throws Exception {
+        // given
+        int page = 0;
+        List<ContestListDto> contestList = List.of(
+                new ContestListDto(1L, "테스트 대회 1", 16,
+                        LocalDateTime.now().minusDays(5), LocalDateTime.now().minusDays(1),
+                        LocalDateTime.now(), LocalDateTime.now().plusDays(1)),
+                new ContestListDto(2L, "테스트 대회 2", 17,
+                        LocalDateTime.now().minusDays(5), LocalDateTime.now().minusDays(1),
+                        LocalDateTime.now(), LocalDateTime.now().plusDays(1))
+        );
+
+        int totalPage = 3;
+        int firstPage = 0;
+        int lastPage = 2;
+        int size = 2;
+        ContestListResponse response = ContestListResponse.builder()
+                .page(page)
+                .totalPage(totalPage)
+                .firstPage(firstPage)
+                .lastPage(lastPage)
+                .size(size)
+                .problemList(contestList)
+                .build();
+
+        Mockito.when(contestAdminService.searchContestList(page))
+                        .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests")
+                        .param("page", String.valueOf(page)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.page").value(0))
+                .andExpect(jsonPath("$.data.totalPage").value(totalPage))
+                .andExpect(jsonPath("$.data.firstPage").value(firstPage))
+                .andExpect(jsonPath("$.data.lastPage").value(lastPage))
+                .andExpect(jsonPath("$.data.size").value(size))
+                .andExpect(jsonPath("$.data.problemList").isArray())
+                .andExpect(jsonPath("$.data.problemList[0].contestId").value(1L))
+                .andExpect(jsonPath("$.data.problemList[0].title").value("테스트 대회 1"))
+                .andExpect(jsonPath("$.data.problemList[0].season").value(16))
+                .andExpect(jsonPath("$.data.problemList[1].contestId").value(2L))
+                .andExpect(jsonPath("$.data.problemList[1].title").value("테스트 대회 2"))
+                .andDo(print());
+    }
+
+    @WithMockUser(roles = "USER")
+    @DisplayName("ADMIN 권한이 없는 사용자는 접근할 수 없다")
+    @Test
+    void searchContestListUnauthorized() throws Exception {
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 특정 대회의 상세 정보를 조회할 수 있다")
+    @Test
+    void findContestDetail() throws Exception {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        String title = "16회 창의력 경진 대회";
+        String description = "대회 설명입니다";
+        int season = 16;
+        ContestDetailResponse response = ContestDetailResponse.builder()
+                .contestId(1L)
+                .title(title)
+                .description(description)
+                .season(season)
+                .registrationStartAt(now.minusDays(5))
+                .registrationEndAt(now.minusDays(1))
+                .startTime(now)
+                .endTime(now.plusDays(1))
+                .createdAt(now.minusDays(10))
+                .updatedAt(now.minusDays(7))
+                .build();
+        Long contestId = 1L;
+        Mockito.when(contestAdminService.findContestDetail(contestId)).thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/{contestId}", contestId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.contestId").value(1L))
+                .andExpect(jsonPath("$.data.title").value(title))
+                .andExpect(jsonPath("$.data.description").value(description))
+                .andExpect(jsonPath("$.data.season").value(season))
+                .andExpect(jsonPath("$.data.registrationStartAt").exists())
+                .andExpect(jsonPath("$.data.registrationEndAt").exists())
+                .andExpect(jsonPath("$.data.startTime").exists())
+                .andExpect(jsonPath("$.data.endTime").exists())
+                .andExpect(jsonPath("$.data.createdAt").exists())
+                .andExpect(jsonPath("$.data.updatedAt").exists())
+                .andDo(print());
+    }
+
+
+    @Test
+    @DisplayName("인증되지 않은 사용자는 접근할 수 없다")
+    void searchContestListUnauthenticated() throws Exception {
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
     @WithMockUser(roles = {"ADMIN"})
     @DisplayName("대회 생성 요청 성공 테스트")
     @Test
     void createContestSuccess() throws Exception {
-        // given
+        //given
         LocalDateTime now = LocalDateTime.now();
         CreateContestRequest request = new CreateContestRequest(
                 "테스트 대회",
@@ -72,7 +194,8 @@ class ContestAdminControllerTest {
 
         String content = objectMapper.writeValueAsString(request);
 
-        // when & then
+        //when
+        //then
         mockMvc.perform(
                         MockMvcRequestBuilders.post("/api/admin/contests")
                                 .with(csrf())

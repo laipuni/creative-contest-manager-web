@@ -5,6 +5,7 @@ import com.example.cpsplatform.file.service.dto.FileSaveDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FileSources {
 
-    private List<FileSource> fileSourceList;
+    private List<FileSource> fileSourceList = new ArrayList<>();
 
     public static FileSources of(List<FileSource> fileSourceList){
         return FileSources.builder()
@@ -28,6 +29,9 @@ public class FileSources {
         return Collections.unmodifiableList(fileSourceList);
     }
 
+    public boolean hasFileSource(){
+        return !fileSourceList.isEmpty();
+    }
 
     public List<FileSaveDto> toFileSaveDtos(String path, FileType fileType) {
         return fileSourceList.stream()

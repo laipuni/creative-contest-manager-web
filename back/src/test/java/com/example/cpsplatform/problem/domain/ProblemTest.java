@@ -32,6 +32,7 @@ class ProblemTest {
 
     @BeforeEach
     void tearUp(){
+        problemRepository.deleteAllInBatch();
         contestRepository.deleteAllInBatch();
     }
 

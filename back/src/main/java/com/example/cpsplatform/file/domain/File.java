@@ -70,7 +70,8 @@ public class File extends BaseEntity {
             //todo 엔티티 생성 위반 예외 만들기(500 or 400)
             throw new IllegalArgumentException("해당 대회 문제 파일은 대회 정보가 필수입니다.");
         }
-        return File.builder()
+
+        File file = File.builder()
                 .name(name)
                 .originalName(originalName)
                 .extension(extension)
@@ -80,7 +81,34 @@ public class File extends BaseEntity {
                 .fileType(fileType)
                 .problem(problem)
                 .build();
+        problem.addFile(file);
+
+        return file;
     }
 
+    public void setProblem(Problem problem){
+        this.problem = problem;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        File that = (File) o;
+
+        //둘 다 id가 있을 경우만 비교
+        if (this.id != null && that.id != null) {
+            return this.id.equals(that.id);
+        }
+
+        //둘 중 하나라도 id가 없으면 객체 동일성으로 판단
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode(); // Hibernate 권장 방식
+    }
 
 }
