@@ -12,6 +12,8 @@ import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
+import com.example.cpsplatform.teamnumber.domain.TeamNumber;
+import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,13 +33,22 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final MemberTeamRepository memberTeamRepository;
     private final ContestRepository contestRepository;
+    private final TeamNumberRepository teamNumberRepository;
 
     @Transactional
     public Long createTeam(String leaderId, TeamCreateDto createDto){
         Member leader = memberRepository.findMemberByLoginId(leaderId)
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
 
-        Team team = buildTeam(createDto, leader);
+        Contest contest = contestRepository.findById(createDto.getContestId())
+                .orElseThrow(()->new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
+
+        TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
+                .orElseGet(()->teamNumberRepository.save(TeamNumber.of(contest, 0)));
+
+        String teamIdNumber = teamNumber.getNextTeamNumber();
+        Team team = buildTeam(createDto, leader, teamIdNumber);
+
         teamRepository.save(team);
         memberTeamRepository.save(MemberTeam.of(leader, team));
 
@@ -110,12 +121,13 @@ public class TeamService {
         memberTeamRepository.saveAll(memberTeams);
     }
 
-    private Team buildTeam(TeamCreateDto createDto, Member leader) {
+    private Team buildTeam(TeamCreateDto createDto, Member leader, String teamIdNumber) {
         return Team.of(
                 createDto.getTeamName(),
                 false,
                 leader,
-                getContestById(createDto.getContestId()));
+                getContestById(createDto.getContestId()),
+                teamIdNumber);
     }
 
     private void validateTeamSize(List<String> memberIds) {

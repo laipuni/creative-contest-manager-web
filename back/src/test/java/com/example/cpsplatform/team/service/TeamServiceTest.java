@@ -22,11 +22,14 @@ import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
+import com.example.cpsplatform.teamnumber.domain.TeamNumber;
+import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class TeamServiceTest {
@@ -34,12 +37,13 @@ class TeamServiceTest {
     private TeamRepository teamRepository = mock(TeamRepository.class);
     private MemberTeamRepository memberTeamRepository = mock(MemberTeamRepository.class);
     private ContestRepository contestRepository = mock(ContestRepository.class);
+    private TeamNumberRepository teamNumberRepository = mock(TeamNumberRepository.class);
 
     private TeamService teamService;
 
     @BeforeEach
     void setUp() {
-        teamService = new TeamService(memberRepository, teamRepository, memberTeamRepository, contestRepository);
+        teamService = new TeamService(memberRepository, teamRepository, memberTeamRepository, contestRepository, teamNumberRepository);
     }
 
     @DisplayName("팀장과 멤버가 주어질 경우 팀 생성이 정상적으로 동작한다.")
@@ -55,14 +59,31 @@ class TeamServiceTest {
 
         TeamCreateDto dto = new TeamCreateDto("팀입니다", contestId, List.of("one", "two"));
 
+        TeamNumber teamNumber = TeamNumber.builder().contest(contest).lastTeamNumber(2).build();
+
         when(memberRepository.findMemberByLoginId("yi")).thenReturn(Optional.of(leader));
         when(memberRepository.findMemberByLoginId("one")).thenReturn(Optional.of(member1));
         when(memberRepository.findMemberByLoginId("two")).thenReturn(Optional.of(member2));
         when(contestRepository.findById(contestId)).thenReturn(Optional.of(contest));
         when(memberTeamRepository.existsByMember(any())).thenReturn(false);
+        when(teamNumberRepository.getLockedNumberForContest(contestId)).thenReturn(Optional.of(teamNumber));
 
-        Team savedTeam = Team.builder().leader(leader).contest(contest).name("팀입니다").build();
-        when(teamRepository.save(any(Team.class))).thenReturn(savedTeam);
+        // when
+        Long createdTeamId = teamService.createTeam(leaderId, dto);
+
+        // then
+        verify(teamNumberRepository).getLockedNumberForContest(contestId);
+
+        ArgumentCaptor<Team> teamCaptor = ArgumentCaptor.forClass(Team.class);
+        verify(teamRepository).save(teamCaptor.capture());
+        Team savedTeam = teamCaptor.getValue();
+
+        //팀 번호가 003인지 확인
+        assertEquals("003", savedTeam.getTeamNumber());
+        //팀 생성 반환 확인
+        assertEquals("팀입니다", savedTeam.getName());
+        assertEquals(contest, savedTeam.getContest());
+        assertEquals(leader, savedTeam.getLeader());
     }
 
     @DisplayName("팀원이 3명 초과할 경우 예외가 발생한다.")

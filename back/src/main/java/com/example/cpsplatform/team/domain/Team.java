@@ -14,6 +14,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,6 +24,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"contest_id", "team_number"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team extends BaseEntity {
     @Id
@@ -42,20 +45,25 @@ public class Team extends BaseEntity {
     @JoinColumn(name = "contest_id", nullable = false)
     private Contest contest;
 
+    @Column(name = "team_number", nullable = false)
+    private String teamNumber;
+
     @Builder
-    private Team(final String name, final Boolean winner, final Member leader, final Contest contest){
+    private Team(final String name, final Boolean winner, final Member leader, final Contest contest, final String teamNumber){
         this.name = name;
         this.winner = winner;
         this.leader = leader;
         this.contest = contest;
+        this.teamNumber = teamNumber;
     }
 
-    public static Team of(final String name, final Boolean winner, final Member leader, final Contest contest){
+    public static Team of(final String name, final Boolean winner, final Member leader, final Contest contest, final String teamNumber){
         return Team.builder()
                 .name(name)
                 .winner(winner)
                 .leader(leader)
                 .contest(contest)
+                .teamNumber(teamNumber)
                 .build();
     }
 
