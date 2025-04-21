@@ -4,6 +4,7 @@ import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
+import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
@@ -64,5 +65,13 @@ public class ContestAdminController {
     public ApiResponse<Object> deleteContest(@Valid @RequestBody DeleteContestRequest request){
         contestAdminService.deleteContest(request.toContestDeleteDto());
         return ApiResponse.ok(null);
+    }
+
+    @AdminLog
+    @GetMapping("/{contestId}/teams")
+    public ApiResponse<TeamListByContestResponse> searchTeamListByContest(@PathVariable("contestId")Long contestId,
+                                                                          @RequestParam(value = "page",defaultValue = "0") int page){
+        TeamListByContestResponse teamListResponse = contestAdminService.searchTeamListByContest(contestId, page);
+        return ApiResponse.ok(teamListResponse);
     }
 }

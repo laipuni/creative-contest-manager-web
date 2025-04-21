@@ -3,11 +3,15 @@ package com.example.cpsplatform.contest.admin.service;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
+import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestDto;
+import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
-import com.example.cpsplatform.problem.domain.Problem;
+import com.example.cpsplatform.team.domain.Team;
+import com.example.cpsplatform.team.repository.TeamRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +29,7 @@ public class ContestAdminService {
     public static final int CONTEST_PAGE_SIZE = 5;
 
     private final ContestRepository contestRepository;
+    private final TeamRepository teamRepository;
 
     @Transactional
     public void createContest(ContestCreateDto createDto){
@@ -63,5 +68,13 @@ public class ContestAdminService {
         Contest contest = contestRepository.findById(contestId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
         return ContestDetailResponse.of(contest);
+    }
+
+    public TeamListByContestResponse searchTeamListByContest(final Long contestId, final int page){
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
+        Pageable pageable = PageRequest.of(page,CONTEST_PAGE_SIZE);
+        Page<Team> teamList = teamRepository.findTeamListByContest(contest, pageable);
+        return TeamListByContestResponse.of(teamList);
     }
 }

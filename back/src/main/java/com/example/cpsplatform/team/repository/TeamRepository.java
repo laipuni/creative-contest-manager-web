@@ -5,6 +5,8 @@ import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.team.domain.Team;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +24,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
             "JOIN mt.team t " +
             "WHERE mt.member.loginId = :loginId AND t.contest.id = :contestId")
     Optional<Team> findTeamByMemberAndContest(@Param("loginId") String loginId, @Param("contestId") Long contestId);
+
+    @EntityGraph(attributePaths = {"leader"})
+    Page<Team> findTeamListByContest(Contest contest, Pageable pageable);
 }
