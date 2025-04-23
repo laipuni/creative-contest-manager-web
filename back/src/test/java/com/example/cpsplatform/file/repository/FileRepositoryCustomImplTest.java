@@ -159,4 +159,100 @@ class FileRepositoryCustomImplTest {
                 );
     }
 
+    @DisplayName("대회에 제출된 답안지들의 파일 id들을 조회한다.")
+    @Test
+    void findFileIdsByContestIdInTeamSolve(){
+        //given
+        Contest contest = Contest.builder()
+                .title("테스트 대회 2")
+                .description("테스트 대회 설명 2")
+                .season(17)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().minusDays(1))
+                .startTime(now())
+                .endTime(now().plusDays(1))
+                .build();
+
+        contestRepository.save(contest);
+
+        Problem commonProblem = Problem.builder()
+                .title("테스트 공통 문제")
+                .contest(contest)
+                .section(Section.COMMON)
+                .problemOrder(1)
+                .problemType(ProblemType.CONTEST)
+                .content("문제 설명")
+                .build();
+
+        Problem highNormalProblem = Problem.builder()
+                .title("테스트 고등-일반 문제 제목")
+                .contest(contest)
+                .section(Section.HIGH_NORMAL)
+                .problemOrder(1)
+                .problemType(ProblemType.CONTEST)
+                .content("문제 설명")
+                .build();
+
+        problemRepository.saveAll(List.of(commonProblem, highNormalProblem));
+
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member = Member.builder()
+                .loginId("loginId")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        memberRepository.save(member);
+
+        Team team = Team.builder().name("xx팀").winner(false).leader(member).contest(contest).build();
+        teamRepository.save(team);
+
+        TeamSolve teamSolve = TeamSolve.builder().team(team).problem(highNormalProblem).build();
+        teamSolveRepository.save(teamSolve);
+
+        File file1 = File.builder()
+                .problem(highNormalProblem)
+                .name("문제1_1.pdf")
+                .originalName("문제1_1.pdf")
+                .fileType(FileType.PROBLEM_REAL)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .extension(FileExtension.PDF)
+                .size(100L)
+                .teamSolve(teamSolve)
+                .path("/contest/16회/일반/1번")
+                .build();
+
+        File file2 = File.builder()
+                .problem(commonProblem)
+                .name("문제2_1.jpg")
+                .originalName("문제2_1.jpg")
+                .fileType(FileType.PROBLEM_REAL)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .extension(FileExtension.PDF)
+                .size(200L)
+                .teamSolve(teamSolve)
+                .path("/contest/16회/일반/2번")
+                .build();
+
+        List<File> files = fileRepository.saveAll(List.of(file1, file2));
+
+
+        //when
+        List<Long> result = fileRepository.findFileIdsByContestIdInTeamSolve(contest.getId());
+
+        //then
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0)).isEqualTo(file1.getId());
+        assertThat(result.get(1)).isEqualTo(file2.getId());
+
+    }
+
 }
