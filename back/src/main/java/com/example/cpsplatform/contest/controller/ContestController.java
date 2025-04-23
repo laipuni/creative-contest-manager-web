@@ -3,7 +3,6 @@ package com.example.cpsplatform.contest.controller;
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.contest.controller.service.ContestJoinService;
 import com.example.cpsplatform.security.domain.SecurityMember;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,7 @@ public class ContestController {
             @PathVariable("contestId") Long contestId,
             @AuthenticationPrincipal SecurityMember securityMember
             ){
-        contestJoinService.join(contestId,securityMember.getUsername(), LocalDateTime.now());
+        contestJoinService.validateContestParticipation(contestId,securityMember.getUsername(), LocalDateTime.now());
         return ApiResponse.ok(null);
     }
 
