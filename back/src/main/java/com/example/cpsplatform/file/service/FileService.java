@@ -17,4 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileService {
 
+    private final FileRepository fileRepository;
+
+    public List<Long> getTeamSolveFileIdsByContestId(final Long contestId) {
+        return fileRepository.findFileIdsByContestIdInTeamSolve(contestId);
+    }
 }

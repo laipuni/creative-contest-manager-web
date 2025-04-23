@@ -45,4 +45,15 @@ public class FileRepositoryCustomImpl implements FileRepositoryCustom{
                 .where(file.id.in(fileIds), file.deleted.isFalse())
                 .fetch();
     }
+
+    @Override
+    public List<Long> findFileIdsByContestIdInTeamSolve(final Long contestId) {
+        return queryFactory.select(file.id)
+                .from(file)
+                .join(file.teamSolve, teamSolve)
+                .join(teamSolve.team, team)
+                .join(team.contest, contest)
+                .where(contest.id.eq(contestId))
+                .fetch();
+    }
 }
