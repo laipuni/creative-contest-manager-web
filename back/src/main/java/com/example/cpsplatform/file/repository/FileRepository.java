@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FileRepository extends JpaRepository<File,Long> {
+public interface FileRepository extends JpaRepository<File,Long>, FileRepositoryCustom {
 
     //관리자 용, 기출 문제 전용 파일 조회 쿼리
     @Query("select f from File f where f.problem.id = :problemId AND f.fileType = :fileType AND f.deleted is FALSE")
