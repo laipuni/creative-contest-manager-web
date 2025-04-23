@@ -1,14 +1,18 @@
 package com.example.cpsplatform.file.admin;
 
+import com.example.cpsplatform.auth.service.RegisterService;
 import com.example.cpsplatform.file.service.FileService;
 import com.example.cpsplatform.file.service.download.FileDownloadService;
+import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.security.config.SecurityConfig;
+import com.example.cpsplatform.security.service.LoginFailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,6 +30,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(SecurityConfig.class)
 @WebMvcTest(controllers = FileAdminController.class)
 class FileAdminControllerTest {
+
+    @MockitoBean
+    MemberRepository memberRepository;
+
+    @MockitoBean
+    PasswordEncoder passwordEncoder;
+
+    @MockitoBean
+    LoginFailService loginFailService;
+
+    @MockitoBean
+    RegisterService registerService;
 
     @MockitoBean
     FileDownloadService fileDownloadService;
@@ -50,7 +67,9 @@ class FileAdminControllerTest {
         //when
         //then
         mockMvc.perform(get("/api/admin/v1/contests/{contestId}/answers/zip-download", contestId)
-                        .param("zipName", zipName))
+                        .param("zipName", zipName)
+                        .with(csrf())
+                )
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -64,7 +83,9 @@ class FileAdminControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/admin/v1/contests/{contestId}/answers/zip-download", contestId))
+        mockMvc.perform(get("/api/admin/v1/contests/{contestId}/answers/zip-download", contestId)
+                        .with(csrf())
+                )
                 .andExpect(status().isForbidden())
                 .andDo(print());
     }
@@ -78,7 +99,9 @@ class FileAdminControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/admin/files/{fileId}", fileId))
+        mockMvc.perform(get("/api/admin/files/{fileId}", fileId)
+                        .with(csrf())
+                )
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -93,7 +116,9 @@ class FileAdminControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/admin/files/{fileId}", fileId))
+        mockMvc.perform(get("/api/admin/files/{fileId}", fileId)
+                        .with(csrf())
+                )
                 .andExpect(status().isForbidden())
                 .andDo(print());
     }
