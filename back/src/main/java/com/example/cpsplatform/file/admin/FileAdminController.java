@@ -28,4 +28,12 @@ public class FileAdminController {
         List<Long> fileIds = fileService.getTeamSolveFileIdsByContestId(contestId);
         fileDownloadService.downloadAsZip(fileIds, response, zipName, TEAM_SOLVE_ZIP_DOWNLOAD);
     }
+
+    @AdminLog
+    @GetMapping("/api/admin/files/{fileId}")
+    public void testZipDownload(@PathVariable("fileId") Long fileId,
+                                HttpServletResponse response){
+        fileDownloadService.download(fileId, response);
+    }
+
 }
