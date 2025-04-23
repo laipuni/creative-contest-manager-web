@@ -69,4 +69,33 @@ class FileAdminControllerTest {
                 .andDo(print());
     }
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 단일 파일 다운로드를 요청하면 정상적으로 처리된다")
+    @Test
+    void testFileDownload() throws Exception {
+        //given
+        Long fileId = 1L;
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/files/{fileId}", fileId))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+    @WithMockUser(roles = "USER")
+    @DisplayName("ADMIN 권한이 없는 사용자는 단일 파일 다운로드에 접근할 수 없다")
+    @Test
+    void testFileDownloadUnauthorized() throws Exception {
+        //given
+        Long fileId = 1L;
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/files/{fileId}", fileId))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
 }
