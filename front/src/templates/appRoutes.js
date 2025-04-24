@@ -14,6 +14,7 @@ import TestSubmitInfo from "../testTake/realTest/testSubmitInfo";
 import TestSubmit from "../testTake/realTest/testSubmit";
 import PastTest from "../testTake/pastTest/pastTest";
 import Certificate from "../supportPage/certificatePage/certificate";
+import QnA from "../supportPage/qnaPage/qna";
 
 function AppRoutes() {
     const location = useLocation();
@@ -49,6 +50,7 @@ function AppRoutes() {
             <Route path="test/realTest/submit" element={<TestSubmit />}></Route>
             <Route path="test/pastTest" element={<PastTest />}></Route>
             <Route path="certificate/info" element={<Certificate />}></Route>
+            <Route path="qna" element={<QnA/>}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );
