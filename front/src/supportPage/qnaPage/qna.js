@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
@@ -18,9 +18,35 @@ const exampleQuestion = [{type: "answer", text: "궁금한 점을 질문해보�
 const QnA = () => {
     const [question, setQuestion] = useState('');
     const [chatList, setChatList] = useState(exampleQuestion);
+    const [showScrollButton, setShowScrollButton] = useState(false); //아래 내리기 버튼
+    const endRef = useRef(null);  // 마지막 요소 참조
+
+    //스크롤 감지
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const docHeight = document.documentElement.scrollHeight;
+
+            console.log("scrollY + windowHeight:", scrollY + windowHeight);
+            console.log("docHeight:", docHeight);
+
+            const atBottom = scrollY + windowHeight >= docHeight - 200;
+            console.log("atBottom:", atBottom);
+            setShowScrollButton(!atBottom);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    useEffect(() => {
+        endRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [chatList]);
+
 
     function handleSubmit(question) {
-        //1. 질문 추가
+        //1. 질문 추가 + 스크롤 내리기
         setChatList(prev => [...prev, {type: "question", text: question}])
         //2. 로딩 메시지
         const loadingMessage = { type: "answer", text: "답변 생성 중" };
@@ -89,7 +115,18 @@ const QnA = () => {
                                         )}
                                     </div>
                                 ))}
+                                <div ref={endRef}/>
                             </div>
+                            {showScrollButton && (
+                                <button
+                                    className="scroll-button"
+                                    onClick={() => {
+                                        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                                    }}
+                                >
+                                    <span>▼</span>
+                                </button>
+                            )}
                             <div className="chat-input-wrapper">
                                   <textarea
                                       placeholder="질문을 입력하세요"

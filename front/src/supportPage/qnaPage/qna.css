@@ -195,3 +195,23 @@
     50%  { opacity: 1; }
     100% { opacity: 0; }
 }
+
+.scroll-button {
+    position: fixed;
+    bottom: 120px;
+    left: 52%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    color: black;
+    font-size: 18px;
+    border-radius: 50%;
+    font-family: 'Roboto-Bold';
+    cursor: pointer;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
