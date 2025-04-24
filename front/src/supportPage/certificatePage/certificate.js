@@ -3,16 +3,40 @@ import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import supportLogo from "../../styles/images/support_logo.png";
+import "./certificate.css"
 
 import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
 
 //출력 예시
-const exampleData = {
-    testYear: "2024",
-    certificateType: "예선합격증",
-    fileLink: "example_File",
-};
+const exampleData = [
+    {
+        testYear: "2024",
+        certificateType: "예선합격증",
+        fileLink: "example_File_2024_prelim",
+    },
+    {
+        testYear: "2023",
+        certificateType: "본선참가확인서",
+        fileLink: "example_File_2023_final",
+    },
+    {
+        testYear: "2022",
+        certificateType: "수료증",
+        fileLink: "example_File_2022_completion",
+    },
+    {
+        testYear: "2021",
+        certificateType: "참가확인서",
+        fileLink: "example_File_2021_participation",
+    },
+    {
+        testYear: "2020",
+        certificateType: "예선합격증",
+        fileLink: "example_File_2020_prelim",
+    }
+];
+
 
 const Certificate = () => {
     const [testYear, setTestYear] = useState('');
@@ -57,13 +81,17 @@ const Certificate = () => {
                                     <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">파일</p>
                                 </div>
-                                {exampleData && <div className="registerInfo-bot-content">
-                                    <p className="registerInfo-bot-text">{testYear}</p>
-                                    <p className="registerInfo-bot-text">{certificateType}</p>
-                                    <p className="registerInfo-bot-text">{fileLink}</p>
-                                </div>}
-                                <div className="registerInfo-bot-buttonbox">
-                                </div>
+                                <ul className="certificate-list">
+                                    {exampleData.map(item => (
+                                        <li key={item.id}>
+                                            <div className="registerInfo-bot-content">
+                                                <p className="certificate-text">{item.testYear}</p>
+                                                <p className="certificate-text">{item.certificateType}</p>
+                                                <p className="certificate-text">{item.fileLink}</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -72,6 +100,5 @@ const Certificate = () => {
         </div>
     )
 };
-
 
 export default Certificate;
