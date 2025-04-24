@@ -105,11 +105,4 @@ public class Problem extends BaseEntity {
         this.content = content;
         this.problemOrder = problemOrder != null ? problemOrder : this.problemOrder;
     }
-
-    public void removeAllFile(){
-        for(File file : files){
-            file.setProblem(null);
-            file.delete();
-        }
-    }
 }
