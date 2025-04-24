@@ -82,6 +82,49 @@ class FileRepositoryTest {
                 );
     }
 
+    @DisplayName("문제의 id로 문제 파일을 soft delete 한다.")
+    @Test
+    void softDeletedByProblemId(){
+        //given
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .description("테스트 대회 설명")
+                .season(16)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().minusDays(1))
+                .startTime(now())
+                .endTime(now().plusDays(1))
+                .build();
+        contestRepository.save(contest);
+
+        Problem problem = Problem.builder()
+                .title("문제 제목")
+                .contest(contest)
+                .section(Section.COMMON)
+                .problemOrder(1)
+                .problemType(ProblemType.CONTEST)
+                .content("문제 설명")
+                .build();
+        problemRepository.save(problem);
+
+        List<File> files = List.of(
+                createFile(problem,"문제1_1.pdf", FileType.PROBLEM_REAL, FileExtension.PDF.getMimeType(), FileExtension.PDF, 100, "/contest/16회/일반/1번"),
+                createFile(problem,"문제1_2.pdf", FileType.PROBLEM_REAL, FileExtension.PDF.getMimeType(), FileExtension.PDF, 100, "/contest/16회/일반/2번"),
+                createFile(problem,"문제1_3.pdf", FileType.PROBLEM_REAL, FileExtension.PDF.getMimeType(), FileExtension.PDF, 100, "/contest/16회/일반/3번"),
+                createFile(problem,"문제1_4.pdf", FileType.PROBLEM_REAL, FileExtension.PDF.getMimeType(), FileExtension.PDF, 100, "/contest/16회/일반/4번")
+        );
+
+        fileRepository.softDeletedByProblemId(problem.getId());
+
+        //when
+        List<File> result = fileRepository.findAllByProblemIdAndFileTypeAndNotDeleted(problem.getId(), FileType.PROBLEM_REAL);
+        //then
+        assertThat(result).isEmpty();
+    }
+
+
+
+
     private static File createFile(Problem problem,String name, FileType fileType, String mimeType, FileExtension extension, long size, String path) {
         return File.builder()
                 .problem(problem)

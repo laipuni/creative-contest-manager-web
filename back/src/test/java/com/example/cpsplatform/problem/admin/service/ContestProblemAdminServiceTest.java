@@ -17,6 +17,7 @@ import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
 import jakarta.persistence.EntityManager;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -719,5 +720,77 @@ class ContestProblemAdminServiceIntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("해당 문제는 존재하지 않습니다.");
     }
+
+    @DisplayName("문제를 삭제하면 파일도 같이 삭제된다.")
+    @Test
+    void deleteContestProblem(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        Contest contest = Contest.builder()
+                .season(16)
+                .title("16회 창의력 경진대회")
+                .description("16회 창의력 경진대회 설명")
+                .registrationStartAt(now.plusDays(1))
+                .registrationEndAt(now.plusDays(2))
+                .startTime(now.plusDays(3))
+                .endTime(now.plusDays(4))
+                .build();
+
+        Contest savedContest = contestRepository.save(contest);
+
+        Problem problem = Problem.builder()
+                .title("기존 문제")
+                .content("기존 문제 설명")
+                .problemOrder(1)
+                .section(Section.COMMON)
+                .problemType(ProblemType.CONTEST)
+                .contest(savedContest)
+                .build();
+
+        Problem savedProblem = problemRepository.save(problem);
+
+        String path = "/contest/16회/공통/1번/";
+
+        //두 개의 파일 생성
+        File file1 = File.builder()
+                .originalName("파일1.pdf")
+                .name("file1.pdf")
+                .extension(FileExtension.PDF)
+                .size(100L)
+                .fileType(FileType.PROBLEM_REAL)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .path(path)
+                .problem(savedProblem)
+                .build();
+
+        File file2 = File.builder()
+                .originalName("파일2.pdf")
+                .name("file2.pdf")
+                .extension(FileExtension.PDF)
+                .size(200L)
+                .fileType(FileType.PROBLEM_REAL)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .path(path)
+                .problem(savedProblem)
+                .build();
+
+        problem.addFile(file1);
+        problem.addFile(file2);
+        fileRepository.saveAll(List.of(file1, file2));
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        contestProblemAdminService.deleteContestProblem(problem.getId());
+
+        //then
+        List<Problem> allProblem = problemRepository.findAll();
+        List<File> allFile = fileRepository.findAll();
+
+        assertThat(allProblem).isEmpty();
+        assertThat(allFile).isEmpty();
+    }
+
 
 }
