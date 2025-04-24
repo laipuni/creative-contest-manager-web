@@ -70,9 +70,9 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                     <div className="main-header-bot-textbox">
                         <Link to="/test/info" className="main-header-bot-text">시험안내</Link>
                         <span className="main-header-bot-circle"></span>
-                        <p className="main-header-bot-text">문제풀이</p>
+                        <Link to="/test/realTest/info" className="main-header-bot-text">문제풀이</Link>
                         <span className="main-header-bot-circle"></span>
-                        <p className="main-header-bot-text">QnA</p>
+                        <Link to="/qna" className="main-header-bot-text">QnA</Link>
                     </div>
                 </div>
             </div>
