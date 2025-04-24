@@ -10,23 +10,53 @@ import apiClient from "../../templates/apiClient";
 
 //출력 예시
 const exampleData = "예시답변"
+const exampleQuestion = [{type: "answer", text: "궁금한 점을 질문해보세요!"},
+    {type: "answer", text: "답변 생성 중"},
+    {type: "answer", text: "답변을 생성하지 못했습니다. 다시 시도해주세요"}]
 
 
 const QnA = () => {
     const [question, setQuestion] = useState('');
-    const [chatList, setChatList] = useState([{type: "answer", text: "궁금한 점을 질문해보세요!"}]);
+    const [chatList, setChatList] = useState(exampleQuestion);
 
     function handleSubmit(question) {
+        //1. 질문 추가
         setChatList(prev => [...prev, {type: "question", text: question}])
+        //2. 로딩 메시지
+        const loadingMessage = { type: "answer", text: "답변 생성 중" };
+        setChatList(prev => [...prev, loadingMessage]);
 
-    /*-----------------답변 가져오기---------
-    apiClient.get('/api/certificate/info', {question})
-        .then((res)=>{
-            setAnswer(res.data.answer);
+        /*
+        // 3. 실제 API 요청
+        apiClient.get('/api/certificate/info', { params: { question } })
+            .then((res) => {
+                // "답변 생성 중..." → 실제 답변으로 교체
+                setChatList(prev => {
+                    const updated = [...prev];
+                    updated[updated.length - 1] = { type: "answer", text: res.data.answer };
+                    return updated;
+                });
+            })
+            .catch((err) => {
+                // "답변 생성 중..." → 에러 메시지로 교체
+                setChatList(prev => {
+                    const updated = [...prev];
+                    updated[updated.length - 1] = {
+                        type: "answer",
+                        text: "답변을 생성하지 못했습니다. 다시 시도해주세요"
+                    };
+                    return updated;
+                });
+            });
+         */
+        setChatList(prev => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+                type: "answer", text: exampleData
+            };
+            return updated;
         });
 
-     */
-        setChatList(prev => [...prev, { ...prev[prev.length - 1] }, { type: "answer", text: exampleData }]);
     }
 
 
@@ -49,6 +79,14 @@ const QnA = () => {
                                     <div key={index}
                                          className={chat.type === "question" ? "chat-question" : "chat-answer"}>
                                         <p>{chat.text}</p>
+                                        {chat.text === "답변 생성 중" && (
+                                            <span className="dots-loading">
+                                                <span>.</span><span>.</span><span>.</span>
+                                            </span>
+                                        )}
+                                        {chat.text === "답변을 생성하지 못했습니다. 다시 시도해주세요" && (
+                                            <span className="error-symbol">❗</span>
+                                        )}
                                     </div>
                                 ))}
                             </div>
