@@ -51,7 +51,7 @@ const Main = () => {
                         </div>
                         <div className="bento-bot">
                             <div className="bento-bot-left">
-                                <div className="bento-bot-left-upper">
+                                <Link to="/certificate/info" className="bento-bot-left-upper" style={{textDecoration: 'none'}}>
                                     <div className="bento-content-textbox" style={{width: '50%'}}>
                                         <p className="bento-content-title" style={{fontSize: 32}}>
                                             <span style={{color: '#2B72F5'}}>증명서</span>&nbsp;발급
@@ -64,7 +64,7 @@ const Main = () => {
                                     <div className="bento-image-container">
                                         <img src={info} alt="info" className="bento-image"/>
                                     </div>
-                                </div>
+                                </Link>
                                 <Link to='/test/pastTest' className="bento-bot-left-lower">
                                     <div className="bento-content-textbox" style={{width: '50%'}}>
                                         <p className="bento-content-title" style={{fontSize: 32}}>

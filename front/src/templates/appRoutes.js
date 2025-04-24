@@ -13,6 +13,7 @@ import MyProfile from "../auth/myProfile";
 import TestSubmitInfo from "../testTake/realTest/testSubmitInfo";
 import TestSubmit from "../testTake/realTest/testSubmit";
 import PastTest from "../testTake/pastTest/pastTest";
+import Certificate from "../supportPage/certificatePage/certificate";
 
 function AppRoutes() {
     const location = useLocation();
@@ -47,6 +48,7 @@ function AppRoutes() {
             <Route path="test/realTest/info" element={<TestSubmitInfo />}></Route>
             <Route path="test/realTest/submit" element={<TestSubmit />}></Route>
             <Route path="test/pastTest" element={<PastTest />}></Route>
+            <Route path="certificate/info" element={<Certificate />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );

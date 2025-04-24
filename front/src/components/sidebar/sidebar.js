@@ -26,7 +26,7 @@ const Sidebar = () => {
             <div className="sidebar-underline"></div>
             <p className="sidebar-title">지원</p>
             <div className="sidebar-content">
-                <Link to = "/" className="sidebar-text">증명서 발급</Link>
+                <Link to = "/certificate/info"  className={`sidebar-text ${location.pathname === "/certificate/info" ? "active" : ""}`}>증명서 발급</Link>
                 <Link to = "/" className="sidebar-text">QnA</Link>
             </div>
 
