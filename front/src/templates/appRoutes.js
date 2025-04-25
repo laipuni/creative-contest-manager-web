@@ -15,6 +15,7 @@ import TestSubmit from "../testTake/realTest/testSubmit";
 import PastTest from "../testTake/pastTest/pastTest";
 import Certificate from "../supportPage/certificatePage/certificate";
 import QnA from "../supportPage/qnaPage/qna";
+import TeamList from "../admin/teamList/teamList";
 
 function AppRoutes() {
     const location = useLocation();
@@ -24,12 +25,18 @@ function AppRoutes() {
         const isJoinPath = location.pathname.startsWith("/join");
         const authenticatedPaths = ["/register/team", "/member/profile", "/test/realTest"];
         const isAuthenticatedPath = authenticatedPaths.some(path => location.pathname.startsWith(path));
+        const isAdminPath = location.pathname.startsWith("/admin");
         if (!isJoinPath) {
             sessionStorage.removeItem("isChecked");
         }
         if (isAuthenticatedPath) {
             if (localStorage.getItem("isAuthenticated") !== "true"){
                 navigate('/member/login', {replace: true, state: {from: location.pathname}});
+            }
+        }
+        if (isAdminPath){
+            if (localStorage.getItem("isAdmin") !== "true"){
+                navigate('/admin/login', {replace: true, state: {from: location.pathname}});
             }
         }
 
@@ -51,6 +58,7 @@ function AppRoutes() {
             <Route path="test/pastTest" element={<PastTest />}></Route>
             <Route path="certificate/info" element={<Certificate />}></Route>
             <Route path="qna" element={<QnA/>}></Route>
+            <Route path="admin/teamList" element={<TeamList />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );
