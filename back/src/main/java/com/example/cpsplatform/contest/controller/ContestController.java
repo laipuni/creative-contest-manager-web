@@ -1,7 +1,7 @@
 package com.example.cpsplatform.contest.controller;
 
 import com.example.cpsplatform.ApiResponse;
-import com.example.cpsplatform.contest.controller.service.ContestJoinService;
+import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

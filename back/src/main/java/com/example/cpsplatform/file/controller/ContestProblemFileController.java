@@ -1,6 +1,6 @@
 package com.example.cpsplatform.file.controller;
 
-import com.example.cpsplatform.contest.controller.service.ContestJoinService;
+import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,7 +1,7 @@
 package com.example.cpsplatform.file.controller;
 
 import com.example.cpsplatform.auth.service.RegisterService;
-import com.example.cpsplatform.contest.controller.service.ContestJoinService;
+import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
@@ -9,7 +9,6 @@ import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.security.service.LoginFailService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

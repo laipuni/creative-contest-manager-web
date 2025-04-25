@@ -1,4 +1,4 @@
-package com.example.cpsplatform.contest.controller.service;
+package com.example.cpsplatform.contest.service;
 
 
 import com.example.cpsplatform.contest.Contest;

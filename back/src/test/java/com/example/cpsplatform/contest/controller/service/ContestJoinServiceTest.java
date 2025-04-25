@@ -2,6 +2,7 @@ package com.example.cpsplatform.contest.controller.service;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
