@@ -4,18 +4,23 @@ import "../../../styles/styles.css"
 import SubHeader from "../../../components/subHeader/subHeader";
 import locker from "../../../styles/images/locker.png"
 import apiClient from "../../../templates/apiClient";
+import {useNavigate} from "react-router-dom";
 const AdminLogin = () => {
     const [userId, setUserId] = useState('')
     const [password, setPassword] = useState('')
-    function handleSignup() {
+    const navigate = useNavigate()
+    function handleSignup(e) {
+        e.preventDefault()
         /*----------rest api------------
         apiClient.post('/api/auth/login', {username: userId, password})
          */
+        localStorage.setItem("isAdmin", "true")
+        navigate('/admin/teamList');
     }
     return (
         <div className="login-page-container">
             <SubHeader />
-            <form onSubmit={handleSignup} className="login-content-container">
+            <form onSubmit={(e)=>handleSignup(e)} className="login-content-container">
                 <div className="login-content-image">
                     <img src={locker} className="locker-image"></img>
                 </div>
