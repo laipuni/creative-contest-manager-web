@@ -15,4 +15,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
             "join mt.member m " + // mt.member.id = m.id 자동으로 쿼리 날릴때 넣어줌
             "where m.loginId = :loginId")
     List<Team> findTeamByMemberLoginId(@Param("loginId") String loginId);
+
+    //해당 대회에 팀장으로 맡고있는 팀이 존재하는지 여부를 확인하는 쿼리
+    @Query("select t from Team t where t.contest.id = :contestId and t.leader.loginId = :leaderLoginId")
+    Optional<Team> findTeamByContestIdAndLeaderId(@Param("contestId") Long contestId, @Param("leaderLoginId") String leaderLoginId);
 }

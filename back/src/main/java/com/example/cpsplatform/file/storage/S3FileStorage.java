@@ -2,6 +2,7 @@ package com.example.cpsplatform.file.storage;
 
 
 import com.amazonaws.services.s3.model.S3Object;
+import com.example.cpsplatform.file.decoder.vo.FileSource;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.s3.S3Service;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +21,20 @@ public class S3FileStorage implements FileStorage {
     @Override
     public void upload(final String path, final FileSources fileSources) {
         fileSources.getFileSourceList().forEach(fileSource -> {
-            s3Service.upload(
-                    path,
-                    fileSource.getUploadFileName(),
-                    fileSource.getFileBytes(),
-                    fileSource.getMimeType(),
-                    fileSource.getExtension(),
-                    fileSource.getSize()
-            );
+            upload(path,fileSource);
         });
+    }
+
+    @Override
+    public void upload(final String path, final FileSource fileSource) {
+        s3Service.upload(
+                path,
+                fileSource.getUploadFileName(),
+                fileSource.getFileBytes(),
+                fileSource.getMimeType(),
+                fileSource.getExtension(),
+                fileSource.getSize()
+        );
     }
 
     @Override

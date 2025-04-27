@@ -6,9 +6,11 @@ import com.example.cpsplatform.team.domain.Team;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @Table(name = "team_solve")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamSolve extends BaseEntity {

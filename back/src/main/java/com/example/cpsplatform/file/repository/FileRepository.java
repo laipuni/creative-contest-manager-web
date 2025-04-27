@@ -21,4 +21,10 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     @Modifying
     @Query("update File f set f.deleted = true, f.problem = null where f.problem.id = :problemId")
     int softDeletedByProblemId(@Param("problemId") Long problemId);
+
+    //팀의 답안지 메다데이터 삭제 쿼리
+    @Modifying
+    @Query("update File f set f.deleted = true, f.teamSolve = null where f.teamSolve.id in :teamSolveIdList")
+    int softDeletedByTeamSolveIdList(@Param("teamSolveIdList") List<Long> teamSolveIdList);
+
 }
