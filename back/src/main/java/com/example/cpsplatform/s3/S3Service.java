@@ -1,10 +1,7 @@
 package com.example.cpsplatform.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.example.cpsplatform.file.decoder.vo.FileSource;
 import com.example.cpsplatform.file.domain.FileExtension;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +30,15 @@ public class S3Service {
         File tempFile = writeFile(extension.getExtension(), fileBytes);
         putObject(path, uploadFileName, mimeType, size, tempFile, extension);
         closeFile(tempFile);
+    }
+
+    public S3Object download(final String path, final String uploadName){
+        try {
+            log.debug("path = {}, fileName = {} 다운로드",path,uploadName);
+            return amazonS3.getObject(bucketName + path, uploadName);
+        } catch (AmazonS3Exception e){
+            throw new IllegalStateException(e);
+        }
     }
 
     private void putObject(final String path, final String uploadFileName, final String mimeType, final long size, final File tempFile,final FileExtension extension) {

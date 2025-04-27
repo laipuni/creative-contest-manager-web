@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FileSources {
 
-    private List<FileSource> fileSourceList = new ArrayList<>();
+    private List<FileSource> fileSourceList;
 
     public static FileSources of(List<FileSource> fileSourceList){
         return FileSources.builder()

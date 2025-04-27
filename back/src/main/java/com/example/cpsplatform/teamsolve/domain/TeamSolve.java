@@ -3,14 +3,7 @@ package com.example.cpsplatform.teamsolve.domain;
 import com.example.cpsplatform.BaseEntity;
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.team.domain.Team;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,28 +11,40 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "team_solve")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "Team_solve")
 public class TeamSolve extends BaseEntity {
+
     @Id
     @GeneratedValue
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Team team;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "problem_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Problem problem;
 
     @Column(name = "modify_count")
-    private Integer modifyCount;
+    private int modifyCount;
 
     @Builder
-    private TeamSolve(final Team team, final Problem problem, final Integer modifyCount){
+    private TeamSolve(final Team team, final Problem problem) {
         this.team = team;
         this.problem = problem;
-        this.modifyCount = modifyCount;
+        this.modifyCount = 0;
+    }
+
+    public static TeamSolve of(final Team team, final Problem problem){
+        return TeamSolve.builder()
+                .team(team)
+                .problem(problem)
+                .build();
+    }
+
+    public void incrementModifyCount(){
+        modifyCount +=1;
     }
 }
