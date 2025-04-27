@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
@@ -46,6 +47,7 @@ public class Problem extends BaseEntity {
     @Column(name = "problem_order")
     private Integer problemOrder;
 
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "problem",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<File> files = new HashSet<>();
 

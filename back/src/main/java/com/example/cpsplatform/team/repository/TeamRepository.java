@@ -27,4 +27,8 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 
     @EntityGraph(attributePaths = {"leader"})
     Page<Team> findTeamListByContest(Contest contest, Pageable pageable);
+
+    //해당 대회에 팀장으로 맡고있는 팀이 존재하는지 여부를 확인하는 쿼리
+    @Query("select t from Team t where t.contest.id = :contestId and t.leader.loginId = :leaderLoginId")
+    Optional<Team> findTeamByContestIdAndLeaderId(@Param("contestId") Long contestId, @Param("leaderLoginId") String leaderLoginId);
 }

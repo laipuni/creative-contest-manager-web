@@ -2,12 +2,12 @@ package com.example.cpsplatform.contest.controller.service;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
-import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -15,7 +15,6 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +103,7 @@ class ContestJoinServiceTest {
 
         //when
         //then
-        assertThatCode(() -> contestService.join(contest.getId(), loginId, now))
+        assertThatCode(() -> contestService.validateContestParticipation(contest.getId(), loginId, now))
                 .doesNotThrowAnyException();
     }
 
@@ -144,7 +143,7 @@ class ContestJoinServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> contestService.join(contest.getId(), loginId, now))
+        assertThatThrownBy(() -> contestService.validateContestParticipation(contest.getId(), loginId, now))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageContaining("제"+ contest.getSeason()+"회 대회에 소속된 팀이 없습니다.");
     }
@@ -201,7 +200,7 @@ class ContestJoinServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> contestService.join(contest.getId(), loginId, now))
+        assertThatThrownBy(() -> contestService.validateContestParticipation(contest.getId(), loginId, now))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageContaining("제"+ contest.getSeason()+"회 대회는 현재 개최 기간이 아닙니다.");
     }
@@ -232,7 +231,7 @@ class ContestJoinServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> contestService.join(invalidContestId, loginId, now))
+        assertThatThrownBy(() -> contestService.validateContestParticipation(invalidContestId, loginId, now))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("해당 대회는 존재하지 않습니다");
     }

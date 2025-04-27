@@ -5,6 +5,7 @@ import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.file.decoder.MultipartDecoder;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.problem.admin.controller.request.AddContestProblemRequest;
+import com.example.cpsplatform.problem.admin.controller.request.DeleteContestProblemRequest;
 import com.example.cpsplatform.problem.admin.controller.request.UpdateContestProblemRequest;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDetailResponse;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemListResponse;
@@ -54,6 +55,14 @@ public class ContestProblemAdminController {
                 request.toUpdateProblemDto(contestId,problemId),
                 fileSource
         );
+        return ApiResponse.ok(null);
+    }
+
+    @AdminLog
+    @DeleteMapping("/contests/problems")
+    public ApiResponse<Object> deleteContestProblem(
+            @Valid @RequestBody DeleteContestProblemRequest request){
+        contestProblemAdminService.deleteContestProblem(request.getDeleteProblemId());
         return ApiResponse.ok(null);
     }
 

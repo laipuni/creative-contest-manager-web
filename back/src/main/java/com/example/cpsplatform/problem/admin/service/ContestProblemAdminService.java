@@ -29,6 +29,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ContestProblemAdminService {
 
@@ -92,14 +93,12 @@ public class ContestProblemAdminService {
             problem.removeFile(file);
         });
     }
-    @Transactional(readOnly = true)
     public ContestProblemListResponse findContestProblemList(final Long contestId, final int page) {
         Pageable pageable = PageRequest.of(page,PROBLEM_SIZE);
         log.debug("대회 ({})의 출제 문제(page ={}) 조회 시도",contestId,page);
         Page<Problem> result = problemRepository.findContestProblemsByContestAndProblemType(pageable, ProblemType.CONTEST, contestId);
         return ContestProblemListResponse.of(result);
     }
-    @Transactional(readOnly = true)
     public ContestProblemDetailResponse findContestProblemDetail(final Long contestId, final Long problemId) {
         log.debug("대회 ({})의 출제 문제({})를 조회 시도",contestId,problemId);
         Problem problem = problemRepository.findContestProblemByContestIdAndProblemId(ProblemType.CONTEST, problemId, contestId)
@@ -107,6 +106,14 @@ public class ContestProblemAdminService {
         log.debug("대회 ({})에 출제 문제({})의 파일 조회 시도",contestId,problemId);
         List<File> files = fileRepository.findAllByProblemIdAndFileTypeAndNotDeleted(problemId, FileType.PROBLEM_REAL);
         return ContestProblemDetailResponse.of(problem,files);
+    }
+
+    @Transactional
+    public void deleteContestProblem(final Long deleteProblemId) {
+        log.debug("문제({})와 관련된 파일 삭제 시도.",deleteProblemId);
+        fileRepository.softDeletedByProblemId(deleteProblemId);
+        problemRepository.deleteById(deleteProblemId);
+        log.info("문제({})와 관련된 파일들을 삭제했습니다.",deleteProblemId);
     }
 
     private Problem saveProblem(final AddProblemDto addProblemDto, final Contest contest) {
@@ -139,4 +146,5 @@ public class ContestProblemAdminService {
         return problemRepository.findById(problemDto.getProblemId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 문제는 존재하지 않습니다."));
     }
+
 }

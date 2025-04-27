@@ -1,5 +1,6 @@
 package com.example.cpsplatform.problem.admin.controller;
 
+import com.example.cpsplatform.problem.admin.controller.request.DeleteContestProblemRequest;
 import com.example.cpsplatform.problem.admin.controller.request.UpdateContestProblemRequest;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDetailResponse;
 import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDto;
@@ -19,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
@@ -26,8 +28,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -345,5 +346,54 @@ class ContestProblemAdminControllerTest {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.message").value("출제할 문제의 번호는 0보다 큰 수여야 합니다."));
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회 기출 문제 삭제 시 삭제할 문제의 id가 null인 경우 예외를 반환한다")
+    @Test
+    void deleteContestProblemWithNullProblemId() throws Exception {
+        //given
+        DeleteContestProblemRequest request = new DeleteContestProblemRequest(
+                null
+        );
+
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(delete("/api/admin/contests/problems")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("삭제할 문제의 정보는 필수입니다."));
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("대회 기출 문제 삭제 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void deleteContestProblem() throws Exception {
+        //given
+        DeleteContestProblemRequest request = new DeleteContestProblemRequest(
+                1L
+        );
+
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(delete("/api/admin/contests/problems")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200));
     }
 }
