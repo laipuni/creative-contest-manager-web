@@ -16,6 +16,7 @@ import com.example.cpsplatform.problem.repository.ProblemRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,6 +111,14 @@ class TeamSolveRepositoryTest {
         teamSolveRepository.save(teamSolve);
     }
 
+    @AfterEach
+    void tearDown(){
+        teamSolveRepository.deleteAllInBatch();
+        problemRepository.deleteAllInBatch();
+        teamRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+        contestRepository.deleteAllInBatch();
+    }
 
     @DisplayName("100명의 쓰레드가 문제 id와 팀 id로 pessimistic lock을 걸어 조회하고 수정횟수를 100까지 증가시킨다.")
     @Test
