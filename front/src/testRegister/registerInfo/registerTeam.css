@@ -1,0 +1,210 @@
+.registerTeam-body-bot{
+    /* Frame 32 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 0px;
+
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.registerTeam-bot-textbox {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 30px;
+    gap: 25px;
+    width: 100%;
+    height: fit-content;
+
+    background: rgba(0, 0, 0, 0.02);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.registerTeam-bot-title {
+    /* 팀명 */
+
+    width: 5%;
+    height: fit-content;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 110%;
+    /* identical to box height, or 20px */
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.registerTeam-bot-line {
+    /* Line 6 */
+
+    width: 20px;
+    height: 0px;
+
+    border: 1px solid #000000;
+    transform: rotate(-90deg);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.registerTeam-bot-input {
+    /* Frame 39 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 7px;
+
+    width: 11%;
+    height: fit-content;
+
+    border: 1px solid #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+
+}
+
+.registerTeam-bot-warning {
+    /* ※ 팀명은 7자 이내로 작성해 주세요. */
+    width: 100%;
+    height: fit-content;
+    text-align: left;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 110%;
+    /* identical to box height, or 20px */
+
+    color: #FF0000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.registerTeam-bot-buttonbox{
+    /* Frame 35 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 10px 5px;
+    gap: 16px;
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 5;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.registerTeam-register-button{
+    /* Frame 36 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+
+    width: 15%;
+    height: 50px;
+
+    background: #2E38FF;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 110%;
+    text-align: center;
+
+    color: #FFFFFF;
+
+
+}
+
+.registerTeam-enter-button {
+    /* Frame 40 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 0px;
+    border: none;
+    cursor: pointer;
+    width: 5%;
+    height: fit-content;
+    color: white;
+    font-size: 10px;
+    background: #2E38FF;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 3;
+    flex-grow: 0;
+
+}

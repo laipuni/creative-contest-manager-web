@@ -8,6 +8,7 @@ import com.example.cpsplatform.security.provider.UsernamePasswordAuthenticationT
 import com.example.cpsplatform.security.service.CustomUserDetailService;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,7 +66,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
-                                    "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate","/api/check-id"
+                                    "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate","/api/check-id", "/api/csrf"
                             ).permitAll()
                             .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
                                     "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code",
@@ -77,6 +78,9 @@ public class SecurityConfig {
 
                 .logout(logout ->
                         logout.logoutUrl("/api/auth/logout") // 로그아웃 api url
+                                .logoutSuccessHandler((request, response, authentication) -> {
+                                    response.setStatus(HttpServletResponse.SC_OK);
+                                })
                                 .invalidateHttpSession(true)  // 로그아웃 시 저장된 세션을
                                 .deleteCookies(COOKIES_JSESSIONID) // 브라우저 세션 제거
                 )

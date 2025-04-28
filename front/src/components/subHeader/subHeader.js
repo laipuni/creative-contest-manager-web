@@ -19,15 +19,15 @@ const SubHeader = () => {
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <p className="main-header-menu-item-text">LOGIN</p>
+                        <Link to="/member/login" className="main-header-menu-item-text">LOGIN</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <Link to="/join" className="main-header-menu-item-text">JOIN</Link>
+                        <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
                     <div className="main-header-menu-item">
-                        <p className="main-header-menu-item-text">ADMIN</p>
+                        <Link to="/admin/login" className="main-header-menu-item-text">ADMIN</Link>
                     </div>
                 </div>
             </div>

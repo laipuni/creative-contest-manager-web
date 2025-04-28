@@ -1,16 +1,25 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './join2.css'
-import SubHeader from "../components/subHeader/subHeader";
+import SubHeader from "../../components/subHeader/subHeader";
 import {useNavigate} from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
-import EmailVerificationModal from '../components/modals/emailVerificationModal';
+import EmailVerificationModal from '../../components/modals/emailVerificationModal';
+import apiClient from "../../templates/apiClient";
+import SchoolSearchModal from "../../components/modals/schoolSearchModal";
 
 const Join2 = () => {
+    const navigate = useNavigate();
+    /*-------------앞 페이지 항목 동의 여부------------*/
+    useEffect(() => {
+        const isChecked = sessionStorage.getItem("isChecked");
+        if (isChecked !== "true") {
+            navigate('/join/policy');
+        }
+    }, []);
     /*--------------아이디--------------*/
     const [userId, setUserId] = useState('');
     const [isDuplicate, setIsDuplicate] = useState(true);
     const [idErrorMessage, setIdErrorMessage] = useState('');
-    const exampleIds = ['user1', 'user2'];
     /*--------------비밀번호--------------*/
     const [password, setPassword] = useState('');
     const [passwordCheck, setPasswordCheck] = useState('');
@@ -26,6 +35,7 @@ const Join2 = () => {
     const [address, setAddress] = useState('');
     const [detailAddress, setDetailAddress] = useState('');
     const [extraAddress, setExtraAddress] = useState('');
+    const [sido, setSido] = useState('');
     const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
     /*--------------휴대폰번호--------------*/
     const [prefix, setPrefix] = useState('010'); // 기본값 010
@@ -40,16 +50,24 @@ const Join2 = () => {
     /*--------------직업------------------*/
     const [job, setJob] = useState('');
     //
-    const navigate = useNavigate();
 
     /*--------------학교(소속)------------------------*/
     const [workPlace, setWorkPlace] = useState('');
+    const [schoolModalOpen, setSchoolModalOpen] = useState(false);
+    const [selectedSchool, setSelectedSchool] = useState({
+        schoolName: '',
+        region: '',
+        estType: ''
+    });
 
     /*--------------학년(부서)------------------------*/
     const [detailJob, setDetailJob] = useState('');
 
     /*------------------- 회원가입 & 나가기 버튼 기능----------------*/
     const handleSignup = (e) => {
+        if(job.startsWith('s')){
+            setWorkPlace(selectedSchool.schoolName);
+        }
         e.preventDefault();
         if(isDuplicate) {
             alert('아이디를 다시 확인해주세요.');
@@ -75,9 +93,43 @@ const Join2 = () => {
             return;
         }
 
+        function changeBirth() {
+            const year = parseInt(birthday.slice(0, 4), 10);
+            const month = parseInt(birthday.slice(4, 6), 10) - 1;
+            const day = parseInt(birthday.slice(6, 8), 10);
+            return new Date(year, month, day);
+        }
 
-        navigate('/');
-
+        apiClient.post('/api/v1/members', {
+            loginId : userId,
+            password,
+            confirmPassword: passwordCheck,
+            name,
+            birth: changeBirth(),
+            gender,
+            street: postcode,
+            city: sido,
+            zipCode: address,
+            detail: detailAddress,
+            phoneNumber : prefix+middle+last,
+            email,
+            organizationType: job.slice(2),
+            organizationName: workPlace,
+            position: detailJob,
+        }, )
+            .then((res) => {
+                if(res.data.code === 200){
+                    //로그인 바로 진행
+                    apiClient.post('/api/auth/login', {username: userId, password})
+                        .then((res)=>{
+                            navigate('/');
+                        })
+                        .catch((err)=>{})
+                }
+            })
+            .catch((err)=>{
+                }
+            )
     }
 
     const handleExit = () => {
@@ -96,13 +148,21 @@ const Join2 = () => {
             setIsDuplicate(true);
             setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~10자리로 입력해야 합니다.');
         }
-        else if(exampleIds.includes(userId)) {
-            setIsDuplicate(true);
-            setIdErrorMessage('이미 사용 중인 아이디입니다.')
-        }
         else {
-            setIsDuplicate(false);
-            setIdErrorMessage('');
+            apiClient.get('/api/check-id', {
+                params: {loginId: userId}})
+                .then((res) => {
+                    const result = res.data.data;
+                    if (result) {
+                        setIsDuplicate(true);
+                        setIdErrorMessage('이미 사용 중인 아이디입니다.')
+                    }
+                    else {
+                        setIsDuplicate(false);
+                        setIdErrorMessage('');
+                    }
+                })
+                .catch((err) => {})
         }
     }
 
@@ -146,6 +206,7 @@ const Join2 = () => {
     const handleComplete = (data) => {
         let fullAddress = data.address;
         let extraAddress = '';
+        const sido = data.sido;
 
         if (data.addressType === 'R') {
             if (data.bname !== '') {
@@ -160,6 +221,7 @@ const Join2 = () => {
         setPostcode(data.zonecode);
         setAddress(fullAddress);
         setExtraAddress(extraAddress);
+        setSido(sido);
         setIsPostcodeOpen(false);
     };
 
@@ -352,8 +414,8 @@ const Join2 = () => {
                                         onChange={handleGenderChange}
                                         required>
                                         <option value="">---</option>
-                                        <option value="male">남성</option>
-                                        <option value="femaie">여성</option>
+                                        <option value="MAN">남자</option>
+                                        <option value="WOMAN">여자</option>
                                     </select>
                                 </div>
                             </div>
@@ -491,17 +553,17 @@ const Join2 = () => {
                                         onChange={handleJobChange}
                                         required>
                                         <option value="">---</option>
-                                        <option value="s_elementary">초등학생</option>
-                                        <option value="s_middle">중학생</option>
-                                        <option value="s_high">고등학생</option>
-                                        <option value="s_university">대학생</option>
-                                        <option value="p_IT">컴퓨터/인터넷</option>
-                                        <option value="p_press">언론</option>
-                                        <option value="p_official">공무원</option>
-                                        <option value="p_soldier">군인</option>
-                                        <option value="p_service">서비스업</option>
-                                        <option value="p_art">예술</option>
-                                        <option value="p_etc">기타</option>
+                                        <option value="s_초등학생">초등학생</option>
+                                        <option value="s_중학생">중학생</option>
+                                        <option value="s_고등학생">고등학생</option>
+                                        <option value="s_대학생">대학생</option>
+                                        <option value="p_컴퓨터/인터넷">컴퓨터/인터넷</option>
+                                        <option value="p_언론">언론</option>
+                                        <option value="p_공무원">공무원</option>
+                                        <option value="p_군인">군인</option>
+                                        <option value="p_서비스업">서비스업</option>
+                                        <option value="p_예술">예술</option>
+                                        <option value="p_기타">기타</option>
 
                                     </select>
                                 </div>
@@ -515,12 +577,42 @@ const Join2 = () => {
                             </div>
                             <div className="join2-main-border-right">
                                 <div className="join2-right-row">
-                                    <input
+                                    {!job && <input
                                         className="join2-id-input"
-                                        value={workPlace}
-                                        onChange={(e) => {setWorkPlace(e.target.value)}}
-                                        required>
-                                    </input>
+                                        readOnly
+                                        value={" ---"}
+                                        required/>
+                                    }
+                                    {job.startsWith('s') &&
+                                        <>
+                                            <input
+                                                className="join2-id-input"
+                                                value={selectedSchool?.schoolName}
+                                                readOnly
+                                                required>
+                                            </input>
+                                            <button className="join2-id-button"
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setSchoolModalOpen(true)
+                                                    }}>학교 검색
+                                            </button>
+                                            <SchoolSearchModal isOpen={schoolModalOpen}
+                                                               onClose={() => {
+                                                                   setSchoolModalOpen(false)
+                                                               }}
+                                                               level={job}
+                                                               onSelectSchool={(school) => setSelectedSchool(school)}/>
+                                        </>}
+                                    {job.startsWith('p') &&
+                                        <input
+                                            className="join2-id-input"
+                                            value={workPlace}
+                                            onChange={(e) => {
+                                                setWorkPlace(e.target.value)
+                                            }}
+                                            required>
+                                        </input>}
                                 </div>
                             </div>
                         </div>
@@ -538,7 +630,7 @@ const Join2 = () => {
                                                     setDetailJob(e.target.value)
                                                 }} required>
                                             <option value="">---</option>
-                                            {job.startsWith('s_elementary') && (
+                                            {job.startsWith('s_초등학생') && (
                                                 <>
                                                     {[1, 2, 3, 4, 5, 6].map((grade) => (
                                                         <option key={grade} value={grade}>
@@ -547,7 +639,7 @@ const Join2 = () => {
                                                     ))}
                                                 </>
                                             )}
-                                            {(job.startsWith('s_middle') || job.startsWith('s_high')) && (
+                                            {(job.startsWith('s_중학생') || job.startsWith('s_고등학생')) && (
                                                 <>
                                                     {[1, 2, 3].map((grade) => (
                                                         <option key={grade} value={grade}>
@@ -556,7 +648,7 @@ const Join2 = () => {
                                                     ))}
                                                 </>
                                             )}
-                                            {job.startsWith('s_university') && (
+                                            {job.startsWith('s_대학생') && (
                                                 <>
                                                     {[1, 2, 3, 4].map((grade) => (
                                                         <option key={grade} value={grade}>
@@ -593,7 +685,7 @@ const Join2 = () => {
                     </div>
                     <div className="join1-buttonbox-lower">
                         <button className="join1-button" type="submit">가입하기</button>
-                        <button className="join1-button"
+                        <button className="join1-button" type="button"
                                 style={{background: 'lightgray', color: 'black'}}
                                 onClick={handleExit}>나가기
                         </button>

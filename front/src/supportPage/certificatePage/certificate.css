@@ -1,0 +1,27 @@
+.certificate-list {
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.certificate-list li{
+    margin-bottom: 8px;
+}
+
+.certificate-text {
+    margin: 0 auto;
+    width: 100%;
+    height: fit-content;
+    justify-content: center;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 50%;
+    /* or 22px */
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #000000;
+}

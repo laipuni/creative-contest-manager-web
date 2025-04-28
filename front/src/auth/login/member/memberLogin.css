@@ -1,0 +1,365 @@
+.login-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0px;
+
+    position: relative;
+    width: 100%;
+    min-width: 1500px;
+    height: 100%;
+
+}
+
+.login-content-container {
+    display: flex; /* flexbox 사용 */
+    flex-direction: row; /* 요소들을 가로로 배치 */
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    padding: 50px 100px; /* padding 값을 조정하여 여백 설정 */
+    width: 100%; /* 부모 요소의 너비에 맞춤 */
+    height: 100%; /* 부모 요소의 높이에 맞춤 */
+    box-sizing: border-box; /* padding을 포함한 요소 크기 계산 */
+    gap: 50px; /* 요소 간 간격 설정 */
+}
+
+.login-content-image {
+    width: 30%; /* 원의 너비 */
+    height: 30%; /* 원의 높이 (너비와 동일하게 설정) */
+    background-color: #F2F4F8;
+    border-radius: 50%; /* 원 모양 만들기 */
+    overflow: hidden; /* 이미지가 원 밖으로 나가지 않도록 설정 */
+    display: flex; /* 내부 요소 정렬을 위해 flexbox 사용 */
+    align-items: center; /* 수직 가운데 정렬 */
+    justify-content: center; /* 수평 가운데 정렬 */
+}
+
+.locker-image {
+    width: 100%; /* 부모 요소의 너비에 맞춤 */
+    height: 100%; /* 부모 요소의 높이에 맞춤 */
+    background-size: cover; /* 이미지를 원에 꽉 채우도록 설정 */
+    background-position: center; /* 이미지 중앙 정렬 */
+}
+
+.login-content-text {
+    /* member_login */
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px;
+    gap: 10px;
+    width: 50%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.login-title {
+    /* login_title */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 8px;
+
+    width: 100%;
+    height: fit-content;
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 110%;
+    color: #21272A;
+
+
+}
+
+.login-body {
+    /* login_body */
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 16px;
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.login-input-field {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 4px;
+
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.login-input-title {
+    /* Label */
+
+    width: 100%;
+    height: fit-content;
+    text-align: left;
+    /* Body/S */
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 140%;
+    /* identical to box height, or 20px */
+
+    /* CoolGray/90 */
+    color: #21272A;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.login-input-body {
+    /* Field */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 8px;
+
+    width: 80%;
+    height: fit-content;
+
+    /* CoolGray/10 */
+    background: #F2F4F8;
+    /* CoolGray/30 */
+    border-left: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: 1px solid #C1C7CD;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.login-forgotpw {
+    /* forgot_password */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0px;
+    gap: 10px;
+    width: 80%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 0;
+
+
+
+}
+
+.login-forgotpw-text {
+    /* forgot_password */
+    all: unset;
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+    /* Body/S */
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 140%;
+    /* identical to box height, or 20px */
+    text-align: left;
+
+    /* Primary/90 */
+    color: #001D6C;
+
+
+
+
+}
+
+.login-button {
+    /* login_button */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px;
+    cursor: pointer;
+    width: 80%;
+    height: fit-content;
+
+    /* Primary/60 */
+    background: #0F62FE;
+    /* Primary/60 */
+    border: 2px solid #0F62FE;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 3;
+    align-self: stretch;
+    flex-grow: 0;
+    /* Button Text */
+
+    /* Button/M */
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    /* identical to box height, or 16px */
+    letter-spacing: 0.5px;
+
+    /* Default/White */
+    color: #FFFFFF;
+
+
+}
+
+.login-underline {
+    /* underbar */
+
+    width: 80%;
+    height: 0px;
+
+    /* CoolGray/20 */
+    border: 1px solid #DDE1E6;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.login-joinmessage {
+    /* join_box */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px 0px;
+    gap: 0px;
+    width: 80%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 3;
+    align-self: stretch;
+    flex-grow: 0;
+
+
+}
+
+.login-joinmessage-text {
+    /* 아직 회원가입을 안하셨나요? */
+
+    width: 40%;
+    height: fit-content;
+
+    /* Body/S */
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    /* or 20px */
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    margin: 0px -20px;
+
+}
+
+.login-joinmessage-hyper {
+    /* 회원가입 */
+
+    width: 50%;
+    height: fit-content;
+
+    /* Body/S */
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    text-align: left;
+
+    color: #001D6C;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+    text-decoration: none;
+}

@@ -118,7 +118,7 @@
     align-content: flex-start;
     padding: 0px 10px;
     gap: 10px;
-
+    text-decoration: none;
     width: 40%;
     height: 100%;
 
@@ -294,6 +294,7 @@
     /* Frame */
 
     /* Auto layout */
+    text-decoration: none;
     display: flex;
     flex-direction: row;
     align-items: flex-start;

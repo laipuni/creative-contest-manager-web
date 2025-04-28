@@ -1,21 +1,24 @@
 import React, {useState} from 'react';
-import SubHeader from '../components/subHeader/subHeader'
+import SubHeader from '../../components/subHeader/subHeader'
 import './join1.css'
 import {useNavigate} from "react-router-dom";
 const Join1 = () => {
-    const [isChecked, setIsChecked] = useState(false);
+    const [localChecked, setLocalChecked] = useState(() => {
+        return sessionStorage.getItem("isChecked") === "true";
+    });
     const navigate = useNavigate();
 
     const handleCheckbox = () => {
-        setIsChecked(!isChecked);
+        setLocalChecked(!localChecked);
     };
 
     const handleNextPage = () => {
-        if (isChecked) {
-            navigate('/join2');
+        if (localChecked) {
+            sessionStorage.setItem("isChecked", "true")
+            navigate('/join/register');
         }
         else {
-            alert('약관에 동의하셔야 합니다.')
+            alert('약관에 동의해야 다음 단계로 넘어갈 수 있습니다.')
         }
     };
 
@@ -135,7 +138,7 @@ const Join1 = () => {
                         <div className="join1-buttonbox-upper">
                             <input
                                 type="checkbox"
-                                checked={isChecked}
+                                checked={localChecked}
                                 onChange={handleCheckbox}/>
                             <p className="join1-upper-text">위 약관에 동의합니다.</p>
                         </div>
