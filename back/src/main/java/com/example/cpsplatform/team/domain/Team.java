@@ -56,22 +56,24 @@ public class Team extends BaseEntity {
 
     @Builder
     private Team(final String name, final Boolean winner, final Member leader,
-                 final Contest contest, final String teamNumber){
+                 final Contest contest, final String teamNumber, final Section section){
         this.name = name;
         this.winner = winner;
         this.leader = leader;
         this.contest = contest;
         this.teamNumber = teamNumber;
+        this.section = section;
     }
 
     public static Team of(final String name, final Boolean winner, final Member leader,
-                          final Contest contest, final String teamNumber){
+                          final Contest contest, final String teamNumber, final Section section){
         return Team.builder()
                 .name(name)
                 .winner(winner)
                 .leader(leader)
                 .contest(contest)
                 .teamNumber(teamNumber)
+                .section(section)
                 .build();
     }
 
