@@ -18,7 +18,7 @@ public class TeamListByContestDto {
     private Long teamId;
     private String name;
     private Boolean winner;
-    private Member leader;
+    private String leaderId;
     private String teamNumber;
     private LocalDateTime createdAt;
 
@@ -27,7 +27,7 @@ public class TeamListByContestDto {
                 .teamId(team.getId())
                 .name(team.getName())
                 .winner(team.getWinner())
-                .leader(team.getLeader())
+                .leaderId(team.getLeader().getLoginId())
                 .teamNumber(team.getTeamNumber())
                 .createdAt(team.getCreatedAt())
                 .build();

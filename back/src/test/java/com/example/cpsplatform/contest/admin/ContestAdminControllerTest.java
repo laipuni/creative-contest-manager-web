@@ -588,8 +588,8 @@ class ContestAdminControllerTest {
         Member leader = Member.builder().loginId("yi").role(Role.USER).build();
         Member leader2 = Member.builder().loginId("kim").role(Role.USER).build();
         List<TeamListByContestDto> teamList = List.of(
-                new TeamListByContestDto(1L, "팀1", false, leader, "002", LocalDateTime.now()),
-                new TeamListByContestDto(2L, "팀2", false, leader2, "003", LocalDateTime.now())
+                new TeamListByContestDto(1L, "팀1", false, leader.getLoginId(), "002", LocalDateTime.now()),
+                new TeamListByContestDto(2L, "팀2", false, leader2.getLoginId(), "003", LocalDateTime.now())
         );
 
         int totalPage = 3;
