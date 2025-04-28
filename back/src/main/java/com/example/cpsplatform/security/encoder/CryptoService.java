@@ -2,6 +2,7 @@ package com.example.cpsplatform.security.encoder;
 
 import com.example.cpsplatform.exception.CryptoException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -18,12 +19,8 @@ import java.util.concurrent.Callable;
 @Component
 public class CryptoService {
 
-    private final String secretKey;
-
-    public CryptoService() throws IOException {
-        ClassPathResource resource = new ClassPathResource("/AES_key.key");
-        this.secretKey = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8).trim();
-    }
+    @Value("${register.encoder.secretkey}")
+    private String secretKey;
 
     public String encryptAES(String data) {
         return handleException(() -> {
