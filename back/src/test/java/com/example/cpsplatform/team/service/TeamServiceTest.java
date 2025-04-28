@@ -12,10 +12,16 @@ import static org.mockito.Mockito.when;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.DuplicateDataException;
+import com.example.cpsplatform.member.domain.Address;
+import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.Role;
+import com.example.cpsplatform.member.domain.organization.school.School;
+import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.security.encoder.CryptoService;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
@@ -24,22 +30,45 @@ import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
+@SpringBootTest
 class TeamServiceTest {
-    private MemberRepository memberRepository = mock(MemberRepository.class);
-    private TeamRepository teamRepository = mock(TeamRepository.class);
-    private MemberTeamRepository memberTeamRepository = mock(MemberTeamRepository.class);
-    private ContestRepository contestRepository = mock(ContestRepository.class);
-    private TeamNumberRepository teamNumberRepository = mock(TeamNumberRepository.class);
-
+    @Autowired
     private TeamService teamService;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private ContestRepository contestRepository;
+
+    @Autowired
+    private TeamRepository teamRepository;
+
+    @Autowired
+    private TeamNumberRepository teamNumberRepository;
+
+    @Autowired
+    private MemberTeamRepository memberTeamRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    CryptoService cryptoService;
 
     @BeforeEach
     void setUp() {
@@ -174,34 +203,65 @@ class TeamServiceTest {
     @DisplayName("특정 대회에 자신이 참여한 팀을 단건 조회할 수 있다.")
     @Test
     void getMyTeamInfoByContest(){
-        //given
+        // given
         String loginId = "yi";
-        Member member = Member.builder().loginId(loginId).build();
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+        memberRepository.save(member);
 
-        Long contestId = 5L;
-        Contest contest = Contest.builder().build();
-        Team team = Team.builder().name("이팀").contest(contest).leader(member).build();
+        Contest contest = Contest.builder()
+                .title("테스트대회")
+                .season(2025)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
 
-        ReflectionTestUtils.setField(contest, "id", contestId);
-        ReflectionTestUtils.setField(team, "id", 1L);
+        Team team = Team.builder().name("이팀").winner(false).leader(member).teamNumber("003").contest(contest).build();
+        teamRepository.save(team);
 
-        List<MemberTeam> memberTeams = List.of(
-                MemberTeam.of(member, team),
-                MemberTeam.of(Member.builder().loginId("kim").build(), team)
-        );
+        String loginId2 = "kim";
+        Address address2 = new Address("street","city","zipCode","detail");
+        School school2 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member2 = Member.builder()
+                .loginId(loginId2)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email2@email.com")
+                .address(address2)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341235")
+                .name("사람 이름2")
+                .organization(school2)
+                .build();
+        memberRepository.save(member2);
 
-        when(memberRepository.findMemberByLoginId(loginId)).thenReturn(Optional.of(member));
-        when(contestRepository.findById(contestId)).thenReturn(Optional.of(contest));
-        when(teamRepository.findTeamByMemberAndContest(loginId,contestId)).thenReturn(Optional.of(team));
-        when(memberTeamRepository.findAllByTeamId(team.getId())).thenReturn(memberTeams);
+        memberTeamRepository.save(MemberTeam.of(member, team));
+        memberTeamRepository.save(MemberTeam.of(member2, team));
 
-        //when
-        MyTeamInfoByContestDto myTeamInfoByContestDto = teamService.getMyTeamInfoByContest(contestId, loginId);
+        // when
+        MyTeamInfoByContestDto myTeamInfoByContestDto = teamService.getMyTeamInfoByContest(contest.getId(), member.getLoginId());
 
-        //then
+        // then
+        assertThat(myTeamInfoByContestDto.getTeamId()).isEqualTo(team.getId());
         assertThat(myTeamInfoByContestDto.getTeamName()).isEqualTo("이팀");
         assertThat(myTeamInfoByContestDto.getLeader().getLoginId()).isEqualTo("yi");
-        assertThat(myTeamInfoByContestDto.getTeamId()).isEqualTo(1L);
-        assertThat(myTeamInfoByContestDto.getMemberIds()).contains("yi","kim");
+        assertThat(myTeamInfoByContestDto.getMemberIds()).containsExactlyInAnyOrder("yi", "kim");
+        assertThat(myTeamInfoByContestDto.getCreatedAt()).isNotNull();
     }
 }
