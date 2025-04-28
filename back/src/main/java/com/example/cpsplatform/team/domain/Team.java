@@ -7,8 +7,11 @@ import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.Organization;
+import com.example.cpsplatform.problem.domain.Section;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -48,8 +51,12 @@ public class Team extends BaseEntity {
     @Column(name = "team_number", nullable = false)
     private String teamNumber;
 
+    @Enumerated(EnumType.STRING)
+    private Section section;
+
     @Builder
-    private Team(final String name, final Boolean winner, final Member leader, final Contest contest, final String teamNumber){
+    private Team(final String name, final Boolean winner, final Member leader,
+                 final Contest contest, final String teamNumber){
         this.name = name;
         this.winner = winner;
         this.leader = leader;
@@ -57,7 +64,8 @@ public class Team extends BaseEntity {
         this.teamNumber = teamNumber;
     }
 
-    public static Team of(final String name, final Boolean winner, final Member leader, final Contest contest, final String teamNumber){
+    public static Team of(final String name, final Boolean winner, final Member leader,
+                          final Contest contest, final String teamNumber){
         return Team.builder()
                 .name(name)
                 .winner(winner)
