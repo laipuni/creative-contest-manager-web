@@ -3,9 +3,13 @@ package com.example.cpsplatform.team.service;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.organization.Organization;
+import com.example.cpsplatform.member.domain.organization.school.School;
+import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
@@ -47,7 +51,8 @@ public class TeamService {
                 .orElseGet(()->teamNumberRepository.save(TeamNumber.of(contest, 0)));
 
         String teamIdNumber = teamNumber.getNextTeamNumber();
-        Team team = buildTeam(createDto, leader, teamIdNumber);
+        Section teamSection = determineSection(leader);
+        Team team = buildTeam(createDto, leader, teamIdNumber, teamSection);
 
         teamRepository.save(team);
         memberTeamRepository.save(MemberTeam.of(leader, team));
@@ -121,13 +126,30 @@ public class TeamService {
         memberTeamRepository.saveAll(memberTeams);
     }
 
-    private Team buildTeam(TeamCreateDto createDto, Member leader, String teamIdNumber) {
+    private Section determineSection(Member leader) {
+        Organization organization = leader.getOrganization();
+
+        if (organization instanceof School school) {
+            StudentType studentType = school.getStudentType();
+
+            if (studentType == StudentType.ELEMENTARY || studentType == StudentType.MIDDLE) {
+                return Section.ELEMENTARY_MIDDLE;
+            } else if (studentType == StudentType.HIGH) {
+                return Section.HIGH_NORMAL;
+            }
+        }
+        return Section.HIGH_NORMAL;
+    }
+
+
+    private Team buildTeam(TeamCreateDto createDto, Member leader, String teamIdNumber, Section section) {
         return Team.of(
                 createDto.getTeamName(),
                 false,
                 leader,
                 getContestById(createDto.getContestId()),
-                teamIdNumber);
+                teamIdNumber,
+                section);
     }
 
     private void validateTeamSize(List<String> memberIds) {
