@@ -1,6 +1,5 @@
 package com.example.cpsplatform.member.controller.request;
 
-import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.domain.organization.company.Company;
@@ -17,13 +16,13 @@ import java.time.LocalDate;
 @ValidOrganization
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberRegisterReqeust {
+public class MemberRegisterRequest {
 
     @Size(min = 4, max = 12, message = "로그인 ID는 4-12자 이내여야 합니다")
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "로그인 ID는 영문자와 숫자만 가능합니다")
     private String loginId;
 
-    @Size(min = 4, max = 8, message = "비밀번호는 4-12자 이내여야 합니다")
+    @Size(min = 4, max = 8, message = "비밀번호는 4-8자 이내여야 합니다")
     private String password;
 
     @NotBlank(message = "비밀번호확인은 필수입니다")
@@ -54,7 +53,7 @@ public class MemberRegisterReqeust {
     @Pattern(regexp = "^010\\d{8}$", message = "휴대폰 번호는 010으로 시작하는 11자리 숫자여야 합니다")
     private String phoneNumber;
 
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})*$", message = "이메일 형식이 올바르지 않습니다")
     private String email;
 
     @NotBlank(message = "직업은 필수입니다")

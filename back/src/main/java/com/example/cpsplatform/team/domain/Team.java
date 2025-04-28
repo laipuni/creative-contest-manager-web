@@ -35,21 +35,39 @@ public class Team extends BaseEntity {
     private Boolean winner = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leader_id", nullable = false)
+    private Member leader;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contest_id", nullable = false)
     private Contest contest;
 
     @Builder
-    private Team(final String name, final Boolean winner, final Contest contest){
+    private Team(final String name, final Boolean winner, final Member leader, final Contest contest){
         this.name = name;
         this.winner = winner;
+        this.leader = leader;
         this.contest = contest;
     }
 
-    public static Team of(final String name, final Boolean winner, final Contest contest){
+    public static Team of(final String name, final Boolean winner, final Member leader, final Contest contest){
         return Team.builder()
                 .name(name)
                 .winner(winner)
+                .leader(leader)
                 .contest(contest)
                 .build();
+    }
+
+    public void updateTeamName(String newName) {
+        if (newName != null && !newName.isBlank()) {
+            this.name = newName;
+        }
+    }
+
+    public void isNotTeamLeader(Team team, String leaderId) {
+        if (!team.getLeader().getLoginId().equals(leaderId)) {
+            throw new IllegalArgumentException("팀장만 수정 또는 삭제할 수 있습니다.");
+        }
     }
 }

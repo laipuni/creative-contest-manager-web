@@ -1,10 +1,15 @@
 package com.example.cpsplatform.exception.controller;
 
 import com.example.cpsplatform.exception.CryptoException;
+import com.example.cpsplatform.exception.FileDownloadException;
+import com.example.cpsplatform.exception.FileNotFoundException;
+import com.example.cpsplatform.exception.FileReadException;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,6 +21,45 @@ import java.util.Map;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse<Object> fileNotFoundException(FileNotFoundException ex, HttpServletResponse response) {
+        //이미 설정된 콘텐츠 타입을 재설정(application/zip or octet-stream -> application/Json")
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        return ApiErrorResponse.of(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(FileDownloadException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse<Object> fileDownloadException(FileDownloadException ex, HttpServletResponse response) {
+        log.error("파일 다운로드 중 오류 발생", ex);
+        //todo 개발자에게 해당 에러를 전송해야 함
+
+        //이미 설정된 콘텐츠 타입을 재설정(application/zip or octet-stream -> application/Json")
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        return ApiErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                null
+        );
+    }
+
+    @ExceptionHandler(FileReadException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse<Object> handleFileReadException(FileReadException e) {
+        log.error("msg = {}",e.getMessage(),e);
+        //todo 개발자에게 해당 에러를 전송해야 함
+        return ApiErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                e.getMessage(),
+                null
+        );
+    }
 
     @ExceptionHandler(CryptoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
