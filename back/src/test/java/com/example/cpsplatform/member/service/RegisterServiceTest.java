@@ -14,6 +14,7 @@ import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.auth.service.dto.FindIdDto;
 import com.example.cpsplatform.auth.service.dto.RegisterRequestDto;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class RegisterServiceTest {
     @MockitoBean
     AuthService authService;
 
-    @BeforeEach
+    @AfterEach
     void tearUp(){
         memberRepository.deleteAll();
     }
