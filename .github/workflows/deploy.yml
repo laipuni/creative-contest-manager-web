@@ -21,7 +21,6 @@ jobs:
       - name: Write environment variables to .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > ./back/.env
-          source ./back/.env
       
       - name: Log in to DockerHub
         uses: docker/login-action@v2
