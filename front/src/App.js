@@ -7,7 +7,7 @@ import AppRoutes from "./templates/appRoutes";
 function App() {
     //csrf 토큰 생성
     useEffect(() => {
-        axios.get("/api/csrf")
+        axios.get("http://back:8080/api/csrf")
             .then((data) => {
             })
             .catch((error) => {alert(error.message)});
