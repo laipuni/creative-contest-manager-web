@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -57,6 +58,7 @@ class ProblemServiceTest {
     private ContestRepository contestRepository;
 
     @Test
+    @DisplayName("팀의 섹션에 맞는 문제를 불러올 수 있다.(특정섹션문제, 공통문제 총 두개)")
     void getProblemsForTeam() {
         // given
         Address address = new Address("street", "city", "zipCode", "detail");
