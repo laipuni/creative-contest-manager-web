@@ -18,21 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create .env file
+      - name: Write environment variables to .env file
         run: |
-          cat <<EOF > ./back/.env
-          SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
-          SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          SPRING_REDIS_HOST=${{ secrets.SPRING_REDIS_HOST }}
-          SPRING_REDIS_PORT=${{ secrets.SPRING_REDIS_PORT }}
-          SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}
-          SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }}
-          AWS_S3_ACCESS_KEY=${{ secrets.AWS_S3_ACCESS_KEY }}
-          AWS_S3_SECRET_KEY=${{ secrets.AWS_S3_SECRET_KEY }}
-          AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
-          REGISTER_ENCODER_SECRETKEY=${{ secrets.REGISTER_ENCODER_SECRETKEY }}
-          EOF
+          echo "${{ secrets.ENV_FILE }}" > ./back/.env
+          source .env
       
       - name: Log in to DockerHub
         uses: docker/login-action@v2
