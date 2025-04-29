@@ -21,6 +21,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.encoder.CryptoService;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -31,16 +32,15 @@ import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -79,36 +79,81 @@ class TeamServiceTest {
     @Test
     void createTeam() {
         // given
-        String leaderId = "yi";
-        Member leader = Member.builder().loginId(leaderId).build();
-        Member member1 = Member.builder().loginId("one").build();
-        Member member2 = Member.builder().loginId("two").build();
-        Contest contest = Contest.builder().title("테스트대회").build();
+        String leaderId = "leaderId";
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member leader = Member.builder()
+                .loginId(leaderId)
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("팀장")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
+
+        Address address1 = new Address("street", "city", "zipCode", "detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member member1 = Member.builder()
+                .loginId("one")
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email1@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341235")
+                .name("팀원1")
+                .organization(school1)
+                .build();
+        memberRepository.save(member1);
+
+        Address address2 = new Address("street", "city", "zipCode", "detail");
+        School school2 = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member member2 = Member.builder()
+                .loginId("two")
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email2@email.com")
+                .address(address2)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341236")
+                .name("팀원2")
+                .organization(school2)
+                .build();
+        memberRepository.save(member2);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(2025)
+                .registrationStartAt(LocalDateTime.now())
+                .registrationEndAt(LocalDateTime.now().plusDays(5))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(7))
+                .build();
+        contestRepository.save(contest);
         Long contestId = 1L;
 
         TeamCreateDto dto = new TeamCreateDto("팀입니다", contestId, List.of("one", "two"));
 
         TeamNumber teamNumber = TeamNumber.builder().contest(contest).lastTeamNumber(2).build();
-
-        when(memberRepository.findMemberByLoginId("yi")).thenReturn(Optional.of(leader));
-        when(memberRepository.findMemberByLoginId("one")).thenReturn(Optional.of(member1));
-        when(memberRepository.findMemberByLoginId("two")).thenReturn(Optional.of(member2));
-        when(contestRepository.findById(contestId)).thenReturn(Optional.of(contest));
-        when(memberTeamRepository.existsByMember(any())).thenReturn(false);
-        when(teamNumberRepository.getLockedNumberForContest(contestId)).thenReturn(Optional.of(teamNumber));
+        teamNumberRepository.save(teamNumber);
 
         // when
         Long createdTeamId = teamService.createTeam(leaderId, dto);
 
         // then
-        verify(teamNumberRepository).getLockedNumberForContest(contestId);
-
-        ArgumentCaptor<Team> teamCaptor = ArgumentCaptor.forClass(Team.class);
-        verify(teamRepository).save(teamCaptor.capture());
-        Team savedTeam = teamCaptor.getValue();
+        Team savedTeam = teamRepository.findById(createdTeamId).orElseThrow();
 
         //팀 번호가 003인지 확인
         assertEquals("003", savedTeam.getTeamNumber());
+        //팀 섹션 확인
+        assertEquals(Section.HIGH_NORMAL, savedTeam.getSection());
         //팀 생성 반환 확인
         assertEquals("팀입니다", savedTeam.getName());
         assertEquals(contest, savedTeam.getContest());
