@@ -1,0 +1,475 @@
+.join2-page-container {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0px;
+
+    position: relative;
+    width: 100%;
+    min-width: 850px;
+    height: 100%;
+
+}
+
+.join2-content-container {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 0px;
+    margin: 0 auto;
+    width: 100%;
+    height: 80%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.join2-subtitle {
+    /* login_title_text */
+
+    width: 60%;
+    height: fit-content;
+    text-align: left;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 110%;
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.join2-main-container {
+
+    /* Frame 56 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+
+    width: 60%;
+    height: fit-content;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+
+
+
+}
+
+.join2-main-upper {
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+
+    width: 100%;
+    height: fit-content;
+
+    border-width: 1px 0px;
+    border-style: solid;
+    border-color: #6B94FC;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.join2-main-lower {
+    /* Frame 57 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.join2-main-border {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+
+    width: 100%;
+    height: fit-content;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+
+}
+
+.join2-main-border-left {
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 20px;
+    gap: 10px;
+
+    width: 25%;
+    height: auto;
+
+    background: rgba(0, 0, 0, 0.06);
+    border-width: 0px 1px 1px 0px;
+    border-style: dashed;
+    border-color: #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.join2-main-border-right {
+
+    /* Frame 64 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 13px 20px;
+    width: 60%;
+    height: auto;
+
+    border-bottom: 1px dashed #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 1;
+
+}
+
+.join2-left-text {
+
+    width: 100%;
+    height: fit-content;
+    text-align: left;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 00%;
+    /* identical to box height, or 22px */
+
+    color: #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 1;
+
+}
+
+.join2-right-row {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 0px;
+    gap: 10px;
+
+    width: 100%;
+    height: auto;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+
+}
+
+.join2-id-input {
+    /* Frame 39 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 5px;
+
+    width: 20%;
+    height: 20%;
+
+    border: 1px solid #000000;
+
+    /* Inside    auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 110%;
+
+    color: #000000;
+
+
+}
+
+.join2-id-button{
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 0px;
+    cursor: pointer;
+    width: 10%;
+    height: 20%;
+
+    background: rgba(0, 0, 0, 0.06);
+    font-size: 11px;
+    text-align: center;
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+    border: none;
+
+}
+
+.join2-id-info {
+    /* 회원ID는 가입 후 바꾸실 수 없으니 신중하게 결정 해 주세요. 영문자로 시작하는 4~12자의 영문과 숫자를 사용하시고 여백없이 입력해 주세요. */
+
+    width: 100%;
+    height: fit-content;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 110%;
+
+    color: #000000;
+    text-align: left;
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+.info-message {
+
+    width: fit-content;
+    height: fit-content;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 110%;
+    white-space: pre-line;
+    text-align: left;
+
+    color: #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+
+}
+
+.join2-right-lower {
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px 0px;
+    gap: 0px;
+
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.join2-right-lower-top {
+    /* Frame 39 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 5px;
+
+    width: 45%;
+    height: fit-content;
+
+    border: 1px solid #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    text-align: left;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 110%;
+
+    color: #000000;
+
+
+
+
+}
+
+.join2-right-lower-bot {
+    /* Frame 79 */
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+
+    width: 100%;
+    height: 100%;
+
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.join2-right-lower-bot-left {
+    /* Frame 40 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 5px;
+    font-size: 13px;
+    width: 45%;
+    height: 60%;
+
+    border: 1px solid #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.join2-right-lower-bot-right {
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 10px;
+    gap: 10px;
+    width: fit-content;
+    height: fit-content;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 1;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 0%;
+
+    color: #000000;
+
+}
+
+.info-message2 {
+
+    width: fit-content;
+    height: fit-content;
+    text-align: center;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 110%;
+    /* identical to box height, or 20px */
+
+    color: #000000;
+
+}
