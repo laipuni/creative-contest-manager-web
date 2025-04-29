@@ -30,7 +30,7 @@ jobs:
 
       - name: Build & tag with docker-compose
         run: |
-          docker-compose -f docker-prod.yml build
+          docker-compose -f docker-compose.yml build
           docker tag creative-contest-manager-web-backend $DOCKER_IMAGE_BACK
           docker tag creative-contest-manager-web-frontend $DOCKER_IMAGE_FRONT
 
