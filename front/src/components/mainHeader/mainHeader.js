@@ -14,7 +14,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                 setIsAuthenticated(null);
                 window.location.reload();
                 //csrf 토큰 다시 얻어오기
-                axios.get("http://back:8080/api/csrf")
+                axios.get("/api/csrf")
                     .then((data) => {
                     })
                     .catch((error) => {alert(error.message)});

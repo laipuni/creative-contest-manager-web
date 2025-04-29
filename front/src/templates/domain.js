@@ -1,1 +1,1 @@
-export const domain = "http://back:8080";
+export const domain = "";

@@ -14,7 +14,7 @@ function getCsrfToken() {
 
 // Axios 기본 설정
 const apiClient = axios.create({
-    baseURL: "http://back:8080",
+    baseURL: "",
     withCredentials: true, // 쿠키 기반 인증을 사용하려면 필요
     headers: {
         'Content-Type': 'application/json'
