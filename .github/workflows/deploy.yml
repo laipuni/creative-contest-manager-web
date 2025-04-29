@@ -21,7 +21,7 @@ jobs:
       - name: Write environment variables to .env file
         run: |
           echo "${{ secrets.ENV_FILE }}" > ./back/.env
-          source .env
+          source ./back/.env
       
       - name: Log in to DockerHub
         uses: docker/login-action@v2
@@ -33,7 +33,7 @@ jobs:
         run: |
           docker-compose -f docker-prod.yml build
           docker tag creative-contest-manager-web-backend $DOCKER_IMAGE_BACK
-          docker tag creative-contest-manager-web-frontend $DOCKER_IMAGE_FRON
+          docker tag creative-contest-manager-web-frontend $DOCKER_IMAGE_FRONT
 
       - name: Push with docker
         run: |
