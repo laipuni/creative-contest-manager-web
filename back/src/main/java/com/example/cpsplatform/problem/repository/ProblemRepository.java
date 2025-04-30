@@ -2,6 +2,7 @@ package com.example.cpsplatform.problem.repository;
 
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
+import com.example.cpsplatform.problem.domain.Section;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -21,4 +22,12 @@ public interface ProblemRepository extends JpaRepository<Problem,Long> {
     @EntityGraph(value = "contest")
     @Query("SELECT p FROM Problem p WHERE p.contest.id = :contestId AND p.id = :problemId AND p.problemType = :problemType")
     Optional<Problem> findContestProblemByContestIdAndProblemId(@Param("problemType") ProblemType problemType, @Param("problemId") Long problemId, @Param("contestId") Long contestId);
+
+    @Query("""
+        SELECT p FROM Problem p
+        LEFT JOIN FETCH p.files
+        WHERE p.contest.id = :contestId
+          AND p.section = :section
+    """)
+    Optional<Problem> findWithFilesByContestIdAndSection(@Param("contestId") Long contestId, @Param("section") Section section);
 }
