@@ -11,6 +11,8 @@ import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.teamnumber.domain.TeamNumber;
+import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +32,14 @@ public class ContestAdminService {
 
     private final ContestRepository contestRepository;
     private final TeamRepository teamRepository;
+    private final TeamNumberRepository teamNumberRepository;
 
     @Transactional
     public void createContest(ContestCreateDto createDto){
         Contest contest = contestRepository.save(createDto.toEntity());
         log.info("[ADMIN] 대회 생성: id={}", contest.getId());
+        TeamNumber teamNumber = teamNumberRepository.save(TeamNumber.of(contest, 0));
+        log.info("[ADMIN] 대회의 팀 접수 번호 생성 : id={}", teamNumber.getId());
     }
 
     @Transactional

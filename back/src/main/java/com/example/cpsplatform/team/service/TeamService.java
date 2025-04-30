@@ -45,18 +45,8 @@ public class TeamService {
         Member leader = memberRepository.findMemberByLoginId(leaderId)
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
 
-        Contest contest = contestRepository.findById(createDto.getContestId())
-                .orElseThrow(()->new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
-
         TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
-                .orElseGet(()->{
-                    try {
-                        return teamNumberRepository.save(TeamNumber.of(contest, 0));
-                    } catch (DataIntegrityViolationException e) {
-                        return teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
-                                .orElseThrow(() -> new IllegalStateException("TeamNumber 중복 생성 충돌"));
-                    }
-                });
+                .orElseThrow(() -> new IllegalArgumentException("팁 접수 번호를 생성하는데, 문제가 발생했습니다."));
 
         String teamIdNumber = teamNumber.getNextTeamNumber();
         Section teamSection = determineSection(leader);
