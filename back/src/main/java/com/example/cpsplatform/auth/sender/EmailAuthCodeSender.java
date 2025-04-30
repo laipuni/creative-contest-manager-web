@@ -17,7 +17,7 @@ public class EmailAuthCodeSender implements AuthCodeSender{
     private final AuthCodeProperties authCodeProperties;
 
     public static final String AUTHCODE_MAIL_TITLE = "안녕하세요. 인증코드 메일입니다.";
-    public static final String AUTHCODE_HTML_FORM_PATH = "/mail/authMailForm";
+    public static final String AUTHCODE_HTML_FORM_PATH = "mail/authMailForm";
 
     public EmailAuthCodeSender(final EmailService emailService, final SpringTemplateEngine templateEngine, final AuthCodeProperties authCodeProperties) {
         this.emailService = emailService;
