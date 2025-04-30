@@ -6,10 +6,14 @@ import com.example.cpsplatform.contest.admin.controller.ContestAdminController;
 import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListDto;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
+import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestDto;
+import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
+import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
@@ -573,5 +577,54 @@ class ContestAdminControllerTest {
                 .andExpect(jsonPath("$.message").value("삭제할 대회의 정보는 필수입니다."));
     }
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 해당 대회에 참여한 팀을 조회하면 해당 페이지의 팀 목록이 반환된다")
+    @Test
+    void searchTeamListByContest() throws Exception {
+        // given
+        int page = 0;
+        Long contestId = 1L;
+
+        Member leader = Member.builder().loginId("yi").role(Role.USER).build();
+        Member leader2 = Member.builder().loginId("kim").role(Role.USER).build();
+        List<TeamListByContestDto> teamList = List.of(
+                new TeamListByContestDto(1L, "팀1", false, leader.getLoginId(), "002", LocalDateTime.now()),
+                new TeamListByContestDto(2L, "팀2", false, leader2.getLoginId(), "003", LocalDateTime.now())
+        );
+
+        int totalPage = 3;
+        int firstPage = 0;
+        int lastPage = 2;
+        int size = 2;
+        TeamListByContestResponse response = TeamListByContestResponse.builder()
+                .page(page)
+                .totalPage(totalPage)
+                .firstPage(firstPage)
+                .lastPage(lastPage)
+                .size(size)
+                .teamList(teamList)
+                .build();
+
+        Mockito.when(contestAdminService.searchTeamListByContest(contestId,page))
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/{contestId}/teams", contestId)
+                        .param("page", String.valueOf(page)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.page").value(0))
+                .andExpect(jsonPath("$.data.totalPage").value(totalPage))
+                .andExpect(jsonPath("$.data.firstPage").value(firstPage))
+                .andExpect(jsonPath("$.data.lastPage").value(lastPage))
+                .andExpect(jsonPath("$.data.size").value(size))
+                .andExpect(jsonPath("$.data.teamList").isArray())
+                .andExpect(jsonPath("$.data.teamList[0].teamId").value(1L))
+                .andExpect(jsonPath("$.data.teamList[0].name").value("팀1"))
+                .andExpect(jsonPath("$.data.teamList[1].teamId").value(2L))
+                .andExpect(jsonPath("$.data.teamList[1].name").value("팀2"))
+                .andDo(print());
+    }
 
 }

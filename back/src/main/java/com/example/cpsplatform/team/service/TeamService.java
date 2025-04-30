@@ -3,18 +3,28 @@ package com.example.cpsplatform.team.service;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.organization.Organization;
+import com.example.cpsplatform.member.domain.organization.school.School;
+import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
+import com.example.cpsplatform.teamnumber.domain.TeamNumber;
+import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,13 +38,20 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final MemberTeamRepository memberTeamRepository;
     private final ContestRepository contestRepository;
+    private final TeamNumberRepository teamNumberRepository;
 
     @Transactional
     public Long createTeam(String leaderId, TeamCreateDto createDto){
         Member leader = memberRepository.findMemberByLoginId(leaderId)
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
 
-        Team team = buildTeam(createDto, leader);
+        TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
+                .orElseThrow(() -> new IllegalArgumentException("팁 접수 번호를 생성하는데, 문제가 발생했습니다."));
+
+        String teamIdNumber = teamNumber.getNextTeamNumber();
+        Section teamSection = determineSection(leader);
+        Team team = buildTeam(createDto, leader, teamIdNumber, teamSection);
+
         teamRepository.save(team);
         memberTeamRepository.save(MemberTeam.of(leader, team));
 
@@ -75,6 +92,27 @@ public class TeamService {
                 )).toList();
     }
 
+    public MyTeamInfoByContestDto getMyTeamInfoByContest(Long contestId, String loginId){
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(()->new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
+        Member member = memberRepository.findMemberByLoginId(loginId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
+        Team team = teamRepository.findTeamByMemberAndContest(member.getLoginId(),contest.getId())
+                .orElseThrow(()->new IllegalArgumentException("해당하는 팀이 존재하지 않습니다."));
+
+        List<MemberTeam> memberTeams = memberTeamRepository.findAllByTeamId(team.getId());
+        List<String> memberIds = memberTeams.stream()
+                .map(mt -> mt.getMember().getLoginId())
+                .toList(); //본인이 속한 팀의 멤버들 리스트
+
+        return new MyTeamInfoByContestDto(
+                team.getId(),
+                team.getName(),
+                team.getLeader(),
+                memberIds,
+                team.getCreatedAt());
+    }
+
     private void addMembersToTeam(List<String> memberIds, Team team) {
         List<MemberTeam> memberTeams = new ArrayList<>();
 
@@ -86,12 +124,30 @@ public class TeamService {
         memberTeamRepository.saveAll(memberTeams);
     }
 
-    private Team buildTeam(TeamCreateDto createDto, Member leader) {
+    private Section determineSection(Member leader) {
+        Organization organization = leader.getOrganization();
+
+        if (organization instanceof School school) {
+            StudentType studentType = school.getStudentType();
+
+            if (studentType == StudentType.ELEMENTARY || studentType == StudentType.MIDDLE) {
+                return Section.ELEMENTARY_MIDDLE;
+            } else if (studentType == StudentType.HIGH) {
+                return Section.HIGH_NORMAL;
+            }
+        }
+        return Section.HIGH_NORMAL;
+    }
+
+
+    private Team buildTeam(TeamCreateDto createDto, Member leader, String teamIdNumber, Section section) {
         return Team.of(
                 createDto.getTeamName(),
                 false,
                 leader,
-                getContestById(createDto.getContestId()));
+                getContestById(createDto.getContestId()),
+                teamIdNumber,
+                section);
     }
 
     private void validateTeamSize(List<String> memberIds) {
