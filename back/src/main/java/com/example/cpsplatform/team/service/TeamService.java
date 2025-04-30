@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +49,14 @@ public class TeamService {
                 .orElseThrow(()->new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
 
         TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
-                .orElseGet(()->teamNumberRepository.save(TeamNumber.of(contest, 0)));
+                .orElseGet(()->{
+                    try {
+                        return teamNumberRepository.save(TeamNumber.of(contest, 0));
+                    } catch (DataIntegrityViolationException e) {
+                        return teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
+                                .orElseThrow(() -> new IllegalStateException("TeamNumber 중복 생성 충돌"));
+                    }
+                });
 
         String teamIdNumber = teamNumber.getNextTeamNumber();
         Section teamSection = determineSection(leader);
