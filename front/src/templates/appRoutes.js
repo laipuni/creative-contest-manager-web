@@ -25,7 +25,8 @@ function AppRoutes() {
         const isJoinPath = location.pathname.startsWith("/join");
         const authenticatedPaths = ["/register/team", "/member/profile", "/test/realTest"];
         const isAuthenticatedPath = authenticatedPaths.some(path => location.pathname.startsWith(path));
-        const isAdminPath = location.pathname.startsWith("/admin");
+        const adminPaths = ["/admin/teamList"];
+        const isAdminPath = adminPaths.some(path => location.pathname.startsWith(path));
         if (!isJoinPath) {
             sessionStorage.removeItem("isChecked");
         }
