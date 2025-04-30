@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+      ssl:
+        enabled: true #TLS 설정으로
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          connectionTimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          auth: true
+          authExpireTime: 300 # 300초 = 5분
+          starttls:
+            enable: true
+            required: true
+
+login:
+  fail:
+    count: 5
+    time : 15
+  lock:
+    time: 15
+auth:
+  authcode:
+    timeout: 10 #10분 유지
+  password-reset-session:
+    timeout : 10
+
+aws:
+  s3:
+    accessKey: ${AWS_S3_ACCESS_KEY}
+    secretKey: ${AWS_S3_SECRET_KEY}
+    bucketName: ${AWS_S3_BUCKET_NAME}
+
+register:
+  encoder:
+    secretkey: ${REGISTER_ENCODER_SECRETKEY}
