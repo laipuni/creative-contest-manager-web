@@ -1,0 +1,254 @@
+.admin-teamList-container {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0px;
+
+    width: 100%;
+    height: 630px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 1;
+
+}
+
+.admin-main-container {
+    /* Frame 13 */
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding: 0px;
+
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.34);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.admin-teamList-main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 0px;
+    width: 30%;
+    height: 90%;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 1;
+
+}
+
+.admin-teamList-header {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 10px;
+
+    margin: 0 auto;
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.admin-teamList-titlebox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    margin: 0 auto;
+    width: 80%;
+    height: fit-content;
+
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.admin-teamList-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    gap: 50px;
+    text-align: left;
+    width: 100%;
+    height: fit-content;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+
+    color: #000000;
+
+}
+
+.admin-teamList-underline {
+
+    width: 100%;
+    height: 0px;
+
+    border: 1px solid rgba(0, 0, 0, 0.43);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.admin-teamList-selectbox{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+    margin: 0 auto;
+    width: fit-content;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.admin-teamList-body {
+    /* Frame 32 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    width: 95%;
+    height: 600px;
+
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.admin-teamList-body-title {
+    /* Frame 33 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0px;
+    gap: 114px;
+
+    width: 100%;
+    height: 30px;
+
+    background: rgba(0, 0, 0, 0.02);
+
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.admin-teamList-body-title-textbox {
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    width: 10%;
+    height: fit-content;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 1;
+
+}
+
+.admin-teamList-body-title-text {
+    width: 100%;
+    height: fit-content;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 0%;
+    text-align: center;
+
+    color: #000000;
+
+
+
+}
+
+.admin-teamList-body-verticalLine {
+    /* Line 6 */
+
+    margin: 0 auto;
+    width: 0px;
+    height: 50%;
+
+    border: 1px solid #000000;
+
+
+}
+
+.admin-teamList-download {
+    width: 100%;
+    line-height: 0%;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    color: #000000;
+}
