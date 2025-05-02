@@ -12,6 +12,7 @@ import com.example.cpsplatform.auth.storage.AuthCodeStorage;
 import com.example.cpsplatform.auth.storage.RedisAuthCodeStorage;
 import com.example.cpsplatform.auth.strategy.*;
 import com.example.cpsplatform.redis.RedisRepository;
+import com.example.cpsplatform.template.renderer.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,10 +33,10 @@ public class AuthConfig {
     EmailService emailService;
 
     @Autowired
-    SpringTemplateEngine springTemplateEngine;
+    AuthCodeProperties authCodeProperties;
 
     @Autowired
-    AuthCodeProperties authCodeProperties;
+    TemplateRenderer templateRenderer;
 
     @Bean
     public AuthService authService(){
@@ -70,7 +71,7 @@ public class AuthConfig {
     @Bean
     public Map<String,AuthCodeSender> authCodeSender(){
         Map<String, AuthCodeSender> authCodeSenderMap = new HashMap<>();
-        authCodeSenderMap.put("email",new EmailAuthCodeSender(emailService,springTemplateEngine, authCodeProperties));
+        authCodeSenderMap.put("email",new EmailAuthCodeSender(emailService, authCodeProperties,templateRenderer));
         return authCodeSenderMap;
     }
 
