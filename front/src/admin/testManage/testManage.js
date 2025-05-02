@@ -1,9 +1,12 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 import './testManage.css'
 import AdminHeader from "../components/adminHeader/adminHeader";
 import AdminSidebar from "../components/adminSidebar/adminSidebar";
-import planImage from "../../styles/images/admin_register_day.png"
-import testImage from "../../styles/images/admin_register_problem.png"
+import planImage from "../../styles/images/admin_register_day.png";
+import testImage from "../../styles/images/admin_register_problem.png";
+
 
 const TestManage = () => {
     const [checkedTypes, setCheckedTypes] = useState({
@@ -16,6 +19,9 @@ const TestManage = () => {
     const [commonQuiz, setCommonQuiz] = useState(null);
     const [easyQuiz, setEasyQuiz] = useState(null);
     const [hardQuiz, setHardQuiz] = useState(null);
+    const [isDateModalOpen, setIsDateModalOpen] = useState(false); // 달력 모달
+    const [tempStartDate, setTempStartDate] = useState(null); // 선택용 임시 날짜
+    const [tempEndDate, setTempEndDate] = useState(null);
 
     //최초 랜더링 시 예선 기간 및 문제 들고오기
     useEffect(() => {
@@ -25,8 +31,27 @@ const TestManage = () => {
 
     //일정 등록
     const handleRegisterDate = () => {
+        if (!tempStartDate || !tempEndDate) {
+            alert('시작일과 종료일을 모두 선택해주세요.');
+            return;
+        }
 
-    }
+        if (tempStartDate > tempEndDate) {
+            alert('종료일이 시작일보다 빠르게 설정되었습니다.');
+            return;
+        }
+        setStartDate(formatDate(tempStartDate));
+        setEndDate(formatDate(tempEndDate));
+        setIsDateModalOpen(false);
+    };
+
+    // 날짜 포맷을 'yyyy.MM.dd'로 변환
+    const formatDate = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}.${m}.${d}`;
+    };
 
     //일정 삭제
     const handleDeleteDate = () => {
@@ -106,6 +131,42 @@ const TestManage = () => {
                         <div className="admin-testManage-detail-bot">
                             <p className="admin-testManage-detail-text" style={{color:'black'}}>현재 설정된 일정</p>
                             <div className="admin-testManage-contentbox">
+                                {isDateModalOpen && (
+                                    <div className="modal-overlay">
+                                        <div className="modal-box">
+                                            <p>일정 등록</p>
+                                            <div style={{ display: 'flex', gap: '10px' }}>
+                                                <div>
+                                                    <p>시작일</p>
+                                                    <DatePicker
+                                                        selected={tempStartDate}
+                                                        onChange={(date) => setTempStartDate(date)}
+                                                        selectsStart
+                                                        startDate={tempStartDate}
+                                                        endDate={tempEndDate}
+                                                        dateFormat="yyyy.MM.dd"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <p>종료일</p>
+                                                    <DatePicker
+                                                        selected={tempEndDate}
+                                                        onChange={(date) => setTempEndDate(date)}
+                                                        selectsEnd
+                                                        startDate={tempStartDate}
+                                                        endDate={tempEndDate}
+                                                        minDate={tempStartDate}
+                                                        dateFormat="yyyy.MM.dd"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div style={{ marginTop: '20px' }}>
+                                                <button onClick={handleRegisterDate}>확인</button>
+                                                <button onClick={() => setIsDateModalOpen(false)}>취소</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                                 <p className="admin-testManage-detail-text">
                                     {startDate && endDate
                                         ? `${startDate} ~ ${endDate}`
@@ -114,7 +175,7 @@ const TestManage = () => {
                             </div>
                             <div className="admin-testManage-buttonbox">
                                 <div className="admin-testManage-left-button"
-                                    onClick={handleRegisterDate}>등록하기</div>
+                                    onClick={(e)=>setIsDateModalOpen(true)}>등록하기</div>
                                 <div className="admin-testManage-right-button"
                                     onClick={handleDeleteDate}>삭제하기</div>
                             </div>
