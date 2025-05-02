@@ -1,7 +1,9 @@
 package com.example.cpsplatform.security.config;
 
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.security.CustomEntryPoint;
 import com.example.cpsplatform.security.filter.JsonUsernamePasswordAuthenticationFilter;
+import com.example.cpsplatform.security.handler.CustomAccessDeniedHandler;
 import com.example.cpsplatform.security.handler.CustomAuthenticationFailHandler;
 import com.example.cpsplatform.security.handler.CustomAuthenticationSuccessHandler;
 import com.example.cpsplatform.security.provider.UsernamePasswordAuthenticationTokenProvider;
@@ -84,9 +86,25 @@ public class SecurityConfig {
                                 .invalidateHttpSession(true)  // 로그아웃 시 저장된 세션을
                                 .deleteCookies(COOKIES_JSESSIONID) // 브라우저 세션 제거
                 )
+                .exceptionHandling(
+                        exception ->exception
+                                .authenticationEntryPoint(authenticationEntryPoint())
+                                .accessDeniedHandler(accessDeniedHandler())
+                )
                 //폼 로그인 필터 앞에 필터를 추가
                 .addFilterBefore(jsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CustomAccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler(objectMapper);
+    }
+
+    @Bean
+    public
+    CustomEntryPoint authenticationEntryPoint() {
+        return new CustomEntryPoint(objectMapper);
     }
 
     @Bean
