@@ -1,0 +1,273 @@
+.admin-testManage-main-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+
+    width: 10%;
+    height: 100%;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 1;
+
+}
+
+.admin-testManage-detail-container {
+
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 5px;
+
+    width: 50%;
+    height: 130%;
+
+    border: 1px solid #000000;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.admin-testManage-detail-top {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+    height: fit-content;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.admin-testManage-detail-text {
+    /* 일정 등록 */
+
+    width: 100%;
+    height: fit-content;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 0%;
+    text-align: center;
+
+    color: #DD5555;
+
+
+
+}
+
+.admin-testManage-detail-underLine {
+    /* Line 4 */
+
+    width: 100%;
+    height: 0px;
+
+    border: 1px solid rgba(0, 0, 0, 0.43);
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.admin-testManage-image {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+
+    width: 200px;
+    height: 200px;
+
+
+
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.admin-testManage-detail-bot {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 10px;
+    width: 97%;
+    height: fit-content;
+
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.admin-testManage-contentbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 50%;
+
+    background: rgba(95, 164, 255, 0.09);
+    border-radius: 10px;
+
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.admin-testManage-buttonbox {
+    /* Frame 35 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 16px;
+
+    width: 100%;
+    height: 100px;
+
+    flex: none;
+    order: 2;
+    align-self: stretch;
+    flex-grow: 1;
+
+}
+
+.admin-testManage-left-button {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+
+    width: 150px;
+    height: 60px;
+
+    background: #DD5555;
+    border-radius: 20px;
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 110%;
+    text-align: center;
+    cursor: pointer;
+    color: #FFFFFF;
+
+
+}
+
+.admin-testManage-right-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+    cursor: pointer;
+    width: 150px;
+    height: 60px;
+
+    background: rgba(95, 164, 255, 0.09);
+    border-radius: 20px;
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 110%;
+    text-align: center;
+
+    color: black;
+
+}
+
+.admin-testManage-content {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+
+    width: 80%;
+    height: 75px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.admin-testManage-input {
+
+    margin-top : 15px;
+    width: 5%;
+    height: 20%;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 110%;
+    /* or 40px */
+    display: flex;
+    align-items: center;
+
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
