@@ -7,9 +7,11 @@ import com.example.cpsplatform.team.domain.Team;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "team_id"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Certificate extends BaseEntity {
