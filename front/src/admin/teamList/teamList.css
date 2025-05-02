@@ -252,3 +252,28 @@
     cursor: pointer;
     color: #000000;
 }
+
+.admin-pass-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    gap: 10px;
+
+    width: 60px;
+    height: 30px;
+
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 10px;
+    line-height: 110%;
+    text-align: center;
+    cursor: pointer;
+    color: black;
+}

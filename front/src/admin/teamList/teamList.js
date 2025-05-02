@@ -125,8 +125,16 @@ const TeamList = () => {
                         </div>
                     </div>
                     <div className="admin-teamList-body">
-                        <p className="admin-teamList-download"
-                           onClick={handleDownload}>문제 일괄 다운로드 📄</p>
+                        <div style={{flexDirection: 'row', width: '100%', display: 'flex'}}>
+                            <p className="admin-teamList-download"
+                               onClick={handleDownload}>문제 일괄 다운로드 📄</p>
+                            <button
+                                className="admin-pass-button"
+                                onClick={() => handleBulkPass()}
+                            >
+                                합격자 선정
+                            </button>
+                        </div>
                         <div className="admin-teamList-body-title">
                             <div className="admin-teamList-body-title-textbox">
                                 <p className="admin-teamList-body-title-text">팀 이름</p>
@@ -170,12 +178,6 @@ const TeamList = () => {
                                 onPageChange={setCurrentPage}
                             />}
                         </div>
-                        <button
-                            className="admin-pass-button"
-                            onClick={() => handleBulkPass()}
-                        >
-                            합격자 선정
-                        </button>
                     </div>
                 </div>
             </div>
