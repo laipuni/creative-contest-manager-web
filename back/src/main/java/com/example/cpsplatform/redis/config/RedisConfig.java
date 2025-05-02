@@ -20,19 +20,15 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
-        return new LettuceConnectionFactory(redisHost,redisPort);
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);
+        LettuceClientConfiguration clientConfiguration = LettuceClientConfiguration.builder()
+                .useSsl()
+                .build();
+        return new LettuceConnectionFactory(configuration,clientConfiguration);
     }
-
-//    @Bean
-//    public RedisConnectionFactory redisConnectionFactory(){
-//        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);
-//        LettuceClientConfiguration clientConfiguration = LettuceClientConfiguration.builder()
-//                .useSsl()
-//                .build();
-//        return new LettuceConnectionFactory(configuration,clientConfiguration);
-//    }
 
     @Bean
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {

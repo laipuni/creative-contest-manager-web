@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./back/.env
+    container_name: back  # 컨테이너 이름 명시적 지정
     ports:
       - "8080:8080"
     depends_on:
@@ -15,6 +16,7 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
+    container_name: front
     ports:
       - "3000:80"
     depends_on:
