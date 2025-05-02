@@ -11,9 +11,10 @@ const AdminSidebar = () => {
                   className={`adminSidebar-category ${location.pathname === "/admin/teamList" ? "active" : ""}`}>
                 <p className="adminSidebar-text">팀 목록</p>
             </Link>
-            <div className="adminSidebar-category">
+            <Link to="/admin/testManage"
+                  className={`adminSidebar-category ${location.pathname === "/admin/testManage" ? "active" : ""}`}>
                 <p className="adminSidebar-text">예선 관리</p>
-            </div>
+            </Link>
             <div className="adminSidebar-category">
                 <p className="adminSidebar-text">데이터 분석</p>
             </div>
