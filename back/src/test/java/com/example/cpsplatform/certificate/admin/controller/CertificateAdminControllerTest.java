@@ -1,6 +1,7 @@
 package com.example.cpsplatform.certificate.admin.controller;
 
 import com.example.cpsplatform.auth.service.AuthService;
+import com.example.cpsplatform.certificate.admin.controller.request.DeleteCertificateRequest;
 import com.example.cpsplatform.certificate.admin.service.CertificateAdminService;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.security.config.SecurityConfig;
@@ -82,6 +83,74 @@ class CertificateAdminControllerTest {
                         MockMvcRequestBuilders.post("/api/admin/contests/{contestId}/certificates/preliminary/batch",contestId)
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isForbidden());
+
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("확인증 삭제 요청을 받아서 확인증을 삭제한다.")
+    @Test
+    void deleteCertificate() throws Exception {
+        //given
+        DeleteCertificateRequest request = new DeleteCertificateRequest(1L);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/api/admin/certificates")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @WithMockUser(roles = {"ADMIN"})
+    @DisplayName("확인증 삭제 요청을 받았을 때, 삭제할 확인증의 id가 없을 경우 예외가 발생한다.")
+    @Test
+    void deleteCertificateWithNotCertificateId() throws Exception {
+        //given
+        DeleteCertificateRequest request = new DeleteCertificateRequest(null);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/api/admin/certificates")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value("삭제할 확인증의 정보는 필수 입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @WithMockUser(roles = {"USER"})
+    @DisplayName("확인증 삭제 요청을 받았을 때, 관리자가 아닐경우 예외가 발생한다.")
+    @Test
+    void deleteCertificateWithNotAdmin() throws Exception {
+        //given
+        DeleteCertificateRequest request = new DeleteCertificateRequest(1L);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/api/admin/certificates")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
                 )
                 .andDo(print())
                 .andExpect(status().isForbidden());

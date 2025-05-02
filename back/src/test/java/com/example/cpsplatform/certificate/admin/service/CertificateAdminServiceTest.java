@@ -1,6 +1,7 @@
 package com.example.cpsplatform.certificate.admin.service;
 
 import com.example.cpsplatform.certificate.domain.Certificate;
+import com.example.cpsplatform.certificate.domain.CertificateType;
 import com.example.cpsplatform.certificate.repository.CertificateRepository;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -166,6 +168,69 @@ class CertificateAdminServiceTest {
         //then
         List<Certificate> result = certificateRepository.findAll();
         assertThat(result).hasSize(2);
+
+    }
+
+    @DisplayName("확인증 id를 받아 해당 확인증을 삭제한다.")
+    @Test
+    void deleteCertificate(){
+        //given
+        Address address1 = new Address("street","city","zipCode","detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member leader = Member.builder()
+                .loginId("leaderId")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("leaderemail@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("리더")
+                .organization(school1)
+                .build();
+        memberRepository.save(leader);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(16)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        Team team = Team.builder()
+                .name("팀 이름")
+                .winner(false)
+                .leader(leader)
+                .teamNumber("001")
+                .contest(contest)
+                .build();
+        teamRepository.save(team);
+
+        MemberTeam memberTeam1 = MemberTeam.builder()
+                .team(team)
+                .member(leader)
+                .build();
+        memberTeamRepository.save(memberTeam1);
+        Certificate certificate = Certificate.builder()
+                .serialNumber(UUID.randomUUID().toString())
+                .certificateType(CertificateType.PRELIMINARY)
+                .contest(contest)
+                .member(leader)
+                .team(team)
+                .build();
+        certificateRepository.save(certificate);
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        certificateAdminService.deleteCertificate(certificate.getId());
+        //then
+        List<Certificate> result = certificateRepository.findAll();
+        assertThat(result).isEmpty();
 
     }
 
