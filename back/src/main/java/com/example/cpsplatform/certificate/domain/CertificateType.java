@@ -23,7 +23,7 @@ public enum CertificateType {
 
     @JsonFormat
     public static CertificateType findCertificateType(String key){
-        return certificateTypeMap.get(key);
+        return certificateTypeMap.get(key.toLowerCase());
     }
 
 }
