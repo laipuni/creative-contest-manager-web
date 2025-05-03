@@ -141,4 +141,57 @@ class ContestRepositoryTest {
     }
 
 
+    @DisplayName("가장 최근의 대회의 정보를 가져온다.")
+    @Test
+    void findLatestContest() {
+        //given
+        Contest contest1 = Contest.builder()
+                .title("테스트 대회 1")
+                .description("테스트 대회 설명 1")
+                .season(16)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().minusDays(1))
+                .startTime(now())
+                .endTime(now().plusDays(1))
+                .build();
+
+        Contest contest2 = Contest.builder()
+                .title("테스트 대회 2")
+                .description("테스트 대회 설명 2")
+                .season(17)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().minusDays(1))
+                .startTime(now())
+                .endTime(now().plusDays(1))
+                .build();
+
+        Contest contest3 = Contest.builder()
+                .title("테스트 대회 3")
+                .description("테스트 대회 설명 3")
+                .season(18)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().minusDays(1))
+                .startTime(now())
+                .endTime(now().plusDays(1))
+                .build();
+
+        Contest contest4 = Contest.builder()
+                .title("테스트 대회 4")
+                .description("테스트 대회 설명 4")
+                .season(19)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().minusDays(1))
+                .startTime(now())
+                .endTime(now().plusDays(1))
+                .build();
+        contestRepository.saveAll(List.of(contest1,contest2, contest3, contest4));
+
+        //when
+        Contest contest = contestRepository.findLatestContest().get();
+
+        //then
+        assertThat(contest).isEqualTo(contest4);
+    }
+
+
 }

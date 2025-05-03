@@ -1,6 +1,7 @@
 package com.example.cpsplatform.contest.controller.service;
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.controller.response.LatestContestResponse;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.exception.ContestJoinException;
@@ -25,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static java.time.LocalDateTime.now;
+import static org.assertj.core.api.Assertions.*;
 
 
 @SpringBootTest
@@ -234,5 +235,17 @@ class ContestJoinServiceTest {
         assertThatThrownBy(() -> contestService.validateContestParticipation(invalidContestId, loginId, now))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("해당 대회는 존재하지 않습니다");
+    }
+
+
+    @DisplayName("만약 가장 최근의 대회가 없을 경우 예외가 발생한다.")
+    @Test
+    void getLatestContestInfoWithNotExistLatestContest(){
+        //given
+        //when
+        //then
+        assertThatThrownBy(() -> contestService.getLatestContestInfo())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageMatching("최신 대회의 정보를 받아오는데 실패했습니다.");
     }
 }
