@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "team_id","contest_id","certificate_type"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "team_id","preliminary_contest_id","certificate_type"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Certificate extends BaseEntity {
 
