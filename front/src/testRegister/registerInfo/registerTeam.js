@@ -60,19 +60,17 @@ const RegisterTeam = () => {
                                     <p className="registerTeam-bot-title">팀원1</p>
                                     <div className="registerTeam-bot-line"></div>
                                     <input className="registerTeam-bot-input"
-                                    type="text" value={teamMate1} readOnly
+                                    type="text" value={teamMate1}
                                     onChange={(e)=>setTeamMate1(e.target.value)}></input>
-                                    <button type="button" className="registerTeam-enter-button">등록</button>
                                 </div>
                                 <div className="registerTeam-bot-textbox">
                                     <p className="registerTeam-bot-title">팀원2</p>
                                     <div className="registerTeam-bot-line"></div>
                                     <input className="registerTeam-bot-input"
-                                           type="text" value={teamMate2} readOnly
+                                           type="text" value={teamMate2}
                                            onChange={(e) => setTeamMate2(e.target.value)}></input>
-                                    <button type="button" className="registerTeam-enter-button">등록</button>
                                 </div>
-                                <p className="registerTeam-bot-warning">※ 팀원은 최소 1명 이상 등록해야 합니다.</p>
+                                <p className="registerTeam-bot-warning">※ 팀원의 아이디를 정확하게 입력해주세요.</p>
                                 <div className="registerTeam-bot-buttonbox">
                                 <button type="submit" className="registerTeam-register-button">접수하기</button>
                                     <button className="registerTeam-register-button" type="button"
