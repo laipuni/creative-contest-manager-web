@@ -51,7 +51,7 @@ public class File extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Problem problem;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_solve_id")
     private TeamSolve teamSolve;
 
