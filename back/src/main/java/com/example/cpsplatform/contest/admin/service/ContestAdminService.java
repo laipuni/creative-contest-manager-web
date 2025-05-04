@@ -1,10 +1,7 @@
 package com.example.cpsplatform.contest.admin.service;
 
 import com.example.cpsplatform.contest.Contest;
-import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
-import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
-import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestDto;
-import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
+import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
@@ -14,6 +11,8 @@ import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -81,5 +80,12 @@ public class ContestAdminService {
         Pageable pageable = PageRequest.of(page,CONTEST_PAGE_SIZE);
         Page<Team> teamList = teamRepository.findTeamListByContest(contest, pageable);
         return TeamListByContestResponse.of(teamList);
+    }
+
+    public ContestLatestResponse findContestLatest() {
+        log.debug("[ADMIN] 최신 대회의 조회 시도");
+        return contestRepository.findLatestContest()
+                .map(ContestLatestResponse::of)
+                .orElse(null); //프론트가 null 처리하기로 했기 때문에 예외 대신 null 반환
     }
 }

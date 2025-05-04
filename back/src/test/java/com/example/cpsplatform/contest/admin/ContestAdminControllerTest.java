@@ -3,11 +3,7 @@ package com.example.cpsplatform.contest.admin;
 import com.example.cpsplatform.admin.aop.AdminLogProxy;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.contest.admin.controller.ContestAdminController;
-import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
-import com.example.cpsplatform.contest.admin.controller.response.ContestListDto;
-import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
-import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestDto;
-import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
+import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
@@ -581,7 +577,7 @@ class ContestAdminControllerTest {
     @DisplayName("관리자가 해당 대회에 참여한 팀을 조회하면 해당 페이지의 팀 목록이 반환된다")
     @Test
     void searchTeamListByContest() throws Exception {
-        // given
+        //given
         int page = 0;
         Long contestId = 1L;
 
@@ -626,5 +622,53 @@ class ContestAdminControllerTest {
                 .andExpect(jsonPath("$.data.teamList[1].name").value("팀2"))
                 .andDo(print());
     }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 최신 대회를 조회하면 최신 대회 정보가 반환된다")
+    @Test
+    void findLatestContestWithExistContest() throws Exception {
+        //given
+        ContestLatestResponse response = new ContestLatestResponse(
+                3L, 15,"15회 창의력 경진 대회",
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1)
+        );
+
+        Mockito.when(contestAdminService.findContestLatest())
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/latest"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.contestId").value(3L))
+                .andExpect(jsonPath("$.data.season").value(15))
+                .andExpect(jsonPath("$.data.title").value("15회 창의력 경진 대회"));
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 최신 대회를 조회했지만 대회가 없으면 data는 null로 응답된다")
+    @Test
+    void findLatestContestWithNoContestExists() throws Exception {
+        // given
+        Mockito.when(contestAdminService.findContestLatest())
+                .thenReturn(null); // 대회 없음
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/latest"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+
 
 }

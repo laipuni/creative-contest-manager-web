@@ -73,7 +73,7 @@ class TeamSolveRepositoryTest {
                 .email("teamsolveRepo@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01098765432")
+                .phoneNumber("01056791234")
                 .name("이름")
                 .organization(school)
                 .build();

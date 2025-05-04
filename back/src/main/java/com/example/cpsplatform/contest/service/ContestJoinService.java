@@ -2,6 +2,7 @@ package com.example.cpsplatform.contest.service;
 
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.admin.controller.response.ContestLatestResponse;
 import com.example.cpsplatform.contest.controller.response.LatestContestResponse;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
@@ -48,9 +49,8 @@ public class ContestJoinService {
     }
 
     public LatestContestResponse getLatestContestInfo() {
-        log.trace("유저의 권한에서 최근 대회 정보 조회 시도");
-        Contest contest = contestRepository.findLatestContest()
-                .orElseThrow(() -> new IllegalArgumentException("최신 대회의 정보를 받아오는데 실패했습니다."));
-        return LatestContestResponse.of(contest);
+        return contestRepository.findLatestContest()
+                .map(LatestContestResponse::of)
+                .orElse(null); //프론트가 null 처리하기로 했기 때문에 예외 대신 null 반환
     }
 }

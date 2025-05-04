@@ -237,7 +237,7 @@ class TeamSolveControllerTest {
 
         //When
         //Then
-        mockMvc.perform(get("/api/contest/{contestId}/team-solves", contestId)
+        mockMvc.perform(get("/api/contests/{contestId}/team-solves", contestId)
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -249,6 +249,6 @@ class TeamSolveControllerTest {
                 .andExpect(jsonPath("$.data.teamAnswerList[0].section").value("ELEMENTARY_MIDDLE"))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"))
-                .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2));
+                .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(1));
     }
 }
