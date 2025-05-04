@@ -37,35 +37,22 @@ const TestManage = () => {
 
     //접수 일정 등록
     const handleRegisterDate = () => {
-        if (!tempRegisterStartDate || !tempRegisterEndDate) {
-            alert('시작일과 종료일을 모두 선택해주세요.');
+        if (!tempRegisterStartDate || !tempRegisterEndDate || !tempStartDate || !tempEndDate) {
+            alert('접수 기간과 대회 기간의 시작일과 종료일을 모두 선택해주세요.');
             return;
         }
 
-        if (tempRegisterStartDate > tempRegisterEndDate) {
+        if ((tempRegisterStartDate > tempRegisterEndDate) || (tempStartDate > tempEndDate)) {
             alert('종료일이 시작일보다 빠르게 설정되었습니다.');
             return;
         }
         setRegisterStartDate(formatDate(tempRegisterStartDate));
         setRegisterEndDate(formatDate(tempRegisterEndDate));
-        setIsDateModalOpen(false);
-    };
-
-    //대회 일정 등록
-    const handleContestDate = () => {
-        if (!tempStartDate || !tempEndDate) {
-            alert('시작일과 종료일을 모두 선택해주세요.');
-            return;
-        }
-
-        if (tempStartDate > tempEndDate) {
-            alert('종료일이 시작일보다 빠르게 설정되었습니다.');
-            return;
-        }
         setStartDate(formatDate(tempStartDate));
         setEndDate(formatDate(tempEndDate));
         setIsDateModalOpen(false);
     };
+
 
     // 날짜 포맷을 'yyyy.MM.dd'로 변환
     const formatDate = (date) => {
@@ -236,7 +223,7 @@ const TestManage = () => {
 
                                                 <button
                                                     className="testManage-modal-confirm-btn"
-                                                    onClick={modalTab === '접수' ? handleRegisterDate : handleContestDate}
+                                                    onClick={handleRegisterDate}
                                                 >
                                                     확인
                                                 </button>
