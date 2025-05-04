@@ -52,7 +52,7 @@ public class TeamSolveController {
         return ApiResponse.ok(null);
     }
 
-    @GetMapping("/api/contest/{contestId}/team-solves")
+    @GetMapping("/api/contests/{contestId}/team-solves")
     public ApiResponse<GetTeamAnswerResponse> getAnswerSubmissionRequest(@PathVariable("contestId")Long contestId,
                                                                          @AuthenticationPrincipal SecurityMember member){
         GetTeamAnswerResponse response = answerSubmitService.getAnswer(contestId, member.getUsername());
