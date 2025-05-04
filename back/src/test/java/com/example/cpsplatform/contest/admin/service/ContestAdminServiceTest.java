@@ -6,9 +6,21 @@ import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
+import com.example.cpsplatform.contest.admin.service.dto.WinnerTeamsDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.DuplicateDataException;
+import com.example.cpsplatform.member.domain.Address;
+import com.example.cpsplatform.member.domain.Gender;
+import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.Role;
+import com.example.cpsplatform.member.domain.organization.school.School;
+import com.example.cpsplatform.member.domain.organization.school.StudentType;
+import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.problem.domain.Section;
+import com.example.cpsplatform.team.domain.Team;
+import com.example.cpsplatform.team.repository.TeamRepository;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -34,6 +47,15 @@ class ContestAdminServiceTest {
 
     @Autowired
     ContestRepository contestRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private TeamRepository teamRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     EntityManager entityManager;
@@ -163,4 +185,84 @@ class ContestAdminServiceTest {
         assertThat(result).hasSize(0);
     }
 
+    @Transactional
+    @DisplayName("우승팀을 지정하면 해당 팀들의 winner가 true로 변경된다.")
+    @Test
+    void selectWinnerTeams(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(1)
+                .registrationStartAt(now.minusDays(5))
+                .registrationEndAt(now.minusDays(2))
+                .startTime(now.minusHours(1))
+                .endTime(now.plusHours(2))
+                .build();
+        contestRepository.save(contest);
+
+        String loginId = "leaderId";
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx초등학교", StudentType.ELEMENTARY, 4);
+        Member leader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("팀장")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
+
+        String loginId1 = "leaderId1";
+        Address address1 = new Address("street", "city", "zipCode", "detail");
+        School school1 = new School("oo초등학교", StudentType.ELEMENTARY, 4);
+        Member leader1 = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email1@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341235")
+                .name("팀장")
+                .organization(school1)
+                .build();
+        memberRepository.save(leader1);
+
+        Team team = Team.builder()
+                .name("테스트팀")
+                .winner(false)
+                .leader(leader)
+                .contest(contest)
+                .teamNumber("003")
+                .section(Section.ELEMENTARY_MIDDLE)
+                .build();
+        teamRepository.save(team);
+
+        Team team1 = Team.builder()
+                .name("테스트팀1")
+                .winner(false)
+                .leader(leader1)
+                .contest(contest)
+                .teamNumber("004")
+                .section(Section.ELEMENTARY_MIDDLE)
+                .build();
+        teamRepository.save(team1);
+
+        List<Long> winnerTeamIds = List.of(team.getId(), team1.getId());
+        WinnerTeamsDto dto = new WinnerTeamsDto(winnerTeamIds);
+
+        // when
+        contestAdminService.selectWinnerTeams(contest.getId(), dto);
+
+        // then
+        List<Team> result = teamRepository.findAllById(winnerTeamIds);
+        assertThat(result).extracting(Team::getWinner).containsOnly(true);
+    }
 }
