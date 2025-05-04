@@ -39,7 +39,7 @@ public class CertificateRepositoryCustomImpl implements CertificateRepositoryCus
     @Override
     public SearchCertificateResponse SearchCertificate(final int page,final int pageSize, final String order,
                                                         final CertificateType certificateType, final String username) {
-        log.debug("유저({})가 확인증({})을 리스트 조회(page : {}, page = {}, order = {})",username,certificateType.getLabel(),page,pageSize,order);
+        log.debug("유저({})가 확인증({})을 리스트 조회(page : {}, page = {}, order = {})",username,certificateType,page,pageSize,order);
         Pageable pageable = PageRequest.of(page, pageSize);
         List<SearchCertificateDto> result = queryFactory.select(
                         Projections.constructor(SearchCertificateDto.class,

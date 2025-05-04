@@ -176,7 +176,7 @@ class ContestAdminControllerTest {
         //when
         //then
         mockMvc.perform(get("/api/admin/contests"))
-                .andExpect(status().isForbidden())
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 

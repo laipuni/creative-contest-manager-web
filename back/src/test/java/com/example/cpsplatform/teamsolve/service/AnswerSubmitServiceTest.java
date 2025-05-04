@@ -24,10 +24,7 @@ import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import com.example.cpsplatform.teamsolve.service.dto.SubmitAnswerDto;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
@@ -97,7 +94,7 @@ class AnswerSubmitServiceTest {
                 .email("email@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01012344321")
                 .name("이름")
                 .organization(school)
                 .build();
@@ -115,7 +112,7 @@ class AnswerSubmitServiceTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().contest(contest).leader(member).winner(false).name("팀 이름").build();
+        Team team = Team.builder().contest(contest).teamNumber("001").leader(member).winner(false).name("팀 이름").build();
         teamRepository.save(team);
 
         problem = Problem.builder()

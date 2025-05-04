@@ -64,32 +64,33 @@ class CertificateRepositoryCustomImplTest {
         int page = 0;
         int pageSize = 10;
         String order = "asc";
-        CertificateType certificateType = CertificateType.PRELIMINARY;
+        CertificateType certificateType_pre = CertificateType.PRELIMINARY;
+        CertificateType certificateType_final = CertificateType.FINAL;
 
         Member leader = createAndSaveLeader();
         Contest contest = createAndSaveContest();
         Team team = createAndSaveTeam(leader, contest);
-        Certificate certificate1 = createAndSaveCertificate(leader, team, contest, certificateType);
-        Certificate certificate2 = createAndSaveCertificate(leader, team, contest, certificateType);
+        Certificate certificate1 = createAndSaveCertificate(leader, team, contest, certificateType_pre);
+        Certificate certificate2 = createAndSaveCertificate(leader, team, contest, certificateType_final);
         entityManager.flush();
         entityManager.clear();
 
         //when
         SearchCertificateResponse response = certificateRepository.SearchCertificate(
-                page, pageSize, order, certificateType, leader.getLoginId()
+                page, pageSize, order, certificateType_pre, leader.getLoginId()
         );
 
         //then
         assertThat(response).isNotNull();
-        assertThat(response.getCertificateDtoList()).hasSize(2);
-        assertThat(response.getSize()).isEqualTo(2);
+        assertThat(response.getCertificateDtoList()).hasSize(1);
+        assertThat(response.getSize()).isEqualTo(1);
         assertThat(response.getTotalPage()).isEqualTo(1);
 
         assertThat(response.getCertificateDtoList())
                 .extracting("certificateId", "title", "certificateType", "teamName")
                 .containsExactlyInAnyOrder(
-                        tuple(certificate1.getId(), certificate1.getTitle(), certificateType, team.getName()),
-                        tuple(certificate2.getId(), certificate2.getTitle(), certificateType, team.getName())
+                        tuple(certificate1.getId(), certificate1.getTitle(), certificateType_pre, team.getName())
+
                 );
     }
 
@@ -143,7 +144,6 @@ class CertificateRepositoryCustomImplTest {
 
         createAndSaveCertificate(leader, team, contest, CertificateType.PRELIMINARY);
         createAndSaveCertificate(leader, team, contest, CertificateType.FINAL);
-        createAndSaveCertificate(leader, team, contest, CertificateType.PRELIMINARY);
 
         entityManager.flush();
         entityManager.clear();
@@ -156,7 +156,7 @@ class CertificateRepositoryCustomImplTest {
         //then
         assertThat(firstPageResponse).isNotNull();
         assertThat(firstPageResponse.getCertificateDtoList()).hasSize(1);
-        assertThat(firstPageResponse.getTotalPage()).isEqualTo(3);
+        assertThat(firstPageResponse.getTotalPage()).isEqualTo(2);
     }
 
     private Member createAndSaveLeader() {
@@ -170,7 +170,7 @@ class CertificateRepositoryCustomImplTest {
                 .email("leaderemail@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01012349876")
                 .name("리더")
                 .organization(school)
                 .build();

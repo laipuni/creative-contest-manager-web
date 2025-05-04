@@ -86,8 +86,8 @@ class TeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team1 = Team.builder().name("one").winner(false).leader(member).contest(contest).build();
-        Team team2 = Team.builder().name("two").winner(false).leader(member).contest(contest).build();
+        Team team1 = Team.builder().name("one").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team2 = Team.builder().name("two").winner(false).teamNumber("002").leader(member).contest(contest).build();
         teamRepository.saveAll(List.of(team1, team2));
 
         memberTeamRepository.save(MemberTeam.of(member, team1));
@@ -135,7 +135,7 @@ class TeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).leader(member).contest(contest).build();
+        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
         //when
         Team result = teamRepository.findTeamByContestIdAndLeaderId(contest.getId(), member.getLoginId()).get();

@@ -105,17 +105,17 @@ class FileRepositoryCustomImplTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
-                .email("email@email.com")
+                .email("file@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01013974628")
                 .name("사람 이름")
                 .organization(school)
                 .build();
 
         memberRepository.save(member);
 
-        Team team = Team.builder().name("xx팀").winner(false).leader(member).contest(contest).build();
+        Team team = Team.builder().name("xx팀").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
 
         TeamSolve teamSolve = TeamSolve.builder().team(team).problem(highNormalProblem).build();
@@ -202,17 +202,17 @@ class FileRepositoryCustomImplTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
-                .email("email@email.com")
+                .email("filerepo@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01095123578")
                 .name("사람 이름")
                 .organization(school)
                 .build();
 
         memberRepository.save(member);
 
-        Team team = Team.builder().name("xx팀").winner(false).leader(member).contest(contest).build();
+        Team team = Team.builder().name("xx팀").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
 
         TeamSolve teamSolve = TeamSolve.builder().team(team).problem(highNormalProblem).build();

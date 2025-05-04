@@ -111,7 +111,7 @@ class CertificateAdminServiceTest {
                 .email("leaderemail@email.com")
                 .address(address1)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01078451456")
                 .name("리더")
                 .organization(school1)
                 .build();
@@ -185,7 +185,7 @@ class CertificateAdminServiceTest {
                 .email("leaderemail@email.com")
                 .address(address1)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01045617896")
                 .name("리더")
                 .organization(school1)
                 .build();
@@ -217,6 +217,7 @@ class CertificateAdminServiceTest {
         memberTeamRepository.save(memberTeam1);
         Certificate certificate = Certificate.builder()
                 .serialNumber(UUID.randomUUID().toString())
+                .title("16회 예선 참가 확인증")
                 .certificateType(CertificateType.PRELIMINARY)
                 .contest(contest)
                 .member(leader)
