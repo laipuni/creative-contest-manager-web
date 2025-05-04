@@ -1,20 +1,27 @@
 package com.example.cpsplatform.teamsolve.controller;
 
 import com.example.cpsplatform.auth.service.RegisterService;
+import com.example.cpsplatform.file.domain.File;
+import com.example.cpsplatform.file.domain.FileExtension;
+import com.example.cpsplatform.file.domain.FileType;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.member.service.MemberService;
+import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.example.cpsplatform.teamsolve.controller.request.SubmitTeamAnswerRequest;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
 import com.example.cpsplatform.teamsolve.service.AnswerSubmitService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -23,14 +30,21 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -193,5 +207,48 @@ class TeamSolveControllerTest {
                 .andExpect(jsonPath("$.message").value("답안지를 제출할 문제들의 정보들은 필수입니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
 
+    }
+
+    @DisplayName("해당 대회의 답안지 조회 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void getAnswerSubmissionRequest() throws Exception {
+        // Given
+        Long contestId = 1L;
+
+        File file1 = File.builder()
+                .name("문제1_1.pdf")
+                .originalName("문제1_1.pdf")
+                .fileType(FileType.TEAM_SOLUTION)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .extension(FileExtension.PDF)
+                .size(100L)
+                .path("path")
+                .build();
+
+        //테스트용 DTO 생성
+        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, "팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
+        dto1.setFileInfo(file1);
+
+
+        GetTeamAnswerResponse response = new GetTeamAnswerResponse(List.of(dto1));
+
+        //서비스 모의 설정
+        when(answerSubmitService.getAnswer(anyLong(), anyString())).thenReturn(response);
+
+        //When
+        //Then
+        mockMvc.perform(get("/api/contest/{contestId}/team-solves", contestId)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.teamAnswerList").isArray())
+                .andExpect(jsonPath("$.data.teamAnswerList[0].teamSolveId").value(1L))
+                .andExpect(jsonPath("$.data.teamAnswerList[0].teamName").value("팀A"))
+                .andExpect(jsonPath("$.data.teamAnswerList[0].section").value("ELEMENTARY_MIDDLE"))
+                .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2))
+                .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"))
+                .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2));
     }
 }

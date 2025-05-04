@@ -67,8 +67,8 @@ class FileRepositoryCustomImplTest {
     void findFileNameDto(){
         //given
         Contest contest = Contest.builder()
-                .title("테스트 대회 2")
-                .description("테스트 대회 설명 2")
+                .title("테스트 대회")
+                .description("테스트 대회 설명")
                 .season(17)
                 .registrationStartAt(now().minusDays(5))
                 .registrationEndAt(now().minusDays(1))
@@ -118,18 +118,19 @@ class FileRepositoryCustomImplTest {
         Team team = Team.builder().name("xx팀").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
 
-        TeamSolve teamSolve = TeamSolve.builder().team(team).problem(highNormalProblem).build();
-        teamSolveRepository.save(teamSolve);
+        TeamSolve teamSolve1 = TeamSolve.builder().team(team).problem(highNormalProblem).build();
+        TeamSolve teamSolve2 = TeamSolve.builder().team(team).problem(highNormalProblem).build();
+        teamSolveRepository.saveAll(List.of(teamSolve1,teamSolve2));
 
         File file1 = File.builder()
                 .problem(highNormalProblem)
                 .name("문제1_1.pdf")
                 .originalName("문제1_1.pdf")
-                .fileType(FileType.PROBLEM_REAL)
+                .fileType(FileType.TEAM_SOLUTION)
                 .mimeType(FileExtension.PDF.getMimeType())
                 .extension(FileExtension.PDF)
                 .size(100L)
-                .teamSolve(teamSolve)
+                .teamSolve(teamSolve1)
                 .path("/contest/16회/일반/1번")
                 .build();
 
@@ -137,11 +138,11 @@ class FileRepositoryCustomImplTest {
                 .problem(commonProblem)
                 .name("문제2_1.jpg")
                 .originalName("문제2_1.jpg")
-                .fileType(FileType.PROBLEM_REAL)
+                .fileType(FileType.TEAM_SOLUTION)
                 .mimeType(FileExtension.PDF.getMimeType())
                 .extension(FileExtension.PDF)
                 .size(200L)
-                .teamSolve(teamSolve)
+                .teamSolve(teamSolve2)
                 .path("/contest/16회/일반/2번")
                 .build();
 
@@ -218,11 +219,11 @@ class FileRepositoryCustomImplTest {
         TeamSolve teamSolve = TeamSolve.builder().team(team).problem(highNormalProblem).build();
         teamSolveRepository.save(teamSolve);
 
-        File file1 = File.builder()
+        File file = File.builder()
                 .problem(highNormalProblem)
                 .name("문제1_1.pdf")
                 .originalName("문제1_1.pdf")
-                .fileType(FileType.PROBLEM_REAL)
+                .fileType(FileType.TEAM_SOLUTION)
                 .mimeType(FileExtension.PDF.getMimeType())
                 .extension(FileExtension.PDF)
                 .size(100L)
@@ -230,28 +231,15 @@ class FileRepositoryCustomImplTest {
                 .path("/contest/16회/일반/1번")
                 .build();
 
-        File file2 = File.builder()
-                .problem(commonProblem)
-                .name("문제2_1.jpg")
-                .originalName("문제2_1.jpg")
-                .fileType(FileType.PROBLEM_REAL)
-                .mimeType(FileExtension.PDF.getMimeType())
-                .extension(FileExtension.PDF)
-                .size(200L)
-                .teamSolve(teamSolve)
-                .path("/contest/16회/일반/2번")
-                .build();
-
-        List<File> files = fileRepository.saveAll(List.of(file1, file2));
+        fileRepository.save(file);
 
 
         //when
         List<Long> result = fileRepository.findFileIdsByContestIdInTeamSolve(contest.getId());
 
         //then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(0)).isEqualTo(file1.getId());
-        assertThat(result.get(1)).isEqualTo(file2.getId());
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0)).isEqualTo(file.getId());
 
     }
 

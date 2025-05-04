@@ -5,7 +5,9 @@ import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.file.decoder.vo.FileSource;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
+import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.domain.FileExtension;
+import com.example.cpsplatform.file.domain.FileType;
 import com.example.cpsplatform.file.repository.FileRepository;
 import com.example.cpsplatform.file.storage.FileStorage;
 import com.example.cpsplatform.member.domain.Address;
@@ -15,12 +17,17 @@ import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.memberteam.domain.MemberTeam;
+import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
+import com.example.cpsplatform.teamsolve.domain.TeamSolve;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import com.example.cpsplatform.teamsolve.service.dto.SubmitAnswerDto;
 import jakarta.persistence.EntityManager;
@@ -37,6 +44,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,15 +80,22 @@ class AnswerSubmitServiceTest {
     @Autowired
     TeamSolveRepository teamSolveRepository;
 
+    @Autowired
+    MemberTeamRepository memberTeamRepository;
+
     @MockitoBean
     FileStorage fileStorage;
 
     FileSources fileSources;
 
+    //해당 테스트에서 사용할 테스트 전역 변수들
     LocalDateTime now;
     Member member;
     Problem problem;
     Contest contest;
+    Team team;
+    TeamSolve teamSolve;
+    File file;
 
     @BeforeEach
     void tearUp(){
@@ -112,8 +127,14 @@ class AnswerSubmitServiceTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().contest(contest).teamNumber("001").leader(member).winner(false).name("팀 이름").build();
+        team = Team.builder().contest(contest).teamNumber("001").leader(member).winner(false).name("팀 이름").build();
         teamRepository.save(team);
+
+        MemberTeam memberTeam = MemberTeam.builder()
+                .member(member)
+                .team(team)
+                .build();
+        memberTeamRepository.save(memberTeam);
 
         problem = Problem.builder()
                 .title("문제 제목")
@@ -124,6 +145,27 @@ class AnswerSubmitServiceTest {
                 .content("문제 설명")
                 .build();
         problemRepository.save(problem);
+
+        teamSolve = TeamSolve.builder()
+                .team(team)
+                .problem(problem)
+                .build();
+        teamSolveRepository.save(teamSolve);
+
+        file = File.builder()
+                .problem(problem)
+                .name("문제1_1.pdf")
+                .originalName("문제1_1.pdf")
+                .fileType(FileType.TEAM_SOLUTION)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .extension(FileExtension.PDF)
+                .size(100L)
+                .path("path")
+                .teamSolve(teamSolve)
+                .build();
+
+        fileRepository.save(file);
+
         entityManager.flush();
         entityManager.clear();
     }
@@ -312,4 +354,38 @@ class AnswerSubmitServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("해당 대회 문제는 존재하지 않습니다.");
     }
+
+    @DisplayName("대회에 참여한 팀의 답안지를 성공적으로 조회한다")
+    @Test
+    void getAnswerSuccess() {
+        // given
+        Long contestId = contest.getId();
+        String loginId = member.getLoginId();
+
+        //when
+        GetTeamAnswerResponse response = answerSubmitService.getAnswer(contestId, loginId);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getTeamAnswerList()).hasSize(1);
+        assertThat(response.getTeamAnswerList().get(0))
+                .extracting("teamSolveId","teamName","section","modifyCount","fileId","fileName")
+                .containsExactly(teamSolve.getId(),team.getName(),problem.getSection(),teamSolve.getModifyCount(),file.getId(),file.getOriginalName());
+    }
+
+    @DisplayName("대회에 참여한 팀이 없으면 예외가 발생한다")
+    @Test
+    void getAnswerWithNoTeam() {
+        // given
+        Long contestId = 999L; //존재하지 않는 대회 id
+        String loginId = member.getLoginId();
+
+        //when
+        //then
+        assertThatThrownBy(() -> answerSubmitService.getAnswer(contestId, loginId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("해당 대회에 참여한 팀이 없습니다.");
+    }
+
+
 }
