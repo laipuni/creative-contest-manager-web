@@ -27,18 +27,13 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-@Transactional
 class TeamNumberRepositoryTest {
 
     @Autowired
@@ -64,9 +59,8 @@ class TeamNumberRepositoryTest {
 
     private Long contestId;
 
-    @BeforeAll
+    @BeforeEach
     void init() {
-
         Contest contest = Contest.builder()
                 .title("테스트 대회")
                 .season(2025)
@@ -80,6 +74,16 @@ class TeamNumberRepositoryTest {
 
         TeamNumber teamNumber = TeamNumber.of(contest, 0);
         teamNumberRepository.save(teamNumber);
+    }
+
+    @AfterEach
+    void tearDown(){
+        memberTeamRepository.deleteAllInBatch();
+        teamNumberRepository.deleteAllInBatch();
+        memberTeamRepository.deleteAllInBatch();
+        teamRepository.deleteAllInBatch();
+        contestRepository.deleteAllInBatch();
+
     }
 
     @Test

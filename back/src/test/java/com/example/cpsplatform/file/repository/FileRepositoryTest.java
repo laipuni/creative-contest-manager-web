@@ -161,10 +161,10 @@ class FileRepositoryTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
-                .email("email@email.com")
+                .email("teamsolve@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01045686542")
                 .name("이름")
                 .organization(school)
                 .build();
@@ -181,7 +181,7 @@ class FileRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).leader(member).contest(contest).build();
+        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
 
         Problem problem1 = Problem.builder()

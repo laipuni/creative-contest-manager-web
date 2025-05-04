@@ -1,5 +1,6 @@
 package com.example.cpsplatform.admin.aop;
 
+import com.example.cpsplatform.ClientIpUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class AdminLogProxy {
     //@AdminLog가 있는 메서드들은 아래와 같은 로그를 남긴다.
     @Before("@annotation(com.example.cpsplatform.admin.annotaion.AdminLog)")
     public void logAdminReqeust(JoinPoint joinPoint){
-        String ip = request.getRemoteUser();
+        String ip = ClientIpUtils.getClientIp(request);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String methodName = joinPoint.getSignature().toShortString();
         String uri = request.getRequestURI();

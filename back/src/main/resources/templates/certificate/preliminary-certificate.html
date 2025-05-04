@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <title>참여확인증</title>
+    <style>
+        body {
+            font-family : 'NanumGothic';
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .certificate-container {
+            width: 700px;
+            height: 800px;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+            justify-content: center;
+        }
+
+        .certificate-border {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid #6ac972;
+            box-shadow: inset 0 0 0 1px #8dc96a;
+        }
+
+        .certificate-inner {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            bottom: 30px;
+            border: 1px solid #a0e0a1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 50px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 350px;
+            background-blend-mode: lighten;
+            background-color: rgba(255, 255, 255, 0.85);
+        }
+
+        .certificate-header {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .certificate-title {
+            font-size: 24px;
+            font-weight: 50;
+            color: #2a3b4c;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .certificate-content {
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        .content-text {
+            font-size: 16px;
+            line-height: 2;
+            color: #333;
+            margin: 15px auto;
+            width: 100%;
+            text-align: center;
+            display: block;
+            font-weight: 500;
+        }
+
+        .personal-info {
+            width: 95%;
+            margin: 15px auto;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .personal-info td {
+            padding: 6px 10px;
+            border: 1px solid #b5e0a0;
+        }
+
+        .info-label {
+            background-color: #eaf8ea;
+            font-weight: 600;
+            width: 20%;
+            text-align: center;
+        }
+
+        .info-value {
+            width: 30%;
+            text-align: center;
+        }
+
+        .event-details {
+            margin: 15px 0;
+            width: 100%;
+        }
+
+        .event-table {
+            width: 95%;
+            margin: 0 auto;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .event-table td {
+            padding: 6px 10px;
+            border: 1px solid #b0e0a0;
+        }
+
+        .certificate-footer {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .certificate-serial {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .signature {
+            text-align: center;
+            width: 100%;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        .signature-date {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .signature-title {
+            font-size: 25px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            margin-top: 15px;
+        }
+
+        .signature-name {
+            font-size: 24px;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border: 2px solid #8ac96a;
+        }
+
+        .top-left {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .top-right {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .bottom-left {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .bottom-right {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+
+    </style>
+</head>
+<body>
+<div class="certificate-container">
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
+
+    <div class="certificate-border">
+        <div class="certificate-inner">
+            <div class="certificate-header">
+                <div class="certificate-title" th:text="|제${season}회 전국 창의문제 해결능력 경진대회 예선 참여확인서|">제16회 전국 창의문제 해결능력 경진대회 예선 참여확인서</div>
+            </div>
+
+            <div class="certificate-content">
+                <table class="personal-info">
+                    <tr>
+                        <td class="info-label">성명</td>
+                        <td class="info-value" th:text="${name}">김민서</td>
+                        <td class="info-label">생년월일</td>
+                        <td class="info-value" th:text="${birth}">1990.01.01</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">소속</td>
+                        <td class="info-value" th:text="${organizationName}">OO대학교</td>
+                        <td class="info-label">팀명</td>
+                        <td class="info-value" th:text="${teamName}">A팀</td>
+                    </tr>
+                </table>
+
+                <div class="event-details">
+                    <table class="event-table">
+                        <tr>
+                            <td class="info-label">행사명</td>
+                            <td colspan="3" class="info-value" th:text="${title}">제16회 창의력 예선 경진대회</td>
+                        </tr>
+                        <tr>
+                            <td class="info-label">일시</td>
+                            <td colspan="3" class="info-value" th:text="${date}">2024년 4월 17일 18:00 ~ 19:00</td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <p class="content-text">
+                    <span th:text="|위 ${name}(은/는) 대구광역시, 경상북도가 주관하고|">위 김민서님은 대구광역시, 경상북도가 주관하고</span>
+                    <span th:text="|(사)IT 여성기업인협회 영남지회와 (재)대구디지털혁신진흥원이 주관한 제${season}회 전국 창의문제 해결능력 경진대회 예선을 참가하였음을 확인합니다.|">
+                        (사)IT 여성기업인협회 영남지회와 (재)대구디지털혁신진흥원이 주관한 제16회 전국 창의문제 해결능력 경진대회 예선을 참가하였음을 확인합니다.
+                    </span>
+                </p>
+
+            </div>
+
+            <div class="signature">
+                <div class="signature-date" th:text="${createdDate}">2024년 4월 30일</div>
+                <div class="signature-title" th:text="${organizationTitle}">한국IT여성기업인협회 영남지회</div>
+                <div class="signature-name" th:text="|${presidentName} 회장|" style="display: inline-block; padding: 0 20px;">(이름) 회장</div>
+            </div>
+
+            <div class="certificate-footer">
+                <div class="certificate-serial" th:text="'일련번호: ' + ${serialNumber}">일련번호: ABC123456789</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

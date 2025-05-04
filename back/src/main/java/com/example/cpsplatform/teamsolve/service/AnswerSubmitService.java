@@ -15,6 +15,8 @@ import com.example.cpsplatform.queue.job.AnswerSubmitJob;
 import com.example.cpsplatform.queue.service.QueueService;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import com.example.cpsplatform.teamsolve.service.dto.SubmitAnswerDto;
@@ -41,6 +43,32 @@ public class AnswerSubmitService {
     private final FileRepository fileRepository;
     private final ContestRepository contestRepository;
     private final QueueService queueService;
+
+    /*
+     * 한번의 쿼리가 아닌 여러번의 쿼리로 나눈 이유는
+     * 조인이 많으면 테이블에 불러오는 데이터가 많고.
+     * 쿼리가 복잡해지기 때문에 분리했음
+     */
+    public GetTeamAnswerResponse getAnswer(Long contestId, String loginId){
+        //해당 대회에 참여한 팀이 있는지 확인
+        Team team = teamRepository.findTeamByMemberLoginIdAndContestId(loginId, contestId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 대회에 참여한 팀이 없습니다."));
+        log.info("대회 {}에 참여한 팀: {} 답안지 조회", contestId, team.getName());
+
+        //해당 답안지와 문제의 정보를 dto로 조회
+        List<GetTeamAnswerDto> response = teamSolveRepository.findSubmittedAnswersByTeamId(team.getId());
+        findFileByTeamSolve(response);
+        log.info("답안 조회 완료, teamId = {}, 답안 수={}", team.getId(), response.size());
+        return new GetTeamAnswerResponse(response);
+    }
+
+    private void findFileByTeamSolve(final List<GetTeamAnswerDto> response) {
+        for(GetTeamAnswerDto dto : response){
+            //한 번에 조회하는 것보다 개별 조회가 가독성과 처리에 유리하여 파일 단위로 조회함
+            fileRepository.findFileByTeamSolveId(dto.getTeamSolveId())
+                    .ifPresent(dto::setFileInfo);
+        }
+    }
 
     @Transactional
     public void submitAnswer(FileSources fileSources, SubmitAnswerDto answerDto){

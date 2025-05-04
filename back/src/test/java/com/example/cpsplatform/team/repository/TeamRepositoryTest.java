@@ -86,8 +86,8 @@ class TeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team1 = Team.builder().name("one").winner(false).leader(member).contest(contest).build();
-        Team team2 = Team.builder().name("two").winner(false).leader(member).contest(contest).build();
+        Team team1 = Team.builder().name("one").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team2 = Team.builder().name("two").winner(false).teamNumber("002").leader(member).contest(contest).build();
         teamRepository.saveAll(List.of(team1, team2));
 
         memberTeamRepository.save(MemberTeam.of(member, team1));
@@ -135,7 +135,7 @@ class TeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).leader(member).contest(contest).build();
+        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
         //when
         Team result = teamRepository.findTeamByContestIdAndLeaderId(contest.getId(), member.getLoginId()).get();
@@ -144,4 +144,48 @@ class TeamRepositoryTest {
                 .extracting("name","winner","leader","contest")
                 .containsExactly(team.getName(),team.getWinner(),team.getLeader(),team.getContest());
     }
+
+    @DisplayName("해당 대회에 팀장으로 참여한 팀이 있는지 조회한다.")
+    @Test
+    void findTeamByMemberLoginIdAndContestId(){
+        //given
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member = Member.builder()
+                .loginId("loginId")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("이름")
+                .organization(school)
+                .build();
+        memberRepository.save(member);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(16)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        teamRepository.save(team);
+        MemberTeam memberTeam = MemberTeam.builder().team(team).member(member).build();
+        memberTeamRepository.save(memberTeam);
+
+        //when
+        Team result = teamRepository.findTeamByMemberLoginIdAndContestId(member.getLoginId(),contest.getId()).get();
+        //then
+        assertThat(result).isNotNull()
+                .extracting("name","winner","leader","contest")
+                .containsExactly(team.getName(),team.getWinner(),team.getLeader(),team.getContest());
+    }
+
 }

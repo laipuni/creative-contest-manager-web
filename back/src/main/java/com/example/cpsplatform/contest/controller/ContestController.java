@@ -1,14 +1,12 @@
 package com.example.cpsplatform.contest.controller;
 
 import com.example.cpsplatform.ApiResponse;
+import com.example.cpsplatform.contest.controller.response.LatestContestResponse;
 import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -28,5 +26,9 @@ public class ContestController {
         return ApiResponse.ok(null);
     }
 
-
+    @GetMapping("/latest")
+    public ApiResponse<LatestContestResponse> getLatestContestInfo(){
+        LatestContestResponse response = contestJoinService.getLatestContestInfo();
+        return ApiResponse.ok(response);
+    }
 }
