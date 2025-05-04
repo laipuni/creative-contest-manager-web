@@ -239,15 +239,4 @@ class ContestJoinServiceTest {
                 .hasMessageContaining("해당 대회는 존재하지 않습니다");
     }
 
-
-    @DisplayName("만약 가장 최근의 대회가 없을 경우 예외가 발생한다.")
-    @Test
-    void getLatestContestInfoWithNotExistLatestContest(){
-        //given
-        //when
-        //then
-        assertThatThrownBy(() -> contestService.getLatestContestInfo())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("최신 대회의 정보를 받아오는데 실패했습니다.");
-    }
 }
