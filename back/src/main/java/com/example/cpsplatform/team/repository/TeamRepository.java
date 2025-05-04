@@ -31,4 +31,15 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     //해당 대회에 팀장으로 맡고있는 팀이 존재하는지 여부를 확인하는 쿼리
     @Query("select t from Team t where t.contest.id = :contestId and t.leader.loginId = :leaderLoginId")
     Optional<Team> findTeamByContestIdAndLeaderId(@Param("contestId") Long contestId, @Param("leaderLoginId") String leaderLoginId);
+
+
+    //유저의 아이디와 대회의 id를 받아서 해당 대회에 참여한 팀의 정보를 조회하는 쿼리
+    @EntityGraph(attributePaths = {"leader"})
+    @Query("select t from MemberTeam mt " +
+            "join mt.team t " +
+            "join mt.member m " +
+            "where m.loginId = :loginId and t.contest.id = :contestId")
+    Optional<Team> findTeamByMemberLoginIdAndContestId(@Param("loginId") String loginId,@Param("contestId") Long contestId);
+
+
 }
