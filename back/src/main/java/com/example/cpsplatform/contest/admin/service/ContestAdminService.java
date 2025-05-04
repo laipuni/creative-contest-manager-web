@@ -8,12 +8,14 @@ import com.example.cpsplatform.contest.admin.controller.response.TeamListByConte
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
+import com.example.cpsplatform.contest.admin.service.dto.WinnerTeamsDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -81,5 +83,16 @@ public class ContestAdminService {
         Pageable pageable = PageRequest.of(page,CONTEST_PAGE_SIZE);
         Page<Team> teamList = teamRepository.findTeamListByContest(contest, pageable);
         return TeamListByContestResponse.of(teamList);
+    }
+
+    @Transactional
+    public void selectWinnerTeams(final Long contestId, final WinnerTeamsDto winnerTeamsDto){
+        List<Team> teams = teamRepository.findAllById(winnerTeamsDto.getTeamIds());
+        for(Team team : teams){
+            if(!Objects.equals(team.getContest().getId(), contestId)){
+                throw new IllegalArgumentException("해당 팀(" + team.getId() + ")은 해당 대회에 속하지 않습니다.");
+            }
+            team.changeAsWinner();
+        }
     }
 }

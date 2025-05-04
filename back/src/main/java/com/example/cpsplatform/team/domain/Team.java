@@ -88,4 +88,8 @@ public class Team extends BaseEntity {
             throw new IllegalArgumentException("팀장만 수정 또는 삭제할 수 있습니다.");
         }
     }
+
+    public void changeAsWinner(){
+        this.winner = true;
+    }
 }
