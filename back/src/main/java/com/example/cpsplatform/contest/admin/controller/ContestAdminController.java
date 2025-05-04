@@ -3,6 +3,7 @@ package com.example.cpsplatform.contest.admin.controller;
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
+import com.example.cpsplatform.contest.admin.controller.response.ContestLatestResponse;
 import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
 import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
@@ -21,6 +22,14 @@ import org.springframework.web.bind.annotation.*;
 public class ContestAdminController {
 
     private final ContestAdminService contestAdminService;
+
+    //최신 대회 정보를 받아오는 api
+    @AdminLog
+    @GetMapping("/latest")
+    public ApiResponse<ContestLatestResponse> findContestLatest(){
+        ContestLatestResponse response = contestAdminService.findContestLatest();
+        return ApiResponse.ok(response);
+    }
 
     @AdminLog
     @GetMapping
