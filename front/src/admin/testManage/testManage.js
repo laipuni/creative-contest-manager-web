@@ -64,8 +64,8 @@ const TestManage = () => {
         const contestTitle = `${latestContest.season+1}회차 cps 경진대회`;
         apiClient.post('/api/admin/contests', {
             title: contestTitle, season: latestContest.season+1,
-            registrationStartAt: tempRegisterStartDate, registrationEndAt: tempRegisterEndDate,
-            contestStartAt: tempStartDate, contestEndAt: tempEndDate
+            registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
+            contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
         }, {skipErrorHandler: true})
             .then((res) => {
                 setRegisterStartDate(formatDate(tempRegisterStartDate));
@@ -108,11 +108,19 @@ const TestManage = () => {
                 return;
             }
 
-            setRegisterStartDate(formatDate(rStart));
-            setRegisterEndDate(formatDate(rEnd));
-            setStartDate(formatDate(cStart));
-            setEndDate(formatDate(cEnd));
-            setIsDateModalOpen(false);
+            const contestTitle = `${latestContest.season}회차 cps 경진대회`;
+            apiClient.put('/api/admin/contests', {
+                title: contestTitle, season: latestContest.season, contestId: latestContest.contestId,
+                registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
+                contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
+            }, {skipErrorHandler: true})
+                .then((res) => {
+                    setIsDateModalOpen(false);
+                    setIsEditMode(false);
+                    setIsRegistered(!isRegistered);
+                })
+                .catch((err)=>{
+                    alert(err.response.data.message)})
         } else {
             handleRegisterDate();
         }
@@ -145,6 +153,32 @@ const TestManage = () => {
         }
     };
 
+    // 날짜를 UTC+9 형태로 변환
+    const toISOStringWithUTC9 = (value) => {
+        // 이미 문자열인 경우 (ex. "2025.05.15")
+        if (typeof value === 'string') {
+            // 문자열 -> Date로 파싱 (format: yyyy.MM.dd 기준)
+            const [year, month, day] = value.split('.').map(Number);
+            if (!year || !month || !day) return value; // 파싱 실패 시 그대로 반환
+
+            const localDate = new Date(year, month - 1, day);
+            // UTC 기준으로 9시간 빼서 보정
+            const utcDate = new Date(localDate.getTime() + 9 * 60 * 60 * 1000);
+            return utcDate.toISOString();
+        }
+
+        // Date 객체인 경우
+        if (value instanceof Date) {
+            const utcDate = new Date(value.getTime() - 9 * 60 * 60 * 1000);
+            return utcDate.toISOString();
+        }
+
+        // 다른 타입이면 그대로 반환
+        return value;
+    };
+
+
+
 
     //일정 삭제
     const handleDeleteDate = () => {
@@ -163,7 +197,6 @@ const TestManage = () => {
     //선택된 문제 등록하기
     const handleRegisterSelectedTypes = () => {
         const typesToDelete = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
-        console.log(typesToDelete);
         if (typesToDelete.length < 1) {
             alert('항목을 선택해주세요');
         }
@@ -173,7 +206,6 @@ const TestManage = () => {
     //선택된 문제 삭제하기
     const handleDeleteSelectedTypes = () => {
         const typesToDelete = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
-        console.log(typesToDelete);
         if (typesToDelete.length < 1) {
             alert('항목을 선택해주세요');
         }
