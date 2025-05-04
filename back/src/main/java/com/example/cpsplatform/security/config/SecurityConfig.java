@@ -77,7 +77,9 @@ public class SecurityConfig {
                             ).permitAll()
                             .anyRequest().authenticated(); // 나머지 url은 인증 필요
                 })
-
+                .sessionManagement( session -> session.maximumSessions(1) //동시에 접속 가능한 세션의 수는 1명
+                        .maxSessionsPreventsLogin(true) //현재 로그인 유저는 유지, 새로운 로그인은 차단
+                )
                 .logout(logout ->
                         logout.logoutUrl("/api/auth/logout") // 로그아웃 api url
                                 .logoutSuccessHandler((request, response, authentication) -> {
