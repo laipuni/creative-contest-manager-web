@@ -26,6 +26,7 @@ const TestManage = () => {
     const [registerStartDate, setRegisterStartDate] = useState('');
     const [registerEndDate, setRegisterEndDate] = useState('');
     const [modalTab, setModalTab] = useState('접수'); // 모달 탭 상태 관리
+    const [isEditMode, setIsEditMode] = useState(false); // 일정 등록/수정 여부
 
     //최초 랜더링 시 예선 기간 및 문제 들고오기
     useEffect(() => {
@@ -35,7 +36,7 @@ const TestManage = () => {
         setEndDate('2025.06.03');
     }, [])
 
-    //접수 일정 등록
+    //일정 등록
     const handleRegisterDate = () => {
         if (!tempRegisterStartDate || !tempRegisterEndDate || !tempStartDate || !tempEndDate) {
             alert('접수 기간과 대회 기간의 시작일과 종료일을 모두 선택해주세요.');
@@ -50,17 +51,70 @@ const TestManage = () => {
         setRegisterEndDate(formatDate(tempRegisterEndDate));
         setStartDate(formatDate(tempStartDate));
         setEndDate(formatDate(tempEndDate));
+    };
+
+    //일정 수정
+    const openEditModal = () => {
+        setTempRegisterStartDate(registerStartDate);
+        setTempRegisterEndDate(registerEndDate);
+        setTempStartDate(startDate);
+        setTempEndDate(endDate);
+        setIsEditMode(true);
+        setIsDateModalOpen(true);
+    };
+
+    const handleConfirm = () => {
+        if (isEditMode) {
+            // 문자열 또는 Date 모두 처리
+            const parseDate = (d) => typeof d === 'string' ? new Date(d.replace(/\./g, '-')) : d;
+
+            const rStart = parseDate(tempRegisterStartDate);
+            const rEnd = parseDate(tempRegisterEndDate);
+            const cStart = parseDate(tempStartDate);
+            const cEnd = parseDate(tempEndDate);
+
+            if ((rStart > rEnd) || (cStart > cEnd)) {
+                alert('종료일이 시작일보다 빠르게 설정되었습니다.');
+                return;
+            }
+
+            setRegisterStartDate(formatDate(rStart));
+            setRegisterEndDate(formatDate(rEnd));
+            setStartDate(formatDate(cStart));
+            setEndDate(formatDate(cEnd));
+        } else {
+            handleRegisterDate();
+        }
+
+        setIsDateModalOpen(false);
+    };
+
+    const handleCloseModal = () => {
+        // 수정 모드일 경우 원래 값 유지
+        if (isEditMode) {
+            setTempRegisterStartDate(registerStartDate);
+            setTempRegisterEndDate(registerEndDate);
+            setTempStartDate(startDate);
+            setTempEndDate(endDate);
+        }
         setIsDateModalOpen(false);
     };
 
 
     // 날짜 포맷을 'yyyy.MM.dd'로 변환
     const formatDate = (date) => {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}.${m}.${d}`;
+        if (typeof date === 'string') {
+            // 이미 포맷처리 된 경우
+            return date;
+        }
+        if (date instanceof Date && !isNaN(date)) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}.${m}.${d}`;
+        }
     };
+
 
     //일정 삭제
     const handleDeleteDate = () => {
@@ -146,7 +200,7 @@ const TestManage = () => {
                                             {/* X 버튼 */}
                                             <button
                                                 className="testManage-modal-close"
-                                                onClick={() => setIsDateModalOpen(false)}
+                                                onClick={handleCloseModal}
                                             >
                                                 X
                                             </button>
@@ -223,7 +277,7 @@ const TestManage = () => {
 
                                                 <button
                                                     className="testManage-modal-confirm-btn"
-                                                    onClick={handleRegisterDate}
+                                                    onClick={handleConfirm}
                                                 >
                                                     확인
                                                 </button>
@@ -235,17 +289,23 @@ const TestManage = () => {
                                     <p style={{ color: 'black' }}>접수 기간</p>
                                     {registerStartDate && registerEndDate
                                         ? `${registerStartDate} ~ ${registerEndDate}`
-                                        : '접수 기간을 등록해주세요'}
+                                        : '일정을 등록해주세요'}
                                 </p>
                                 <p className="admin-testManage-detail-text">
                                     <p style={{ color: 'black' }}>대회 기간</p>
                                     {startDate && endDate
                                         ? `${startDate} ~ ${endDate}`
-                                        : '예선 기간을 등록해주세요'}
+                                        : '일정을 등록해주세요'}
                                 </p>
                             </div>
                             <div className="admin-testManage-buttonbox">
-                                <div className="admin-testManage-left-button" onClick={() => setIsDateModalOpen(true)}>등록하기</div>
+                                <div className="admin-testManage-left-button"
+                                     onClick={() => setIsDateModalOpen(true)}>등록하기
+                                </div>
+                                <div className="admin-testManage-left-button"
+                                     style={{backgroundColor: 'lightblue', color: 'black'}}
+                                     onClick={openEditModal}>수정하기
+                                </div>
                                 <div className="admin-testManage-right-button" onClick={handleDeleteDate}>삭제하기</div>
                             </div>
                         </div>
