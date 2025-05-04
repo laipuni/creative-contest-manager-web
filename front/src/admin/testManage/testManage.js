@@ -6,6 +6,7 @@ import AdminHeader from "../components/adminHeader/adminHeader";
 import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import planImage from "../../styles/images/admin_register_day.png";
 import testImage from "../../styles/images/admin_register_problem.png";
+import apiClient from "../../templates/apiClient";
 
 const TestManage = () => {
     const [checkedTypes, setCheckedTypes] = useState({
@@ -27,14 +28,26 @@ const TestManage = () => {
     const [registerEndDate, setRegisterEndDate] = useState('');
     const [modalTab, setModalTab] = useState('접수'); // 모달 탭 상태 관리
     const [isEditMode, setIsEditMode] = useState(false); // 일정 등록/수정 여부
+    const [latestContest, setLatestContest] = useState({season: 0, contestId: null});
+    const [isRegistered, setIsRegistered] = useState(false);
 
-    //최초 랜더링 시 예선 기간 및 문제 들고오기
+    //최초 랜더링 시 마지막 대회 정보 들고오기
     useEffect(() => {
-        setRegisterStartDate('2025.04.03');
-        setRegisterEndDate('2025.05.02');
-        setStartDate('2025.05.03');
-        setEndDate('2025.06.03');
-    }, [])
+        apiClient.get('/api/admin/contests/latest')
+            .then((res) => {
+                if(res.data.data){
+                   setLatestContest({
+                       season: res.data.data.season,
+                       contestId: res.data.data.contestId});
+                    setRegisterStartDate(formatDate(new Date(res.data.data.registrationStartAt)));
+                    setRegisterEndDate(formatDate(new Date(res.data.data.registrationEndAt)));
+                    setStartDate(formatDate(new Date(res.data.data.startTime)));
+                    setEndDate(formatDate(new Date(res.data.data.endTime)));
+                }
+            })
+            .catch((err)=>{})
+    }, [isRegistered])
+
 
     //일정 등록
     const handleRegisterDate = () => {
@@ -47,14 +60,31 @@ const TestManage = () => {
             alert('종료일이 시작일보다 빠르게 설정되었습니다.');
             return;
         }
-        setRegisterStartDate(formatDate(tempRegisterStartDate));
-        setRegisterEndDate(formatDate(tempRegisterEndDate));
-        setStartDate(formatDate(tempStartDate));
-        setEndDate(formatDate(tempEndDate));
+
+        const contestTitle = `${latestContest.season+1}회차 cps 경진대회`;
+        apiClient.post('/api/admin/contests', {
+            title: contestTitle, season: latestContest.season+1,
+            registrationStartAt: tempRegisterStartDate, registrationEndAt: tempRegisterEndDate,
+            contestStartAt: tempStartDate, contestEndAt: tempEndDate
+        }, {skipErrorHandler: true})
+            .then((res) => {
+                setRegisterStartDate(formatDate(tempRegisterStartDate));
+                setRegisterEndDate(formatDate(tempRegisterEndDate));
+                setStartDate(formatDate(tempStartDate));
+                setEndDate(formatDate(tempEndDate));
+                setIsDateModalOpen(false);
+                setIsRegistered(!isRegistered);
+            })
+            .catch((err)=>{
+                alert(err.response.data.message)})
     };
 
     //일정 수정
     const openEditModal = () => {
+        if(latestContest.season <= 0){
+            alert('등록을 먼저 해주세요');
+            return;
+        }
         setTempRegisterStartDate(registerStartDate);
         setTempRegisterEndDate(registerEndDate);
         setTempStartDate(startDate);
@@ -82,11 +112,11 @@ const TestManage = () => {
             setRegisterEndDate(formatDate(rEnd));
             setStartDate(formatDate(cStart));
             setEndDate(formatDate(cEnd));
+            setIsDateModalOpen(false);
         } else {
             handleRegisterDate();
         }
 
-        setIsDateModalOpen(false);
     };
 
     const handleCloseModal = () => {
@@ -192,7 +222,12 @@ const TestManage = () => {
                         </div>
                         <img src={planImage} alt="planImage" className="admin-testManage-image" />
                         <div className="admin-testManage-detail-bot">
-                            <p className="admin-testManage-detail-text" style={{ color: 'black' }}>현재 설정된 일정</p>
+                            <p className="admin-testManage-detail-text" style={{color: 'black'}}>
+                                {latestContest.season > 0
+                                    ? `현재 설정된 일정: ${latestContest.season}회차`
+                                    : '개최된 대회가 없습니다'}
+                            </p>
+
                             <div className="admin-testManage-contentbox">
                                 {isDateModalOpen && (
                                     <div className="testManage-modal-overlay">
