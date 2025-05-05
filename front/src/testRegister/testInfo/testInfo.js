@@ -8,25 +8,28 @@ import {format} from 'date-fns';
 import apiClient from "../../templates/apiClient";
 
 const TestInfo = () => {
+    const [registerStartDate, setRegisterStartDate] = useState('');
+    const [registerEndDate, setRegisterEndDate] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [season, setSeason] = useState(null);
 
-    //시험 일정 가정(TODO - api 호출로 변경)
+    //시험 일정 가정
     useEffect(() => {
-        const start = "2025-04-04T15:00:00.000Z";
-        const end = "2025-04-10T15:00:00.000Z"
-        setStartDate(format(new Date(start), 'yyyy-MM-dd'));
-        setEndDate(format(new Date(end), 'yyyy-MM-dd'));
+        apiClient.get('/api/contests/latest')
+          .then((res) => {
+              const registerStart = new Date(res.data.data.registrationStartAt);
+              const registerEnd = new Date(res.data.data.registrationEndAt);
+              const start = new Date(res.data.data.startTime);
+              const end = new Date(res.data.data.endTime);
+              setSeason(res.data.data.season);
+              setStartDate(format(start, 'yyyy-MM-dd'));
+              setEndDate(format(end, 'yyyy-MM-dd'));
+              setRegisterStartDate(format(registerStart, 'yyyy-MM-dd'));
+              setRegisterEndDate(format(registerEnd, 'yyyy-MM-dd'));
+          });
     }, [])
-    /*-----------------시험 일정 받아오기------------
-    apiClient.get('/api/v1/test/date')
-        .then((res) => {
-            const start = new Date(res.data.startDate);
-            const end = new Date(res.data.finalDate);
-            setStartDate(start);
-            setEndDate(end);
-        });
-     */
+
 
     return (
         <div className="testInfo-page-container">
@@ -35,11 +38,28 @@ const TestInfo = () => {
                 <div className="testInfo-content-container">
                     <Sidebar />
                     <div className="testInfo-main-container">
-                        <CategoryLogo logoTitle={"예선시험 안내"} imgSrc={trophyLogo}/>
+                        {season && <CategoryLogo logoTitle={`${season}회차 예선시험 안내`} imgSrc={trophyLogo}/>}
+                        {!season && <CategoryLogo logoTitle={`예선시험 안내`} imgSrc={trophyLogo}/>}
                         <div className="testInfo-text-container">
                             <div className="testInfo-text-inner-container">
                                 <div className="testInfo-textbox">
-                                    <p className="testInfo-title">기간</p>
+                                    <p className="testInfo-title">접수 기간</p>
+                                    <div className="testInfo-line"></div>
+                                    {registerStartDate && registerEndDate && <p className="testInfo-description"
+                                                                style={{
+                                                                    color: '#FFA220',
+                                                                    fontSize: '25px',
+                                                                    fontWeight: '700'
+                                                                }}>{registerStartDate} &nbsp;~&nbsp; {registerEndDate}</p>}
+                                    {!registerStartDate && <p className="testInfo-description"
+                                                      style={{color: '#FFA220', fontSize: '25px', fontWeight: '700'}}>추후
+                                        공지예정</p>}
+                                </div>
+                                <div className="testInfo-underline"></div>
+                            </div>
+                            <div className="testInfo-text-inner-container">
+                                <div className="testInfo-textbox">
+                                    <p className="testInfo-title">대회 기간</p>
                                     <div className="testInfo-line"></div>
                                     {startDate && endDate && <p className="testInfo-description"
                                                                 style={{
