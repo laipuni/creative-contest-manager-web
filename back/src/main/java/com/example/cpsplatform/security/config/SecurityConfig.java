@@ -114,7 +114,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("HEAD", "POST", "GET", "DELETE", "PUT"));
+        config.setAllowedMethods(List.of("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
