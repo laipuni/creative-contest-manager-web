@@ -1,9 +1,11 @@
 package com.example.cpsplatform.teamsolve.controller;
 
 import com.example.cpsplatform.auth.service.RegisterService;
+import com.example.cpsplatform.file.FileAccessService;
 import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.domain.FileExtension;
 import com.example.cpsplatform.file.domain.FileType;
+import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -12,6 +14,7 @@ import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.security.service.LoginFailService;
+import com.example.cpsplatform.team.service.TeamService;
 import com.example.cpsplatform.teamsolve.controller.request.SubmitTeamAnswerRequest;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
@@ -70,6 +73,15 @@ class TeamSolveControllerTest {
 
     @MockitoBean
     AnswerSubmitService answerSubmitService;
+
+    @MockitoBean
+    FileAccessService fileAccessService;
+
+    @MockitoBean
+    FileDownloadService fileDownloadService;
+
+    @MockitoBean
+    TeamService teamService;
 
     @Autowired
     MockMvc mockMvc;
@@ -226,7 +238,7 @@ class TeamSolveControllerTest {
                 .build();
 
         //테스트용 DTO 생성
-        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, "팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
+        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, 1L,"팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
         dto1.setFileInfo(file1);
 
 
@@ -250,4 +262,19 @@ class TeamSolveControllerTest {
                 .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"));
     }
+
+    @DisplayName("해당 팀의 답안지 파일 다운로드 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void downloadTeamAnswer() throws Exception {
+        //given
+        Long teamId = 1L;
+        Long fileId = 1L;
+        //When
+        //Then
+        mockMvc.perform(get("/api/teams/{teamId}/files/{fileId}/answer/download", teamId,fileId)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }

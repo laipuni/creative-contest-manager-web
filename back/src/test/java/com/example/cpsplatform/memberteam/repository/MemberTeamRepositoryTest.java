@@ -431,4 +431,69 @@ class MemberTeamRepositoryTest {
                 .extracting("member","team")
                 .containsExactly(tuple(leader,team));
     }
+
+    @DisplayName("유저의 아이디와 팀의 id를 받아 유저가 팀에 속해있는지 확인한다.")
+    @Test
+    void existsByTeamIdAndLoginId(){
+        //given
+
+        String loginId = "loginId";
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member leader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(16)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        Team team = Team.builder()
+                .name("팀 이름")
+                .winner(false)
+                .leader(leader)
+                .teamNumber("001")
+                .contest(contest)
+                .build();
+        teamRepository.save(team);
+
+        MemberTeam memberTeam = MemberTeam.builder()
+                .team(team)
+                .member(leader)
+                .build();
+
+        memberTeamRepository.save(memberTeam);
+
+        //when
+        boolean result = memberTeamRepository.existsByTeamIdAndLoginId(team.getId(), leader.getLoginId());
+        //then
+        Assertions.assertThat(result).isTrue();
+    }
+
+    @DisplayName("유저의 아이디와 팀의 id를 받아 유저가 팀에 속해있는지 확인한다.")
+    @Test
+    void existsByTeamIdAndLoginIdWithNotExistMember(){
+        //given
+        //when
+        //유효하지않은 팀 id와 유효하지 않은 아이디조 조회
+        boolean result = memberTeamRepository.existsByTeamIdAndLoginId(999L, "invalidLoginId");
+        //then
+        Assertions.assertThat(result).isFalse();
+    }
 }
