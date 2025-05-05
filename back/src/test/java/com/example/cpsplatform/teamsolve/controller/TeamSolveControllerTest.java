@@ -108,9 +108,9 @@ class TeamSolveControllerTest {
     @Test
     void submitTeamAnswers() throws Exception {
         //given
-        List<Long> problemIds = List.of(1L);
+        Long problemId = 1L;
 
-        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemIds);
+        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemId,"빈 내용");
 
         //테스트용 파일 생성
         MockMultipartFile multipartFiles = new MockMultipartFile(
@@ -147,48 +147,9 @@ class TeamSolveControllerTest {
     @Test
     void submitTeamAnswersWithNullProblemIds() throws Exception {
         //given
-        List<Long> problemIds = null;
+        Long problemId = null;
 
-        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemIds);
-
-        //테스트용 파일 생성
-        MockMultipartFile multipartFiles = new MockMultipartFile(
-                "file",
-                "test.pdf",
-                "application/pdf",
-                "PDF 내용".getBytes()
-        );
-
-        MockMultipartFile requestPart = new MockMultipartFile(
-                "request",
-                "",
-                "application/json",
-                objectMapper.writeValueAsBytes(request)
-        );
-
-        //when
-        //then
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/contests/{contestId}/team-solves",1L)
-                        .file(requestPart)
-                        .file(multipartFiles)
-                        .with(csrf())
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("답안지를 제출할 문제들의 정보들은 필수입니다."))
-                .andExpect(jsonPath("$.data").isEmpty());
-
-    }
-
-    @DisplayName("문제의 id와 파일의 사이즈가 맞지않을 경우 예외가 발생한다.")
-    @Test
-    void submitTeamAnswersWithFileAndProblemMismatchSize() throws Exception {
-        //given
-        List<Long> problemIds = Collections.emptyList();
-
-        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemIds);
+        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemId,"빈 내용");
 
         //테스트용 파일 생성
         MockMultipartFile multipartFiles = new MockMultipartFile(

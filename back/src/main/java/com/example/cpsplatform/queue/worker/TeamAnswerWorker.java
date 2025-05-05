@@ -33,7 +33,7 @@ public class TeamAnswerWorker {
             try {
                 AnswerSubmitJob job = queueService.take();
                 if(job != null){
-                    log.info("팀(id:{})의 문제(ids : {}) 답안지 제출 워커 시작",job.getTeamId(),job.getProblemIdList());
+                    log.info("[TeamAnswerWorker] 팀(id:{})의 문제(id : {}) 답안지 제출 작업 시작",job.getTeamId(),job.getProblemId());
                     answerSubmitService.saveTeamSolve(job);
                 }
             } catch (InterruptedException e) {

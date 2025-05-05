@@ -175,7 +175,7 @@ class AnswerSubmitServiceTest {
     void submitAnswer(){
         //given
         String originalFilename1 = "문제1_1.pdf";
-        FileSource fileSource1 = new FileSource(
+        FileSource fileSource = new FileSource(
                 "upload1.pdf",
                 originalFilename1,
                 new byte[]{1, 2, 3},
@@ -183,62 +183,33 @@ class AnswerSubmitServiceTest {
                 FileExtension.PDF,
                 100L
         );
-
-        String originalFilename2 = "문제1_2.pdf";
-        FileSource fileSource2 = new FileSource(
-                "upload2.pdf",
-                originalFilename2,
-                new byte[]{4, 5, 6},
-                "application/pdf",
-                FileExtension.PDF,
-                200L
-        );
-
-
-        List<FileSource> fileSourceList = List.of(fileSource1, fileSource2);
-        FileSources fileSources = FileSources.of(fileSourceList);
-
-        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), contest.getId(), List.of(problem.getId()));
+        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), contest.getId(), problem.getId(), "빈 내용");
 
         //when
         //then
-        assertDoesNotThrow(() -> answerSubmitService.submitAnswer(fileSources,answerDto));
+        assertDoesNotThrow(() -> answerSubmitService.submitAnswer(fileSource,answerDto));
     }
 
     @DisplayName("대회 개최 기간이 아닌 시간에 답안지를 제출하면 예외가 발생한다.")
     @Test
     void submitAnswerWithNotOnGoingContest(){
         //given
-        String originalFilename1 = "문제1_1.pdf";
-        FileSource fileSource1 = new FileSource(
+        String originalFilename = "문제1_1.pdf";
+        FileSource fileSource = new FileSource(
                 "upload1.pdf",
-                originalFilename1,
+                originalFilename,
                 new byte[]{1, 2, 3},
                 "application/pdf",
                 FileExtension.PDF,
                 100L
         );
 
-        String originalFilename2 = "문제1_2.pdf";
-        FileSource fileSource2 = new FileSource(
-                "upload2.pdf",
-                originalFilename2,
-                new byte[]{4, 5, 6},
-                "application/pdf",
-                FileExtension.PDF,
-                200L
-        );
-
-
-        List<FileSource> fileSourceList = List.of(fileSource1, fileSource2);
-        FileSources fileSources = FileSources.of(fileSourceList);
-
         //대회 시작 5일 전으로 대회시간이 아니도록 설정
-        SubmitAnswerDto answerDto = new SubmitAnswerDto(now.minusDays(5), member.getLoginId(), contest.getId(), List.of(problem.getId()));
+        SubmitAnswerDto answerDto = new SubmitAnswerDto(now.minusDays(5), member.getLoginId(), contest.getId(), problem.getId(),"content");
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSources,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageMatching("현재 대회시간이 아니라 답을 제출할 수 없습니다.");
     }
@@ -248,7 +219,7 @@ class AnswerSubmitServiceTest {
     void submitAnswerWithNotExistContest(){
         //given
         String originalFilename1 = "문제1_1.pdf";
-        FileSource fileSource1 = new FileSource(
+        FileSource fileSource = new FileSource(
                 "upload1.pdf",
                 originalFilename1,
                 new byte[]{1, 2, 3},
@@ -256,27 +227,13 @@ class AnswerSubmitServiceTest {
                 FileExtension.PDF,
                 100L
         );
-
-        String originalFilename2 = "문제1_2.pdf";
-        FileSource fileSource2 = new FileSource(
-                "upload2.pdf",
-                originalFilename2,
-                new byte[]{4, 5, 6},
-                "application/pdf",
-                FileExtension.PDF,
-                200L
-        );
-
         Long invalidContestId = 9999L;
 
-        List<FileSource> fileSourceList = List.of(fileSource1, fileSource2);
-        FileSources fileSources = FileSources.of(fileSourceList);
-
-        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), invalidContestId, List.of(problem.getId()));
+        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), invalidContestId, problem.getId(), "빈 내용");
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSources,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageMatching("답을 제출할 대회가 존재하지 않습니다.");
     }
@@ -286,7 +243,7 @@ class AnswerSubmitServiceTest {
     void submitAnswerWithNotLeader(){
         //given
         String originalFilename1 = "문제1_1.pdf";
-        FileSource fileSource1 = new FileSource(
+        FileSource fileSource = new FileSource(
                 "upload1.pdf",
                 originalFilename1,
                 new byte[]{1, 2, 3},
@@ -295,25 +252,12 @@ class AnswerSubmitServiceTest {
                 100L
         );
 
-        String originalFilename2 = "문제1_2.pdf";
-        FileSource fileSource2 = new FileSource(
-                "upload2.pdf",
-                originalFilename2,
-                new byte[]{4, 5, 6},
-                "application/pdf",
-                FileExtension.PDF,
-                200L
-        );
-
         String invalidLoginId = "invalidLoginId";
-        List<FileSource> fileSourceList = List.of(fileSource1, fileSource2);
-        FileSources fileSources = FileSources.of(fileSourceList);
-
-        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, invalidLoginId, contest.getId(), List.of(problem.getId()));
+        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, invalidLoginId, contest.getId(), problem.getId(), "빈 내용");
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSources,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageMatching("답안지는 팀장만이 제출할 수 있습니다.");
     }
@@ -323,7 +267,7 @@ class AnswerSubmitServiceTest {
     void submitAnswerWithNotExistProblem(){
         //given
         String originalFilename1 = "문제1_1.pdf";
-        FileSource fileSource1 = new FileSource(
+        FileSource fileSource = new FileSource(
                 "upload1.pdf",
                 originalFilename1,
                 new byte[]{1, 2, 3},
@@ -332,25 +276,13 @@ class AnswerSubmitServiceTest {
                 100L
         );
 
-        String originalFilename2 = "문제1_2.pdf";
-        FileSource fileSource2 = new FileSource(
-                "upload2.pdf",
-                originalFilename2,
-                new byte[]{4, 5, 6},
-                "application/pdf",
-                FileExtension.PDF,
-                200L
-        );
-
         Long invalidProblemId = 9999L;
-        List<FileSource> fileSourceList = List.of(fileSource1, fileSource2);
-        FileSources fileSources = FileSources.of(fileSourceList);
 
-        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), contest.getId(), List.of(invalidProblemId));
+        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), contest.getId(), invalidProblemId, "빈 내용");
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSources,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("해당 대회 문제는 존재하지 않습니다.");
     }

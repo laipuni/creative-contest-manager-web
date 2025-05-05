@@ -3,6 +3,7 @@ package com.example.cpsplatform.teamsolve.controller;
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.file.FileAccessService;
 import com.example.cpsplatform.file.decoder.MultipartDecoder;
+import com.example.cpsplatform.file.decoder.vo.FileSource;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.security.domain.SecurityMember;
@@ -41,19 +42,12 @@ public class TeamSolveController {
             @PathVariable("contestId") Long contestId,
             @Valid @RequestPart("request") SubmitTeamAnswerRequest request,
             @AuthenticationPrincipal SecurityMember securityMember,
-            @RequestPart("file") List<MultipartFile> multipartFiles){
-
-        if(multipartFiles.size() != request.getProblemIds().size()){
-            //문제와 답안지 파일의 수가 일치하지 않을 경우 예외 발생
-            log.debug("유저(loginId:{})가 제출한 답안지 파일({}개)과 문제 정보({}개)가 일치하지 않음",
-                    securityMember.getUsername(), request.getProblemIds().size(),multipartFiles.size());
-            throw new IllegalArgumentException("모든 문제의 파일을 제출 해주시길 바랍니다.");
-        }
+            @RequestPart("file") MultipartFile multipartFile){
 
         MultipartDecoder multipartDecoder = new MultipartDecoder();
-        FileSources fileSources = multipartDecoder.decode(multipartFiles);
+        FileSource fileSource = multipartDecoder.decode(multipartFile);
         answerSubmitService.submitAnswer(
-                fileSources,
+                fileSource,
                 getAnswerDto(contestId, request, securityMember)
         );
         return ApiResponse.ok(null);
@@ -80,7 +74,8 @@ public class TeamSolveController {
                 contestId,
                 securityMember.getUsername(),
                 LocalDateTime.now(),
-                request.getProblemIds()
+                request.getProblemId(),
+                request.getContents()
         );
     }
 
