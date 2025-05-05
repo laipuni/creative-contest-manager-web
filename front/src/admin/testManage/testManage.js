@@ -16,9 +16,9 @@ const TestManage = () => {
     });
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [commonQuiz, setCommonQuiz] = useState(null);
-    const [easyQuiz, setEasyQuiz] = useState(null);
-    const [hardQuiz, setHardQuiz] = useState(null);
+    const [commonQuiz, setCommonQuiz] = useState([]);
+    const [easyQuiz, setEasyQuiz] = useState([]);
+    const [hardQuiz, setHardQuiz] = useState([]);
     const [isDateModalOpen, setIsDateModalOpen] = useState(false); // 달력 모달
     const [tempStartDate, setTempStartDate] = useState(null); // 선택용 임시 날짜
     const [tempEndDate, setTempEndDate] = useState(null);
@@ -57,6 +57,21 @@ const TestManage = () => {
             })
             .catch((err)=>{})
     }, [isRegistered])
+
+    //최초 랜더링 or 대회 삭제됐을 때 문제 갱신
+    useEffect(()=>{
+        if(!latestContest.contestId)
+            return;
+        apiClient.get(`/api/admin/v1/contests/${latestContest.contestId}/problems`, {
+            parameter: {page : 0}, skipErrorHandler: true})
+            .then((res) => {
+                const problemList = res.data.data.problemList;
+                setCommonQuiz(problemList.filter(problem => problem.section === 'COMMON'));
+                setHardQuiz(problemList.filter(problem => problem.section === 'HIGH_NORMAL'));
+                setEasyQuiz(problemList.filter(problem => problem.section === 'ELEMENTARY_MIDDLE'));
+            })
+            .catch((err)=>{})
+    }, [latestContest.contestId])
 
 
     //일정 등록
@@ -410,15 +425,15 @@ const TestManage = () => {
                                     />
                                     <p className="admin-testManage-detail-text"
                                        style={{textAlign: 'left', width: '200px'}}>(공통) /</p>
-                                    {!commonQuiz &&
+                                    {commonQuiz.length === 0 &&
                                         <p className="admin-testManage-detail-text" style={{
                                             color: 'black', textAlign: 'left'
                                         }}>등록된 문제 없음</p>}
-                                    {commonQuiz && (
+                                    {commonQuiz.length > 0 && (
                                         <>
                                             <a
                                                 href={URL.createObjectURL(commonQuiz)}
-                                                download={commonQuiz.name}
+                                                download={commonQuiz.title}
                                                 style={{
                                                     display: 'inline-block',
                                                     marginTop: '10px',
@@ -432,7 +447,7 @@ const TestManage = () => {
                                                     fontSize: '16px',
                                                 }}
                                             >
-                                                {commonQuiz.name}
+                                                {commonQuiz.title}
                                             </a>
                                         </>
                                     )}
@@ -458,15 +473,15 @@ const TestManage = () => {
                                     />
                                     <p className="admin-testManage-detail-text"
                                        style={{textAlign: 'left', width: '200px'}}>(초/중등) /</p>
-                                    {!easyQuiz &&
+                                    {easyQuiz.length === 0 &&
                                         <p className="admin-testManage-detail-text" style={{
                                             color: 'black', textAlign: 'left'
                                         }}>등록된 문제 없음</p>}
-                                    {easyQuiz && (
+                                    {easyQuiz.length > 0 && (
                                         <>
                                             <a
                                                 href={URL.createObjectURL(easyQuiz)}
-                                                download={easyQuiz.name}
+                                                download={easyQuiz.title}
                                                 style={{
                                                     display: 'inline-block',
                                                     marginTop: '10px',
@@ -480,7 +495,7 @@ const TestManage = () => {
                                                     fontSize: '16px',
                                                 }}
                                             >
-                                                {easyQuiz.name}
+                                                {easyQuiz.title}
                                             </a>
                                         </>
                                     )}
@@ -506,15 +521,15 @@ const TestManage = () => {
                                     />
                                     <p className="admin-testManage-detail-text"
                                        style={{textAlign: 'left', width: '200px'}}>(고등/일반) /</p>
-                                    {!hardQuiz &&
+                                    {hardQuiz.length === 0 &&
                                         <p className="admin-testManage-detail-text" style={{
                                             color: 'black', textAlign: 'left'
                                         }}>등록된 문제 없음</p>}
-                                    {hardQuiz && (
+                                    {hardQuiz.length > 0 && (
                                         <>
                                             <a
                                                 href={URL.createObjectURL(hardQuiz)}
-                                                download={hardQuiz.name}
+                                                download={hardQuiz.title}
                                                 style={{
                                                     display: 'inline-block',
                                                     marginTop: '10px',
@@ -528,7 +543,7 @@ const TestManage = () => {
                                                     fontSize: '16px',
                                                 }}
                                             >
-                                                {hardQuiz.name}
+                                                {hardQuiz.title}
                                             </a>
                                         </>
                                     )}
