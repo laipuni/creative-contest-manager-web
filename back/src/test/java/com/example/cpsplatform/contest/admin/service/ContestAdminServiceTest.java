@@ -8,7 +8,10 @@ import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.DuplicateDataException;
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
@@ -161,6 +163,55 @@ class ContestAdminServiceTest {
         List<Contest> result = contestRepository.findAll();
         //then
         assertThat(result).hasSize(0);
+    }
+
+    @DisplayName("임시 삭제된 대회를 복구한다.")
+    @Test
+    void recoverContest(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.plusDays(1);
+        LocalDateTime registrationEndAt= now.plusDays(2);
+        LocalDateTime contestStartAt = now.plusDays(3);
+        LocalDateTime contestEndAt = now.plusDays(4);
+        //contest 생성
+        Contest contest = Contest.builder()
+                .title("title")
+                .description("대회 설명")
+                .season(16)
+                .registrationStartAt(registrationStartAt)
+                .registrationEndAt(registrationEndAt)
+                .startTime(contestStartAt)
+                .endTime(contestEndAt)
+                .build();
+        //대회를 미리 저장
+        Contest save = contestRepository.save(contest);
+        entityManager.flush();
+        entityManager.clear();
+
+        //미리 저장한 대회를 소프트 삭제
+        contestRepository.deleteById(contest.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        contestAdminService.recoverContest(contest.getId());
+
+        //then
+        List<Contest> result = contestRepository.findAll();
+        assertThat(result).hasSize(1)
+                .extracting("id",
+                        "title",
+                        "description",
+                        "season"
+                )
+                .containsExactly(
+                        tuple(save.getId(),
+                                save.getTitle(),
+                                save.getDescription(),
+                                save.getSeason()
+                        )
+                );
     }
 
 }

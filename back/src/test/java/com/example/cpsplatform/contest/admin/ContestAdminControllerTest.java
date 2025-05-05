@@ -32,6 +32,7 @@ import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -669,6 +670,20 @@ class ContestAdminControllerTest {
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
-
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("임시삭제된 대회를 복구하는 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void recoverContest() throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(patch("/api/admin/contests/{contestId}/recover",1L)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
 
 }
