@@ -26,7 +26,6 @@ const TestManage = () => {
     const [isRegistered, setIsRegistered] = useState(false);
 
     // --- 문제 등록 관련 상태 ---
-    const [problemList, setProblemList] = useState([]);
     const [commonQuiz, setCommonQuiz] = useState([]);         // 등록된 COMMON 문제
     const [easyQuiz, setEasyQuiz] = useState([]);             // 등록된 ELEMENTARY_MIDDLE 문제
     const [hardQuiz, setHardQuiz] = useState([]);             // 등록된 HIGH_NORMAL 문제
@@ -73,7 +72,6 @@ const TestManage = () => {
         apiClient.get(`/api/admin/v1/contests/${latestContest.contestId}/problems`, {
             parameter: {page : 0}, skipErrorHandler: true})
             .then((res) => {
-                setProblemList(res.data.data.problemList);
                 const problemList = res.data.data.problemList;
                 setCommonQuiz(problemList.filter(problem => problem.section === 'COMMON'));
                 setHardQuiz(problemList.filter(problem => problem.section === 'HIGH_NORMAL'));
@@ -238,14 +236,14 @@ const TestManage = () => {
         }));
     };
 
-    // 선택된 문제 등록하기
+    // 문제 등록 or 수정
     const handleRegisterSelectedTypes = async (e) => {
         e.preventDefault();
-
+        console.log(easyQuiz[0]);
         const sectionMap = {
-            '공통': { file: commonTempFile, section: 'COMMON' },
-            '초/중등': { file: easyTempFile, section: 'ELEMENTARY_MIDDLE' },
-            '고등/일반': { file: hardTempFile, section: 'HIGH_NORMAL' },
+            '공통': { file: commonTempFile, section: 'COMMON', existing: commonQuiz[0]},
+            '초/중등': { file: easyTempFile, section: 'ELEMENTARY_MIDDLE', existing: easyQuiz[0]},
+            '고등/일반': { file: hardTempFile, section: 'HIGH_NORMAL', existing: hardQuiz[0]},
         };
 
         const typesToUpload = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
@@ -258,25 +256,34 @@ const TestManage = () => {
         const promises = [];
 
         for (const type of typesToUpload) {
-            const { file, section } = sectionMap[type] || {};
-            if (!file) continue;
+            const { file, section, existing } = sectionMap[type] || {};
+            if (!file) {
+                alert('변경된 파일만 선택해주세요.');
+                return;
+            }
 
             const formData = new FormData();
 
-            // JSON 데이터를 Blob으로 감싸서 'request'라는 이름으로 추가
             const jsonBlob = new Blob([JSON.stringify({
                 title: file.name,
                 section,
                 season: latestContest.season,
                 contestId: latestContest.contestId,
                 problemOrder: 1,
+                deleteFileIds: []
             })], { type: 'application/json' });
 
             formData.append('request', jsonBlob);
-            formData.append('multipartFiles', file); // 서버에서 이 키 이름 그대로 받음
+            formData.append('multipartFiles', file);
+
+            const method = existing?.problemId?  'put' : 'post';
+            const url = existing?.problemId
+                ? `/api/admin/contests/${latestContest.contestId}/problems/${existing.problemId}`  // PUT일 경우 ID 포함
+                : `/api/admin/problems/real`;
+
 
             promises.push(
-                axios.post('/api/admin/problems/real', formData, {
+                axios[method](url, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -284,31 +291,34 @@ const TestManage = () => {
             );
         }
 
-        if (promises.length === 0) {
-            alert('파일이 선택되지 않았습니다.');
-            return;
-        }
-
         try {
             await Promise.all(promises);
             alert('문제가 등록되었습니다.');
+            setCheckedTypes({
+                '초/중등': false,
+                '공통': false,
+                '고등/일반': false
+            });
             setIsRegistered(r => !r);
         } catch (error) {
             console.error(error);
-            alert('문제 등록에 오류가 발생했습니다.');
+            alert(error.response.data.message);
         }
     };
+
 
 
 
     //문제 다운로드
     const handleDownload = async (problemId) => {
         try {
-            const res = await apiClient.get(`/api/admin/problems/${problemId}`);
+            const res = await apiClient.get(`/api/admin/v1/contests/${latestContest.contestId}/problems/${problemId}`);
             const fileId = res.data.data.fileList[0]?.fileId;
             if (fileId) {
                 // 파일 다운로드
-                window.location.href = `/api/admin/files/${fileId}`;
+                apiClient.get(`/api/admin/files/${fileId}`)
+                    .then((res)=>{})
+                    .catch((err)=>{})
             } else {
                 alert('파일이 존재하지 않습니다.');
             }
@@ -317,23 +327,43 @@ const TestManage = () => {
     };
 
     //선택된 문제 삭제하기
-    const handleDeleteSelectedTypes = () => {
+    const handleDeleteSelectedTypes = async () => {
+        const sectionMap = {
+            '공통': commonQuiz,
+            '초/중등': easyQuiz,
+            '고등/일반': hardQuiz,
+        };
+
         const typesToDelete = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
-        if (typesToDelete.length < 1) {
+        if (typesToDelete.length === 0) {
             alert('항목을 선택해주세요');
+            return;
         }
-        // 데이터 초기화
+
+        const deletePromises = [];
+
         typesToDelete.forEach(type => {
-            if (type === '초/중등') {
-                setEasyQuiz(null);
-            } else if (type === '공통') {
-                setCommonQuiz(null);
-            } else if (type === '고등/일반') {
-                setHardQuiz(null);
-            }
+            const quiz = sectionMap[type];
+            console.log(quiz);
+            if (quiz[0]?.problemId) {
+                deletePromises.push(axios.delete(`/api/admin/contests/problems`, {
+                    data: { deleteProblemId: quiz[0].problemId }
+                }))}
+
+            // 상태 초기화
+            if (type === '공통') setCommonQuiz([]);
+            if (type === '초/중등') setEasyQuiz([]);
+            if (type === '고등/일반') setHardQuiz([]);
         });
 
-        // 체크 상태 초기화
+        try {
+            await Promise.all(deletePromises);
+            alert('삭제되었습니다.');
+        } catch (error) {
+            console.error(error);
+            alert('삭제 중 오류가 발생했습니다.');
+        }
+        setIsRegistered(r=> !r);
         setCheckedTypes({
             '초/중등': false,
             '공통': false,
@@ -499,7 +529,7 @@ const TestManage = () => {
                         <img src={testImage} alt="testImage" className="admin-testManage-image"/>
                         <form encType="multipart/form-data" onSubmit={handleRegisterSelectedTypes}>
                             <div className="admin-testManage-detail-bot">
-                                <p className="admin-testManage-detail-text" style={{color: 'black'}}>현재 게시된 문제</p>
+                                <p className="admin-testManage-detail-text" style={{color: 'black'}}>현재 게시된 문제 (클릭 시 다운로드)</p>
                                 <div className="admin-testManage-contentbox" style={{padding: '15px', height: '60%'}}>
 
                                     {/* 공통 문제 섹션 */}
@@ -510,13 +540,13 @@ const TestManage = () => {
                                         />
                                         <p className="admin-testManage-detail-text" style={{width: 200}}> (공통) /</p>
 
-                                        {!commonTempFile && commonQuiz.length === 0
+                                        {!commonTempFile && !commonQuiz[0]
                                             && <p className="admin-testManage-detail-text" style={{
                                                 textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
                                         }
 
                                         {/* 1) 이미 등록된 문제 목록 */}
-                                        {commonQuiz.map(p => (
+                                        {!commonTempFile && commonQuiz.map(p => (
                                             <p
                                                key={p.problemId}
                                                onClick={() => handleDownload(p.problemId)}
@@ -553,13 +583,21 @@ const TestManage = () => {
                                                checked={checkedTypes['초/중등']} onChange={() => toggleTypeCheck('초/중등')}
                                         />
                                         <p className="admin-testManage-detail-text" style={{width: 200}}>(초/중등) /</p>
-                                        {!easyTempFile && easyQuiz.length === 0
+                                        {!easyTempFile && !easyQuiz[0]
                                             && <p className="admin-testManage-detail-text" style={{
                                                 textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
                                         }
-                                        {easyQuiz.map(p => (
+                                        {!easyTempFile && easyQuiz.map(p => (
                                             <p key={p.problemId} onClick={() => handleDownload(p.problemId)}
-                                               style={{cursor: 'pointer'}}> {p.title} </p>
+                                               style={{
+                                                   cursor: 'pointer',
+                                                   whiteSpace: 'nowrap',
+                                                   overflow: 'hidden',
+                                                   textOverflow: 'ellipsis',
+                                                   textAlign: 'left',
+                                                   color: 'black',
+                                                   width: 200
+                                               }}> {p.title} </p>
                                         ))}
                                         {easyTempFile && (
                                             <a href={URL.createObjectURL(easyTempFile)} download>{easyTempFile.name}</a>
@@ -576,13 +614,21 @@ const TestManage = () => {
                                                checked={checkedTypes['고등/일반']} onChange={() => toggleTypeCheck('고등/일반')}
                                         />
                                         <p className="admin-testManage-detail-text" style={{width: 200}}>(고등/일반) /</p>
-                                        {!hardTempFile && hardQuiz.length === 0
+                                        {!hardTempFile && !hardQuiz[0]
                                             && <p className="admin-testManage-detail-text" style={{
                                                 textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
                                         }
-                                        {hardQuiz.map(p => (
+                                        {!hardTempFile && hardQuiz.map(p => (
                                             <p key={p.problemId} onClick={() => handleDownload(p.problemId)}
-                                               style={{cursor: 'pointer'}}> {p.title} </p>
+                                               style={{
+                                                   cursor: 'pointer',
+                                                   whiteSpace: 'nowrap',
+                                                   overflow: 'hidden',
+                                                   textOverflow: 'ellipsis',
+                                                   textAlign: 'left',
+                                                   color: 'black',
+                                                   width: 200
+                                               }}> {p.title} </p>
                                         ))}
                                         {hardTempFile && (
                                             <a href={URL.createObjectURL(hardTempFile)} download>{hardTempFile.name}</a>
