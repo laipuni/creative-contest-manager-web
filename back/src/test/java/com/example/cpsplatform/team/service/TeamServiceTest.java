@@ -1,6 +1,7 @@
 package com.example.cpsplatform.team.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.exception.DuplicateDataException;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
@@ -308,5 +310,74 @@ class TeamServiceTest {
         assertThat(myTeamInfoByContestDto.getLeader().getLoginId()).isEqualTo("yi");
         assertThat(myTeamInfoByContestDto.getMemberIds()).containsExactlyInAnyOrder("yi", "kim");
         assertThat(myTeamInfoByContestDto.getCreatedAt()).isNotNull();
+    }
+
+    @DisplayName("이미 다른팀에 소속된 경우 예외가 발생한다.")
+    @Test
+    void addMembersToTeam(){
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(16)
+                .registrationStartAt(now.minusDays(6))
+                .registrationEndAt(now.minusDays(5))
+                .startTime(now.minusHours(1))
+                .endTime(now.plusHours(1))
+                .build();
+        contestRepository.save(contest);
+
+        String loginId = "loginId";
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member leader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.of(2003,1,1))
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
+
+        String loginId1 = "loginId1";
+        Address address1 = new Address("street","city","zipCode","detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.of(2003,1,1))
+                .email("email1@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341235")
+                .name("사람 이름")
+                .organization(school1)
+                .build();
+        memberRepository.save(member);
+
+        Team team = Team.builder()
+                .name("테스트팀")
+                .winner(false)
+                .leader(leader)
+                .contest(contest)
+                .teamNumber("003")
+                .section(Section.ELEMENTARY_MIDDLE)
+                .build();
+        teamRepository.save(team);
+
+        memberTeamRepository.save(MemberTeam.of(leader, team));
+
+        List<String> memberIdsToAdd = List.of(leader.getLoginId(), member.getLoginId());
+
+        // when & then
+        assertThatThrownBy(() -> teamService.addMembersToTeam(memberIdsToAdd, team))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageContaining("해당 팀원은 이미 해당 대회에 소속된 팀이 있습니다.");
     }
 }
