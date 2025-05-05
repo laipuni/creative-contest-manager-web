@@ -7,29 +7,37 @@ import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import planImage from "../../styles/images/admin_register_day.png";
 import testImage from "../../styles/images/admin_register_problem.png";
 import apiClient from "../../templates/apiClient";
+import axios from "axios";
 
 const TestManage = () => {
-    const [checkedTypes, setCheckedTypes] = useState({
-        '초/중등': false,
-        '공통': false,
-        '고등/일반': false
-    });
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [commonQuiz, setCommonQuiz] = useState([]);
-    const [easyQuiz, setEasyQuiz] = useState([]);
-    const [hardQuiz, setHardQuiz] = useState([]);
-    const [isDateModalOpen, setIsDateModalOpen] = useState(false); // 달력 모달
-    const [tempStartDate, setTempStartDate] = useState(null); // 선택용 임시 날짜
-    const [tempEndDate, setTempEndDate] = useState(null);
-    const [tempRegisterStartDate, setTempRegisterStartDate] = useState(null); // 선택용 임시 날짜
-    const [tempRegisterEndDate, setTempRegisterEndDate] = useState(null);
+    // --- 일정 관련 상태 ---
+    const [latestContest, setLatestContest] = useState({ season: 0, contestId: null });
     const [registerStartDate, setRegisterStartDate] = useState('');
     const [registerEndDate, setRegisterEndDate] = useState('');
-    const [modalTab, setModalTab] = useState('접수'); // 모달 탭 상태 관리
-    const [isEditMode, setIsEditMode] = useState(false); // 일정 등록/수정 여부
-    const [latestContest, setLatestContest] = useState({season: 0, contestId: null});
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+    const [modalTab, setModalTab] = useState('접수');
+    const [tempRegisterStartDate, setTempRegisterStartDate] = useState(null);
+    const [tempRegisterEndDate, setTempRegisterEndDate] = useState(null);
+    const [tempStartDate, setTempStartDate] = useState(null);
+    const [tempEndDate, setTempEndDate] = useState(null);
+    const [isEditMode, setIsEditMode] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
+
+    // --- 문제 등록 관련 상태 ---
+    const [problemList, setProblemList] = useState([]);
+    const [commonQuiz, setCommonQuiz] = useState([]);         // 등록된 COMMON 문제
+    const [easyQuiz, setEasyQuiz] = useState([]);             // 등록된 ELEMENTARY_MIDDLE 문제
+    const [hardQuiz, setHardQuiz] = useState([]);             // 등록된 HIGH_NORMAL 문제
+    const [commonTempFile, setCommonTempFile] = useState(null);
+    const [easyTempFile, setEasyTempFile] = useState(null);
+    const [hardTempFile, setHardTempFile] = useState(null);
+    const [checkedTypes, setCheckedTypes] = useState({
+        '공통': false,
+        '초/중등': false,
+        '고등/일반': false
+    });
 
     //최초 랜더링 시 마지막 대회 정보 들고오기
     useEffect(() => {
@@ -65,10 +73,17 @@ const TestManage = () => {
         apiClient.get(`/api/admin/v1/contests/${latestContest.contestId}/problems`, {
             parameter: {page : 0}, skipErrorHandler: true})
             .then((res) => {
+                setProblemList(res.data.data.problemList);
                 const problemList = res.data.data.problemList;
                 setCommonQuiz(problemList.filter(problem => problem.section === 'COMMON'));
                 setHardQuiz(problemList.filter(problem => problem.section === 'HIGH_NORMAL'));
                 setEasyQuiz(problemList.filter(problem => problem.section === 'ELEMENTARY_MIDDLE'));
+                // 새 첨부 파일은 초기화
+                setCommonTempFile(null);
+                setEasyTempFile(null);
+                setHardTempFile(null);
+                // 체크박스 초기화
+                setCheckedTypes({ '공통': false, '초/중등': false, '고등/일반': false });
             })
             .catch((err)=>{})
     }, [latestContest.contestId])
@@ -223,14 +238,83 @@ const TestManage = () => {
         }));
     };
 
-    //선택된 문제 등록하기
-    const handleRegisterSelectedTypes = () => {
-        const typesToDelete = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
-        if (typesToDelete.length < 1) {
-            alert('항목을 선택해주세요');
+    // 선택된 문제 등록하기
+    const handleRegisterSelectedTypes = async (e) => {
+        e.preventDefault();
+
+        const sectionMap = {
+            '공통': { file: commonTempFile, section: 'COMMON' },
+            '초/중등': { file: easyTempFile, section: 'ELEMENTARY_MIDDLE' },
+            '고등/일반': { file: hardTempFile, section: 'HIGH_NORMAL' },
+        };
+
+        const typesToUpload = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
+
+        if (typesToUpload.length === 0) {
+            alert('섹션을 체크해주세요.');
+            return;
         }
-        //등록 api 연동
-    }
+
+        const promises = [];
+
+        for (const type of typesToUpload) {
+            const { file, section } = sectionMap[type] || {};
+            if (!file) continue;
+
+            const formData = new FormData();
+
+            // JSON 데이터를 Blob으로 감싸서 'request'라는 이름으로 추가
+            const jsonBlob = new Blob([JSON.stringify({
+                title: file.name,
+                section,
+                season: latestContest.season,
+                contestId: latestContest.contestId,
+                problemOrder: 1,
+            })], { type: 'application/json' });
+
+            formData.append('request', jsonBlob);
+            formData.append('multipartFiles', file); // 서버에서 이 키 이름 그대로 받음
+
+            promises.push(
+                axios.post('/api/admin/problems/real', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
+            );
+        }
+
+        if (promises.length === 0) {
+            alert('파일이 선택되지 않았습니다.');
+            return;
+        }
+
+        try {
+            await Promise.all(promises);
+            alert('문제가 등록되었습니다.');
+            setIsRegistered(r => !r);
+        } catch (error) {
+            console.error(error);
+            alert('문제 등록에 오류가 발생했습니다.');
+        }
+    };
+
+
+
+    //문제 다운로드
+    const handleDownload = async (problemId) => {
+        try {
+            const res = await apiClient.get(`/api/admin/problems/${problemId}`);
+            const fileId = res.data.data.fileList[0]?.fileId;
+            if (fileId) {
+                // 파일 다운로드
+                window.location.href = `/api/admin/files/${fileId}`;
+            } else {
+                alert('파일이 존재하지 않습니다.');
+            }
+        } catch (err) {
+        }
+    };
 
     //선택된 문제 삭제하기
     const handleDeleteSelectedTypes = () => {
@@ -413,162 +497,111 @@ const TestManage = () => {
                             <div className="admin-testManage-detail-underLine"></div>
                         </div>
                         <img src={testImage} alt="testImage" className="admin-testManage-image"/>
-                        <div className="admin-testManage-detail-bot">
-                            <p className="admin-testManage-detail-text" style={{color:'black'}}>현재 게시된 문제</p>
-                            <div className="admin-testManage-contentbox" style={{padding: '15px', height:'60%'}}>
-                                <div className="admin-testManage-content">
-                                    <input
-                                        className="admin-testManage-input"
-                                        type="checkbox"
-                                        checked={checkedTypes['공통']}
-                                        onChange={() => toggleTypeCheck('공통')}
-                                    />
-                                    <p className="admin-testManage-detail-text"
-                                       style={{textAlign: 'left', width: '200px'}}>(공통) /</p>
-                                    {commonQuiz.length === 0 &&
-                                        <p className="admin-testManage-detail-text" style={{
-                                            color: 'black', textAlign: 'left'
-                                        }}>등록된 문제 없음</p>}
-                                    {commonQuiz.length > 0 && (
-                                        <>
-                                            <a
-                                                href={URL.createObjectURL(commonQuiz)}
-                                                download={commonQuiz.title}
-                                                style={{
-                                                    display: 'inline-block',
-                                                    marginTop: '10px',
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    whiteSpace: 'nowrap',
-                                                    textOverflow: 'ellipsis',
-                                                    color: '#000000',
-                                                    fontFamily: 'Roboto',
-                                                    fontWeight: 400,
-                                                    fontSize: '16px',
-                                                }}
-                                            >
-                                                {commonQuiz.title}
-                                            </a>
-                                        </>
-                                    )}
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        onChange={(e) => handleFileChange(e, setCommonQuiz)}
-                                        className="quiz-filename" id="file-upload-easy"
-                                        style={{display: "none"}}
-                                    />
-                                    {/* 사용자에게 보일 버튼 */}
-                                    <label htmlFor="file-upload-easy" className="quiz-file-button"
-                                           style={{width: '10%', height: '35%', marginTop: '10px'}}>
-                                        파일 등록
-                                    </label>
+                        <form encType="multipart/form-data" onSubmit={handleRegisterSelectedTypes}>
+                            <div className="admin-testManage-detail-bot">
+                                <p className="admin-testManage-detail-text" style={{color: 'black'}}>현재 게시된 문제</p>
+                                <div className="admin-testManage-contentbox" style={{padding: '15px', height: '60%'}}>
+
+                                    {/* 공통 문제 섹션 */}
+                                    <div className="admin-testManage-content">
+                                        {/* 체크박스 + 레이블 */}
+                                        <input type="checkbox" className="admin-testManage-input"
+                                               checked={checkedTypes['공통']} onChange={() => toggleTypeCheck('공통')}
+                                        />
+                                        <p className="admin-testManage-detail-text" style={{width: 200}}> (공통) /</p>
+
+                                        {!commonTempFile && commonQuiz.length === 0
+                                            && <p className="admin-testManage-detail-text" style={{
+                                                textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
+                                        }
+
+                                        {/* 1) 이미 등록된 문제 목록 */}
+                                        {commonQuiz.map(p => (
+                                            <p
+                                               key={p.problemId}
+                                               onClick={() => handleDownload(p.problemId)}
+                                               style={{
+                                                   cursor: 'pointer',
+                                                   whiteSpace: 'nowrap',
+                                                   overflow: 'hidden',
+                                                   textOverflow: 'ellipsis',
+                                                   textAlign: 'left',
+                                                   color: 'black',
+                                                   width: 200
+                                               }}
+                                            >{p.title}</p>
+                                        ))}
+
+                                        {/* 2) 임시 첨부된 파일 (바로 다운로드 가능) */}
+                                        {commonTempFile && (
+                                            <a href={URL.createObjectURL(commonTempFile)}
+                                               download={commonTempFile.name}
+                                            >{commonTempFile.name}</a>
+                                        )}
+
+                                        {/* 3) 파일 입력 + 라벨 */}
+                                        <input type="file" accept=".pdf"
+                                               style={{display: 'none'}} id="file-upload-common"
+                                               onChange={(e) => handleFileChange(e, setCommonTempFile)}
+                                        />
+                                        <label htmlFor="file-upload-common" className="quiz-file-button" style={{height: 'fit-content'}}>첨부</label>
+                                    </div>
+
+                                    {/* 초/중등 섹션 (같은 패턴) */}
+                                    <div className="admin-testManage-content">
+                                        <input type="checkbox" className="admin-testManage-input"
+                                               checked={checkedTypes['초/중등']} onChange={() => toggleTypeCheck('초/중등')}
+                                        />
+                                        <p className="admin-testManage-detail-text" style={{width: 200}}>(초/중등) /</p>
+                                        {!easyTempFile && easyQuiz.length === 0
+                                            && <p className="admin-testManage-detail-text" style={{
+                                                textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
+                                        }
+                                        {easyQuiz.map(p => (
+                                            <p key={p.problemId} onClick={() => handleDownload(p.problemId)}
+                                               style={{cursor: 'pointer'}}> {p.title} </p>
+                                        ))}
+                                        {easyTempFile && (
+                                            <a href={URL.createObjectURL(easyTempFile)} download>{easyTempFile.name}</a>
+                                        )}
+                                        <input type="file" accept=".pdf" style={{display: 'none'}} id="file-upload-easy"
+                                               onChange={(e) => handleFileChange(e, setEasyTempFile)}
+                                        />
+                                        <label htmlFor="file-upload-easy" className="quiz-file-button" style={{height: 'fit-content'}}>첨부</label>
+                                    </div>
+
+                                    {/* 고등/일반 섹션 */}
+                                    <div className="admin-testManage-content">
+                                        <input type="checkbox" className="admin-testManage-input"
+                                               checked={checkedTypes['고등/일반']} onChange={() => toggleTypeCheck('고등/일반')}
+                                        />
+                                        <p className="admin-testManage-detail-text" style={{width: 200}}>(고등/일반) /</p>
+                                        {!hardTempFile && hardQuiz.length === 0
+                                            && <p className="admin-testManage-detail-text" style={{
+                                                textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
+                                        }
+                                        {hardQuiz.map(p => (
+                                            <p key={p.problemId} onClick={() => handleDownload(p.problemId)}
+                                               style={{cursor: 'pointer'}}> {p.title} </p>
+                                        ))}
+                                        {hardTempFile && (
+                                            <a href={URL.createObjectURL(hardTempFile)} download>{hardTempFile.name}</a>
+                                        )}
+                                        <input type="file" accept=".pdf" style={{display: 'none'}} id="file-upload-hard"
+                                               onChange={(e) => handleFileChange(e, setHardTempFile)}
+                                        />
+                                        <label htmlFor="file-upload-hard" className="quiz-file-button" style={{height: 'fit-content'}}>첨부</label>
+                                    </div>
+
                                 </div>
-                                <div className="admin-testManage-content">
-                                    <input
-                                        className="admin-testManage-input"
-                                        type="checkbox"
-                                        checked={checkedTypes['초/중등']}
-                                        onChange={() => toggleTypeCheck('초/중등')}
-                                    />
-                                    <p className="admin-testManage-detail-text"
-                                       style={{textAlign: 'left', width: '200px'}}>(초/중등) /</p>
-                                    {easyQuiz.length === 0 &&
-                                        <p className="admin-testManage-detail-text" style={{
-                                            color: 'black', textAlign: 'left'
-                                        }}>등록된 문제 없음</p>}
-                                    {easyQuiz.length > 0 && (
-                                        <>
-                                            <a
-                                                href={URL.createObjectURL(easyQuiz)}
-                                                download={easyQuiz.title}
-                                                style={{
-                                                    display: 'inline-block',
-                                                    marginTop: '10px',
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    whiteSpace: 'nowrap',
-                                                    textOverflow: 'ellipsis',
-                                                    color: '#000000',
-                                                    fontFamily: 'Roboto',
-                                                    fontWeight: 400,
-                                                    fontSize: '16px',
-                                                }}
-                                            >
-                                                {easyQuiz.title}
-                                            </a>
-                                        </>
-                                    )}
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        onChange={(e) => handleFileChange(e, setEasyQuiz)}
-                                        className="quiz-filename" id="file-upload-hard"
-                                        style={{display: "none"}}
-                                    />
-                                    {/* 사용자에게 보일 버튼 */}
-                                    <label htmlFor="file-upload-hard" className="quiz-file-button"
-                                           style={{width: '10%', height: '35%', marginTop: '10px'}}>
-                                        파일 등록
-                                    </label>
-                                </div>
-                                <div className="admin-testManage-content">
-                                    <input
-                                        className="admin-testManage-input"
-                                        type="checkbox"
-                                        checked={checkedTypes['고등/일반']}
-                                        onChange={() => toggleTypeCheck('고등/일반')}
-                                    />
-                                    <p className="admin-testManage-detail-text"
-                                       style={{textAlign: 'left', width: '200px'}}>(고등/일반) /</p>
-                                    {hardQuiz.length === 0 &&
-                                        <p className="admin-testManage-detail-text" style={{
-                                            color: 'black', textAlign: 'left'
-                                        }}>등록된 문제 없음</p>}
-                                    {hardQuiz.length > 0 && (
-                                        <>
-                                            <a
-                                                href={URL.createObjectURL(hardQuiz)}
-                                                download={hardQuiz.title}
-                                                style={{
-                                                    display: 'inline-block',
-                                                    marginTop: '10px',
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    whiteSpace: 'nowrap',
-                                                    textOverflow: 'ellipsis',
-                                                    color: '#000000',
-                                                    fontFamily: 'Roboto',
-                                                    fontWeight: 400,
-                                                    fontSize: '16px',
-                                                }}
-                                            >
-                                                {hardQuiz.title}
-                                            </a>
-                                        </>
-                                    )}
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        onChange={(e) => handleFileChange(e, setHardQuiz)}
-                                        className="quiz-filename" id="file-upload-common"
-                                        style={{display: "none"}}
-                                    />
-                                    {/* 사용자에게 보일 버튼 */}
-                                    <label htmlFor="file-upload-common" className="quiz-file-button"
-                                           style={{width: '10%', height: '35%', marginTop: '10px'}}>
-                                        파일 등록
-                                    </label>
+                                <div className="admin-testManage-buttonbox">
+                                    <button type="submit" className="admin-testManage-left-button">등록하기</button>
+                                    <div className="admin-testManage-right-button"
+                                         onClick={handleDeleteSelectedTypes}>삭제하기
+                                    </div>
                                 </div>
                             </div>
-                            <div className="admin-testManage-buttonbox">
-                                <div className="admin-testManage-left-button"
-                                     onClick={handleRegisterSelectedTypes}>등록하기</div>
-                                <div className="admin-testManage-right-button"
-                                     onClick={handleDeleteSelectedTypes}>삭제하기
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
