@@ -18,15 +18,17 @@ const TestInfo = () => {
     useEffect(() => {
         apiClient.get('/api/contests/latest')
           .then((res) => {
-              const registerStart = new Date(res.data.data.registrationStartAt);
-              const registerEnd = new Date(res.data.data.registrationEndAt);
-              const start = new Date(res.data.data.startTime);
-              const end = new Date(res.data.data.endTime);
-              setSeason(res.data.data.season);
-              setStartDate(format(start, 'yyyy-MM-dd'));
-              setEndDate(format(end, 'yyyy-MM-dd'));
-              setRegisterStartDate(format(registerStart, 'yyyy-MM-dd'));
-              setRegisterEndDate(format(registerEnd, 'yyyy-MM-dd'));
+              if(res.data.data){
+                  const registerStart = new Date(res.data.data.registrationStartAt);
+                  const registerEnd = new Date(res.data.data.registrationEndAt);
+                  const start = new Date(res.data.data.startTime);
+                  const end = new Date(res.data.data.endTime);
+                  setSeason(res.data.data.season);
+                  setStartDate(format(start, 'yyyy-MM-dd'));
+                  setEndDate(format(end, 'yyyy-MM-dd'));
+                  setRegisterStartDate(format(registerStart, 'yyyy-MM-dd'));
+                  setRegisterEndDate(format(registerEnd, 'yyyy-MM-dd'));
+              }
           });
     }, [])
 
