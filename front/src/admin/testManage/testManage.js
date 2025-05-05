@@ -84,7 +84,7 @@ const TestManage = () => {
                 setCheckedTypes({ '공통': false, '초/중등': false, '고등/일반': false });
             })
             .catch((err)=>{})
-    }, [latestContest.contestId])
+    }, [isRegistered])
 
 
     //일정 등록
@@ -293,67 +293,96 @@ const TestManage = () => {
 
         try {
             await Promise.all(promises);
+            setIsRegistered(r => !r);
             alert('문제가 등록되었습니다.');
             setCheckedTypes({
                 '초/중등': false,
                 '공통': false,
                 '고등/일반': false
             });
-            setIsRegistered(r => !r);
         } catch (error) {
             console.error(error);
-            alert(error.response.data.message);
+            alert('서버에 중복된 제목의 문제가 등록되어 있습니다.');
         }
     };
 
 
 
 
-    //문제 다운로드
-    const handleDownload = async (problemId) => {
+    // 문제 다운로드
+    const handleDownload = async (problem) => {
         try {
-            const res = await apiClient.get(`/api/admin/v1/contests/${latestContest.contestId}/problems/${problemId}`);
+            const res = await apiClient.get(`/api/admin/v1/contests/${latestContest.contestId}/problems/${problem.problemId}`);
             const fileId = res.data.data.fileList[0]?.fileId;
+
             if (fileId) {
-                // 파일 다운로드
-                apiClient.get(`/api/admin/files/${fileId}`)
-                    .then((res)=>{})
-                    .catch((err)=>{})
+                const fileResponse = await apiClient.get(`/api/admin/files/${fileId}`, {
+                    responseType: 'blob',
+                });
+
+                const blob = new Blob([fileResponse.data]);
+                const url = window.URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = problem.title; // 파일명 설정
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                window.URL.revokeObjectURL(url);
             } else {
                 alert('파일이 존재하지 않습니다.');
             }
         } catch (err) {
+            console.error('파일 다운로드 오류:', err);
+            alert('파일 다운로드에 실패했습니다.');
         }
     };
+
 
     //선택된 문제 삭제하기
     const handleDeleteSelectedTypes = async () => {
         const sectionMap = {
-            '공통': commonQuiz,
-            '초/중등': easyQuiz,
-            '고등/일반': hardQuiz,
+            '공통': { quiz: commonQuiz, temp: commonTempFile, reset: () => setCommonQuiz([]) },
+            '초/중등': { quiz: easyQuiz, temp: easyTempFile, reset: () => setEasyQuiz([]) },
+            '고등/일반': { quiz: hardQuiz, temp: hardTempFile, reset: () => setHardQuiz([]) },
         };
 
         const typesToDelete = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
+
         if (typesToDelete.length === 0) {
             alert('항목을 선택해주세요');
+            return;
+        }
+
+        const invalidTypes = typesToDelete.filter(type => {
+            const { quiz, temp } = sectionMap[type];
+            return !quiz[0]?.problemId && !temp;
+        });
+
+        if (invalidTypes.length > 0) {
+            alert(`삭제할 수 있는 문제만 선택해주세요.\n(${invalidTypes.join(', ')})`);
             return;
         }
 
         const deletePromises = [];
 
         typesToDelete.forEach(type => {
-            const quiz = sectionMap[type];
-            console.log(quiz);
-            if (quiz[0]?.problemId) {
-                deletePromises.push(axios.delete(`/api/admin/contests/problems`, {
-                    data: { deleteProblemId: quiz[0].problemId }
-                }))}
+            const { quiz, temp, reset } = sectionMap[type];
+            const problemId = quiz[0]?.problemId;
+
+            // temp는 없고, 등록된 문제만 있는 경우 삭제 API 호출
+            if (!temp && problemId) {
+                deletePromises.push(
+                    axios.delete(`/api/admin/contests/problems`, {
+                        data: { deleteProblemId: problemId }
+                    })
+                );
+            }
 
             // 상태 초기화
-            if (type === '공통') setCommonQuiz([]);
-            if (type === '초/중등') setEasyQuiz([]);
-            if (type === '고등/일반') setHardQuiz([]);
+            reset();
         });
 
         try {
@@ -363,13 +392,15 @@ const TestManage = () => {
             console.error(error);
             alert('삭제 중 오류가 발생했습니다.');
         }
-        setIsRegistered(r=> !r);
+
+        setIsRegistered(r => !r);
         setCheckedTypes({
             '초/중등': false,
             '공통': false,
             '고등/일반': false
         });
     };
+
 
     //문제 등록 관리
     const handleFileChange = (e, setFile) => {
@@ -549,7 +580,7 @@ const TestManage = () => {
                                         {!commonTempFile && commonQuiz.map(p => (
                                             <p
                                                key={p.problemId}
-                                               onClick={() => handleDownload(p.problemId)}
+                                               onClick={() => handleDownload(p)}
                                                style={{
                                                    cursor: 'pointer',
                                                    whiteSpace: 'nowrap',
@@ -588,7 +619,7 @@ const TestManage = () => {
                                                 textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
                                         }
                                         {!easyTempFile && easyQuiz.map(p => (
-                                            <p key={p.problemId} onClick={() => handleDownload(p.problemId)}
+                                            <p key={p.problemId} onClick={() => handleDownload(p)}
                                                style={{
                                                    cursor: 'pointer',
                                                    whiteSpace: 'nowrap',
@@ -619,7 +650,7 @@ const TestManage = () => {
                                                 textAlign: 'left', width: 200, color: 'black'}}>등록되지 않음</p>
                                         }
                                         {!hardTempFile && hardQuiz.map(p => (
-                                            <p key={p.problemId} onClick={() => handleDownload(p.problemId)}
+                                            <p key={p.problemId} onClick={() => handleDownload(p)}
                                                style={{
                                                    cursor: 'pointer',
                                                    whiteSpace: 'nowrap',
