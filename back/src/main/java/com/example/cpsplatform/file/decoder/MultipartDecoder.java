@@ -1,5 +1,6 @@
 package com.example.cpsplatform.file.decoder;
 
+import com.example.cpsplatform.exception.FileNotFoundException;
 import com.example.cpsplatform.exception.FileReadException;
 import com.example.cpsplatform.exception.UnsupportedFileTypeException;
 import com.example.cpsplatform.file.decoder.strategy.FileNamingStrategy;
@@ -14,7 +15,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class MultipartDecoder implements FileDecoder<List<MultipartFile>>{
+public class MultipartDecoder implements FileDecoder<MultipartFile>{
 
     @Override
     public FileSources decode(final List<MultipartFile> files) {
@@ -26,6 +27,16 @@ public class MultipartDecoder implements FileDecoder<List<MultipartFile>>{
                 .map(this::convertToFileSource).toList();
         return FileSources.of(fileSourceList);
     }
+
+    @Override
+    public FileSource decode(final MultipartFile file) {
+        if(file == null){
+            //파일이 존재하지 않을 경우
+            throw new FileNotFoundException("다운로드 파일이 존재하지 않습니다.");
+        }
+        return convertToFileSource(file);
+    }
+
 
     private FileSource convertToFileSource(MultipartFile file) {
         String contentType = file.getContentType();
