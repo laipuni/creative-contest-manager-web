@@ -2,6 +2,7 @@ package com.example.cpsplatform.team.service;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.domain.organization.school.School;
@@ -113,12 +114,18 @@ public class TeamService {
                 team.getCreatedAt());
     }
 
-    private void addMembersToTeam(List<String> memberIds, Team team) {
+    public void addMembersToTeam(List<String> memberIds, Team team) {
         List<MemberTeam> memberTeams = new ArrayList<>();
+        Long contestId = team.getContest().getId();
 
         for (String loginId : memberIds) {
             Member member = memberRepository.findMemberByLoginId(loginId)
                     .orElseThrow(()->new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
+
+            boolean result = memberTeamRepository.existsByContestIdAndLoginId(contestId, loginId);
+            if(result){
+                throw new ContestJoinException("해당 팀원은 이미 해당 대회에 소속된 팀이 있습니다.");
+            }
             memberTeams.add(MemberTeam.of(member, team));
         }
         memberTeamRepository.saveAll(memberTeams);
