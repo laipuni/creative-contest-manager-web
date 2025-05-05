@@ -83,4 +83,11 @@ public class ContestAdminController {
         TeamListByContestResponse teamListResponse = contestAdminService.searchTeamListByContest(contestId, page);
         return ApiResponse.ok(teamListResponse);
     }
+
+    @AdminLog
+    @PatchMapping("/{contestId}/recover")
+    public ApiResponse<Object> recoverContest(@PathVariable("contestId")Long contestId){
+        contestAdminService.recoverContest(contestId);
+        return ApiResponse.ok(null);
+    }
 }

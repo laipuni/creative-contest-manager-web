@@ -109,5 +109,8 @@ public class Contest extends BaseEntity {
         return now.isBefore(startTime) || now.isAfter(endTime);
     }
 
+    public void recover(){
+        this.deleted = false;
+    }
 
 }

@@ -22,5 +22,7 @@ public interface ContestRepository extends JpaRepository<Contest,Long> {
     @Query("select c from Contest c where c.deleted = false order by c.season DESC limit 1")
     Optional<Contest> findLatestContest();
 
+    @Query(value = "SELECT * FROM Contest WHERE id = :id AND deleted = true", nativeQuery = true)
+    Optional<Contest> findDeletedContestById(@Param("id") Long contestId);
 }
 
