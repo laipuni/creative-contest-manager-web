@@ -5,7 +5,7 @@ import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import trophyLogo from "../../styles/images/test_info_logo.png";
 import './registerTeam.css'
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {Link} from "react-router-dom";
 import apiClient from "../../templates/apiClient";
 
@@ -16,11 +16,28 @@ const RegisterTeam = () => {
     const [contestInfo, setContestInfo] = useState({});
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const { teamInfo } = location.state || {};
+
     useEffect(() => {
         apiClient.get('/api/contests/latest')
             .then((res)=>{
                 if(res.data.data){
                     setContestInfo(res.data.data);
+                    if(teamInfo){
+                            const leaderId = teamInfo.leader.loginId;
+                            const members = teamInfo.memberIds.filter(id => id !== leaderId);
+
+                            setTeamName(teamInfo.teamName);
+
+                            // 멤버 수에 따라 분기
+                            if (members.length === 2) {
+                                setTeamMate1(members[0]);
+                                setTeamMate2(members[1]);
+                            } else  {
+                                setTeamMate1(members[0]);
+                            }
+                    }
                 }
             })
     }, []);
@@ -34,13 +51,33 @@ const RegisterTeam = () => {
         const memberIds = [teamMate1, teamMate2].filter(id => !!id);
         console.log(memberIds);
         /*-----------------접수하기---------*/
-        apiClient.post('/api/teams', {teamName, contestId: contestInfo.contestId, memberIds}, {skipErrorHandler: true})
-            .then((res)=>{
-                navigate('/register/info');
-            })
-            .catch((err)=>{
-                alert(err.response.data.message);
-            })
+        if(!teamInfo) {
+            apiClient.post('/api/teams', {
+                teamName,
+                contestId: contestInfo.contestId,
+                memberIds
+            }, {skipErrorHandler: true})
+                .then((res) => {
+                    navigate('/register/info');
+                })
+                .catch((err) => {
+                    alert(err.response.data.message);
+                })
+        }
+        /*----------------수정하기-----------*/
+        else {
+            const memberIds = [teamMate1, teamMate2].filter(id => !!id);
+            apiClient.patch(`/api/teams/${teamInfo.teamId}`, {
+                teamName,
+                memberIds
+            }, {skipErrorHandler: true})
+                .then((res)=>{
+                    navigate('/register/info');
+                })
+                .catch((err) => {
+                    alert(err);
+                })
+        }
     }
 
     return (
@@ -84,7 +121,8 @@ const RegisterTeam = () => {
                                 </div>
                                 <p className="registerTeam-bot-warning">※ 팀원의 아이디를 정확하게 입력해주세요.</p>
                                 <div className="registerTeam-bot-buttonbox">
-                                <button type="submit" className="registerTeam-register-button">접수하기</button>
+                                    {!teamInfo && <button type="submit" className="registerTeam-register-button">접수하기</button>}
+                                    {teamInfo && <button type="submit" className="registerTeam-register-button">수정하기</button>}
                                     <button className="registerTeam-register-button" type="button"
                                             style={{color: 'black', background: 'rgba(95, 164, 255, 0.09)'}}
                                     onClick={()=>{navigate('/register/info')}}>나가기</button>

@@ -64,9 +64,16 @@ const RegisterInfo = () => {
                                     <p className="registerInfo-bot-text">{teamInfo.leader.name}({teamInfo.leader.email})</p>
                                 </div>}
                                 <div className="registerInfo-bot-buttonbox">
+                                    {teamInfo &&
+                                        <Link to="/register/team" state={{teamInfo}} className="registerInfo-bot-button" >
+                                            <div className="submit-rocket-img" style={{width:'0px'}}/>
+                                            수정하기</Link>}
                                     <Link to="/register/team" className="registerInfo-bot-button">
                                         <img src={rocket} alt='rocket' className="submit-rocket-img"/>
                                         접수하기</Link>
+                                    <Link to="/register/team" className="registerInfo-bot-button" >
+                                        <div className="submit-rocket-img" style={{width:'0px'}}/>
+                                        삭제하기</Link>
                                 </div>
                             </div>
                         </div>
