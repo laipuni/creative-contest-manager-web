@@ -11,6 +11,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.team.domain.Team;
+import com.example.cpsplatform.team.policy.TeamJoinEligibilityPolicy;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
@@ -39,6 +40,7 @@ public class TeamService {
     private final MemberTeamRepository memberTeamRepository;
     private final ContestRepository contestRepository;
     private final TeamNumberRepository teamNumberRepository;
+    private final TeamJoinEligibilityPolicy teamJoinEligibilityPolicy;
 
     @Transactional
     public Long createTeam(String leaderId, TeamCreateDto createDto){
@@ -118,7 +120,8 @@ public class TeamService {
 
         for (String loginId : memberIds) {
             Member member = memberRepository.findMemberByLoginId(loginId)
-                    .orElseThrow(()->new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
+                    .orElseThrow(()->new IllegalArgumentException(String.format("%s는 존재하지 않는 계정입니다.",loginId)));
+            teamJoinEligibilityPolicy.validate(member); //팀에 가입할 정책에 준수하는 유저인가(현재 : 매년 회원가입 정책)
             memberTeams.add(MemberTeam.of(member, team));
         }
         memberTeamRepository.saveAll(memberTeams);
