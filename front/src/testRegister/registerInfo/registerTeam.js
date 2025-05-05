@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './registerInfo.css';
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
@@ -13,7 +13,17 @@ const RegisterTeam = () => {
     const [teamName, setTeamName] = useState("");
     const [teamMate1, setTeamMate1] = useState("");
     const [teamMate2, setTeamMate2] = useState("");
+    const [contestInfo, setContestInfo] = useState({});
     const navigate = useNavigate();
+
+    useEffect(() => {
+        apiClient.get('/api/contests/latest')
+            .then((res)=>{
+                if(res.data.data){
+                    setContestInfo(res.data.data);
+                }
+            })
+    }, []);
 
     const handleRegisterTeam = (e) => {
         e.preventDefault();
@@ -21,14 +31,16 @@ const RegisterTeam = () => {
             alert('팀원을 1명 이상 등록해주세요.')
             return;
         }
-        /*-----------------접수하기---------
-        apiClient.post('/api/register/team', {teamName, teamMate1, teamMate2})
-       .then((res)=>{
-          navigate('/register/info');
-       });
-
-    */
-        navigate('/');
+        const memberIds = [teamMate1, teamMate2].filter(id => !!id);
+        console.log(memberIds);
+        /*-----------------접수하기---------*/
+        apiClient.post('/api/teams', {teamName, contestId: contestInfo.contestId, memberIds}, {skipErrorHandler: true})
+            .then((res)=>{
+                navigate('/register/info');
+            })
+            .catch((err)=>{
+                alert(err.response.data.message);
+            })
     }
 
     return (
