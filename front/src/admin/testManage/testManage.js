@@ -196,14 +196,13 @@ const TestManage = () => {
             if (!year || !month || !day) return value; // 파싱 실패 시 그대로 반환
 
             const localDate = new Date(year, month - 1, day);
-            // UTC 기준으로 9시간 빼서 보정
             const utcDate = new Date(localDate.getTime() + 9 * 60 * 60 * 1000);
             return utcDate.toISOString();
         }
 
         // Date 객체인 경우
         if (value instanceof Date) {
-            const utcDate = new Date(value.getTime() - 9 * 60 * 60 * 1000);
+            const utcDate = new Date(value.getTime() + 9 * 60 * 60 * 1000);
             return utcDate.toISOString();
         }
 
