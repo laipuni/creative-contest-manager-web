@@ -70,7 +70,6 @@ public class AnswerSubmitService {
         }
     }
 
-    @Transactional
     public void submitAnswer(FileSource fileSource, SubmitAnswerDto answerDto){
         Contest contest = validateContest(answerDto);
         Team team = validateTeamLeader(answerDto);
