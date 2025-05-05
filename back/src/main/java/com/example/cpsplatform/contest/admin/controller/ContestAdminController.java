@@ -2,10 +2,7 @@ package com.example.cpsplatform.contest.admin.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
-import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
-import com.example.cpsplatform.contest.admin.controller.response.ContestLatestResponse;
-import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
-import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
+import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
@@ -89,5 +86,12 @@ public class ContestAdminController {
     public ApiResponse<Object> recoverContest(@PathVariable("contestId")Long contestId){
         contestAdminService.recoverContest(contestId);
         return ApiResponse.ok(null);
+    }
+
+    @AdminLog
+    @GetMapping("/deleted")
+    public ApiResponse<DeletedContestListResponse> recoverContest(){
+        DeletedContestListResponse response = contestAdminService.findDeletedContest();
+        return ApiResponse.ok(response);
     }
 }

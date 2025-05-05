@@ -98,6 +98,11 @@ public class ContestAdminService {
         Contest contest = contestRepository.findDeletedContestById(contestId)
                 .orElseThrow(() -> new IllegalArgumentException("복구할 대회가 존재하지 않습니다."));
         contest.recover();
-        log.info("{} 임시 삭제된 대회(id: {})를 복구했습니다.", ADMIN_CONTEST_LOG, contestId);
+        log.info("{} 임시 삭제된 {} 대회(id: {})를 복구했습니다.", ADMIN_CONTEST_LOG, contest.getTitle(), contestId);
+    }
+
+    public DeletedContestListResponse findDeletedContest() {
+        List<Contest> result = contestRepository.findDeletedContestById();
+        return DeletedContestListResponse.of(result);
     }
 }
