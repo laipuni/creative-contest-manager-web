@@ -84,7 +84,7 @@ const TestManage = () => {
                 setCheckedTypes({ '공통': false, '초/중등': false, '고등/일반': false });
             })
             .catch((err)=>{})
-    }, [isRegistered])
+    }, [isRegistered, latestContest.contestId])
 
 
     //일정 등록
@@ -106,10 +106,6 @@ const TestManage = () => {
             contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
         }, {skipErrorHandler: true})
             .then((res) => {
-                setRegisterStartDate(formatDate(tempRegisterStartDate));
-                setRegisterEndDate(formatDate(tempRegisterEndDate));
-                setStartDate(formatDate(tempStartDate));
-                setEndDate(formatDate(tempEndDate));
                 setIsDateModalOpen(false);
                 setIsRegistered(!isRegistered);
             })
