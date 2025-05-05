@@ -44,6 +44,16 @@ const TestManage = () => {
                     setStartDate(formatDate(new Date(res.data.data.startTime)));
                     setEndDate(formatDate(new Date(res.data.data.endTime)));
                 }
+                else{
+                    setLatestContest({
+                        season: 0,
+                        contestId: null
+                    })
+                    setRegisterStartDate(null);
+                    setRegisterEndDate(null);
+                    setStartDate(null);
+                    setEndDate(null);
+                }
             })
             .catch((err)=>{})
     }, [isRegistered])
@@ -182,8 +192,12 @@ const TestManage = () => {
 
     //일정 삭제
     const handleDeleteDate = () => {
-        setStartDate('');
-        setEndDate('');
+        apiClient.delete('/api/admin/contests', {
+            data: { contestId: latestContest.contestId }, skipErrorHandler: true})
+            .then((res)=>{
+                setIsRegistered(!isRegistered);
+            })
+            .catch((err)=>{})
     }
 
     //문제 체크박스 선택
