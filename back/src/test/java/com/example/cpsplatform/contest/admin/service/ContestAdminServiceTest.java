@@ -1,6 +1,7 @@
 package com.example.cpsplatform.contest.admin.service;
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.admin.controller.response.DeletedContestListResponse;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
@@ -203,14 +204,66 @@ class ContestAdminServiceTest {
                 .extracting("id",
                         "title",
                         "description",
-                        "season"
+                        "season",
+                        "deleted"
                 )
                 .containsExactly(
                         tuple(save.getId(),
                                 save.getTitle(),
                                 save.getDescription(),
-                                save.getSeason()
+                                save.getSeason(),
+                                false
                         )
+                );
+    }
+
+    @DisplayName("임시 삭제된 대회들을 조회한다.")
+    @Test
+    void findDeletedContest(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.plusDays(1);
+        LocalDateTime registrationEndAt= now.plusDays(2);
+        LocalDateTime contestStartAt = now.plusDays(3);
+        LocalDateTime contestEndAt = now.plusDays(4);
+        //contest 생성
+        Contest contest1 = Contest.builder()
+                .title("title")
+                .description("대회 설명")
+                .season(16)
+                .registrationStartAt(registrationStartAt)
+                .registrationEndAt(registrationEndAt)
+                .startTime(contestStartAt)
+                .endTime(contestEndAt)
+                .build();
+        Contest contest2 = Contest.builder()
+                .title("title")
+                .description("대회 설명")
+                .season(17)
+                .registrationStartAt(registrationStartAt)
+                .registrationEndAt(registrationEndAt)
+                .startTime(contestStartAt)
+                .endTime(contestEndAt)
+                .build();
+        //대회들을 미리 저장
+        contestRepository.saveAll(List.of(contest1,contest2));
+        entityManager.flush();
+        entityManager.clear();
+
+        //미리 저장한 대회를 전부 소프트 삭제
+        contestRepository.deleteAllById(List.of(contest1.getId(),contest2.getId()));
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        DeletedContestListResponse result = contestAdminService.findDeletedContest();
+
+        //then
+        assertThat(result.getDeletedContestList()).hasSize(2)
+                .extracting("contestId", "title", "season")
+                .containsExactly(
+                        tuple(contest1.getId(), contest1.getTitle(), contest1.getSeason()),
+                        tuple(contest2.getId(), contest2.getTitle(), contest2.getSeason())
                 );
     }
 
