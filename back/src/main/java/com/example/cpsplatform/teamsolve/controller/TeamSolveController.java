@@ -1,13 +1,17 @@
 package com.example.cpsplatform.teamsolve.controller;
 
 import com.example.cpsplatform.ApiResponse;
+import com.example.cpsplatform.file.FileAccessService;
 import com.example.cpsplatform.file.decoder.MultipartDecoder;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
+import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.security.domain.SecurityMember;
+import com.example.cpsplatform.team.service.TeamService;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
 import com.example.cpsplatform.teamsolve.controller.request.SubmitTeamAnswerRequest;
 import com.example.cpsplatform.teamsolve.service.AnswerSubmitService;
 import com.example.cpsplatform.teamsolve.service.dto.SubmitAnswerDto;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +29,9 @@ import java.util.List;
 public class TeamSolveController {
 
     private final AnswerSubmitService answerSubmitService;
+    private final FileDownloadService fileDownloadService;
+    private final TeamService teamService;
+    private final FileAccessService fileAccessService;
 
     @PostMapping(
             value = "/api/contests/{contestId}/team-solves",
@@ -57,6 +64,14 @@ public class TeamSolveController {
                                                                          @AuthenticationPrincipal SecurityMember member){
         GetTeamAnswerResponse response = answerSubmitService.getAnswer(contestId, member.getUsername());
         return ApiResponse.ok(response);
+    }
+
+    @GetMapping("/api/teams/{teamId}/files/{fileId}/answer/download")
+    public void downloadTeamAnswer(@PathVariable("teamId") Long teamId, @PathVariable("fileId") Long fileId,
+                                   HttpServletResponse response, @AuthenticationPrincipal SecurityMember member){
+        //해당 유저가 해당 파일을 다운로드 받을 권한이 있는지 체크
+        fileAccessService.validateMemberFileAccess(teamId,fileId,member.getUsername());
+        fileDownloadService.download(fileId,response);
     }
 
 

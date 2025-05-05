@@ -29,6 +29,7 @@ public class TeamSolveRepositoryCustomImpl implements TeamSolveRepositoryCustom{
         return queryFactory.select(
                         Projections.constructor(GetTeamAnswerDto.class,
                                 teamSolve.id,
+                                team.id,
                                 team.name,
                                 problem.section,
                                 teamSolve.updatedAt,

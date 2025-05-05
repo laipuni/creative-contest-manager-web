@@ -13,6 +13,7 @@ import java.util.List;
 public class GetTeamAnswerDto {
 
     private Long teamSolveId;
+    private Long teamId;
     private String teamName;
     private Section section;
     private LocalDateTime updatedAt;
@@ -20,8 +21,9 @@ public class GetTeamAnswerDto {
     private Long fileId;
     private String fileName;
 
-    public GetTeamAnswerDto(final Long teamSolveId, final String teamName, final Section section, final LocalDateTime updatedAt, final int modifyCount) {
+    public GetTeamAnswerDto(final Long teamSolveId, final Long teamId, final String teamName, final Section section, final LocalDateTime updatedAt, final int modifyCount) {
         this.teamSolveId = teamSolveId;
+        this.teamId = teamId;
         this.teamName = teamName;
         this.section = section;
         this.updatedAt = updatedAt;
