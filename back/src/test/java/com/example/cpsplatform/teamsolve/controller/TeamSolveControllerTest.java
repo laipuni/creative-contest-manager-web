@@ -248,7 +248,6 @@ class TeamSolveControllerTest {
                 .andExpect(jsonPath("$.data.teamAnswerList[0].teamName").value("팀A"))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].section").value("ELEMENTARY_MIDDLE"))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2))
-                .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"))
-                .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(1));
+                .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"));
     }
 }
