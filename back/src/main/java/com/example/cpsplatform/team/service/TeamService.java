@@ -110,7 +110,7 @@ public class TeamService {
         return new MyTeamInfoByContestDto(
                 team.getId(),
                 team.getName(),
-                team.getLeader(),
+                team.getLeader().getLoginId(),
                 memberIds,
                 team.getCreatedAt());
     }

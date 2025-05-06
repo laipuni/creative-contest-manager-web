@@ -70,7 +70,7 @@ public class TeamController {
         return ApiResponse.ok(myTeamInfo);
     }
 
-    @GetMapping("/api/contests/{contestId}/team")
+    @GetMapping("/api/contests/{contestId}/my-team")
     public ApiResponse<MyTeamInfoByContestDto> getMyTeamByContest(@AuthenticationPrincipal SecurityMember securityMember,
                                                                   @PathVariable Long contestId){
         MyTeamInfoByContestDto myTeamInfoByContestDto = teamService.getMyTeamInfoByContest(contestId, securityMember.getUsername());
