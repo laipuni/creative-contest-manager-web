@@ -1,16 +1,37 @@
 import React from 'react'
 import './testQuiz.css'
 import '../../styles/styles.css'
+import apiClient from "../../templates/apiClient";
 
-const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz}) => {
+const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz, contestInfo}) => {
     const maxLength = 500;
+
+    const handleDownload = () => {
+        apiClient.get(`/api/contests/${contestInfo.contestId}/files/${quiz.fileList[0].fileId}`, {
+            responseType: 'blob',
+            skipErrorHandler: true
+        })
+            .then(res => {
+                const blob = new Blob([res.data]);
+                const fileUrl = window.URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = quiz.title;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(err => {
+                alert('파일을 다운로드할 수 없습니다.');
+            });
+    }
     return (
         <div className="quiz-container">
             <div className="quiz-titlebox">
                 <p className="quiz-title-text">{quizTitle}</p>
                 {quiz &&
-                <a href={URL.createObjectURL(quiz)}
-                   download={quiz.name} className="quiz-title-button">📄</a>}
+                <p onClick={handleDownload} className="quiz-title-button">📄</p>}
             </div>
             <p className="quiz-info-text">※ 문제 우측의 파일 모양 아이콘을 눌러 다운로드하세요</p>
             <div className="quiz-underline"></div>
