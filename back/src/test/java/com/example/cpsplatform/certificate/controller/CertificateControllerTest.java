@@ -7,6 +7,7 @@ import com.example.cpsplatform.certificate.controller.response.SearchCertificate
 import com.example.cpsplatform.certificate.controller.response.SearchCertificateResponse;
 import com.example.cpsplatform.certificate.domain.CertificateType;
 import com.example.cpsplatform.certificate.service.CertificateService;
+import com.example.cpsplatform.certificate.service.dto.DownloadCertificateResult;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -35,6 +36,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -181,6 +183,28 @@ class CertificateControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.code").value(200));
+    }
+
+    @WithMockUser
+    @DisplayName("정렬 방향을 지정하여 인증서 목록을 조회한다")
+    @Test
+    void downloadCertificate() throws Exception {
+        //given
+        byte[] bytes = new byte[100];
+        DownloadCertificateResult result = DownloadCertificateResult.of(bytes,"16회 창의력 경진대회 확인증");
+
+        Mockito.when(certificateService.downloadCertificate(Mockito.anyString(),Mockito.anyLong()))
+                        .thenReturn(result);
+
+        //when
+        //then
+        mockMvc.perform(
+                        get("/api/certificate/{certificateId}",1L)
+                                .with(csrf())
+                                .contentType(APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     private SearchCertificateResponse createMockResponse() {
