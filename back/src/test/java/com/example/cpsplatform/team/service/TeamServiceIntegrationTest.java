@@ -205,7 +205,7 @@ class TeamServiceIntegrationTest {
         // then
         assertThat(myTeamInfoByContestDto.getTeamId()).isEqualTo(team.getId());
         assertThat(myTeamInfoByContestDto.getTeamName()).isEqualTo("이팀");
-        assertThat(myTeamInfoByContestDto.getLeader().getLoginId()).isEqualTo("yi");
+        assertThat(myTeamInfoByContestDto.getLeaderLoginId()).isEqualTo("yi");
         assertThat(myTeamInfoByContestDto.getMemberIds()).containsExactlyInAnyOrder("yi", "kim");
         assertThat(myTeamInfoByContestDto.getCreatedAt()).isNotNull();
     }
