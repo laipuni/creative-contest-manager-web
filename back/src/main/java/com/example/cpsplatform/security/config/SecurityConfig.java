@@ -69,6 +69,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
                                     "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate","/api/check-id", "/api/csrf"
+                            ,"/api/contests/latest"
                             ).permitAll()
                             .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
                                     "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code",
