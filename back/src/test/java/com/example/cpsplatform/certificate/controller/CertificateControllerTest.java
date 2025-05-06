@@ -92,7 +92,7 @@ class CertificateControllerTest {
         //when
         //then
         mockMvc.perform(
-                        get("/api/v1/certificate")
+                        get("/api/v1/certificates")
                                 .contentType(APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -119,7 +119,7 @@ class CertificateControllerTest {
         //when
         //then
         mockMvc.perform(
-                        get("/api/v1/certificate")
+                        get("/api/v1/certificates")
                                 .param("type", "PRELIMINARY")
                                 .contentType(APPLICATION_JSON)
                 )
@@ -149,7 +149,7 @@ class CertificateControllerTest {
         //when
         //then
         mockMvc.perform(
-                        get("/api/v1/certificate")
+                        get("/api/v1/certificates")
                                 .param("page", "1")
                                 .contentType(APPLICATION_JSON)
                 )
@@ -173,7 +173,7 @@ class CertificateControllerTest {
         //when
         //then
         mockMvc.perform(
-                        get("/api/v1/certificate")
+                        get("/api/v1/certificates")
                                 .param("order", "asc")
                                 .contentType(APPLICATION_JSON)
                 )
