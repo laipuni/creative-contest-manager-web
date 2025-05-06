@@ -11,7 +11,7 @@ import axios from "axios";
 
 const TestManage = () => {
     // --- 일정 관련 상태 ---
-    const [latestContest, setLatestContest] = useState({ season: 0, contestId: null });
+    const [latestContest, setLatestContest] = useState({ season: 15, contestId: null });
     const [registerStartDate, setRegisterStartDate] = useState('');
     const [registerEndDate, setRegisterEndDate] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -423,7 +423,7 @@ const TestManage = () => {
                         <img src={planImage} alt="planImage" className="admin-testManage-image" />
                         <div className="admin-testManage-detail-bot">
                             <p className="admin-testManage-detail-text" style={{color: 'black'}}>
-                                {latestContest.season > 0
+                                {latestContest.contestId
                                     ? `현재 설정된 일정: ${latestContest.season}회차`
                                     : '개최된 대회가 없습니다'}
                             </p>
