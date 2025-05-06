@@ -28,6 +28,15 @@ const RegisterInfo = () => {
             .catch((err)=>{})
     }, []);
 
+    const handleDeleteTeam = () => {
+        apiClient.delete('/api/teams', {
+            data: {teamId: teamInfo.teamId}, skipErrorHandler: true})
+            .then((res)=>{
+                setTeamInfo(null);
+            })
+            .catch((err)=>{alert(err.response.data.message)});
+    }
+
 
     return (
         <div className="testInfo-page-container">
@@ -71,9 +80,10 @@ const RegisterInfo = () => {
                                     <Link to="/register/team" className="registerInfo-bot-button">
                                         <img src={rocket} alt='rocket' className="submit-rocket-img"/>
                                         접수하기</Link>
-                                    <Link to="/register/team" className="registerInfo-bot-button" >
-                                        <div className="submit-rocket-img" style={{width:'0px'}}/>
-                                        삭제하기</Link>
+                                    {teamInfo &&
+                                        <div onClick={handleDeleteTeam} className="registerInfo-bot-button">
+                                            <div className="submit-rocket-img" style={{width: '0px'}}/>
+                                            삭제하기</div>}
                                 </div>
                             </div>
                         </div>
