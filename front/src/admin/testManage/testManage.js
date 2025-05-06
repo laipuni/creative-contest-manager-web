@@ -70,7 +70,7 @@ const TestManage = () => {
         if(!latestContest.contestId)
             return;
         apiClient.get(`/api/admin/v1/contests/${latestContest.contestId}/problems`, {
-            parameter: {page : 0}, skipErrorHandler: true})
+            parameter: {page : 0}})
             .then((res) => {
                 const problemList = res.data.data.problemList;
                 setCommonQuiz(problemList.filter(problem => problem.section === 'COMMON'));
@@ -104,14 +104,13 @@ const TestManage = () => {
             title: contestTitle, season: latestContest.season+1,
             registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
             contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
-        }, {skipErrorHandler: true})
+        }, )
             .then((res) => {
                 setIsDateModalOpen(false);
                 setIsRegistered(!isRegistered);
                 alert('대회가 등록되었습니다');
             })
-            .catch((err)=>{
-                alert(err.response.data.message)})
+            .catch((err)=>{})
     };
 
     //일정 수정
@@ -218,7 +217,7 @@ const TestManage = () => {
     //일정 삭제
     const handleDeleteDate = () => {
         apiClient.delete('/api/admin/contests', {
-            data: { contestId: latestContest.contestId }, skipErrorHandler: true})
+            data: { contestId: latestContest.contestId }})
             .then((res)=>{
                 setIsRegistered(!isRegistered);
             })
@@ -332,8 +331,6 @@ const TestManage = () => {
                 alert('파일이 존재하지 않습니다.');
             }
         } catch (err) {
-            console.error('파일 다운로드 오류:', err);
-            alert('파일 다운로드에 실패했습니다.');
         }
     };
 

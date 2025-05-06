@@ -40,6 +40,7 @@ const RegisterTeam = () => {
                     }
                 }
             })
+            .catch((e)=>{})
     }, []);
 
     const handleRegisterTeam = (e) => {
