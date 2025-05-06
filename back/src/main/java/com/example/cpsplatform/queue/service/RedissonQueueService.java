@@ -28,4 +28,9 @@ public class RedissonQueueService implements QueueService {
     public AnswerSubmitJob take() throws InterruptedException {
         return queue.take();
     }
+
+    @Override
+    public void clear() {
+        queue.clear();
+    }
 }
