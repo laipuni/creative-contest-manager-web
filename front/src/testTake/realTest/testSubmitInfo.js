@@ -4,29 +4,60 @@ import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import testLogo from "../../styles/images/solve_logo.png";
 import rocket from "../../styles/images/solve_icon.png"
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
 
 const TestSubmitInfo = () => {
     const [registerInfo, setRegisterInfo] = useState([]);
+    const [contestInfo, setContestInfo] = useState(null);
+
+    const navigate = useNavigate();
 
     //문제 제출내역 가져오기
     useEffect(() => {
         apiClient.get('/api/contests/latest')
             .then((res)=>{
                 if(res.data.data){
-                    apiClient.get(`/api/contests/${res.data.data.contestId}/team-solves`, {skipErrorHandler: true})
+                    const contestId = res.data.data.contestId
+                    setContestInfo(res.data.data);
+                    apiClient.get(`/api/contests/${contestId}/team-solves`, {skipErrorHandler: true})
                         .then((res) => {
-                            setRegisterInfo(res.data.data)
+                            setRegisterInfo(res.data.data.teamAnswerList)
+                            console.log(res.data.data.teamAnswerList);
+                            if(res.data.data.teamAnswerList.length === 0){
+                                apiClient.get(`/api/contests/${contestId}/team`, {skipErrorHandler: true})
+                                    .then((res) => {
+                                        setRegisterInfo([{teamName: res.data.data.teamName, updatedAt: 'X', modifyCount: 0}])
+                                    })
+                                    .catch((err)=>{
+                                    })
+                            }
                         })
                         .catch((err)=>{
-                            if(err.response.status !== 400) alert(err.response.data.message);
+                            alert(err.response.data.message);
                         })
                 }
             })
             .catch((err)=>{})
     }, []);
+
+    //대회 참여 버튼
+    const handleValidationContest = () => {
+        apiClient.post(`/api/contests/${contestInfo.contestId}/join`)
+            .then((res)=>{
+                if(res.status === 200){
+                    navigate('/test/realTest/submit');
+                }
+            })
+            .catch((err)=>{});
+    }
+
+    //날짜 형태로 파싱
+    const formatDate = (date) => {
+        if(date !== 'X') return formatDate(new Date(date), 'yyyy-MM-dd')
+        else return date;
+    }
 
     return (
         <div className="testInfo-page-container">
@@ -51,13 +82,16 @@ const TestSubmitInfo = () => {
                                     <p className="registerInfo-bot-text">제출횟수</p>
                                 </div>
                                 {registerInfo.length > 0 && <div className="registerInfo-bot-content">
-                                    <p className="registerInfo-bot-text">{registerInfo.teamName}</p>
-                                    <p className="registerInfo-bot-text">{registerInfo.updatedAt}</p>
-                                    <p className="registerInfo-bot-text">{registerInfo.modifyCount}</p>
+                                    <p className="registerInfo-bot-text">{registerInfo[0].teamName}</p>
+                                    <p className="registerInfo-bot-text">{formatDate(registerInfo[0].updatedAt)}</p>
+                                    <p className="registerInfo-bot-text">{registerInfo[0].modifyCount}</p>
                                 </div>}
                                 <div className="registerInfo-bot-buttonbox">
-                                    <Link to="/test/realTest/submit" className="registerInfo-bot-button">
-                                        <img src={rocket} alt='rocket' className="submit-rocket-img"/>문제풀기</Link>
+                                    <div onClick={handleValidationContest} className="registerInfo-bot-button"
+                                         style={{cursor: 'pointer'}}>
+                                        <img src={rocket} alt="rocket" className="submit-rocket-img"/>
+                                        문제풀기
+                                    </div>
                                 </div>
                             </div>
                         </div>
