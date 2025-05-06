@@ -29,4 +29,18 @@ public class CertificateController {
         return ApiResponse.ok(response);
     }
 
+    @GetMapping("/api/certificate/{certificateId}")
+    public ResponseEntity<byte[]> downloadCertificate(@PathVariable("certificateId") Long certificateId,
+                                                      @AuthenticationPrincipal SecurityMember securityMember){
+        DownloadCertificateResult result = certificateService.downloadCertificate(securityMember.getUsername(), certificateId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.attachment()
+                .filename(String.format("%s.pdf",result.getCertificateName()))
+                .build()
+        );
+        return new ResponseEntity<>(result.getFileBytes(), headers, HttpStatus.OK);
+    }
+
+
 }
