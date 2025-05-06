@@ -3,6 +3,8 @@ import "./teamList.css"
 import AdminHeader from "../components/adminHeader/adminHeader";
 import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import "../../styles/pagination.css"
+import apiClient from "../../templates/apiClient";
+import {all} from "axios";
 
 const ITEMS_PER_PAGE = 10;
 const LatestYear = 12;
@@ -48,24 +50,53 @@ function handleDownload() {
 }
 const TeamList = () => {
     const [testYear, setTestYear] = useState(0);
-    const [maxTestYear, setMaxTestYear] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [testData, setTestData] = useState([]);
     const [currentData, setCurrentData] = useState([]);
     const [selectedTeams, setSelectedTeams] = useState({});
     const [level, setLevel] = useState('초/중등');
+    const [contests, setContests] = useState([]);
 
-    //최신 회차 알아오기
+    //회차 정보 받아오기
     useEffect(() => {
-        setMaxTestYear(LatestYear);
+        let page = 0;
+        let lastPage = 0;
+        let allContests = [];
+
+        const fetchContests = () => {
+            apiClient.get(`/api/admin/contests?page=${page}`)
+                .then((res) => {
+                    const data = res.data.data;
+                    lastPage = data.lastPage;
+                    const mapped = data.problemList.map((contest) => ({
+                        season: contest.season,
+                        contestId: contest.contestId
+                    }));
+                    allContests = [...allContests, ...mapped];
+                    page++;
+
+                    if (page <= lastPage) {
+                        fetchContests();
+                    } else {
+                        // 시즌 내림차순 정렬
+                        allContests.sort((a, b) => b.season - a.season);
+                        setContests(allContests);
+                    }
+                })
+                .catch((err) => {
+                });
+        };
+
+        fetchContests();
+        console.log(allContests)
     }, [])
 
     //수준별, 회차별 데이터 변경
     useEffect(() => {
         let filtered = [];
-        if (level === '초/중등') {
+        /*if (level === '초/중등') {
             filtered = exampleData;
-        }
+        }*/
         setTestData(filtered);
         setCurrentPage(1);
     }, [level, testYear]);
@@ -116,9 +147,9 @@ const TeamList = () => {
                                 value={testYear}
                                 onChange={(e) => setTestYear(e.target.value)}
                                 required>
-                                {Array.from({length: maxTestYear}, (_, i) => (
-                                    <option key={i + 1} value={i + 1}>
-                                        {i + 1}회차
+                                {contests.map((c) => (
+                                    <option key={c.season} value={c.season}>
+                                        {c.season}회차
                                     </option>
                                 ))}
                             </select>
