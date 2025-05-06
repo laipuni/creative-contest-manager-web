@@ -6,17 +6,6 @@ import "../../styles/pagination.css"
 import apiClient from "../../templates/apiClient";
 import {all} from "axios";
 
-const ITEMS_PER_PAGE = 10;
-const LatestYear = 12;
-// 예시 데이터
-const exampleData = Array.from({ length: 23 }, (_, i) => ({
-    id: i + 1,
-    teamName: `${i + 1}팀`,
-    memberCnt: 3,
-    fileLink: `/downloads/file_${i + 1}.pdf`,
-    score: -1,
-    date: `2025-04-${String((i % 30) + 1).padStart(2, '0')}`
-}));
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -52,10 +41,11 @@ const TeamList = () => {
     const [testYear, setTestYear] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [testData, setTestData] = useState([]);
-    const [currentData, setCurrentData] = useState([]);
     const [selectedTeams, setSelectedTeams] = useState({});
     const [level, setLevel] = useState('초/중등');
     const [contests, setContests] = useState([]);
+    const [contestId, setContestId] = useState(null);
+    const [lastPage, setLastPage] = useState(0);
 
     //회차 정보 받아오기
     useEffect(() => {
@@ -77,6 +67,7 @@ const TeamList = () => {
 
                     if (page <= lastPage) {
                         fetchContests();
+                        setLastPage(lastPage);
                     } else {
                         // 시즌 내림차순 정렬
                         allContests.sort((a, b) => b.season - a.season);
@@ -88,24 +79,57 @@ const TeamList = () => {
         };
 
         fetchContests();
-        console.log(allContests)
     }, [])
+
+    useEffect(() => {
+        if (contests.length > 0 && testYear === 0) {
+            setTestYear(contests[0].season); // 최신 회차 자동 선택
+        }
+    }, [contests]);
 
     //수준별, 회차별 데이터 변경
     useEffect(() => {
-        let filtered = [];
-        /*if (level === '초/중등') {
-            filtered = exampleData;
-        }*/
-        setTestData(filtered);
-        setCurrentPage(1);
-    }, [level, testYear]);
+        console.log(testYear);
+        const matched = contests.find((c) => c.season === Number(testYear));
+        if (!matched) return;
+
+        const { contestId } = matched;
+        setContestId(contestId);  // 상태 업데이트
+
+        // 팀 목록 API 호출
+        apiClient.get(`/api/admin/contests/${contestId}/teams`, {
+            params: {
+                page: 0,  // 첫 페이지
+            },
+        }).then((res) => {
+            const data = res.data.data;
+            console.log(res);
+            console.log(data);
+            setTestData(data.teamList);   // 팀 리스트
+            setLastPage(data.lastPage);   // 전체 페이지 수
+            setCurrentPage(1);            // 현재 페이지 초기화
+        }).catch((err) => {
+        });
+    }, [testYear, level]);
+
 
     //데이터 변경되거나 페이지 이동
     useEffect(() => {
-        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-        setCurrentData(testData.slice(startIdx, startIdx + ITEMS_PER_PAGE));
-    }, [testData, currentPage]);
+        console.log('데이터')
+        if (contestId === null) return;
+
+        apiClient.get(`/api/admin/contests/${contestId}/teams`, {
+            params: {
+                page: currentPage - 1,  // 0부터 시작
+            }
+        }).then((res) => {
+            const data = res.data.data;
+            console.log(data);
+            setTestData(data.teamList);
+        }).catch((err) => {
+        });
+    }, [currentPage]);
+
 
     const toggleTeamSelection = (teamId) => {
         setSelectedTeams(prev => ({
@@ -121,7 +145,6 @@ const TeamList = () => {
         // 여기에서 API 호출 등 합격 처리 로직 수행
     };
 
-    const totalPages = Math.ceil(testData.length / ITEMS_PER_PAGE);
 
 
     return (
@@ -172,29 +195,38 @@ const TeamList = () => {
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
-                                <p className="admin-teamList-body-title-text">인원</p>
+                                <p className="admin-teamList-body-title-text">팀장 id</p>
+                            </div>
+                            <div className="admin-teamList-body-verticalLine"></div>
+                            <div className="admin-teamList-body-title-textbox">
+                                <p className="admin-teamList-body-title-text">합격자</p>
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
                                 <p className="admin-teamList-body-title-text">합격 여부</p>
                             </div>
                         </div>
-                        {currentData.map(team => (
+                        {testData.map(team => (
                             <div key={team.id} className="admin-teamList-body-title">
                                 <div className="admin-teamList-body-title-textbox">
-                                    <p className="admin-teamList-body-title-text">{team.teamName}</p>
+                                    <p className="admin-teamList-body-title-text">{team.name}</p>
                                 </div>
                                 <div className="admin-teamList-body-verticalLine"></div>
                                 <div className="admin-teamList-body-title-textbox">
-                                    <p className="admin-teamList-body-title-text">{team.memberCnt}</p>
+                                    <p className="admin-teamList-body-title-text">{team.leaderId}</p>
+                                </div>
+                                <div className="admin-teamList-body-verticalLine"></div>
+                                <div className="admin-teamList-body-title-textbox">
+                                    {team.winner && <p className="admin-teamList-body-title-text">O</p>}
+                                    {!team.winner && <p className="admin-teamList-body-title-text">X</p>}
                                 </div>
                                 <div className="admin-teamList-body-verticalLine"></div>
                                 <div className="admin-teamList-body-title-textbox">
                                     <input
                                         className="admin-teamList-body-title-text"
                                         type="checkbox"
-                                        checked={!!selectedTeams[team.id]}
-                                        onChange={() => toggleTeamSelection(team.id)}
+                                        checked={!!selectedTeams[team.teamId]}
+                                        onChange={() => toggleTeamSelection(team.teamId)}
                                     />
                                 </div>
                             </div>
@@ -203,8 +235,8 @@ const TeamList = () => {
                     </div>
                     <div className="pastTest-pagination-container">
                         <div className="pastTest-pagination">
-                            {totalPages !== 0 && <Pagination
-                                totalPages={totalPages}
+                            {lastPage !== 0 && <Pagination
+                                totalPages={lastPage}
                                 currentPage={currentPage}
                                 onPageChange={setCurrentPage}
                             />}
