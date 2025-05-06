@@ -199,7 +199,7 @@ class TeamSolveControllerTest {
                 .build();
 
         //테스트용 DTO 생성
-        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, 1L,"팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
+        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, "문제 풀이",1L,"팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
         dto1.setFileInfo(file1);
 
 

@@ -108,7 +108,7 @@ public class AnswerSubmitService {
     public void saveTeamSolve(final AnswerSubmitJob job) {
         Team team = findTeam(job.getTeamId());
         Problem problem = findProblems(job.getProblemId());
-        TeamSolve teamSolve = findOrCreateTeamSolve(problem, team);
+        TeamSolve teamSolve = findOrCreateTeamSolve(problem, team, job.getContent());
         File file = createFile(job.getFileSource(), job.getPath(), teamSolve);
         removeAndSaveAllFile(teamSolve.getId(), file);
         log.info("{} 팀 답안 및 파일 저장 완료, teamId: {}, 문제: {}", ANSWER_SUBMIT_LOG , team.getId(), problem.getId());
@@ -151,17 +151,17 @@ public class AnswerSubmitService {
         );
     }
 
-    private TeamSolve findOrCreateTeamSolve(final Problem problem, final Team team) {
+    private TeamSolve findOrCreateTeamSolve(final Problem problem, final Team team,final String content) {
         Optional<TeamSolve> teamSolveOptional = teamSolveRepository.findByTeamIdAndProblemId(team.getId(), problem.getId());
 
         if (teamSolveOptional.isEmpty()) {
             log.info("{} 새 팀 답안 생성 - teamId: {}, problemId: {}", ANSWER_SUBMIT_LOG, team.getId(), problem.getId());
-            return teamSolveRepository.save(TeamSolve.of(team, problem));
+            return teamSolveRepository.save(TeamSolve.of(team, problem,content));
         } else {
             TeamSolve teamSolve = teamSolveOptional.get();
-            teamSolve.incrementModifyCount();
-            log.info("{} 기존 팀 답안 수정 - teamId: {}, problemId: {}, 수정 횟수: {}"
-                    , ANSWER_SUBMIT_LOG, team.getId(), problem.getId(), teamSolve.getModifyCount());
+            teamSolve.modifyContent(content);
+            log.info("{} 기존 팀 답안 수정 - teamId: {}, problemId: {}, 수정 횟수: {}, 문제 풀이 = {}"
+                    , ANSWER_SUBMIT_LOG, team.getId(), problem.getId(), teamSolve.getModifyCount(),teamSolve.getContent());
             return teamSolve;
         }
     }
