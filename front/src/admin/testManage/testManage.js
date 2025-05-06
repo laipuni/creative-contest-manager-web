@@ -108,6 +108,7 @@ const TestManage = () => {
             .then((res) => {
                 setIsDateModalOpen(false);
                 setIsRegistered(!isRegistered);
+                alert('대회가 등록되었습니다');
             })
             .catch((err)=>{
                 alert(err.response.data.message)})
@@ -151,6 +152,7 @@ const TestManage = () => {
                 .then((res) => {
                     setIsDateModalOpen(false);
                     setIsEditMode(false);
+                    alert('대회가 수정되었습니다');
                     setIsRegistered(!isRegistered);
                 })
                 .catch((err)=>{
