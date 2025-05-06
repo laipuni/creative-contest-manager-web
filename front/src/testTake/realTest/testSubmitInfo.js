@@ -8,33 +8,25 @@ import {Link} from "react-router-dom";
 import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
 
-//출력 예시
-const exampleData = {
-    teamName: "챌린저 팀",
-    registerDate: "2025-04-04T15:00:00.000Z",
-    registerCnt: 3
-};
-
 const TestSubmitInfo = () => {
-    const [teamName, setTeamName] = useState('');
-    const [registerDate, setRegisterDate] = useState('');
-    const [registerCnt, setRegisterCnt] = useState(0);
+    const [registerInfo, setRegisterInfo] = useState([]);
 
+    //문제 제출내역 가져오기
     useEffect(() => {
-        setTeamName(exampleData.teamName);
-        setRegisterDate(format(new Date(exampleData.registerDate), 'yyyy-MM-dd'));
-        setRegisterCnt(exampleData.registerCnt);
+        apiClient.get('/api/contests/latest')
+            .then((res)=>{
+                if(res.data.data){
+                    apiClient.get(`/api/contests/${res.data.data.contestId}/team-solves`, {skipErrorHandler: true})
+                        .then((res) => {
+                            setRegisterInfo(res.data.data)
+                        })
+                        .catch((err)=>{
+                            if(err.response.status !== 400) alert(err.response.data.message);
+                        })
+                }
+            })
+            .catch((err)=>{})
     }, []);
-
-    /*-----------------제출 내역 가져오기---------
-    apiClient.get('/api/test/submitInfo'})
-        .then((res)=>{
-            setTeamName(res.data.teamName);
-            setRegisterDate(format(new Date(res.data.registerDate), 'yyyy-MM-dd'));
-            setRegisterCnt(res.data.registerCnt);
-        });
-
-     */
 
     return (
         <div className="testInfo-page-container">
@@ -58,10 +50,10 @@ const TestSubmitInfo = () => {
                                     <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">제출횟수</p>
                                 </div>
-                                {teamName && <div className="registerInfo-bot-content">
-                                    <p className="registerInfo-bot-text">{teamName}</p>
-                                    <p className="registerInfo-bot-text">{registerDate}</p>
-                                    <p className="registerInfo-bot-text">{registerCnt}</p>
+                                {registerInfo.length > 0 && <div className="registerInfo-bot-content">
+                                    <p className="registerInfo-bot-text">{registerInfo.teamName}</p>
+                                    <p className="registerInfo-bot-text">{registerInfo.updatedAt}</p>
+                                    <p className="registerInfo-bot-text">{registerInfo.modifyCount}</p>
                                 </div>}
                                 <div className="registerInfo-bot-buttonbox">
                                     <Link to="/test/realTest/submit" className="registerInfo-bot-button">
