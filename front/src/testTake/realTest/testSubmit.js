@@ -14,6 +14,8 @@ const TestSubmit = () => {
     const [level, setLevel] = useState('');
     const [quiz1, setQuiz1] = useState(null);
     const [quiz2, setQuiz2] = useState(null);
+    const [answer1, setAnswer1] = useState(null);
+    const [answer2, setAnswer2] = useState(null);
 
     const [contestInfo, setContestInfo] = useState(null);
     const [teamInfo, setTeamInfo] = useState(null);
@@ -44,13 +46,12 @@ const TestSubmit = () => {
             .catch((err)=>{})
     }, []);
 
-    // 문제, 제출답안 들고오기
+    // 문제 가져오기
     useEffect(() => {
         if(teamInfo) {
             apiClient.get(`/api/problems/team/${teamInfo.teamId}`)
                 .then((res) => {
                     const problems = res.data.data;
-                    console.log(problems);
                     problems.forEach((problem) => {
                         if (problem.problemType === 'COMMON') {
                             setQuiz1(problem);
@@ -69,6 +70,26 @@ const TestSubmit = () => {
         }
     }, [teamInfo])
 
+    //답안 가져오기
+    useEffect(() => {
+        if (teamInfo) {
+            apiClient.get(`/api/contests/${contestInfo.contestId}/team-solves`)
+                .then((res) => {
+                    const answerList = res.data.data.teamAnswerList;
+                    answerList.forEach((answer) => {
+                        if (answer.section === 'COMMON') {
+                            setAnswer1(answer);
+                        } else {
+                            setAnswer2(answer);
+                        }
+                    });
+                })
+                .catch((e) => {
+                });
+        }
+    }, [teamInfo]);
+
+
     const handleFileChange = (e,setFile) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -81,13 +102,6 @@ const TestSubmit = () => {
         setFile(file);
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        apiClient.post('/api/v1/test/submit',
-            {
-                    text1, text2, file1, file2
-            })
-    }
 
     return (
         <div className="testInfo-page-container">
@@ -95,19 +109,30 @@ const TestSubmit = () => {
                 <MainHeader underbarWidth="95%"/>
                 <div className="testInfo-content-container">
                     <Sidebar/>
-                    <form onSubmit={handleSubmit} className="testInfo-main-container">
-                        <TestQuiz quizTitle='문제 1 (공통)' textVal={text1} textOnChange={(e) => setText1(e.target.value)}
-                                  fileVal={file1} fileOnChange={(e) => handleFileChange(e, setFile1)} quiz={quiz1}
-                                  contestInfo={contestInfo}/>
-                        <TestQuiz quizTitle={'문제 2 (' + level + ')'} textVal={text2}
-                                  textOnChange={(e) => setText2(e.target.value)}
-                                  fileVal={file2} fileOnChange={(e) => handleFileChange(e, setFile2)} quiz={quiz2}
-                                  contestInfo={contestInfo}/>
-                        <div className="registerInfo-bot-buttonbox">
-                            <button className="registerInfo-bot-button">
-                                <img src={rocket} alt='rocket' className="submit-rocket-img"/>제출하기</button>
-                        </div>
-                    </form>
+                    <div className="testInfo-main-container">
+                        <TestQuiz
+                            quizTitle='문제 1 (공통)'
+                            textVal={text1}
+                            textOnChange={(e) => setText1(e.target.value)}
+                            fileVal={file1}
+                            fileOnChange={(e) => handleFileChange(e, setFile1)}
+                            quiz={quiz1}
+                            contestInfo={contestInfo}
+                            answer={answer1}
+                            teamInfo={teamInfo}
+                        />
+                        <TestQuiz
+                            quizTitle={'문제 2 (' + level + ')'}
+                            textVal={text2}
+                            textOnChange={(e) => setText2(e.target.value)}
+                            fileVal={file2}
+                            fileOnChange={(e) => handleFileChange(e, setFile2)}
+                            quiz={quiz2}
+                            contestInfo={contestInfo}
+                            answer={answer2}
+                            teamInfo={teamInfo}
+                        />
+                    </div>
 
                 </div>
             </div>
