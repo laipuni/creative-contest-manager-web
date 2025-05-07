@@ -91,8 +91,10 @@ const TestSubmitInfo = () => {
                 <div className="testInfo-content-container">
                     <Sidebar/>
                     <div className="testInfo-main-container">
-                        <CategoryLogo logoTitle={"예선문제 풀기"} imgSrc={testLogo} imageWidth='18%'
-                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'}/>
+                        {contestInfo && <CategoryLogo logoTitle={`${contestInfo.season}회차 예선문제 풀기`} imgSrc={testLogo} imageWidth='18%'
+                                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'}/>}
+                        {!contestInfo && <CategoryLogo logoTitle={`예선문제 풀기`} imgSrc={testLogo} imageWidth='18%'
+                                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'}/>}
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
                                 <p className="registerInfo-top-title">제출 내역</p>

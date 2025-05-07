@@ -11,11 +11,13 @@ import rocket from "../../styles/images/solve_icon.png";
 
 const RegisterInfo = () => {
     const [teamInfo, setTeamInfo] = useState(null)
+    const [contestInfo, setContestInfo] = useState(null);
 
     useEffect(() => {
         apiClient.get('/api/contests/latest')
             .then((res)=>{
                 if(res.data.data){
+                    setContestInfo(res.data.data);
                     apiClient.get(`/api/contests/${res.data.data.contestId}/my-team`, {skipErrorHandler: true})
                         .then((res) => {
                             setTeamInfo(res.data.data)
@@ -45,7 +47,8 @@ const RegisterInfo = () => {
                 <div className="testInfo-content-container">
                     <Sidebar/>
                     <div className="testInfo-main-container">
-                        <CategoryLogo logoTitle={"예선시험 접수"} imgSrc={trophyLogo}/>
+                        {contestInfo && <CategoryLogo logoTitle={`${contestInfo.season}회차 예선시험 접수`} imgSrc={trophyLogo}/>}
+                        {!contestInfo && <CategoryLogo logoTitle={`예선시험 접수`} imgSrc={trophyLogo}/>}
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
                                 <p className="registerInfo-top-title">접수 내역</p>
@@ -81,7 +84,7 @@ const RegisterInfo = () => {
                                         <img src={rocket} alt='rocket' className="submit-rocket-img"/>
                                         접수하기</Link>
                                     {teamInfo &&
-                                        <div onClick={handleDeleteTeam} className="registerInfo-bot-button">
+                                        <div onClick={handleDeleteTeam} className="registerInfo-bot-button" style={{cursor: 'pointer'}}>
                                             <div className="submit-rocket-img" style={{width: '0px'}}/>
                                             삭제하기</div>}
                                 </div>
