@@ -90,8 +90,7 @@ public class Member extends BaseEntity {
         return this.role.getName();
     }
 
-    public boolean isSignedUpThisYear() {
-        int currentYear = Year.now().getValue();
+    public boolean isSignedUpThisYear(int currentYear) {
         return this.getCreatedAt().getYear() == currentYear;  //가입 연도와 현재 연도와 같은지 비교
     }
 
