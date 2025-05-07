@@ -1,4 +1,4 @@
-package com.example.cpsplatform;
+package com.example.cpsplatform.ai.service;
 
 import lombok.AccessLevel;
 import lombok.Getter;
