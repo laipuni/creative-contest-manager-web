@@ -79,8 +79,10 @@ const TestSubmit = () => {
                     answerList.forEach((answer) => {
                         if (answer.section === 'COMMON') {
                             setAnswer1(answer);
+                            setText1(answer.content || '')
                         } else {
                             setAnswer2(answer);
+                            setText2(answer.content || '')
                         }
                     });
                 })
