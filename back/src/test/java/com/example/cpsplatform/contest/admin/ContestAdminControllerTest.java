@@ -32,6 +32,7 @@ import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -669,6 +670,63 @@ class ContestAdminControllerTest {
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("임시삭제된 대회를 복구하는 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void recoverContest() throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(patch("/api/admin/contests/{contestId}/recover",1L)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 삭제된 대회 목록을 조회하면 삭제된 대회 목록이 반환된다")
+    @Test
+    void getDeletedContestList() throws Exception {
+        //given
+        List<DeletedContestDto> deletedContestList = List.of(
+                DeletedContestDto.builder()
+                        .contestId(1L)
+                        .title("삭제된 테스트 대회 1")
+                        .season(16)
+                        .createdAt(LocalDateTime.now().minusDays(10))
+                        .build(),
+                DeletedContestDto.builder()
+                        .contestId(2L)
+                        .title("삭제된 테스트 대회 2")
+                        .season(17)
+                        .createdAt(LocalDateTime.now().minusDays(5))
+                        .build()
+        );
 
+        DeletedContestListResponse response = DeletedContestListResponse.builder()
+                .deletedContestList(deletedContestList)
+                .build();
+
+        Mockito.when(contestAdminService.findDeletedContest())
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/deleted")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.deletedContestList").isArray())
+                .andExpect(jsonPath("$.data.deletedContestList.length()").value(2))
+                .andExpect(jsonPath("$.data.deletedContestList[0].contestId").value(1L))
+                .andExpect(jsonPath("$.data.deletedContestList[0].title").value("삭제된 테스트 대회 1"))
+                .andExpect(jsonPath("$.data.deletedContestList[0].season").value(16))
+                .andExpect(jsonPath("$.data.deletedContestList[1].contestId").value(2L))
+                .andExpect(jsonPath("$.data.deletedContestList[1].title").value("삭제된 테스트 대회 2"))
+                .andExpect(jsonPath("$.data.deletedContestList[1].season").value(17))
+                .andDo(print());
+    }
 }

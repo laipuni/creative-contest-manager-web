@@ -1,9 +1,6 @@
 package com.example.cpsplatform.exception.controller;
 
-import com.example.cpsplatform.exception.CryptoException;
-import com.example.cpsplatform.exception.FileDownloadException;
-import com.example.cpsplatform.exception.FileNotFoundException;
-import com.example.cpsplatform.exception.FileReadException;
+import com.example.cpsplatform.exception.*;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +18,16 @@ import java.util.Map;
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UnsupportedCertificateTypeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse<Object> UnsupportedCertificateTypeException(UnsupportedCertificateTypeException ex) {
+        return ApiErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                null
+        );
+    }
 
     @ExceptionHandler(FileNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

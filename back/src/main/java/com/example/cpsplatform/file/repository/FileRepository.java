@@ -31,4 +31,6 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     //팀의 답안지 파일을 조회하는 쿼리
     Optional<File> findFileByTeamSolveId(Long teamSolveId);
 
+    @Query("select exists (select f from File f inner join f.teamSolve ts where ts.team.id = :teamId and f.id = :fileId and f.deleted = false and f.fileType = :fileType)")
+    boolean existsAnswerFileForTeam(@Param("teamId") Long teamId, @Param("fileId") Long fileId, @Param("fileType") FileType fileType);
 }

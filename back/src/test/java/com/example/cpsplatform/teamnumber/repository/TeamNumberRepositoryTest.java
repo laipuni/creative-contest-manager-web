@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.example.cpsplatform.certificate.repository.CertificateRepository;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.member.domain.Address;
@@ -57,6 +58,9 @@ class TeamNumberRepositoryTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    CertificateRepository certificateRepository;
+
     private Long contestId;
 
     @BeforeEach
@@ -81,6 +85,7 @@ class TeamNumberRepositoryTest {
         memberTeamRepository.deleteAllInBatch();
         teamNumberRepository.deleteAllInBatch();
         memberTeamRepository.deleteAllInBatch();
+        certificateRepository.deleteAllInBatch();
         teamRepository.deleteAllInBatch();
         contestRepository.deleteAllInBatch();
 

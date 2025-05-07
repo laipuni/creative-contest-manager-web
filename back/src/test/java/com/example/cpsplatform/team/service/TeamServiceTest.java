@@ -102,7 +102,7 @@ class TeamServiceTest {
 
         // when & then
         assertThrows(IllegalArgumentException.class,
-                () -> teamService.updateTeam(1L, new TeamUpdateDto("팀명수정", List.of()), notLeaderId));
+                () -> teamService.updateTeam(1L, new TeamUpdateDto("팀명수정", List.of(),1L), notLeaderId));
     }
 
     @DisplayName("팀장이 아닌 자가 팀을 삭제하면 예외가 발생한다.")

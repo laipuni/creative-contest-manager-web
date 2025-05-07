@@ -7,4 +7,6 @@ public interface QueueService {
     void enqueue(AnswerSubmitJob job);
     AnswerSubmitJob take() throws InterruptedException;
 
+    void clear();
+
 }

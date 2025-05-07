@@ -1,9 +1,11 @@
 package com.example.cpsplatform.teamsolve.controller;
 
 import com.example.cpsplatform.auth.service.RegisterService;
+import com.example.cpsplatform.file.FileAccessService;
 import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.domain.FileExtension;
 import com.example.cpsplatform.file.domain.FileType;
+import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -12,6 +14,7 @@ import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.security.service.LoginFailService;
+import com.example.cpsplatform.team.service.TeamService;
 import com.example.cpsplatform.teamsolve.controller.request.SubmitTeamAnswerRequest;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
@@ -71,6 +74,15 @@ class TeamSolveControllerTest {
     @MockitoBean
     AnswerSubmitService answerSubmitService;
 
+    @MockitoBean
+    FileAccessService fileAccessService;
+
+    @MockitoBean
+    FileDownloadService fileDownloadService;
+
+    @MockitoBean
+    TeamService teamService;
+
     @Autowired
     MockMvc mockMvc;
 
@@ -96,9 +108,9 @@ class TeamSolveControllerTest {
     @Test
     void submitTeamAnswers() throws Exception {
         //given
-        List<Long> problemIds = List.of(1L);
+        Long problemId = 1L;
 
-        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemIds);
+        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemId,"빈 내용");
 
         //테스트용 파일 생성
         MockMultipartFile multipartFiles = new MockMultipartFile(
@@ -135,48 +147,9 @@ class TeamSolveControllerTest {
     @Test
     void submitTeamAnswersWithNullProblemIds() throws Exception {
         //given
-        List<Long> problemIds = null;
+        Long problemId = null;
 
-        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemIds);
-
-        //테스트용 파일 생성
-        MockMultipartFile multipartFiles = new MockMultipartFile(
-                "file",
-                "test.pdf",
-                "application/pdf",
-                "PDF 내용".getBytes()
-        );
-
-        MockMultipartFile requestPart = new MockMultipartFile(
-                "request",
-                "",
-                "application/json",
-                objectMapper.writeValueAsBytes(request)
-        );
-
-        //when
-        //then
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/contests/{contestId}/team-solves",1L)
-                        .file(requestPart)
-                        .file(multipartFiles)
-                        .with(csrf())
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("답안지를 제출할 문제들의 정보들은 필수입니다."))
-                .andExpect(jsonPath("$.data").isEmpty());
-
-    }
-
-    @DisplayName("문제의 id와 파일의 사이즈가 맞지않을 경우 예외가 발생한다.")
-    @Test
-    void submitTeamAnswersWithFileAndProblemMismatchSize() throws Exception {
-        //given
-        List<Long> problemIds = Collections.emptyList();
-
-        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemIds);
+        SubmitTeamAnswerRequest request = new SubmitTeamAnswerRequest(problemId,"빈 내용");
 
         //테스트용 파일 생성
         MockMultipartFile multipartFiles = new MockMultipartFile(
@@ -226,7 +199,7 @@ class TeamSolveControllerTest {
                 .build();
 
         //테스트용 DTO 생성
-        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, "팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
+        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, "문제 풀이",1L,"팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
         dto1.setFileInfo(file1);
 
 
@@ -248,7 +221,21 @@ class TeamSolveControllerTest {
                 .andExpect(jsonPath("$.data.teamAnswerList[0].teamName").value("팀A"))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].section").value("ELEMENTARY_MIDDLE"))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2))
-                .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"))
-                .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(1));
+                .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"));
     }
+
+    @DisplayName("해당 팀의 답안지 파일 다운로드 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void downloadTeamAnswer() throws Exception {
+        //given
+        Long teamId = 1L;
+        Long fileId = 1L;
+        //When
+        //Then
+        mockMvc.perform(get("/api/teams/{teamId}/files/{fileId}/answer/download", teamId,fileId)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }

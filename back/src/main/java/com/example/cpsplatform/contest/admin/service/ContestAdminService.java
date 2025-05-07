@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContestAdminService {
 
     public static final int CONTEST_PAGE_SIZE = 5;
+    public static final String  ADMIN_CONTEST_LOG = "[CONTESTADMIN]";
 
     private final ContestRepository contestRepository;
     private final TeamRepository teamRepository;
@@ -36,9 +37,9 @@ public class ContestAdminService {
     @Transactional
     public void createContest(ContestCreateDto createDto){
         Contest contest = contestRepository.save(createDto.toEntity());
-        log.info("[ADMIN] 대회 생성: id={}", contest.getId());
+        log.info("{} 대회(id: {})를 생성했습니다.", ADMIN_CONTEST_LOG, contest.getId());
         TeamNumber teamNumber = teamNumberRepository.save(TeamNumber.of(contest, 0));
-        log.info("[ADMIN] 대회의 팀 접수 번호 생성 : id={}", teamNumber.getId());
+        log.info("{} 대회(id: {})의 팀 접수 번호(id: {})를 생성했습니다.", ADMIN_CONTEST_LOG, contest.getId(), teamNumber.getId());
     }
 
     @Transactional
@@ -52,13 +53,16 @@ public class ContestAdminService {
                     updateDto.getContestStartAt(),updateDto.getContestEndAt()
         );
 
-        log.info("[ADMIN] 대회 변경: id={}", contest.getId());
+        log.info("{} '{}' 대회(id: {})를 수정했습니다.", ADMIN_CONTEST_LOG, contest.getTitle(), contest.getId());
     }
 
     @Transactional
     public void deleteContest(ContestDeleteDto deleteDto) {
+        Contest contest = contestRepository.findById(deleteDto.getContestId())
+                .orElseThrow(() -> new IllegalArgumentException("삭제할 대회가 존재하지 않습니다."));
         contestRepository.deleteById(deleteDto.getContestId());
-        log.info("[ADMIN] 대회 삭제: id={}", deleteDto.getContestId());
+        log.info("{} '{}' 대회(id: {})를 삭제했습니다.", ADMIN_CONTEST_LOG, contest.getTitle(), contest.getId());
+
     }
 
     public ContestListResponse searchContestList(final int page) {
@@ -68,9 +72,9 @@ public class ContestAdminService {
     }
 
     public ContestDetailResponse findContestDetail(final Long contestId) {
-        log.debug("대회({})를 조회 시도",contestId);
         Contest contest = contestRepository.findById(contestId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
+        log.info("{} '{}' 대회(id: {})를 조회했습니다.", ADMIN_CONTEST_LOG, contest.getTitle(), contestId);
         return ContestDetailResponse.of(contest);
     }
 
@@ -83,9 +87,22 @@ public class ContestAdminService {
     }
 
     public ContestLatestResponse findContestLatest() {
-        log.debug("[ADMIN] 최신 대회의 조회 시도");
+        log.info("{} 최신 대회를 조회 시도",ADMIN_CONTEST_LOG);
         return contestRepository.findLatestContest()
                 .map(ContestLatestResponse::of)
                 .orElse(null); //프론트가 null 처리하기로 했기 때문에 예외 대신 null 반환
+    }
+
+    @Transactional
+    public void recoverContest(final Long contestId) {
+        Contest contest = contestRepository.findDeletedContestById(contestId)
+                .orElseThrow(() -> new IllegalArgumentException("복구할 대회가 존재하지 않습니다."));
+        contest.recover();
+        log.info("{} 임시 삭제된 {} 대회(id: {})를 복구했습니다.", ADMIN_CONTEST_LOG, contest.getTitle(), contestId);
+    }
+
+    public DeletedContestListResponse findDeletedContest() {
+        List<Contest> result = contestRepository.findDeletedContestById();
+        return DeletedContestListResponse.of(result);
     }
 }
