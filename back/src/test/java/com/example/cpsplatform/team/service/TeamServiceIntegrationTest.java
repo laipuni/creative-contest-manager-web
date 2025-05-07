@@ -17,8 +17,10 @@ import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
+import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,9 @@ class TeamServiceIntegrationTest {
 
     @Autowired
     CryptoService cryptoService;
+
+    @Autowired
+    EntityManager entityManager;
 
     @DisplayName("팀장과 멤버가 주어질 경우 팀 생성이 정상적으로 동작한다.")
     @Test
@@ -208,5 +213,91 @@ class TeamServiceIntegrationTest {
         assertThat(myTeamInfoByContestDto.getLeaderLoginId()).isEqualTo("yi");
         assertThat(myTeamInfoByContestDto.getMemberIds()).containsExactlyInAnyOrder("yi", "kim");
         assertThat(myTeamInfoByContestDto.getCreatedAt()).isNotNull();
+    }
+
+    @DisplayName("원래있던 팀원은 수정없이 팀의 이름만 수정한다.")
+    @Test
+    void updateTeam(){
+        // given
+        String loginId = "loginId";
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member leader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("leader@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01011112222")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        String loginId1 = "member";
+        Address address1 = new Address("street","city","zipCode","detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member1 = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("member1@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01033334444")
+                .name("사람 이름2")
+                .organization(school1)
+                .build();
+        String loginId2 = "member2";
+        Address address2 = new Address("street","city","zipCode","detail");
+        School school2 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member2 = Member.builder()
+                .loginId(loginId2)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("member2@email.com")
+                .address(address2)
+                .gender(Gender.MAN)
+                .phoneNumber("01055556666")
+                .name("사람 이름2")
+                .organization(school2)
+                .build();
+        memberRepository.saveAll(List.of(leader,member1,member2));
+
+        Contest contest = Contest.builder()
+                .title("테스트대회")
+                .season(2025)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        Team team = Team.builder().name("이팀").winner(false).leader(leader).teamNumber("003").contest(contest).build();
+        teamRepository.save(team);
+
+        //미리 팀을 구성
+        memberTeamRepository.saveAll(List.of(
+                MemberTeam.of(member1, team), //팀원 1
+                MemberTeam.of(member2, team), //팀원 2
+                MemberTeam.of(leader, team) //리더
+        )); //미리 넣고
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //팀원1,팀원2 그대로 이름만 변경
+        TeamUpdateDto updateDto = new TeamUpdateDto("수정된 팀이름",List.of(member1.getLoginId(),member2.getLoginId()),contest.getId());
+
+        //when
+        teamService.updateTeam(team.getId(),updateDto,leader.getLoginId());
+
+        //then
+        List<MemberTeam> memberTeams = memberTeamRepository.findAll();
+        assertThat(memberTeams).hasSize(3);
     }
 }
