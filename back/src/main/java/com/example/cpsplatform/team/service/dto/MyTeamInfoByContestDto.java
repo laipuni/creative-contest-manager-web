@@ -18,5 +18,6 @@ public class MyTeamInfoByContestDto {
     private String leaderLoginId;
     private List<String> memberIds;
     private LocalDateTime createdAt;
+    private Long contestId;
 
 }

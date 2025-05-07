@@ -109,6 +109,10 @@ public class Contest extends BaseEntity {
         return now.isBefore(startTime) || now.isAfter(endTime);
     }
 
+    public boolean isNotRegistering(final LocalDateTime now){
+        return now.isBefore(registrationStartAt) || now.isAfter(registrationEndAt);
+    }
+
     public void recover(){
         this.deleted = false;
     }

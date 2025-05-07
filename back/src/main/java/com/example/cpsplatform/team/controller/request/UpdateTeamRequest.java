@@ -19,7 +19,10 @@ public class UpdateTeamRequest {
     @NotNull(message = "팀원 정보는 필수입니다.")
     private List<String> memberIds;
 
+    @NotNull(message = "대회 정보는 필수입니다.")
+    private Long contestId;
+
     public TeamUpdateDto toServiceDto() {
-        return new TeamUpdateDto(teamName, memberIds);
+        return new TeamUpdateDto(teamName, memberIds,contestId);
     }
 }

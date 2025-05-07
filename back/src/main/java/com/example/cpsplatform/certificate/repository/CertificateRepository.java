@@ -11,4 +11,5 @@ public interface CertificateRepository extends JpaRepository<Certificate,Long>, 
     @EntityGraph(attributePaths = {"member", "team", "contest"})
     Optional<Certificate> findById(Long certificatedId);
 
+    void deleteAllByTeamId(Long teamId);
 }
