@@ -14,30 +14,56 @@ const TestSubmitInfo = () => {
 
     const navigate = useNavigate();
 
+    const mapTeamAnswersToRegisterInfo = (teamAnswerList) => {
+        const info = [
+            { problemType: '공통', section: 'COMMON' },
+            { problemType: '수준별', section: 'NON_COMMON' }
+        ];
+
+        return info.map(({ problemType, section }) => {
+            let target;
+
+            if (section === 'COMMON') {
+                target = teamAnswerList.find(ans => ans.section === 'COMMON');
+            } else {
+                target = teamAnswerList.find(ans => ans.section !== 'COMMON');
+            }
+
+            return {
+                problemType,
+                updatedAt: target ? target.updatedAt : 'X',
+                registerCount: target ? target.modifyCount + 1 : 0
+            };
+        });
+    };
+
     //문제 제출내역 가져오기
     useEffect(() => {
         apiClient.get('/api/contests/latest')
-            .then((res)=>{
-                if(res.data.data){
-                    const contestId = res.data.data.contestId
+            .then((res) => {
+                if (res.data.data) {
+                    const contestId = res.data.data.contestId;
                     setContestInfo(res.data.data);
-                    apiClient.get(`/api/contests/${contestId}/team-solves`, {skipErrorHandler: true})
+
+                    apiClient.get(`/api/contests/${contestId}/team-solves`, { skipErrorHandler: true })
                         .then((res) => {
-                            setRegisterInfo(res.data.data.teamAnswerList)
-                            if(res.data.data.teamAnswerList.length === 0){
-                                apiClient.get(`/api/contests/${contestId}/my-team`, {skipErrorHandler: true})
-                                    .then((res) => {
-                                        setRegisterInfo([{teamName: res.data.data.teamName, updatedAt: 'X', modifyCount: 0}])
-                                    })
-                                    .catch((err)=>{
-                                    })
-                            }
+                            const teamAnswerList = res.data.data.teamAnswerList;
+
+                            const mappedRegisterInfo = mapTeamAnswersToRegisterInfo(teamAnswerList);
+                            setRegisterInfo(mappedRegisterInfo);
                         })
+                        .catch((err) => {
+                            alert(err.response?.data?.message || '팀 문제 정보 불러오기 실패');
+                            setRegisterInfo([
+                                { problemType: '공통', updatedAt: 'X', registerCount: 0 },
+                                { problemType: '수준별', updatedAt: 'X', registerCount: 0 }
+                            ]);
+                        });
+                }
+            })
                         .catch((err)=>{
                             alert(err.response.data.message);
                         })
-                }
-            })
             .catch((err)=>{})
     }, []);
 
@@ -74,17 +100,26 @@ const TestSubmitInfo = () => {
                             </div>
                             <div className="registerInfo-body-bot">
                                 <div className="registerInfo-bot-title">
-                                    <p className="registerInfo-bot-text">팀명</p>
+                                    <p className="registerInfo-bot-text">문제유형</p>
                                     <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">제출일자</p>
                                     <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">제출횟수</p>
                                 </div>
-                                {registerInfo.length > 0 && <div className="registerInfo-bot-content">
-                                    <p className="registerInfo-bot-text">{registerInfo[0].teamName}</p>
-                                    <p className="registerInfo-bot-text">{formatDate(registerInfo[0].updatedAt)}</p>
-                                    <p className="registerInfo-bot-text">{registerInfo[0].modifyCount}</p>
-                                </div>}
+                                {registerInfo.length > 0 &&
+                                    <>
+                                        <div className="registerInfo-bot-content">
+                                            <p className="registerInfo-bot-text">{registerInfo[0].problemType}</p>
+                                            <p className="registerInfo-bot-text">{formatDate(registerInfo[0].updatedAt)}</p>
+                                            <p className="registerInfo-bot-text">{registerInfo[0].registerCount}</p>
+                                        </div>
+                                        <div className="registerInfo-bot-content">
+                                            <p className="registerInfo-bot-text">{registerInfo[1].problemType}</p>
+                                            <p className="registerInfo-bot-text">{formatDate(registerInfo[1].updatedAt)}</p>
+                                            <p className="registerInfo-bot-text">{registerInfo[1].registerCount}</p>
+                                        </div>
+                                    </>
+                                }
                                 <div className="registerInfo-bot-buttonbox">
                                     <div onClick={handleValidationContest} className="registerInfo-bot-button"
                                          style={{cursor: 'pointer'}}>
