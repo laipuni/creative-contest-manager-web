@@ -33,10 +33,6 @@ function Pagination({ totalPages, currentPage, onPageChange }) {
     );
 }
 
-function handleDownload() {
-    //TODO- 다운로드 api 연동
-
-}
 const TeamList = () => {
     const [testYear, setTestYear] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -89,7 +85,6 @@ const TeamList = () => {
 
     //수준별, 회차별 데이터 변경
     useEffect(() => {
-        console.log(testYear);
         const matched = contests.find((c) => c.season === Number(testYear));
         if (!matched) return;
 
@@ -103,8 +98,6 @@ const TeamList = () => {
             },
         }).then((res) => {
             const data = res.data.data;
-            console.log(res);
-            console.log(data);
             setTestData(data.teamList);   // 팀 리스트
             setLastPage(data.lastPage);   // 전체 페이지 수
             setCurrentPage(1);            // 현재 페이지 초기화
@@ -130,7 +123,20 @@ const TeamList = () => {
         });
     }, [currentPage]);
 
+    /*------------해당 대회 답안 일괄 다운로드-----------*/
+    function handleDownload() {
+        const matched = contests.find((c) => c.contestId === contestId);
+        if (!matched) return;
 
+        const { season } = matched;
+        apiClient.get(`/api/admin/v1/contests/${contestId}/answers/zip-download?zipName=${season}회차 답안.zip`)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {})
+    }
+
+    /*------------합격자 선정------------------*/
     const toggleTeamSelection = (teamId) => {
         setSelectedTeams(prev => ({
             ...prev,
