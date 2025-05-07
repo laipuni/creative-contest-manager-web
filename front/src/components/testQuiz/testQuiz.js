@@ -52,10 +52,9 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
             return;
         }
         const formData = new FormData();
-        const problemIds = [quiz.problemId]
         // request 필드 (문제 ID + 텍스트 답변)
         const requestData = {
-            problemIds: problemIds,
+            problemId: quiz.problemId,
             contents: textVal || ""
         };
 
@@ -69,12 +68,17 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
         apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
-            }
+            }, skipErrorHandler: true
         })
             .then(() => {
                 alert('제출이 완료되었습니다.');
             })
             .catch((err) => {
+                if(err.response.data.message === 'Maximum upload size exceeded')
+                    alert('파일 용량 초과');
+                else{
+                    alert(err.response.data.message);
+                }
             });
     }
 
