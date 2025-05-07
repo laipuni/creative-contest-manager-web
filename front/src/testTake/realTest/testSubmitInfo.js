@@ -54,7 +54,7 @@ const TestSubmitInfo = () => {
 
     //날짜 형태로 파싱
     const formatDate = (date) => {
-        if(date !== 'X') return formatDate(new Date(date), 'yyyy-MM-dd')
+        if(date !== 'X') return format(new Date(date), 'yyyy-MM-dd')
         else return date;
     }
 
