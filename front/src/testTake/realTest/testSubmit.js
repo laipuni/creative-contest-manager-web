@@ -30,7 +30,7 @@ const TestSubmit = () => {
                     setContestInfo(res.data.data);
                     apiClient.post(`/api/contests/${contestId}/join`)
                         .then((res)=>{
-                            apiClient.get(`/api/contests/${contestId}/team`, {skipErrorHandler: true})
+                            apiClient.get(`/api/contests/${contestId}/my-team`, {skipErrorHandler: true})
                                 .then((res) => {
                                     setTeamInfo(res.data.data)
                                 })

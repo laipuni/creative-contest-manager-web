@@ -24,9 +24,8 @@ const TestSubmitInfo = () => {
                     apiClient.get(`/api/contests/${contestId}/team-solves`, {skipErrorHandler: true})
                         .then((res) => {
                             setRegisterInfo(res.data.data.teamAnswerList)
-                            console.log(res.data.data.teamAnswerList);
                             if(res.data.data.teamAnswerList.length === 0){
-                                apiClient.get(`/api/contests/${contestId}/team`, {skipErrorHandler: true})
+                                apiClient.get(`/api/contests/${contestId}/my-team`, {skipErrorHandler: true})
                                     .then((res) => {
                                         setRegisterInfo([{teamName: res.data.data.teamName, updatedAt: 'X', modifyCount: 0}])
                                     })
