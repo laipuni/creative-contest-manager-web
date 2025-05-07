@@ -187,7 +187,7 @@ const TeamList = () => {
                     <div className="admin-teamList-body">
                         <div style={{flexDirection: 'row', width: '100%', display: 'flex'}}>
                             <p className="admin-teamList-download"
-                               onClick={handleDownload}>문제 일괄 다운로드 📄</p>
+                               onClick={handleDownload}>답안 일괄 다운로드 📄</p>
                             <button
                                 className="admin-pass-button"
                                 onClick={() => handleBulkPass()}
