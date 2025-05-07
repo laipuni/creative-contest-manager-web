@@ -25,7 +25,7 @@ const RegisterTeam = () => {
                 if(res.data.data){
                     setContestInfo(res.data.data);
                     if(teamInfo){
-                            const leaderId = teamInfo.leader.loginId;
+                            const leaderId = teamInfo.leaderLoginId;
                             const members = teamInfo.memberIds.filter(id => id !== leaderId);
 
                             setTeamName(teamInfo.teamName);
@@ -70,7 +70,8 @@ const RegisterTeam = () => {
             const memberIds = [teamMate1, teamMate2].filter(id => !!id);
             apiClient.patch(`/api/teams/${teamInfo.teamId}`, {
                 teamName,
-                memberIds
+                memberIds,
+                contestId: contestInfo.contestId
             }, {skipErrorHandler: true})
                 .then((res)=>{
                     navigate('/register/info');

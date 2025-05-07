@@ -16,7 +16,7 @@ const RegisterInfo = () => {
         apiClient.get('/api/contests/latest')
             .then((res)=>{
                 if(res.data.data){
-                    apiClient.get(`/api/contests/${res.data.data.contestId}/team`, {skipErrorHandler: true})
+                    apiClient.get(`/api/contests/${res.data.data.contestId}/my-team`, {skipErrorHandler: true})
                         .then((res) => {
                             setTeamInfo(res.data.data)
                         })
@@ -61,16 +61,16 @@ const RegisterInfo = () => {
                                     <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">접수일자</p>
                                     <div className="registerInfo-bot-line"></div>
-                                    <p className="registerInfo-bot-text">팀장(이메일)</p>
+                                    <p className="registerInfo-bot-text">팀장</p>
                                 </div>
                                 {teamInfo && <div className="registerInfo-bot-content">
                                     <p className="registerInfo-bot-text">{teamInfo.teamName}</p>
-                                    {teamInfo.memberIds.filter(id => id !== teamInfo.leader.loginId)
+                                    {teamInfo.memberIds.filter(id => id !== teamInfo.leaderLoginId)
                                         .map((id, index) => (
                                         <p className="registerInfo-bot-text" key={index+1}>{id}</p>
                                     ))}
                                     <p className="registerInfo-bot-text">{format(new Date(teamInfo.createdAt), 'yyyy-MM-dd')}</p>
-                                    <p className="registerInfo-bot-text">{teamInfo.leader.name}({teamInfo.leader.email})</p>
+                                    <p className="registerInfo-bot-text">{teamInfo.leaderLoginId}</p>
                                 </div>}
                                 <div className="registerInfo-bot-buttonbox">
                                     {teamInfo &&
