@@ -126,16 +126,22 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
                     )}
 
                     {!fileVal && answer && (
-                        <p onClick={handleDownloadAnswer}
-                           className="quiz-normal-text"
+                        <a onClick={handleDownloadAnswer}
                            style={{
-                               textDecoration: 'underline',
-                               color: 'blue',
                                cursor: 'pointer',
-                               fontSize: '12px'
+                               borderBottom: '1px solid black',
+                               display: 'inline-block',
+                               width: '15%',
+                               overflow: 'hidden',
+                               whiteSpace: 'nowrap',
+                               textOverflow: 'ellipsis',
+                               color: '#000000',
+                               fontFamily: 'Roboto',
+                               fontWeight: 400,
+                               fontSize: '12px',
                            }}>
                             {answer.fileName || '답안 다운로드'}
-                        </p>
+                        </a>
                     )}
 
                     <input
