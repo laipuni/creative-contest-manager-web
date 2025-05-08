@@ -149,7 +149,7 @@ public class SecurityConfig {
     }
 
     public AuthenticationSuccessHandler customAuthenticationSuccessHandler(){
-        return new CustomAuthenticationSuccessHandler(loginFailService);
+        return new CustomAuthenticationSuccessHandler(loginFailService,objectMapper);
     }
 
     public AuthenticationFailureHandler customAuthenticationFailureHandler(){
