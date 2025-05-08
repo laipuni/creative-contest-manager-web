@@ -117,7 +117,7 @@ class TeamServiceTest {
 
         // when & then
         assertThrows(IllegalArgumentException.class,
-                () -> teamService.deleteTeam(1L, notLeaderId));
+                () -> teamService.deleteTeam(1L, notLeaderId,1L));
     }
 
     @DisplayName("팀을 삭제할 경우 MemberTeam에 있는 관련 내용도 삭제된다.")
@@ -130,7 +130,7 @@ class TeamServiceTest {
         when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
 
         // when
-        teamService.deleteTeam(1L, "진짜리더");
+        teamService.deleteTeam(1L, "진짜리더",1L);
 
         // then
         verify(memberTeamRepository).deleteAllByTeam(team);

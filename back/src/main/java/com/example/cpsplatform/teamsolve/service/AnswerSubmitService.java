@@ -79,7 +79,7 @@ public class AnswerSubmitService {
         fileStorage.upload(path,fileSource);
         log.info("{} 유저(loginId:{})가 팀(id:{}) 문제(id:{})의 답안지 업로드",
                 ANSWER_SUBMIT_LOG, answerDto.getLoginId(),team.getId(),problem.getId());
-        queueService.enqueue(AnswerSubmitJob.of(team.getId(),problem.getId(),fileSource,path));
+        queueService.enqueue(AnswerSubmitJob.of(team.getId(),problem.getId(),fileSource,path,answerDto.getContent()));
     }
 
     private String generateTeamSolvePath(final Contest contest,final Problem problem){

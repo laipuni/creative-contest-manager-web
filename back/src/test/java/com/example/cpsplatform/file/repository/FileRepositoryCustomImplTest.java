@@ -123,7 +123,6 @@ class FileRepositoryCustomImplTest {
         teamSolveRepository.saveAll(List.of(teamSolve1,teamSolve2));
 
         File file1 = File.builder()
-                .problem(highNormalProblem)
                 .name("문제1_1.pdf")
                 .originalName("문제1_1.pdf")
                 .fileType(FileType.TEAM_SOLUTION)
@@ -135,7 +134,6 @@ class FileRepositoryCustomImplTest {
                 .build();
 
         File file2 = File.builder()
-                .problem(commonProblem)
                 .name("문제2_1.jpg")
                 .originalName("문제2_1.jpg")
                 .fileType(FileType.TEAM_SOLUTION)
@@ -156,7 +154,7 @@ class FileRepositoryCustomImplTest {
                 .extracting("fileId", "fileExtension", "section", "teamName", "season", "problemOrder")
                 .containsExactlyInAnyOrder(
                         tuple(file1.getId(), FileExtension.PDF, Section.HIGH_NORMAL, "xx팀", 17, 1),
-                        tuple(file2.getId(), FileExtension.PDF, Section.COMMON, "xx팀", 17, 1)
+                        tuple(file2.getId(), FileExtension.PDF, Section.HIGH_NORMAL, "xx팀", 17, 1)
                 );
     }
 
@@ -220,7 +218,6 @@ class FileRepositoryCustomImplTest {
         teamSolveRepository.save(teamSolve);
 
         File file = File.builder()
-                .problem(highNormalProblem)
                 .name("문제1_1.pdf")
                 .originalName("문제1_1.pdf")
                 .fileType(FileType.TEAM_SOLUTION)

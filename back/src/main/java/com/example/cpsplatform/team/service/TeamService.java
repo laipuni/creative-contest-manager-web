@@ -108,10 +108,16 @@ public class TeamService {
     }
 
     @Transactional
-    public void deleteTeam(Long teamId, String loginId) {
+    public void deleteTeam(Long teamId, String loginId, Long contestId) {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(()->new IllegalArgumentException("해당 팀은 존재하지 않습니다."));
         team.isNotTeamLeader(team, loginId);
+
+        //todo 대회 접수기간이 끝난 시점에 팀을 삭제 할 수 있는지 여쭤봐야 함, 우선은 막아둔 상태
+        //todo 만약 가능하다고 하시면 team_solve도 같이 삭제되도록
+        Contest contest = findContestById(contestId);
+        validContestJoin(contest);
+
         //팀장과 팀원들 확인증을 제거
         certificateRepository.deleteAllByTeamId(teamId);
         log.info("{} 팀(id:{})의 팀장과 팀원들의 예선 참가 확인증을 삭제합니다.",team.getName(),team.getId());

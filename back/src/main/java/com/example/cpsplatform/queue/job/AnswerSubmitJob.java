@@ -21,12 +21,13 @@ public class AnswerSubmitJob {
     private FileSource fileSource;
     private String content;
 
-    public static AnswerSubmitJob of(Long teamId,Long problemId, FileSource fileSource, String path){
+    public static AnswerSubmitJob of(Long teamId,Long problemId, FileSource fileSource, String path,String content){
         return AnswerSubmitJob.builder()
                 .teamId(teamId)
                 .problemId(problemId)
                 .fileSource(fileSource)
                 .path(path)
+                .content(content)
                 .build();
     }
 

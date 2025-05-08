@@ -60,7 +60,7 @@ public class TeamController {
     @DeleteMapping("/api/teams")
     public ApiResponse<Void> deleteTeam(@RequestBody @Valid DeleteTeamRequest deleteTeamRequest,
                                         @AuthenticationPrincipal SecurityMember securityMember) {
-        teamService.deleteTeam(deleteTeamRequest.getTeamId(), securityMember.getUsername());
+        teamService.deleteTeam(deleteTeamRequest.getTeamId(), securityMember.getUsername(), deleteTeamRequest.getContestId());
         return ApiResponse.ok(null);
     }
 
