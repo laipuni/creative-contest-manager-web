@@ -33,7 +33,7 @@ function AppRoutes() {
             sessionStorage.removeItem("isChecked");
         }
         if (isAuthenticatedPath) {
-            if (localStorage.getItem("isAuthenticated") !== "true"){
+            if (localStorage.getItem("isAuthenticated") !== "true" && localStorage.getItem("isAdmin") !== "true") {
                 navigate('/member/login', {replace: true, state: {from: location.pathname}});
             }
         }
