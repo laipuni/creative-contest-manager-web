@@ -3,17 +3,12 @@ package com.example.cpsplatform.team.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
-import com.example.cpsplatform.exception.DuplicateDataException;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
@@ -167,10 +162,79 @@ class TeamServiceTest {
     void createTeamOverMember() {
         // given
         String leaderId = "yi";
-        Member leader = Member.builder().loginId(leaderId).build();
-        Contest contest = Contest.builder().title("테스트대회").build();
-        when(memberRepository.findMemberByLoginId("yi")).thenReturn(Optional.of(leader));
-        when(contestRepository.findById(1L)).thenReturn(Optional.of(contest));
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member leader = Member.builder()
+                .loginId(leaderId)
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("팀장")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(2025)
+                .registrationStartAt(LocalDateTime.now())
+                .registrationEndAt(LocalDateTime.now().plusDays(5))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(7))
+                .build();
+        contestRepository.save(contest);
+
+        Address address1 = new Address("street", "city", "zipCode", "detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member member1 = Member.builder()
+                .loginId("one")
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email1@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341235")
+                .name("팀원1")
+                .organization(school1)
+                .build();
+        memberRepository.save(member1);
+
+        Address address2 = new Address("street", "city", "zipCode", "detail");
+        School school2 = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member member2 = Member.builder()
+                .loginId("two")
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email2@email.com")
+                .address(address2)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341236")
+                .name("팀원2")
+                .organization(school2)
+                .build();
+        memberRepository.save(member2);
+
+        Address address3 = new Address("street", "city", "zipCode", "detail");
+        School school3 = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member member3 = Member.builder()
+                .loginId("three")
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email3@email.com")
+                .address(address3)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341237")
+                .name("팀원3")
+                .organization(school3)
+                .build();
+        memberRepository.save(member3);
 
         List<String> tooManyMembers = List.of("one", "two", "three");
 
