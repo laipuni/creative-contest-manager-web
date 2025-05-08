@@ -53,6 +53,11 @@ const TestSubmitInfo = () => {
                             setRegisterInfo(mappedRegisterInfo);
                         })
                         .catch((err) => {
+                            if(err.response?.data?.message === '해당 대회에 참여한 팀이 없습니다.'){
+                                alert('팀 접수를 먼저 진행해주세요.')
+                                navigate('/register/info');
+                                return;
+                            }
                             alert(err.response?.data?.message || '팀 문제 정보 불러오기 실패');
                             setRegisterInfo([
                                 { problemType: '공통', updatedAt: 'X', registerCount: 0 },
