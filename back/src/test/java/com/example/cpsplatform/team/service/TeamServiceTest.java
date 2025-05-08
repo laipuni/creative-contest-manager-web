@@ -3,8 +3,6 @@ package com.example.cpsplatform.team.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
@@ -249,14 +247,48 @@ class TeamServiceTest {
     void updateTeam() {
         // given
         String notLeaderId = "가짜리더";
-        Member leader = Member.builder().loginId("진짜리더").build();
-        Team team = Team.builder().leader(leader).build();
 
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        String leaderId = "진짜리더";
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member leader = Member.builder()
+                .loginId(leaderId)
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("팀장")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
 
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(2025)
+                .registrationStartAt(LocalDateTime.now())
+                .registrationEndAt(LocalDateTime.now().plusDays(5))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(7))
+                .build();
+        contestRepository.save(contest);
+
+        Team team = Team.builder()
+                .name("테스트팀")
+                .winner(false)
+                .leader(leader)
+                .contest(contest)
+                .teamNumber("003")
+                .section(Section.HIGH_NORMAL)
+                .build();
+        teamRepository.save(team);
+
+        //팀명 수정만 원할 경우에도 기존 팀원은 입력해야되는구조
         // when & then
         assertThrows(IllegalArgumentException.class,
-                () -> teamService.updateTeam(1L, new TeamUpdateDto("팀명수정", List.of()), notLeaderId));
+                () -> teamService.updateTeam(team.getId(), new TeamUpdateDto("팀명수정", List.of()), notLeaderId));
     }
 
     @DisplayName("팀장이 아닌 자가 팀을 삭제하면 예외가 발생한다.")
@@ -264,47 +296,196 @@ class TeamServiceTest {
     void deleteTeam() {
         // given
         String notLeaderId = "가짜리더";
-        Member leader = Member.builder().loginId("진짜리더").build();
-        Team team = Team.builder().leader(leader).build();
 
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        String leaderId = "진짜리더";
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member leader = Member.builder()
+                .loginId(leaderId)
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("팀장")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(2025)
+                .registrationStartAt(LocalDateTime.now())
+                .registrationEndAt(LocalDateTime.now().plusDays(5))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(7))
+                .build();
+        contestRepository.save(contest);
+        Team team = Team.builder()
+                .name("테스트팀")
+                .winner(false)
+                .leader(leader)
+                .contest(contest)
+                .teamNumber("003")
+                .section(Section.HIGH_NORMAL)
+                .build();
+        teamRepository.save(team);
 
         // when & then
         assertThrows(IllegalArgumentException.class,
-                () -> teamService.deleteTeam(1L, notLeaderId));
+                () -> teamService.deleteTeam(team.getId(), notLeaderId));
     }
 
     @DisplayName("팀을 삭제할 경우 MemberTeam에 있는 관련 내용도 삭제된다.")
     @Test
     void deleteTeamCheckMemberTeam() {
         // given
-        Member leader = Member.builder().loginId("진짜리더").build();
-        Team team = Team.builder().leader(leader).build();
+        String leaderId = "진짜리더";
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx대학교", StudentType.COLLEGE, 4);
+        Member leader = Member.builder()
+                .loginId(leaderId)
+                .password(passwordEncoder.encode("password"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("팀장")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(2025)
+                .registrationStartAt(LocalDateTime.now())
+                .registrationEndAt(LocalDateTime.now().plusDays(5))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(7))
+                .build();
+        contestRepository.save(contest);
+        Team team = Team.builder()
+                .name("테스트팀")
+                .winner(false)
+                .leader(leader)
+                .contest(contest)
+                .teamNumber("003")
+                .section(Section.HIGH_NORMAL)
+                .build();
+        teamRepository.save(team);
 
-        when(teamRepository.findById(1L)).thenReturn(Optional.of(team));
+        String loginId1 = "yi";
+        Address address1 = new Address("street","city","zipCode","detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email1@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341231")
+                .name("사람 이름")
+                .organization(school1)
+                .build();
+        memberRepository.save(member);
+
+        String loginId2 = "kim";
+        Address address2 = new Address("street","city","zipCode","detail");
+        School school2 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member2 = Member.builder()
+                .loginId(loginId2)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email2@email.com")
+                .address(address2)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341235")
+                .name("사람 이름2")
+                .organization(school2)
+                .build();
+        memberRepository.save(member2);
+
+        memberTeamRepository.save(MemberTeam.of(member, team));
+        memberTeamRepository.save(MemberTeam.of(member2, team));
 
         // when
-        teamService.deleteTeam(1L, "진짜리더");
+        teamService.deleteTeam(team.getId(), "진짜리더");
 
         // then
-        verify(memberTeamRepository).deleteAllByTeam(team);
+        assertThat(memberTeamRepository.findAllByTeamId(team.getId())).isEmpty();
     }
 
     @DisplayName("본인이 소속된 팀 리스트를 성공적으로 반환한다.")
     @Test
     void myTeamInfo() {
         // given
-        String loginId = "yi";
-        Member member = Member.builder().loginId(loginId).build();
+        String loginId1 = "yi";
+        Address address1 = new Address("street","city","zipCode","detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("email1@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341231")
+                .name("사람 이름")
+                .organization(school1)
+                .build();
+        memberRepository.save(member);
 
-        Team team1 = Team.builder().name("one").leader(member).build();
-        Team team2 = Team.builder().name("two").leader(member).build();
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(2025)
+                .registrationStartAt(LocalDateTime.now())
+                .registrationEndAt(LocalDateTime.now().plusDays(5))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(7))
+                .build();
+        contestRepository.save(contest);
 
-        when(memberRepository.findMemberByLoginId(loginId)).thenReturn(Optional.of(member));
-        when(teamRepository.findTeamByMemberLoginId(loginId)).thenReturn(List.of(team1, team2));
+        Team team = Team.builder()
+                .name("one")
+                .winner(false)
+                .leader(member)
+                .contest(contest)
+                .teamNumber("003")
+                .section(Section.HIGH_NORMAL)
+                .build();
+        teamRepository.save(team);
+
+        Contest contest1 = Contest.builder()
+                .title("테스트 대회1")
+                .season(2024)
+                .registrationStartAt(LocalDateTime.now())
+                .registrationEndAt(LocalDateTime.now().plusDays(5))
+                .startTime(LocalDateTime.now())
+                .endTime(LocalDateTime.now().plusDays(7))
+                .build();
+        contestRepository.save(contest1);
+
+        Team team1 = Team.builder()
+                .name("two")
+                .winner(false)
+                .leader(member)
+                .contest(contest)
+                .teamNumber("004")
+                .section(Section.HIGH_NORMAL)
+                .build();
+        teamRepository.save(team1);
+
+        memberTeamRepository.save(MemberTeam.of(member, team));
+        memberTeamRepository.save(MemberTeam.of(member, team1));
 
         // when
-        List<MyTeamInfoDto> result = teamService.getMyTeamInfo(loginId);
+        List<MyTeamInfoDto> result = teamService.getMyTeamInfo(loginId1);
 
         // then
         assertThat(result.get(0).getTeamName()).isEqualTo("one");
