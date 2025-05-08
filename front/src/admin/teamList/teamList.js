@@ -246,7 +246,7 @@ const TeamList = () => {
                                     <input
                                         className="admin-teamList-body-title-text"
                                         type="checkbox"
-                                        checked={!!selectedTeams[team.teamId]}
+                                        checked={team.winner === true}
                                         onChange={() => toggleTeamSelection(team.teamId)}
                                     />
                                 </div>
