@@ -21,4 +21,7 @@ public abstract class Organization {
     public Organization(final String name) {
         this.name = name;
     }
+
+    public abstract String getOrganizationType();
+    public abstract String getPosition();
 }

@@ -24,4 +24,15 @@ public class School extends Organization {
         this.studentType = studentType;
         this.grade = grade;
     }
+
+    @Override
+    public String getOrganizationType() {
+        return this.studentType.getDescription();
+    }
+
+    @Override
+    public String getPosition() {
+        return String.valueOf(this.grade);
+    }
+
 }
