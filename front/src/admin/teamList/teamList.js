@@ -37,11 +37,11 @@ const TeamList = () => {
     const [testYear, setTestYear] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [testData, setTestData] = useState([]);
-    const [selectedTeams, setSelectedTeams] = useState({});
     const [level, setLevel] = useState('초/중등');
     const [contests, setContests] = useState([]);
     const [contestId, setContestId] = useState(null);
     const [lastPage, setLastPage] = useState(0);
+    const [checkedTeamIds, setCheckedTeamIds] = useState([]);
 
     //회차 정보 받아오기
     useEffect(() => {
@@ -101,6 +101,10 @@ const TeamList = () => {
             setTestData(data.teamList);   // 팀 리스트
             setLastPage(data.lastPage);   // 전체 페이지 수
             setCurrentPage(1);            // 현재 페이지 초기화
+            const initiallyChecked = data.teamList
+                .filter(team => team.winner === true)
+                .map(team => team.teamId);
+            setCheckedTeamIds(initiallyChecked);
         }).catch((err) => {
         });
     }, [testYear, level]);
@@ -153,15 +157,15 @@ const TeamList = () => {
 
     /*------------합격자 선정------------------*/
     const toggleTeamSelection = (teamId) => {
-        setSelectedTeams(prev => ({
-            ...prev,
-            [teamId]: !prev[teamId]
-        }));
+        setCheckedTeamIds(prev =>
+            prev.includes(teamId)
+                ? prev.filter(id => id !== teamId) // 체크 해제
+                : [...prev, teamId]               // 체크 추가
+        );
     };
 
     const handleBulkPass = () => {
-        const passedTeamIds = Object.keys(selectedTeams).filter(id => selectedTeams[id]);
-        console.log("합격 처리할 팀 ID:", passedTeamIds);
+        console.log("합격 처리할 팀 ID:", checkedTeamIds);
 
         // 여기에서 API 호출 등 합격 처리 로직 수행
     };
@@ -246,7 +250,7 @@ const TeamList = () => {
                                     <input
                                         className="admin-teamList-body-title-text"
                                         type="checkbox"
-                                        checked={team.winner === true}
+                                        checked={checkedTeamIds.includes(team.teamId)}
                                         onChange={() => toggleTeamSelection(team.teamId)}
                                     />
                                 </div>
