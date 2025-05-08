@@ -108,7 +108,6 @@ const TeamList = () => {
 
     //데이터 변경되거나 페이지 이동
     useEffect(() => {
-        console.log('데이터')
         if (contestId === null) return;
 
         apiClient.get(`/api/admin/contests/${contestId}/teams`, {
@@ -129,12 +128,28 @@ const TeamList = () => {
         if (!matched) return;
 
         const { season } = matched;
-        apiClient.get(`/api/admin/v1/contests/${contestId}/answers/zip-download?zipName=${season}회차 답안.zip`)
+
+        apiClient.get(`/api/admin/v1/contests/${contestId}/answers/zip-download?`, {
+            responseType: 'blob'
+        })
             .then((res) => {
-                console.log(res);
+                const blob = new Blob([res.data], { type: 'application/zip' });
+                const url = window.URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${season}회차_답안.zip`; // 원하는 파일명
+                document.body.appendChild(link);
+                link.click();
+
+                // 정리
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
             })
-            .catch((err) => {})
+            .catch((err) => {
+            });
     }
+
 
     /*------------합격자 선정------------------*/
     const toggleTeamSelection = (teamId) => {
