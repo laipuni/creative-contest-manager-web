@@ -21,7 +21,11 @@ const MemberLogin = () => {
         /*----------rest api------------*/
         apiClient.post('/api/auth/login', {username: userId, password}, {skipErrorHandler: true})
             .then((res)=>{
-                localStorage.setItem("isAuthenticated", "true");
+                const role = res.data.role;
+                if(role === 'ROLE_USER')
+                    localStorage.setItem("isAuthenticated", "true");
+                else
+                    localStorage.setItem("isAdmin", "true");
                 navigate(redirectPath, {replace: true});
             })
             .catch((err)=>{
