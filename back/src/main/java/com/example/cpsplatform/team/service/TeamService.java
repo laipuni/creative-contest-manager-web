@@ -54,12 +54,13 @@ public class TeamService {
         Member leader = memberRepository.findMemberByLoginId(leaderId)
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
 
-        TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
-                .orElseThrow(() -> new IllegalArgumentException("팁 접수 번호를 생성하는데, 문제가 발생했습니다."));
-
         Contest contest = findContestById(createDto.getContestId());
         //접수하는 시점이 대회의 접수 기간인 경우
         validContestJoin(contest);
+
+        TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
+                .orElseThrow(() -> new IllegalArgumentException("팁 접수 번호를 생성하는데, 문제가 발생했습니다."));
+
 
         String teamIdNumber = teamNumber.getNextTeamNumber();
         Section teamSection = determineSection(leader);
@@ -93,7 +94,7 @@ public class TeamService {
                 .orElseThrow(()->new IllegalArgumentException("해당 팀은 존재하지 않습니다."));
         team.isNotTeamLeader(team, loginId);
 
-        //todo 대회 접수기간이 끝난 시점에 팀을 수정 할 수 있는지 여쭤봐야 함, 우선은 막아둔 상태
+        //팀 수정은 접수기간에만 가능하다.
         Contest contest = findContestById(updateDto.getContestId());
         validContestJoin(contest);
 
@@ -113,8 +114,7 @@ public class TeamService {
                 .orElseThrow(()->new IllegalArgumentException("해당 팀은 존재하지 않습니다."));
         team.isNotTeamLeader(team, loginId);
 
-        //todo 대회 접수기간이 끝난 시점에 팀을 삭제 할 수 있는지 여쭤봐야 함, 우선은 막아둔 상태
-        //todo 만약 가능하다고 하시면 team_solve도 같이 삭제되도록
+        //팀 삭제은 접수기간에만 가능하다.
         Contest contest = findContestById(contestId);
         validContestJoin(contest);
 
