@@ -61,10 +61,6 @@ public class TeamService {
         TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
                 .orElseThrow(() -> new IllegalArgumentException("팀 접수 번호를 생성하는데, 문제가 발생했습니다."));
 
-
-        TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
-                .orElseThrow(() -> new IllegalArgumentException("팀 접수 번호를 생성하는데, 문제가 발생했습니다."));
-
         String teamIdNumber = teamNumber.getNextTeamNumber();
         Section teamSection = determineSection(leader);
         Team team = buildTeam(createDto, leader, teamIdNumber, teamSection,contest);
