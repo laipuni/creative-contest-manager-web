@@ -17,13 +17,13 @@ const TestManage = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);
-    const [modalTab, setModalTab] = useState('접수');
     const [tempRegisterStartDate, setTempRegisterStartDate] = useState(null);
     const [tempRegisterEndDate, setTempRegisterEndDate] = useState(null);
     const [tempStartDate, setTempStartDate] = useState(null);
     const [tempEndDate, setTempEndDate] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
+    const [showRestoreModal, setShowRestoreModal] = useState(false); // 대회 복구 안내
 
     // --- 문제 등록 관련 상태 ---
     const [commonQuiz, setCommonQuiz] = useState([]);         // 등록된 COMMON 문제
@@ -53,7 +53,7 @@ const TestManage = () => {
                 }
                 else{
                     setLatestContest({
-                        season: 0,
+                        season: 15,
                         contestId: null
                     })
                     setRegisterStartDate(null);
@@ -104,13 +104,16 @@ const TestManage = () => {
             title: contestTitle, season: latestContest.season+1,
             registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
             contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
-        }, )
+        }, {skipErrorHandler: true})
             .then((res) => {
                 setIsDateModalOpen(false);
                 setIsRegistered(!isRegistered);
                 alert('대회가 등록되었습니다');
             })
-            .catch((err)=>{})
+            .catch((err)=>{
+                if(err.response.data.message === '동일한 회의 대회가 있습니다.')
+                    setShowRestoreModal(true);
+            })
     };
 
     //일정 수정
@@ -214,7 +217,7 @@ const TestManage = () => {
 
 
 
-    //일정 삭제
+    //일정 삭제 - soft
     const handleDeleteDate = () => {
         apiClient.delete('/api/admin/contests', {
             data: { contestId: latestContest.contestId }})
@@ -224,6 +227,15 @@ const TestManage = () => {
             .catch((err)=>{})
     }
 
+    //일정 복구
+    const handleRestore = () => {
+
+    }
+
+    //일정 삭제 - hard
+    const handleHardDelete = () => {
+
+    }
     //문제 체크박스 선택
     const toggleTypeCheck = (type) => {
         setCheckedTypes(prev => ({
@@ -431,35 +443,38 @@ const TestManage = () => {
                             <div className="admin-testManage-contentbox">
                                 {isDateModalOpen && (
                                     <div className="testManage-modal-overlay">
+                                        {/* 대회 복구 내용 */}
+                                        {showRestoreModal && (
+                                            <div className="testmanage-restore-modal-overlay">
+                                                <div className="testmanage-restore-modal-box" style={{position: 'relative'}}>
+                                                    <button className="testManage-modal-close"
+                                                            onClick={(e)=>{setShowRestoreModal(false)}}>X
+                                                    </button>
+
+                                                    <p className="testmanage-restore-modal-message">삭제된 최신 대회가 있습니다.
+                                                        복구하시겠습니까?<br/><p style={{color: 'red'}}>※ 아니오 선택 시 영구 삭제됩니다.</p>
+                                                    </p>
+                                                    <div className="testmanage-restore-modal-buttons">
+                                                        <button className="testmanage-restore-modal-button"
+                                                                onClick={handleRestore}>예
+                                                        </button>
+                                                        <button className="testmanage-restore-modal-button"
+                                                                onClick={handleHardDelete}>아니오
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                         <div className="testManage-modal-box">
                                             {/* X 버튼 */}
-                                            <button
-                                                className="testManage-modal-close"
-                                                onClick={handleCloseModal}
-                                            >
-                                                X
+                                            <button className="testManage-modal-close" onClick={handleCloseModal}>X
                                             </button>
 
-                                            <div className="testManage-modal-tabs">
-                                                <button
-                                                    onClick={() => setModalTab('접수')}
-                                                    className={`testManage-modal-tab ${modalTab === '접수' ? 'active' : ''}`}
-                                                >
-                                                    접수 기간
-                                                </button>
-                                                <button
-                                                    onClick={() => setModalTab('대회')}
-                                                    className={`testManage-modal-tab ${modalTab === '대회' ? 'active' : ''}`}
-                                                >
-                                                    대회 기간
-                                                </button>
-                                            </div>
-
-                                            {/* Tab별 내용 */}
-                                            {modalTab === '접수' ? (
-                                                <div className="testManage-modal-content">
-                                                    <div>
-                                                        <p>시작일</p>
+                                            {/* 날짜 입력 영역 */}
+                                            <div className="testManage-modal-content">
+                                                <div className="testManage-date-group">
+                                                    <p className="testManage-label">접수기간</p>
+                                                    <div className="testManage-date-row">
                                                         <DatePicker
                                                             selected={tempRegisterStartDate}
                                                             onChange={(date) => setTempRegisterStartDate(date)}
@@ -468,9 +483,7 @@ const TestManage = () => {
                                                             endDate={tempRegisterEndDate}
                                                             dateFormat="yyyy.MM.dd"
                                                         />
-                                                    </div>
-                                                    <div>
-                                                        <p>종료일</p>
+                                                        <span className="testManage-tilde">~</span>
                                                         <DatePicker
                                                             selected={tempRegisterEndDate}
                                                             onChange={(date) => setTempRegisterEndDate(date)}
@@ -482,10 +495,10 @@ const TestManage = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                            ) : (
-                                                <div className="testManage-modal-content">
-                                                    <div>
-                                                        <p>시작일</p>
+
+                                                <div className="testManage-date-group">
+                                                    <p className="testManage-label">대회기간</p>
+                                                    <div className="testManage-date-row">
                                                         <DatePicker
                                                             selected={tempStartDate}
                                                             onChange={(date) => setTempStartDate(date)}
@@ -494,9 +507,7 @@ const TestManage = () => {
                                                             endDate={tempEndDate}
                                                             dateFormat="yyyy.MM.dd"
                                                         />
-                                                    </div>
-                                                    <div>
-                                                        <p>종료일</p>
+                                                        <span className="testManage-tilde">~</span>
                                                         <DatePicker
                                                             selected={tempEndDate}
                                                             onChange={(date) => setTempEndDate(date)}
@@ -508,26 +519,24 @@ const TestManage = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                            )}
+                                            </div>
 
-                                                <button
-                                                    className="testManage-modal-confirm-btn"
-                                                    onClick={handleConfirm}
-                                                >
-                                                    확인
-                                                </button>
+                                            {/* 확인 버튼 */}
+                                            <button className="testManage-modal-confirm-btn" onClick={handleConfirm}>
+                                                확인
+                                            </button>
                                         </div>
                                     </div>
                                 )}
 
                                 <p className="admin-testManage-detail-text">
-                                    <p style={{ color: 'black' }}>접수 기간</p>
+                                    <p style={{color: 'black'}}>접수 기간</p>
                                     {registerStartDate && registerEndDate
                                         ? `${registerStartDate} ~ ${registerEndDate}`
                                         : '일정을 등록해주세요'}
                                 </p>
                                 <p className="admin-testManage-detail-text">
-                                    <p style={{ color: 'black' }}>대회 기간</p>
+                                    <p style={{color: 'black'}}>대회 기간</p>
                                     {startDate && endDate
                                         ? `${startDate} ~ ${endDate}`
                                         : '일정을 등록해주세요'}
