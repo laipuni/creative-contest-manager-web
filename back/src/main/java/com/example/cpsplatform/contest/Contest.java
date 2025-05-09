@@ -2,10 +2,7 @@ package com.example.cpsplatform.contest;
 
 import com.example.cpsplatform.BaseEntity;
 import io.micrometer.common.util.StringUtils;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +21,7 @@ import java.time.LocalDateTime;
 public class Contest extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

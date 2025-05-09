@@ -19,7 +19,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class File extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
