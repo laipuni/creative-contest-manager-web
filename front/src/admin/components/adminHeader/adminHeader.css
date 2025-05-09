@@ -1,0 +1,122 @@
+.adminHeader-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 1px;
+    width: 100%;
+    height: 100px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.adminHeader-logo-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+
+    width: 218px;
+    height: 84px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.adminHeader-logo-image {
+    /* Icon Container */
+
+    margin: 0 auto;
+    width: 34px;
+    height: 30px;
+
+    object-fit: contain;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+
+}
+
+.adminHeader-logo-text {
+    /* Creative Problem Solving Festival */
+
+    margin: 0 auto;
+    width: 164px;
+    height: 44px;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 110%;
+    /* or 22px */
+
+    /* CoolGray/60 */
+    color: #697077;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 1;
+
+}
+
+.adminHeader-logout-button {
+    /* Frame 111 */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 5px;
+    gap: 10px;
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+
+    background: #F5F5F5;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.adminHeader-logout-text {
+    width: fit-content;
+    height: fit-content;
+    /* Other/Menu M */
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 0%;
+    /* identical to box height, or 16px */
+
+    /* CoolGray/90 */
+    color: #21272A;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}

@@ -45,9 +45,11 @@ const SchoolSearchModal = ({ isOpen, onClose, onSelectSchool, level }) => {
     const handleSearch = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('https://www.career.go.kr/cnet/openapi/getOpenApi', {
+            console.log(process.env.REACT_APP_API_URL);
+            console.log(process.env.REACT_APP_API_KEY);
+            const res = await axios.get(process.env.REACT_APP_API_URL, {
                 params: {
-                    apiKey: 'cc5b04f8298db5fdc564d9b1d9dbf8b4',
+                    apiKey: process.env.REACT_APP_API_KEY,
                     svcType: 'api',
                     svcCode: 'SCHOOL',
                     contentType: 'json',

@@ -68,7 +68,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
-                                    "/video/**","/images/**","/api/auth/**", "/api/check-id", "/api/csrf"
+                                    "/video/**","/images/**","/api/auth/**", "/api/check-id", "/api/csrf", "/api/contests/latest"
                             ).permitAll()
                             .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
                                     "/api/auth/**", "/api/v1/members","/api/v1/send-auth-code",
@@ -114,7 +114,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("HEAD", "POST", "GET", "DELETE", "PUT"));
+        config.setAllowedMethods(List.of("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

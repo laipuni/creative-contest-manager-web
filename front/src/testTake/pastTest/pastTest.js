@@ -74,7 +74,7 @@ const PastTest = () => {
                 <div className="testInfo-content-container">
                     <Sidebar />
                     <div className="testInfo-main-container">
-                        <CategoryLogo logoTitle={"기출문제 풀기"} imgSrc={testLogo} imageWidth='18%'
+                        <CategoryLogo logoTitle={"연습문제 풀기"} imgSrc={testLogo} imageWidth='18%'
                                       backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'} />
                         <div className="pastTest-container">
                             <div className="pastTest-top-container">

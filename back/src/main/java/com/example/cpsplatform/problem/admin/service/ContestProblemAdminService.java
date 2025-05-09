@@ -34,7 +34,7 @@ import java.util.List;
 public class ContestProblemAdminService {
 
     public static final int PROBLEM_SIZE = 10;
-    private static final String CONTEST_FILE_PATH_FORMAT = "/contest/%d회/%s/%d번/";
+    private static final String CONTEST_FILE_PATH_FORMAT = "/contest/%d회/%s/%d번";
     private static final String LOG_PREFIX = "[ContestProblemAdmin]";
 
     private final FileStorage fileStorage;

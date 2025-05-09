@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ContestAdminService {
 
-    public static final int CONTEST_PAGE_SIZE = 5;
+    public static final int CONTEST_PAGE_SIZE = 10;
     public static final String  ADMIN_CONTEST_LOG = "[CONTESTADMIN]";
 
     private final ContestRepository contestRepository;
