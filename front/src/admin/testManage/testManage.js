@@ -23,6 +23,7 @@ const TestManage = () => {
     const [tempEndDate, setTempEndDate] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
+    const [isDeleted, setIsDeleted] = useState(false);
     const [showRestoreModal, setShowRestoreModal] = useState(false); // 대회 복구 안내
 
     // --- 문제 등록 관련 상태 ---
@@ -63,7 +64,7 @@ const TestManage = () => {
                 }
             })
             .catch((err)=>{})
-    }, [isRegistered])
+    }, [isRegistered], [isDeleted])
 
     //최초 랜더링 or 대회 삭제됐을 때 문제 갱신
     useEffect(()=>{
@@ -84,7 +85,7 @@ const TestManage = () => {
                 setCheckedTypes({ '공통': false, '초/중등': false, '고등/일반': false });
             })
             .catch((err)=>{})
-    }, [isRegistered, latestContest.contestId])
+    }, [latestContest.contestId])
 
 
     //일정 등록
@@ -229,7 +230,22 @@ const TestManage = () => {
 
     //일정 복구
     const handleRestore = () => {
-
+        apiClient.get('/api/admin/contests/deleted')
+            .then((res) => {
+                const nextSeason = latestContest.season + 1;
+                const matchedContest = res.data.data.deletedContestList.find(
+                    (contest) => contest.season === nextSeason
+                );
+                const matchedContestId = matchedContest?.contestId;
+                apiClient.patch(`/api/admin/contests/${matchedContestId}/recover`)
+                    .then((res) => {
+                        alert('복구 완료');
+                        setIsDateModalOpen(false);
+                        setShowRestoreModal(false);
+                        setIsRegistered(!isRegistered);
+                    })
+                    .catch((err)=>{})
+            })
     }
 
     //일정 삭제 - hard
