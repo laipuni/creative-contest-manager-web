@@ -1,8 +1,10 @@
 package com.example.cpsplatform.member.service;
 
+import com.example.cpsplatform.member.controller.response.MyProfileResponse;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -82,5 +84,41 @@ class MemberServiceTest {
                 .containsExactly(encodedStreet,city,zipCode,encodedDetail);
     }
 
+    @DisplayName("사용자 프로필을 반환한다.")
+    @Test
+    void getMyInformation(){
+        //given
+        String loginId = "loginId";
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member leader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.of(2003,1,1))
+                .email("email@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("테스트인물")
+                .organization(school)
+                .build();
+        memberRepository.save(leader);
 
+        // when
+        MyProfileResponse response = memberService.getMyInformation(loginId);
+
+        // then
+        assertThat(response.getName()).isEqualTo("테스트인물");
+        assertThat(response.getBirth()).isEqualTo(LocalDate.of(2003, 1, 1));
+        assertThat(response.getGender()).isEqualTo("남자");
+        assertThat(response.getStreet()).isEqualTo("street");
+        assertThat(response.getZipCode()).isEqualTo("zipCode");
+        assertThat(response.getDetail()).isEqualTo("detail");
+        assertThat(response.getPhoneNumber()).isEqualTo("01012341234");
+        assertThat(response.getEmail()).isEqualTo("email@email.com");
+        assertThat(response.getOrganizationType()).isEqualTo("대학생");
+        assertThat(response.getOrganizationName()).isEqualTo("xx대학교");
+        assertThat(response.getPosition()).isEqualTo("4");
+    }
 }

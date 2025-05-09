@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './registerInfo.css';
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import trophyLogo from "../../styles/images/test_info_logo.png";
 import './registerTeam.css'
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {Link} from "react-router-dom";
 import apiClient from "../../templates/apiClient";
 
@@ -13,7 +13,35 @@ const RegisterTeam = () => {
     const [teamName, setTeamName] = useState("");
     const [teamMate1, setTeamMate1] = useState("");
     const [teamMate2, setTeamMate2] = useState("");
+    const [contestInfo, setContestInfo] = useState({});
     const navigate = useNavigate();
+
+    const location = useLocation();
+    const { teamInfo } = location.state || {};
+
+    useEffect(() => {
+        apiClient.get('/api/contests/latest')
+            .then((res)=>{
+                if(res.data.data){
+                    setContestInfo(res.data.data);
+                    if(teamInfo){
+                            const leaderId = teamInfo.leaderLoginId;
+                            const members = teamInfo.memberIds.filter(id => id !== leaderId);
+
+                            setTeamName(teamInfo.teamName);
+
+                            // 멤버 수에 따라 분기
+                            if (members.length === 2) {
+                                setTeamMate1(members[0]);
+                                setTeamMate2(members[1]);
+                            } else  {
+                                setTeamMate1(members[0]);
+                            }
+                    }
+                }
+            })
+            .catch((e)=>{})
+    }, []);
 
     const handleRegisterTeam = (e) => {
         e.preventDefault();
@@ -21,14 +49,37 @@ const RegisterTeam = () => {
             alert('팀원을 1명 이상 등록해주세요.')
             return;
         }
-        /*-----------------접수하기---------
-        apiClient.post('/api/register/team', {teamName, teamMate1, teamMate2})
-       .then((res)=>{
-          navigate('/register/info');
-       });
-
-    */
-        navigate('/');
+        const memberIds = [teamMate1, teamMate2].filter(id => !!id);
+        console.log(memberIds);
+        /*-----------------접수하기---------*/
+        if(!teamInfo) {
+            apiClient.post('/api/teams', {
+                teamName,
+                contestId: contestInfo.contestId,
+                memberIds
+            }, {skipErrorHandler: true})
+                .then((res) => {
+                    navigate('/register/info');
+                })
+                .catch((err) => {
+                    alert(err.response.data.message);
+                })
+        }
+        /*----------------수정하기-----------*/
+        else {
+            const memberIds = [teamMate1, teamMate2].filter(id => !!id);
+            apiClient.patch(`/api/teams/${teamInfo.teamId}`, {
+                teamName,
+                memberIds,
+                contestId: contestInfo.contestId
+            }, {skipErrorHandler: true})
+                .then((res)=>{
+                    navigate('/register/info');
+                })
+                .catch((err) => {
+                    alert(err);
+                })
+        }
     }
 
     return (
@@ -60,21 +111,20 @@ const RegisterTeam = () => {
                                     <p className="registerTeam-bot-title">팀원1</p>
                                     <div className="registerTeam-bot-line"></div>
                                     <input className="registerTeam-bot-input"
-                                    type="text" value={teamMate1} readOnly
+                                    type="text" value={teamMate1}
                                     onChange={(e)=>setTeamMate1(e.target.value)}></input>
-                                    <button type="button" className="registerTeam-enter-button">등록</button>
                                 </div>
                                 <div className="registerTeam-bot-textbox">
                                     <p className="registerTeam-bot-title">팀원2</p>
                                     <div className="registerTeam-bot-line"></div>
                                     <input className="registerTeam-bot-input"
-                                           type="text" value={teamMate2} readOnly
+                                           type="text" value={teamMate2}
                                            onChange={(e) => setTeamMate2(e.target.value)}></input>
-                                    <button type="button" className="registerTeam-enter-button">등록</button>
                                 </div>
-                                <p className="registerTeam-bot-warning">※ 팀원은 최소 1명 이상 등록해야 합니다.</p>
+                                <p className="registerTeam-bot-warning">※ 팀원의 아이디를 정확하게 입력해주세요.</p>
                                 <div className="registerTeam-bot-buttonbox">
-                                <button type="submit" className="registerTeam-register-button">접수하기</button>
+                                    {!teamInfo && <button type="submit" className="registerTeam-register-button">접수하기</button>}
+                                    {teamInfo && <button type="submit" className="registerTeam-register-button">수정하기</button>}
                                     <button className="registerTeam-register-button" type="button"
                                             style={{color: 'black', background: 'rgba(95, 164, 255, 0.09)'}}
                                     onClick={()=>{navigate('/register/info')}}>나가기</button>

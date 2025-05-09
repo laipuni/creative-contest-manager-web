@@ -7,11 +7,18 @@ import apiClient from "../../templates/apiClient";
 import axios from "axios";
 const MainHeader = ({underbarWidth = "75%"}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("isAuthenticated"));
+    const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
     function handleLogout() {
         apiClient.post('/api/auth/logout')
             .then((res)=>{
-                localStorage.removeItem("isAuthenticated");
-                setIsAuthenticated(null);
+                if(isAuthenticated === 'true') {
+                    localStorage.removeItem("isAuthenticated");
+                    setIsAuthenticated('false');
+                }
+                else{
+                    localStorage.removeItem("isAdmin");
+                    setIsAdmin('false');
+                }
                 window.location.reload();
                 //csrf 토큰 다시 얻어오기
                 axios.get("/api/csrf")
@@ -30,7 +37,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                         <Link to="/" className="main-header-menu-item-text">HOME</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
-                    {isAuthenticated !== 'true' &&
+                    {isAuthenticated !== 'true' && isAdmin !== 'true' &&
                         <>
                             <div className="main-header-menu-item">
                                 <Link to="/member/login" className="main-header-menu-item-text">LOGIN</Link>
@@ -38,13 +45,15 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                             </div>
                             <div className="main-header-menu-item">
                             <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
-                            <div className="main-header-menu-item-line"></div>
+                                {isAdmin === 'true' && <div className="main-header-menu-item-line"></div>}
                             </div>
+                            {isAdmin === 'true' &&
                             <div className="main-header-menu-item">
-                            <Link to="/admin/login" className="main-header-menu-item-text">ADMIN</Link>
+                            <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
                             </div>
+                            }
                         </>}
-                    {isAuthenticated === 'true' &&
+                    {(isAuthenticated === 'true' || isAdmin === 'true') &&
                         <>
                             <div className="main-header-menu-item">
                                 <p onClick={handleLogout} style={{cursor: 'pointer'}}
@@ -53,11 +62,13 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                             </div>
                             <div className="main-header-menu-item">
                                 <Link to="/member/profile" className="main-header-menu-item-text">MYPAGE</Link>
-                                <div className="main-header-menu-item-line"></div>
+                                {isAdmin === 'true' && <div className="main-header-menu-item-line"></div>}
                             </div>
-                            <div className="main-header-menu-item">
-                                <Link to="/admin/login" className="main-header-menu-item-text">ADMIN</Link>
-                            </div>
+                            {isAdmin === 'true' &&
+                                <div className="main-header-menu-item">
+                                    <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
+                                </div>
+                            }
                         </>}
                 </div>
             </div>

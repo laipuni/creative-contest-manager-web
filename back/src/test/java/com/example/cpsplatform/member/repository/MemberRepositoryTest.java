@@ -89,7 +89,7 @@ class MemberRepositoryTest {
 
         memberRepository.save(member);
         //when
-        Member result = memberRepository.findMemberByEmail(email).get();
+        Member result = memberRepository.findMemberByEmailAndRole(email,Role.USER).get();
 
         //then
         assertThat(result).isNotNull()
@@ -123,7 +123,7 @@ class MemberRepositoryTest {
 
         memberRepository.save(member);
         //when
-        Member result = memberRepository.findMemberByEmailAndLoginId(email, loginId).get();
+        Member result = memberRepository.findMemberByEmailAndLoginIdAndRole(email, loginId,Role.USER).get();
 
         //then
         assertThat(result).isNotNull()

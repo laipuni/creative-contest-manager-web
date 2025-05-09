@@ -2,15 +2,20 @@ package com.example.cpsplatform.contest.service;
 
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.admin.controller.response.ContestLatestResponse;
+import com.example.cpsplatform.contest.controller.response.LatestContestResponse;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -24,7 +29,7 @@ public class ContestJoinService {
      * 해당 대회에 소속된 팀이 없거나 혹은 대회 진행 중이 아닌 경우 예외가 발생한다.
      */
     public void validateContestParticipation(final Long contestId, final String username, final LocalDateTime now){
-        if (username == null || username.isBlank()) {
+        if (!StringUtils.hasText(username)) {
             throw new IllegalArgumentException("사용자 정보가 없습니다.");
         }
 
@@ -43,4 +48,9 @@ public class ContestJoinService {
         }
     }
 
+    public LatestContestResponse getLatestContestInfo() {
+        return contestRepository.findLatestContest()
+                .map(LatestContestResponse::of)
+                .orElse(null); //프론트가 null 처리하기로 했기 때문에 예외 대신 null 반환
+    }
 }

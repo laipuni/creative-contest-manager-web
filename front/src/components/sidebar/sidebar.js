@@ -21,7 +21,7 @@ const Sidebar = () => {
             <div className="sidebar-content">
                 <Link to = "/test/realTest/info" className={`sidebar-text ${location.pathname.startsWith("/test/realTest") ? "active" : ""}`}>
                     예선문제 풀기</Link>
-                <Link to = "/test/pastTest" className={`sidebar-text ${location.pathname === "/test/pastTest" ? "active" : ""}`}>기출문제 풀기</Link>
+                <Link to = "/test/pastTest" className={`sidebar-text ${location.pathname === "/test/pastTest" ? "active" : ""}`}>연습문제 풀기</Link>
             </div>
             <div className="sidebar-underline"></div>
             <p className="sidebar-title">지원</p>

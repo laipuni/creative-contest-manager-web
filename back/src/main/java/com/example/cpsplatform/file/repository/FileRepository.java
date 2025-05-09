@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FileRepository extends JpaRepository<File,Long>, FileRepositoryCustom {
 
@@ -22,9 +23,14 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     @Query("update File f set f.deleted = true, f.problem = null where f.problem.id = :problemId")
     int softDeletedByProblemId(@Param("problemId") Long problemId);
 
-    //팀의 답안지 메다데이터 삭제 쿼리
+    //답안지 제출 시 팀의 이전에 답안지 메다데이터 삭제 쿼리
     @Modifying
     @Query("update File f set f.deleted = true, f.teamSolve = null where f.teamSolve.id in :teamSolveIdList")
     int softDeletedByTeamSolveIdList(@Param("teamSolveIdList") List<Long> teamSolveIdList);
 
+    //팀의 답안지 파일을 조회하는 쿼리
+    Optional<File> findFileByTeamSolveId(Long teamSolveId);
+
+    @Query("select exists (select f from File f inner join f.teamSolve ts where ts.team.id = :teamId and f.id = :fileId and f.deleted = false and f.fileType = :fileType)")
+    boolean existsAnswerFileForTeam(@Param("teamId") Long teamId, @Param("fileId") Long fileId, @Param("fileType") FileType fileType);
 }

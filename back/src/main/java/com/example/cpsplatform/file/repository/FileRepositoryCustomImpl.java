@@ -39,7 +39,7 @@ public class FileRepositoryCustomImpl implements FileRepositoryCustom{
                 ))
                 .from(file)
                 .join(file.teamSolve, teamSolve)
-                .join(file.problem, problem)
+                .join(teamSolve.problem, problem)
                 .join(teamSolve.team, team)
                 .join(team.contest, contest)
                 .where(file.id.in(fileIds), file.deleted.isFalse())

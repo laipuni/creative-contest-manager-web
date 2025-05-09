@@ -1,6 +1,7 @@
 package com.example.cpsplatform.contest.controller.service;
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.controller.response.LatestContestResponse;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.exception.ContestJoinException;
@@ -25,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static java.time.LocalDateTime.now;
+import static org.assertj.core.api.Assertions.*;
 
 
 @SpringBootTest
@@ -64,10 +65,10 @@ class ContestJoinServiceTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.of(2003,1,1))
-                .email("email@email.com")
+                .email("join@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01085292587")
                 .name("사람 이름")
                 .organization(school)
                 .build();
@@ -87,6 +88,7 @@ class ContestJoinServiceTest {
         Team team = Team.builder()
                 .name("테스트 팀")
                 .winner(false)
+                .teamNumber("001")
                 .leader(leader)
                 .contest(contest)
                 .build();
@@ -119,10 +121,10 @@ class ContestJoinServiceTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.of(2003,1,1))
-                .email("email@email.com")
+                .email("join@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01074185296")
                 .name("사람 이름")
                 .organization(school)
                 .build();
@@ -161,10 +163,10 @@ class ContestJoinServiceTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.of(2003,1,1))
-                .email("email@email.com")
+                .email("join@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01012348765")
                 .name("사람 이름")
                 .organization(school)
                 .build();
@@ -185,6 +187,7 @@ class ContestJoinServiceTest {
                 .name("테스트 팀")
                 .winner(false)
                 .leader(leader)
+                .teamNumber("001")
                 .contest(contest)
                 .build();
 
@@ -217,10 +220,10 @@ class ContestJoinServiceTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.of(2003,1,1))
-                .email("email@email.com")
+                .email("join@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01036925814")
                 .name("사람 이름")
                 .organization(school)
                 .build();
@@ -235,4 +238,5 @@ class ContestJoinServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("해당 대회는 존재하지 않습니다");
     }
+
 }

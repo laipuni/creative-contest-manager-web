@@ -35,7 +35,7 @@ public class S3Service {
     public S3Object download(final String path, final String uploadName){
         try {
             log.debug("path = {}, fileName = {} 다운로드",path,uploadName);
-            return amazonS3.getObject(bucketName + path, uploadName);
+            return amazonS3.getObject(bucketName,path + uploadName);
         } catch (AmazonS3Exception e){
             throw new IllegalStateException(e);
         }
@@ -43,7 +43,7 @@ public class S3Service {
 
     private void putObject(final String path, final String uploadFileName, final String mimeType, final long size, final File tempFile,final FileExtension extension) {
         try{
-            amazonS3.putObject(new PutObjectRequest(bucketName + path, uploadFileName, tempFile)
+            amazonS3.putObject(new PutObjectRequest(bucketName, path + uploadFileName, tempFile)
                     .withMetadata(createObjectMetaData(size, mimeType)));
             log.info("s3에 파일 업로드, 파일이름= {}, 확장자 = {}",uploadFileName,extension.getExtension());
         } catch (AmazonS3Exception e){

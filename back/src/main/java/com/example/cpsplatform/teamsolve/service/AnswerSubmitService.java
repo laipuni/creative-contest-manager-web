@@ -15,6 +15,8 @@ import com.example.cpsplatform.queue.job.AnswerSubmitJob;
 import com.example.cpsplatform.queue.service.QueueService;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
+import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import com.example.cpsplatform.teamsolve.service.dto.SubmitAnswerDto;
@@ -42,25 +44,42 @@ public class AnswerSubmitService {
     private final ContestRepository contestRepository;
     private final QueueService queueService;
 
-    @Transactional
-    public void submitAnswer(FileSources fileSources, SubmitAnswerDto answerDto){
+    /*
+     * 한번의 쿼리가 아닌 여러번의 쿼리로 나눈 이유는
+     * 조인이 많으면 테이블에 불러오는 데이터가 많고.
+     * 쿼리가 복잡해지기 때문에 분리했음
+     */
+    public GetTeamAnswerResponse getAnswer(Long contestId, String loginId){
+        //해당 대회에 참여한 팀이 있는지 확인
+        Team team = teamRepository.findTeamByMemberLoginIdAndContestId(loginId, contestId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 대회에 참여한 팀이 없습니다."));
+        log.info("대회 {}에 참여한 팀: {} 답안지 조회", contestId, team.getName());
+
+        //해당 답안지와 문제의 정보를 dto로 조회
+        List<GetTeamAnswerDto> response = teamSolveRepository.findSubmittedAnswersByTeamId(team.getId());
+        findFileByTeamSolve(response);
+        log.info("답안 조회 완료, teamId = {}, 답안 수={}", team.getId(), response.size());
+        return new GetTeamAnswerResponse(response);
+    }
+
+    private void findFileByTeamSolve(final List<GetTeamAnswerDto> response) {
+        for(GetTeamAnswerDto dto : response){
+            //한 번에 조회하는 것보다 개별 조회가 가독성과 처리에 유리하여 파일 단위로 조회함
+            fileRepository.findFileByTeamSolveId(dto.getTeamSolveId())
+                    .ifPresent(dto::setFileInfo);
+        }
+    }
+
+    public void submitAnswer(FileSource fileSource, SubmitAnswerDto answerDto){
         Contest contest = validateContest(answerDto);
         Team team = validateTeamLeader(answerDto);
-        List<Long> problemIds = answerDto.getProblemIds();
-        List<FileSource> fileSourceList = fileSources.getFileSourceList();
-        List<String> pathList = new ArrayList<>();
-        Map<Long, Problem> problemMap = problemRepository.findAllById(problemIds).stream()
-                .collect(Collectors.toMap(Problem::getId, problem -> problem));
-        for (int i = 0; i < problemIds.size(); i++) {
-            Problem problem = Optional.ofNullable(problemMap.get(problemIds.get(i)))
-                    .orElseThrow(() -> new IllegalArgumentException("해당 대회 문제는 존재하지 않습니다."));
-            String path = generateTeamSolvePath(contest,problem);
-            pathList.add(i,path);
-            fileStorage.upload(path,fileSourceList.get(i));
-            log.info("{} 유저(loginId:{})가 팀(id:{}) 문제(id:{})의 답안지 업로드",
-                    ANSWER_SUBMIT_LOG, answerDto.getLoginId(),team.getId(),problem.getId());
-        }
-        queueService.enqueue(AnswerSubmitJob.of(team.getId(),problemIds,fileSourceList,pathList));
+        Problem problem = problemRepository.findById(answerDto.getProblemId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 대회 문제는 존재하지 않습니다."));
+        String path = generateTeamSolvePath(contest,problem);
+        fileStorage.upload(path,fileSource);
+        log.info("{} 유저(loginId:{})가 팀(id:{}) 문제(id:{})의 답안지 업로드",
+                ANSWER_SUBMIT_LOG, answerDto.getLoginId(),team.getId(),problem.getId());
+        queueService.enqueue(AnswerSubmitJob.of(team.getId(),problem.getId(),fileSource,path,answerDto.getContent()));
     }
 
     private String generateTeamSolvePath(final Contest contest,final Problem problem){
@@ -88,25 +107,11 @@ public class AnswerSubmitService {
     @Transactional
     public void saveTeamSolve(final AnswerSubmitJob job) {
         Team team = findTeam(job.getTeamId());
-        List<Long> problemIdList = job.getProblemIdList();
-        Map<Long, Problem> problemMap = findProblems(problemIdList);
-
-        List<File> fileList = new ArrayList<>();
-        List<Long> teamSolveIdList = new ArrayList<>();
-
-        for (Long problemId : problemIdList) {
-            Problem problem = getProblemFromMap(problemMap, problemId);
-            TeamSolve teamSolve = findOrCreateTeamSolve(problem, team);
-            teamSolveIdList.add(teamSolve.getId());
-
-            String path = getFilePath(job, problemId);
-            fileList.add(createFile(job.getFileSource(problemId), path, teamSolve));
-        }
-
-        removeAndSaveAllFile(teamSolveIdList, fileList);
-
-        log.info("{} 팀 답안 및 파일 저장 완료, teamId: {}, 문제들: {}",
-                ANSWER_SUBMIT_LOG , team.getId(), problemIdList);
+        Problem problem = findProblems(job.getProblemId());
+        TeamSolve teamSolve = findOrCreateTeamSolve(problem, team, job.getContent());
+        File file = createFile(job.getFileSource(), job.getPath(), teamSolve);
+        removeAndSaveAllFile(teamSolve.getId(), file);
+        log.info("{} 팀 답안 및 파일 저장 완료, teamId: {}, 문제: {}", ANSWER_SUBMIT_LOG , team.getId(), problem.getId());
     }
 
     private Team findTeam(Long teamId) {
@@ -114,27 +119,23 @@ public class AnswerSubmitService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀을 찾을 수 없습니다."));
     }
 
-    private Map<Long, Problem> findProblems(List<Long> problemIdList) {
-        return problemRepository.findAllById(problemIdList).stream()
-                .collect(Collectors.toMap(Problem::getId, problem -> problem));
+    private Problem findProblems(Long problemId) {
+        Optional<Problem> result = problemRepository.findById(problemId);
+        if(result.isEmpty()){
+            log.error("해당 문제(id:{})를 찾을 수 없습니다.",problemId);
+            throw new IllegalStateException(
+                    String.format("해당 문제(%d)를 찾지 못해 답안지 파일 저장에 실패했습니다.",problemId)
+            );
+        }
+        return result.get();
     }
 
-    private Problem getProblemFromMap(Map<Long, Problem> problemMap, Long problemId) {
-        return Optional.ofNullable(problemMap.get(problemId))
-                .orElseThrow(() -> new IllegalArgumentException("해당 대회 문제는 존재하지 않습니다."));
-    }
-
-    private String getFilePath(AnswerSubmitJob job, Long problemId) {
-        return Optional.ofNullable(job.getPath(problemId))
-                .orElseThrow(() -> new IllegalArgumentException("파일 경로가 존재하지 않습니다."));
-    }
-
-    private void removeAndSaveAllFile(final List<Long> teamSolveIdList, final List<File> fileList) {
-        log.info("{} 이전 답안 파일 삭제 중, teamSolveIds: {}", ANSWER_SUBMIT_LOG , teamSolveIdList);
-        int result = fileRepository.softDeletedByTeamSolveIdList(teamSolveIdList);
+    private void removeAndSaveAllFile(final Long teamSolveId, final File file) {
+        log.info("{} 이전 답안 파일 삭제 중, teamSolveIds: {}", ANSWER_SUBMIT_LOG , teamSolveId);
+        int result = fileRepository.softDeletedByTeamSolveIdList(List.of(teamSolveId));
         log.info("{} 이전 파일 삭제 완료, 삭제된 파일 수: {}", ANSWER_SUBMIT_LOG , result);
-        fileRepository.saveAll(fileList);
-        log.info("{} 새로 제출된 답안 파일 저장 완료, 파일 Id: {}", ANSWER_SUBMIT_LOG , fileList.stream().map(File::getId).toList());
+        File save = fileRepository.save(file);
+        log.info("{} 새로 제출된 답안 파일 저장 완료, 파일 Id: {}", ANSWER_SUBMIT_LOG , save.getId());
     }
 
     private File createFile(final FileSource fileSource, final String path, final TeamSolve teamSolve) {
@@ -150,17 +151,17 @@ public class AnswerSubmitService {
         );
     }
 
-    private TeamSolve findOrCreateTeamSolve(final Problem problem, final Team team) {
+    private TeamSolve findOrCreateTeamSolve(final Problem problem, final Team team,final String content) {
         Optional<TeamSolve> teamSolveOptional = teamSolveRepository.findByTeamIdAndProblemId(team.getId(), problem.getId());
 
         if (teamSolveOptional.isEmpty()) {
             log.info("{} 새 팀 답안 생성 - teamId: {}, problemId: {}", ANSWER_SUBMIT_LOG, team.getId(), problem.getId());
-            return teamSolveRepository.save(TeamSolve.of(team, problem));
+            return teamSolveRepository.save(TeamSolve.of(team, problem,content));
         } else {
             TeamSolve teamSolve = teamSolveOptional.get();
-            teamSolve.incrementModifyCount();
-            log.info("{} 기존 팀 답안 수정 - teamId: {}, problemId: {}, 수정 횟수: {}"
-                    , ANSWER_SUBMIT_LOG, team.getId(), problem.getId(), teamSolve.getModifyCount());
+            teamSolve.modifyContent(content);
+            log.info("{} 기존 팀 답안 수정 - teamId: {}, problemId: {}, 수정 횟수: {}, 문제 풀이 = {}"
+                    , ANSWER_SUBMIT_LOG, team.getId(), problem.getId(), teamSolve.getModifyCount(),teamSolve.getContent());
             return teamSolve;
         }
     }

@@ -15,6 +15,8 @@ import TestSubmit from "../testTake/realTest/testSubmit";
 import PastTest from "../testTake/pastTest/pastTest";
 import Certificate from "../supportPage/certificatePage/certificate";
 import QnA from "../supportPage/qnaPage/qna";
+import TeamList from "../admin/teamList/teamList";
+import TestManage from "../admin/testManage/testManage";
 
 function AppRoutes() {
     const location = useLocation();
@@ -22,14 +24,28 @@ function AppRoutes() {
 
     useEffect(() => {
         const isJoinPath = location.pathname.startsWith("/join");
-        const authenticatedPaths = ["/register/team", "/member/profile", "/test/realTest"];
+        const authenticatedPaths = ["/register/info", "/register/team", "/member/profile", "/test/realTest"];
         const isAuthenticatedPath = authenticatedPaths.some(path => location.pathname.startsWith(path));
+        const adminPaths = ["/admin/teamList", "/admin/testManage"];
+        const isAdminPath = adminPaths.some(path => location.pathname.startsWith(path));
+
         if (!isJoinPath) {
             sessionStorage.removeItem("isChecked");
         }
         if (isAuthenticatedPath) {
-            if (localStorage.getItem("isAuthenticated") !== "true"){
+            if (localStorage.getItem("isAuthenticated") !== "true" && localStorage.getItem("isAdmin") !== "true") {
                 navigate('/member/login', {replace: true, state: {from: location.pathname}});
+            }
+        }
+        if (isAdminPath){
+            if (localStorage.getItem("isAdmin") !== "true"){
+                navigate('/admin/login', {replace: true, state: {from: location.pathname}});
+            }
+        }
+
+        if (location.pathname === "/admin/login"){
+            if (localStorage.getItem("isAdmin") === "true"){
+                navigate('/admin/teamList');
             }
         }
 
@@ -51,6 +67,8 @@ function AppRoutes() {
             <Route path="test/pastTest" element={<PastTest />}></Route>
             <Route path="certificate/info" element={<Certificate />}></Route>
             <Route path="qna" element={<QnA/>}></Route>
+            <Route path="admin/teamList" element={<TeamList />}></Route>
+            <Route path="admin/testManage" element={<TestManage />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );

@@ -21,4 +21,14 @@ public class Company extends Organization {
         super(name);
         this.position = position;
     }
+
+    @Override
+    public String getOrganizationType() {
+        return "직장인";
+    }
+
+    @Override
+    public String getPosition() {
+        return this.position;
+    }
 }

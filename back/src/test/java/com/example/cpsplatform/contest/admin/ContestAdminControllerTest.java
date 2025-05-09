@@ -3,13 +3,13 @@ package com.example.cpsplatform.contest.admin;
 import com.example.cpsplatform.admin.aop.AdminLogProxy;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.contest.admin.controller.ContestAdminController;
-import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
-import com.example.cpsplatform.contest.admin.controller.response.ContestListDto;
-import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
+import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
+import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
@@ -32,6 +32,7 @@ import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -172,7 +173,7 @@ class ContestAdminControllerTest {
         //when
         //then
         mockMvc.perform(get("/api/admin/contests"))
-                .andExpect(status().isForbidden())
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
@@ -573,5 +574,159 @@ class ContestAdminControllerTest {
                 .andExpect(jsonPath("$.message").value("삭제할 대회의 정보는 필수입니다."));
     }
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 해당 대회에 참여한 팀을 조회하면 해당 페이지의 팀 목록이 반환된다")
+    @Test
+    void searchTeamListByContest() throws Exception {
+        //given
+        int page = 0;
+        Long contestId = 1L;
 
+        Member leader = Member.builder().loginId("yi").role(Role.USER).build();
+        Member leader2 = Member.builder().loginId("kim").role(Role.USER).build();
+        List<TeamListByContestDto> teamList = List.of(
+                new TeamListByContestDto(1L, "팀1", false, leader.getLoginId(), "002", LocalDateTime.now()),
+                new TeamListByContestDto(2L, "팀2", false, leader2.getLoginId(), "003", LocalDateTime.now())
+        );
+
+        int totalPage = 3;
+        int firstPage = 0;
+        int lastPage = 2;
+        int size = 2;
+        TeamListByContestResponse response = TeamListByContestResponse.builder()
+                .page(page)
+                .totalPage(totalPage)
+                .firstPage(firstPage)
+                .lastPage(lastPage)
+                .size(size)
+                .teamList(teamList)
+                .build();
+
+        Mockito.when(contestAdminService.searchTeamListByContest(contestId,page))
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/{contestId}/teams", contestId)
+                        .param("page", String.valueOf(page)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.page").value(0))
+                .andExpect(jsonPath("$.data.totalPage").value(totalPage))
+                .andExpect(jsonPath("$.data.firstPage").value(firstPage))
+                .andExpect(jsonPath("$.data.lastPage").value(lastPage))
+                .andExpect(jsonPath("$.data.size").value(size))
+                .andExpect(jsonPath("$.data.teamList").isArray())
+                .andExpect(jsonPath("$.data.teamList[0].teamId").value(1L))
+                .andExpect(jsonPath("$.data.teamList[0].name").value("팀1"))
+                .andExpect(jsonPath("$.data.teamList[1].teamId").value(2L))
+                .andExpect(jsonPath("$.data.teamList[1].name").value("팀2"))
+                .andDo(print());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 최신 대회를 조회하면 최신 대회 정보가 반환된다")
+    @Test
+    void findLatestContestWithExistContest() throws Exception {
+        //given
+        ContestLatestResponse response = new ContestLatestResponse(
+                3L, 15,"15회 창의력 경진 대회",
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1)
+        );
+
+        Mockito.when(contestAdminService.findContestLatest())
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/latest"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.contestId").value(3L))
+                .andExpect(jsonPath("$.data.season").value(15))
+                .andExpect(jsonPath("$.data.title").value("15회 창의력 경진 대회"));
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 최신 대회를 조회했지만 대회가 없으면 data는 null로 응답된다")
+    @Test
+    void findLatestContestWithNoContestExists() throws Exception {
+        // given
+        Mockito.when(contestAdminService.findContestLatest())
+                .thenReturn(null); // 대회 없음
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/latest"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("임시삭제된 대회를 복구하는 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void recoverContest() throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(patch("/api/admin/contests/{contestId}/recover",1L)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("관리자가 삭제된 대회 목록을 조회하면 삭제된 대회 목록이 반환된다")
+    @Test
+    void getDeletedContestList() throws Exception {
+        //given
+        List<DeletedContestDto> deletedContestList = List.of(
+                DeletedContestDto.builder()
+                        .contestId(1L)
+                        .title("삭제된 테스트 대회 1")
+                        .season(16)
+                        .createdAt(LocalDateTime.now().minusDays(10))
+                        .build(),
+                DeletedContestDto.builder()
+                        .contestId(2L)
+                        .title("삭제된 테스트 대회 2")
+                        .season(17)
+                        .createdAt(LocalDateTime.now().minusDays(5))
+                        .build()
+        );
+
+        DeletedContestListResponse response = DeletedContestListResponse.builder()
+                .deletedContestList(deletedContestList)
+                .build();
+
+        Mockito.when(contestAdminService.findDeletedContest())
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/contests/deleted")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.data.deletedContestList").isArray())
+                .andExpect(jsonPath("$.data.deletedContestList.length()").value(2))
+                .andExpect(jsonPath("$.data.deletedContestList[0].contestId").value(1L))
+                .andExpect(jsonPath("$.data.deletedContestList[0].title").value("삭제된 테스트 대회 1"))
+                .andExpect(jsonPath("$.data.deletedContestList[0].season").value(16))
+                .andExpect(jsonPath("$.data.deletedContestList[1].contestId").value(2L))
+                .andExpect(jsonPath("$.data.deletedContestList[1].title").value("삭제된 테스트 대회 2"))
+                .andExpect(jsonPath("$.data.deletedContestList[1].season").value(17))
+                .andDo(print());
+    }
 }

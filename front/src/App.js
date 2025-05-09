@@ -10,7 +10,7 @@ function App() {
         axios.get("/api/csrf")
             .then((data) => {
             })
-            .catch((error) => {alert(error.message)});
+            .catch((error) => {alert('서버가 연결되어 있지 않습니다.')});
     }, []);
 
   return (

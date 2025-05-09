@@ -94,7 +94,7 @@ class ContestProblemFileControllerTest {
         mockMvc.perform(get("/api/contests/{contestId}/files/{fileId}", contestId, fileId)
                         .with(csrf())
                 )
-                .andExpect(status().isForbidden())
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 

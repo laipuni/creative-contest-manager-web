@@ -16,16 +16,18 @@ public class SubmitAnswerDto {
     private LocalDateTime now;
     private String loginId;
     private Long contestId;
-    private List<Long> problemIds;
+    private Long problemId;
+    private String content;
 
     public static SubmitAnswerDto of(final Long contestId,
                                      final String username,final LocalDateTime now,
-                                     List<Long> problemIds) {
+                                     Long problemIds,String content) {
         return SubmitAnswerDto.builder()
                 .now(now)
                 .loginId(username)
                 .contestId(contestId)
-                .problemIds(problemIds)
+                .problemId(problemIds)
+                .content(content)
                 .build();
     }
 }
