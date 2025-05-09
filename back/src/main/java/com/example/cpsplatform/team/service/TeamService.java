@@ -54,12 +54,12 @@ public class TeamService {
         Member leader = memberRepository.findMemberByLoginId(leaderId)
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
 
-        TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
-                .orElseThrow(() -> new IllegalArgumentException("팁 접수 번호를 생성하는데, 문제가 발생했습니다."));
-
         Contest contest = findContestById(createDto.getContestId());
         //접수하는 시점이 대회의 접수 기간인 경우
         validContestJoin(contest);
+
+        TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
+                .orElseThrow(() -> new IllegalArgumentException("팀 접수 번호를 생성하는데, 문제가 발생했습니다."));
 
         String teamIdNumber = teamNumber.getNextTeamNumber();
         Section teamSection = determineSection(leader);
@@ -215,6 +215,6 @@ public class TeamService {
 
     private Contest findContestById(Long contestId) {
         return contestRepository.findById(contestId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 대회를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("현재 대회를 접수 할 수 없습니다."));
     }
 }
