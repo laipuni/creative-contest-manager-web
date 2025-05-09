@@ -88,14 +88,15 @@ public class ContestAdminService {
     }
 
     @Transactional
-    public void selectWinnerTeams(final Long contestId, final WinnerTeamsDto winnerTeamsDto){
+    public void selectWinnerTeams(final Long contestId, final WinnerTeamsDto winnerTeamsDto) {
         List<Team> teams = teamRepository.findAllById(winnerTeamsDto.getTeamIds());
-        for(Team team : teams){
-            if(!Objects.equals(team.getContest().getId(), contestId)){
+        for (Team team : teams) {
+            if (!Objects.equals(team.getContest().getId(), contestId)) {
                 throw new IllegalArgumentException("해당 팀(" + team.getId() + ")은 해당 대회에 속하지 않습니다.");
             }
             team.changeAsWinner();
         }
+    }
       
     public ContestLatestResponse findContestLatest() {
         log.info("{} 최신 대회를 조회 시도",ADMIN_CONTEST_LOG);
