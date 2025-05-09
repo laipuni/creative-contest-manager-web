@@ -9,4 +9,5 @@ import lombok.Getter;
 public class TeamUpdateDto {
     private String teamName;
     private List<String> memberIds;
+    private Long contestId;
 }

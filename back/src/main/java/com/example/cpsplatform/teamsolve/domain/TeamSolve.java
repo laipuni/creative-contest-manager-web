@@ -27,21 +27,30 @@ public class TeamSolve extends BaseEntity {
     @JoinColumn(nullable = false)
     private Problem problem;
 
+    private String content;
+
     @Column(name = "modify_count")
     private int modifyCount;
 
     @Builder
-    private TeamSolve(final Team team, final Problem problem) {
+    private TeamSolve(final Team team, final Problem problem, final String content) {
         this.team = team;
         this.problem = problem;
+        this.content = content;
         this.modifyCount = 0;
     }
 
-    public static TeamSolve of(final Team team, final Problem problem){
+    public static TeamSolve of(final Team team, final Problem problem,final String content){
         return TeamSolve.builder()
                 .team(team)
                 .problem(problem)
+                .content(content)
                 .build();
+    }
+
+    public void modifyContent(String content){
+        this.content = content;
+        incrementModifyCount();
     }
 
     public void incrementModifyCount(){

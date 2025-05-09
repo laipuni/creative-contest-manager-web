@@ -70,10 +70,10 @@ class TeamSolveRepositoryTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
-                .email("email@email.com")
+                .email("teamsolveRepo@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01056791234")
                 .name("이름")
                 .organization(school)
                 .build();
@@ -90,7 +90,7 @@ class TeamSolveRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        team = Team.builder().name("팀 이름").winner(false).leader(member).contest(contest).build();
+        team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
 
         problem = Problem.builder()

@@ -161,10 +161,10 @@ class FileRepositoryTest {
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
-                .email("email@email.com")
+                .email("teamsolve@email.com")
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber("01012341234")
+                .phoneNumber("01045686542")
                 .name("이름")
                 .organization(school)
                 .build();
@@ -181,7 +181,7 @@ class FileRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).leader(member).contest(contest).build();
+        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
 
         Problem problem1 = Problem.builder()
@@ -245,8 +245,75 @@ class FileRepositoryTest {
         Assertions.assertThat(result).isEmpty();
     }
 
+    @DisplayName("해당 파일이 팀이 제출한 답안지인지 확인한다.")
+    @Test
+    void existsAnswerFileForTeam(){
+        //given
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        Member member = Member.builder()
+                .loginId("loginId")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("teamsolve@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01045686542")
+                .name("이름")
+                .organization(school)
+                .build();
 
+        memberRepository.save(member);
 
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(16)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        teamRepository.save(team);
+
+        Problem problem = Problem.builder()
+                .title("첫번째 문제 제목")
+                .contest(contest)
+                .section(Section.HIGH_NORMAL)
+                .problemOrder(1)
+                .problemType(ProblemType.CONTEST)
+                .content("첫번째 문제 설명")
+                .build();
+
+        problemRepository.save(problem);
+
+        TeamSolve teamSolve = TeamSolve.builder()
+                .team(team)
+                .problem(problem)
+                .build();
+        teamSolveRepository.save(teamSolve);
+
+        //teamsolve를 참조하는 file
+        File file = File.builder()
+                .teamSolve(teamSolve)
+                .name("답안지1_1.pdf")
+                .originalName("답안지1_1.pdf")
+                .fileType(FileType.TEAM_SOLUTION)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .extension(FileExtension.PDF)
+                .size(100L)
+                .path("/contest/16회/고등-일반/1번")
+                .build();
+
+        fileRepository.save(file);
+        //when
+        boolean result = fileRepository.existsAnswerFileForTeam(team.getId(), file.getId(), FileType.TEAM_SOLUTION);
+        //then
+        assertThat(result).isTrue();
+    }
 
     private static File createFile(Problem problem,String name, FileType fileType, String mimeType, FileExtension extension, long size, String path) {
         return File.builder()

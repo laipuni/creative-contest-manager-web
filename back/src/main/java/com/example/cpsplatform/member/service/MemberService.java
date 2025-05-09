@@ -2,6 +2,7 @@ package com.example.cpsplatform.member.service;
 
 import com.example.cpsplatform.member.controller.response.MyProfileResponse;
 import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.member.service.dto.MemberSaveDto;
 import com.example.cpsplatform.security.encoder.CryptoService;
@@ -29,19 +30,19 @@ public class MemberService {
 
     public Member findMemberByEmail(final String email) {
         log.debug("이메일이 {}인 유저 조회 시도", email);
-        return memberRepository.findMemberByEmail(email)
+        return memberRepository.findMemberByEmailAndRole(email, Role.USER)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
     }
 
     public Member findMemberByEmailAndLoginId(final String email, final String loginId) {
         log.debug("이메일({})과 아이디({})에 해당하는 유저 조회 시도", email, loginId);
-        return memberRepository.findMemberByEmailAndLoginId(email, loginId)
+        return memberRepository.findMemberByEmailAndLoginIdAndRole(email, loginId, Role.USER)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
     }
 
     public Member findMemberByLoginId(final String loginId){
         log.debug("아이디({})에 해당하는 유저 조회 시도", loginId);
-        return memberRepository.findMemberByLoginId(loginId)
+        return memberRepository.findMemberByLoginIdAndRole(loginId,Role.USER)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
     }
 

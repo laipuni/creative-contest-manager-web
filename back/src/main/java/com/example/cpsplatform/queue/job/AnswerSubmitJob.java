@@ -16,30 +16,19 @@ import java.util.Map;
 public class AnswerSubmitJob {
 
     private Long teamId;
-    private List<Long> problemIdList;
-    private Map<Long, String> pathMap; // (문제 id, 경로 id)
-    private Map<Long, FileSource> problemFileMap; // (문제 id, 파일 메타데이터)
+    private Long problemId;
+    private String path;
+    private FileSource fileSource;
+    private String content;
 
-    public static AnswerSubmitJob of(Long teamId, List<Long> problemIdList, List<FileSource> fileSources, List<String> paths){
-        Map<Long,FileSource> problemFileMap = new HashMap<>();
-        Map<Long,String> pathMap = new HashMap<>();
-        for (int i = 0; i < problemIdList.size(); i++) {
-            problemFileMap.put(problemIdList.get(i),fileSources.get(i));
-            pathMap.put(problemIdList.get(i), paths.get(i));
-        }
+    public static AnswerSubmitJob of(Long teamId,Long problemId, FileSource fileSource, String path,String content){
         return AnswerSubmitJob.builder()
                 .teamId(teamId)
-                .problemIdList(problemIdList)
-                .problemFileMap(problemFileMap)
-                .pathMap(pathMap)
+                .problemId(problemId)
+                .fileSource(fileSource)
+                .path(path)
+                .content(content)
                 .build();
-    }
-    public String getPath(Long idx){
-        return pathMap.get(idx);
-    }
-
-    public FileSource getFileSource(Long idx){
-        return problemFileMap.get(idx);
     }
 
 }

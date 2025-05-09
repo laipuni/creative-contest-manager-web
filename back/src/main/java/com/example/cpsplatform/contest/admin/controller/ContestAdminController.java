@@ -2,9 +2,7 @@ package com.example.cpsplatform.contest.admin.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
-import com.example.cpsplatform.contest.admin.controller.response.ContestDetailResponse;
-import com.example.cpsplatform.contest.admin.controller.response.ContestListResponse;
-import com.example.cpsplatform.contest.admin.controller.response.TeamListByContestResponse;
+import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
@@ -22,6 +20,14 @@ import org.springframework.web.bind.annotation.*;
 public class ContestAdminController {
 
     private final ContestAdminService contestAdminService;
+
+    //최신 대회 정보를 받아오는 api
+    @AdminLog
+    @GetMapping("/latest")
+    public ApiResponse<ContestLatestResponse> findContestLatest(){
+        ContestLatestResponse response = contestAdminService.findContestLatest();
+        return ApiResponse.ok(response);
+    }
 
     @AdminLog
     @GetMapping
@@ -82,5 +88,18 @@ public class ContestAdminController {
                                                @Valid @RequestBody WinnerTeamsRequest request){
         contestAdminService.selectWinnerTeams(contestId, request.toWinnerTeamsDto());
         return ApiResponse.ok(null);
+    }
+  
+    @PatchMapping("/{contestId}/recover")
+    public ApiResponse<Object> recoverContest(@PathVariable("contestId")Long contestId){
+        contestAdminService.recoverContest(contestId);
+        return ApiResponse.ok(null);
+    }
+
+    @AdminLog
+    @GetMapping("/deleted")
+    public ApiResponse<DeletedContestListResponse> recoverContest(){
+        DeletedContestListResponse response = contestAdminService.findDeletedContest();
+        return ApiResponse.ok(response);
     }
 }

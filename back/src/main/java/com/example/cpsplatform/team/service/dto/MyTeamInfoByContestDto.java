@@ -15,8 +15,9 @@ import lombok.Getter;
 public class MyTeamInfoByContestDto {
     private Long teamId;
     private String teamName;
-    private Member leader;
+    private String leaderLoginId;
     private List<String> memberIds;
     private LocalDateTime createdAt;
+    private Long contestId;
 
 }

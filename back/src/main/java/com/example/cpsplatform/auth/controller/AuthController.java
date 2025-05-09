@@ -36,7 +36,7 @@ public class AuthController {
 
     @PostMapping("/api/verify-register-code")
     public ApiResponse<Object> verifyRegisterAuthCode(@Valid @RequestBody AuthCodeVerifyRequest request){
-        authService.verifySignupEmail(request.getRecipient(), request.getAuthCode(), request.getStrategyType());
+        authService.verifySignup(request.getRecipient(), request.getAuthCode(), request.getStrategyType());
         return ApiResponse.ok(null);
     }
 

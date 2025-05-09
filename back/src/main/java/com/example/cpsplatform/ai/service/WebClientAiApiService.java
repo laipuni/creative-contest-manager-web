@@ -1,7 +1,5 @@
 package com.example.cpsplatform.ai.service;
 
-import com.example.cpsplatform.TestRequest;
-import com.example.cpsplatform.TestResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class WebClientAiApiService implements AiApiService{

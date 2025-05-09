@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface TeamSolveRepository extends JpaRepository<TeamSolve,Long> {
+public interface TeamSolveRepository extends JpaRepository<TeamSolve,Long>, TeamSolveRepositoryCustom{
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select ts from TeamSolve ts where ts.team.id = :teamId and ts.problem.id = :problemId")
     Optional<TeamSolve> findByTeamIdAndProblemId(@Param("teamId") Long teamId, @Param("problemId") Long problemId);

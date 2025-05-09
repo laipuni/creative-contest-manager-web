@@ -63,7 +63,7 @@ class RegisterServiceTest {
         String zipCode = "zipCode";
         String detail = "detail";
         String phoneNumber = "010xxxxXXXX";
-        String email = "email@email.com";
+        String email = "register@email.com";
         School school = new School("xx초등학교", StudentType.ELEMENTARY,1);
 
         RegisterRequestDto request = new RegisterRequestDto(
@@ -84,7 +84,7 @@ class RegisterServiceTest {
         //given
         Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
-        String email = "email@email.com";
+        String email = "register@email.com";
         Member member = Member.builder()
                 .loginId("loginId")
                 .password(passwordEncoder.encode("1234"))

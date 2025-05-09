@@ -1,7 +1,9 @@
 package com.example.cpsplatform.security.config;
 
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.security.CustomEntryPoint;
 import com.example.cpsplatform.security.filter.JsonUsernamePasswordAuthenticationFilter;
+import com.example.cpsplatform.security.handler.CustomAccessDeniedHandler;
 import com.example.cpsplatform.security.handler.CustomAuthenticationFailHandler;
 import com.example.cpsplatform.security.handler.CustomAuthenticationSuccessHandler;
 import com.example.cpsplatform.security.provider.UsernamePasswordAuthenticationTokenProvider;
@@ -66,16 +68,18 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
-                                    "/video/**","/images/**","/api/auth/**", "/api/test/**","/certificate","/api/check-id", "/api/csrf"
+                                    "/video/**","/images/**","/api/auth/**", "/api/check-id", "/api/csrf"
                             ).permitAll()
                             .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
-                                    "/api/auth/**", "/api/test/**", "/api/v1/members","/api/v1/send-auth-code",
+                                    "/api/auth/**", "/api/v1/members","/api/v1/send-auth-code",
                                     "/api/v1/find-id", "/api/password-reset/request","/api/password-reset/confirm",
                                     "/api/password-reset","/api/verify-register-code"
                             ).permitAll()
                             .anyRequest().authenticated(); // 나머지 url은 인증 필요
                 })
-
+                .sessionManagement( session -> session.maximumSessions(1) //동시에 접속 가능한 세션의 수는 1명
+                        .maxSessionsPreventsLogin(true) //현재 로그인 유저는 유지, 새로운 로그인은 차단
+                )
                 .logout(logout ->
                         logout.logoutUrl("/api/auth/logout") // 로그아웃 api url
                                 .logoutSuccessHandler((request, response, authentication) -> {
@@ -84,9 +88,25 @@ public class SecurityConfig {
                                 .invalidateHttpSession(true)  // 로그아웃 시 저장된 세션을
                                 .deleteCookies(COOKIES_JSESSIONID) // 브라우저 세션 제거
                 )
+                .exceptionHandling(
+                        exception ->exception
+                                .authenticationEntryPoint(authenticationEntryPoint())
+                                .accessDeniedHandler(accessDeniedHandler())
+                )
                 //폼 로그인 필터 앞에 필터를 추가
                 .addFilterBefore(jsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CustomAccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler(objectMapper);
+    }
+
+    @Bean
+    public
+    CustomEntryPoint authenticationEntryPoint() {
+        return new CustomEntryPoint(objectMapper);
     }
 
     @Bean
@@ -129,7 +149,7 @@ public class SecurityConfig {
     }
 
     public AuthenticationSuccessHandler customAuthenticationSuccessHandler(){
-        return new CustomAuthenticationSuccessHandler(loginFailService);
+        return new CustomAuthenticationSuccessHandler(loginFailService,objectMapper);
     }
 
     public AuthenticationFailureHandler customAuthenticationFailureHandler(){

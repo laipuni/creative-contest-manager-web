@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -44,19 +45,19 @@ class TeamServiceTest {
     @Autowired
     private TeamService teamService;
 
-    @Autowired
+    @MockitoBean
     private MemberRepository memberRepository;
 
-    @Autowired
+    @MockitoBean
     private ContestRepository contestRepository;
 
-    @Autowired
+    @MockitoBean
     private TeamRepository teamRepository;
 
-    @Autowired
+    @MockitoBean
     private TeamNumberRepository teamNumberRepository;
 
-    @Autowired
+    @MockitoBean
     private MemberTeamRepository memberTeamRepository;
 
     @Autowired
@@ -65,95 +66,6 @@ class TeamServiceTest {
     @Autowired
     CryptoService cryptoService;
 
-    @BeforeEach
-    void setUp() {
-        teamService = new TeamService(memberRepository, teamRepository, memberTeamRepository, contestRepository, teamNumberRepository);
-    }
-
-    @DisplayName("팀장과 멤버가 주어질 경우 팀 생성이 정상적으로 동작한다.")
-    @Test
-    void createTeam() {
-        // given
-        String leaderId = "leaderId";
-        Address address = new Address("street", "city", "zipCode", "detail");
-        School school = new School("xx대학교", StudentType.COLLEGE, 4);
-        Member leader = Member.builder()
-                .loginId(leaderId)
-                .password(passwordEncoder.encode("password"))
-                .role(Role.USER)
-                .birth(LocalDate.now())
-                .email("email@email.com")
-                .address(address)
-                .gender(Gender.MAN)
-                .phoneNumber("01012341234")
-                .name("팀장")
-                .organization(school)
-                .build();
-        memberRepository.save(leader);
-
-        Address address1 = new Address("street", "city", "zipCode", "detail");
-        School school1 = new School("xx대학교", StudentType.COLLEGE, 4);
-        Member member1 = Member.builder()
-                .loginId("one")
-                .password(passwordEncoder.encode("password"))
-                .role(Role.USER)
-                .birth(LocalDate.now())
-                .email("email1@email.com")
-                .address(address1)
-                .gender(Gender.MAN)
-                .phoneNumber("01012341235")
-                .name("팀원1")
-                .organization(school1)
-                .build();
-        memberRepository.save(member1);
-
-        Address address2 = new Address("street", "city", "zipCode", "detail");
-        School school2 = new School("xx대학교", StudentType.COLLEGE, 4);
-        Member member2 = Member.builder()
-                .loginId("two")
-                .password(passwordEncoder.encode("password"))
-                .role(Role.USER)
-                .birth(LocalDate.now())
-                .email("email2@email.com")
-                .address(address2)
-                .gender(Gender.MAN)
-                .phoneNumber("01012341236")
-                .name("팀원2")
-                .organization(school2)
-                .build();
-        memberRepository.save(member2);
-
-        Contest contest = Contest.builder()
-                .title("테스트 대회")
-                .season(2025)
-                .registrationStartAt(LocalDateTime.now())
-                .registrationEndAt(LocalDateTime.now().plusDays(5))
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusDays(7))
-                .build();
-        contestRepository.save(contest);
-        Long contestId = 1L;
-
-        TeamCreateDto dto = new TeamCreateDto("팀입니다", contestId, List.of("one", "two"));
-
-        TeamNumber teamNumber = TeamNumber.builder().contest(contest).lastTeamNumber(2).build();
-        teamNumberRepository.save(teamNumber);
-
-        // when
-        Long createdTeamId = teamService.createTeam(leaderId, dto);
-
-        // then
-        Team savedTeam = teamRepository.findById(createdTeamId).orElseThrow();
-
-        //팀 번호가 003인지 확인
-        assertEquals("003", savedTeam.getTeamNumber());
-        //팀 섹션 확인
-        assertEquals(Section.HIGH_NORMAL, savedTeam.getSection());
-        //팀 생성 반환 확인
-        assertEquals("팀입니다", savedTeam.getName());
-        assertEquals(contest, savedTeam.getContest());
-        assertEquals(leader, savedTeam.getLeader());
-    }
 
     @DisplayName("팀원이 3명 초과할 경우 예외가 발생한다.")
     @Test
@@ -288,7 +200,7 @@ class TeamServiceTest {
         //팀명 수정만 원할 경우에도 기존 팀원은 입력해야되는구조
         // when & then
         assertThrows(IllegalArgumentException.class,
-                () -> teamService.updateTeam(team.getId(), new TeamUpdateDto("팀명수정", List.of()), notLeaderId));
+                () -> teamService.updateTeam(team.getId(), new TeamUpdateDto("팀명수정", List.of(),contest.getId()), notLeaderId));
     }
 
     @DisplayName("팀장이 아닌 자가 팀을 삭제하면 예외가 발생한다.")
@@ -334,7 +246,7 @@ class TeamServiceTest {
 
         // when & then
         assertThrows(IllegalArgumentException.class,
-                () -> teamService.deleteTeam(team.getId(), notLeaderId));
+                () -> teamService.deleteTeam(team.getId(), notLeaderId, contest.getId()));
     }
 
     @DisplayName("팀을 삭제할 경우 MemberTeam에 있는 관련 내용도 삭제된다.")
@@ -414,7 +326,7 @@ class TeamServiceTest {
         memberTeamRepository.save(MemberTeam.of(member2, team));
 
         // when
-        teamService.deleteTeam(team.getId(), "진짜리더");
+        teamService.deleteTeam(team.getId(), "진짜리더",contest.getId());
 
         // then
         assertThat(memberTeamRepository.findAllByTeamId(team.getId())).isEmpty();

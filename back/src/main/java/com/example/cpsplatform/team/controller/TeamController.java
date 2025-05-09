@@ -60,7 +60,7 @@ public class TeamController {
     @DeleteMapping("/api/teams")
     public ApiResponse<Void> deleteTeam(@RequestBody @Valid DeleteTeamRequest deleteTeamRequest,
                                         @AuthenticationPrincipal SecurityMember securityMember) {
-        teamService.deleteTeam(deleteTeamRequest.getTeamId(), securityMember.getUsername());
+        teamService.deleteTeam(deleteTeamRequest.getTeamId(), securityMember.getUsername(), deleteTeamRequest.getContestId());
         return ApiResponse.ok(null);
     }
 
@@ -70,7 +70,7 @@ public class TeamController {
         return ApiResponse.ok(myTeamInfo);
     }
 
-    @GetMapping("/api/contests/{contestId}/team")
+    @GetMapping("/api/contests/{contestId}/my-team")
     public ApiResponse<MyTeamInfoByContestDto> getMyTeamByContest(@AuthenticationPrincipal SecurityMember securityMember,
                                                                   @PathVariable Long contestId){
         MyTeamInfoByContestDto myTeamInfoByContestDto = teamService.getMyTeamInfoByContest(contestId, securityMember.getUsername());
