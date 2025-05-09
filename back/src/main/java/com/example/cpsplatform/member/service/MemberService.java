@@ -1,5 +1,6 @@
 package com.example.cpsplatform.member.service;
 
+import com.example.cpsplatform.member.controller.response.MyProfileResponse;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -43,6 +44,12 @@ public class MemberService {
         log.debug("아이디({})에 해당하는 유저 조회 시도", loginId);
         return memberRepository.findMemberByLoginIdAndRole(loginId,Role.USER)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+    }
+
+    public MyProfileResponse getMyInformation(final String loginId){
+        Member member = memberRepository.findMemberByLoginId(loginId)
+                .orElseThrow(()->new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+        return MyProfileResponse.of(member);
     }
 
     public boolean isUsernameExists(String username) {

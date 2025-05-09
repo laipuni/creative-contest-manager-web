@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
@@ -13,6 +14,8 @@ import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.memberteam.domain.MemberTeam;
+import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.controller.response.TeamProblemResponse;
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
@@ -55,16 +58,23 @@ class ProblemServiceTest {
     PasswordEncoder passwordEncoder;
 
     @Autowired
+    private MemberTeamRepository memberTeamRepository;
+
+    @Autowired
+    private ContestJoinService contestService;
+
+    @Autowired
     private ContestRepository contestRepository;
 
     @Test
     @DisplayName("팀의 섹션에 맞는 문제를 불러올 수 있다.(특정섹션문제, 공통문제 총 두개)")
     void getProblemsForTeam() {
         // given
+        String loginId = "leaderId";
         Address address = new Address("street", "city", "zipCode", "detail");
         School school = new School("xx초등학교", StudentType.ELEMENTARY, 4);
         Member leader = Member.builder()
-                .loginId("leaderId")
+                .loginId(loginId)
                 .password(passwordEncoder.encode("password"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
@@ -77,13 +87,14 @@ class ProblemServiceTest {
                 .build();
         memberRepository.save(leader);
 
+        LocalDateTime now = LocalDateTime.now();
         Contest contest = Contest.builder()
                 .title("테스트 대회")
-                .season(2025)
-                .registrationStartAt(LocalDateTime.now())
-                .registrationEndAt(LocalDateTime.now().plusDays(5))
-                .startTime(LocalDateTime.now())
-                .endTime(LocalDateTime.now().plusDays(7))
+                .season(1)
+                .registrationStartAt(now.minusDays(5))
+                .registrationEndAt(now.minusDays(2))
+                .startTime(now.minusHours(1))
+                .endTime(now.plusHours(2))
                 .build();
         contestRepository.save(contest);
 
@@ -96,6 +107,13 @@ class ProblemServiceTest {
                 .section(Section.ELEMENTARY_MIDDLE)
                 .build();
         teamRepository.save(team);
+
+        MemberTeam memberTeam = MemberTeam.builder()
+                .member(leader)
+                .team(team)
+                .build();
+
+        memberTeamRepository.save(memberTeam);
 
         Problem problemForElementaryMiddle = Problem.builder()
                 .section(Section.ELEMENTARY_MIDDLE)
@@ -113,7 +131,7 @@ class ProblemServiceTest {
         problemRepository.save(problemForCommon);
 
         // when
-        List<TeamProblemResponse> problems = problemService.getProblemsForTeam(team.getId());
+        List<TeamProblemResponse> problems = problemService.getProblemsForTeam(team.getId(), contest.getId(), loginId);
 
         // then
         assertThat(problems).hasSize(2);

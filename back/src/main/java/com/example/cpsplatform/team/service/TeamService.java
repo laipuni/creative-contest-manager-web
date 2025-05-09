@@ -55,11 +55,11 @@ public class TeamService {
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
 
         Contest contest = findContestById(createDto.getContestId());
-        //접수하는 시점이 대회의 접수 기간인 경우
-        validContestJoin(contest);
+        //접수하는 시점이 대회의 접수 기간인지 검증
+        validateContestJoin(contest);
 
         TeamNumber teamNumber = teamNumberRepository.getLockedNumberForContest(createDto.getContestId())
-                .orElseThrow(() -> new IllegalArgumentException("팁 접수 번호를 생성하는데, 문제가 발생했습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("팀 접수 번호를 생성하는데, 문제가 발생했습니다."));
 
 
         String teamIdNumber = teamNumber.getNextTeamNumber();
@@ -77,7 +77,7 @@ public class TeamService {
         return team.getId();
     }
 
-    private static void validContestJoin(final Contest contest) {
+    private static void validateContestJoin(final Contest contest) {
         if(contest.isNotRegistering(LocalDateTime.now())){
             //대회의 접수기간이 아닌 경우
             throw new ContestJoinException(
@@ -94,9 +94,9 @@ public class TeamService {
                 .orElseThrow(()->new IllegalArgumentException("해당 팀은 존재하지 않습니다."));
         team.isNotTeamLeader(team, loginId);
 
-        //팀 수정은 접수기간에만 가능하다.
+        //팀 수정은 접수기간에만 가능하기에 수정 시간 검증
         Contest contest = findContestById(updateDto.getContestId());
-        validContestJoin(contest);
+        validateContestJoin(contest);
 
         team.updateTeamName(updateDto.getTeamName());
         memberTeamRepository.deleteAllByTeamExceptLeader(team, team.getLeader());
@@ -116,7 +116,7 @@ public class TeamService {
 
         //팀 삭제은 접수기간에만 가능하다.
         Contest contest = findContestById(contestId);
-        validContestJoin(contest);
+        validateContestJoin(contest);
 
         //팀장과 팀원들 확인증을 제거
         certificateRepository.deleteAllByTeamId(teamId);
@@ -161,14 +161,17 @@ public class TeamService {
 
     private void addMembersToTeam(List<String> memberIds, Team team,Contest contest) {
         List<MemberTeam> memberTeams = new ArrayList<>();
-
         for (String loginId : memberIds) {
             Member member = memberRepository.findMemberByLoginId(loginId)
                     .orElseThrow(()->new IllegalArgumentException(String.format("%s는 존재하지 않는 계정입니다.",loginId)));
+            boolean result = memberTeamRepository.existsByContestIdAndLoginId(contest.getId(), loginId);
+            if(result){
+                //추가할려는 팀원이 같은 대회에 다른 팀에 속해있는 경우
+                throw new ContestJoinException(String.format("%s님은 이미 해당 대회에 소속된 팀이 있습니다.",loginId));
+            }
             teamJoinEligibilityPolicy.validate(member); //팀에 가입할 정책에 준수하는 유저인가(현재 : 매년 회원가입 정책)
             memberTeams.add(MemberTeam.of(member, team));
-            //팀원의 확인증 만들기
-            createAndSaveCertificate(team, contest, member);
+            createAndSaveCertificate(team, contest, member);//팀원의 확인증 만들기
         }
         memberTeamRepository.saveAll(memberTeams);
     }

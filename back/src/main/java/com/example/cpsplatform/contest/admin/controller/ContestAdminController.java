@@ -6,6 +6,7 @@ import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
+import com.example.cpsplatform.contest.admin.request.WinnerTeamsRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
 import com.example.cpsplatform.exception.DuplicateDataException;
 import jakarta.validation.Valid;
@@ -82,6 +83,13 @@ public class ContestAdminController {
     }
 
     @AdminLog
+    @PatchMapping("/{contestId}/winners")
+    public ApiResponse<Void> selectWinnerTeams(@PathVariable Long contestId,
+                                               @Valid @RequestBody WinnerTeamsRequest request){
+        contestAdminService.selectWinnerTeams(contestId, request.toWinnerTeamsDto());
+        return ApiResponse.ok(null);
+    }
+  
     @PatchMapping("/{contestId}/recover")
     public ApiResponse<Object> recoverContest(@PathVariable("contestId")Long contestId){
         contestAdminService.recoverContest(contestId);

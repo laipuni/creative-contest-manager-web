@@ -1,12 +1,14 @@
 package com.example.cpsplatform.problem.service;
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.contest.service.ContestJoinService;
 import com.example.cpsplatform.problem.controller.response.TeamProblemResponse;
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,20 +25,19 @@ public class ProblemService {
 
     private final ProblemRepository problemRepository;
     private final TeamRepository teamRepository;
+    private final ContestJoinService contestJoinService;
 
-    public List<TeamProblemResponse> getProblemsForTeam(Long teamId){
+    public List<TeamProblemResponse> getProblemsForTeam(Long teamId, Long contestId, String username){
+        contestJoinService.validateContestParticipation(contestId, username, LocalDateTime.now());
+
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 팀을 찾을 수 없습니다."));
 
         Section teamSection = team.getSection();
-        Contest contest = team.getContest();
-        Long contestId = contest.getId();
-
         List<Problem> problems = new ArrayList<>();
 
-        Section specificSection = getSpecificSection(teamSection);
         problems.add(
-                problemRepository.findWithFilesByContestIdAndSection(contestId, specificSection)
+                problemRepository.findWithFilesByContestIdAndSection(contestId, getSpecificSection(teamSection))
                         .orElseThrow(() -> new IllegalArgumentException("특정 섹션 문제를 찾을 수 없습니다."))
         );
 
