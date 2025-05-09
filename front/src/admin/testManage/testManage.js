@@ -413,7 +413,7 @@ const TestManage = () => {
         <div className="admin-teamList-container">
             <AdminHeader />
             <div className="admin-main-container">
-                <AdminSidebar />
+                <AdminSidebar height='817px'/>
                 <div className="admin-testManage-main-container">
                     <div className="admin-testManage-detail-container">
                         <div className="admin-testManage-detail-top">

@@ -2,11 +2,11 @@ import React from 'react';
 import './adminSidebar.css'
 import {Link, useLocation} from "react-router-dom";
 
-const AdminSidebar = () => {
+const AdminSidebar = ({height}) => {
     const location = useLocation();
     //TODO- 예선 관리, 데이터 분석 페이지 링크 연동
     return (
-        <div className="adminSidebar-container">
+        <div className="adminSidebar-container" style={{height: height}}>
             <Link to="/admin/teamList"
                   className={`adminSidebar-category ${location.pathname === "/admin/teamList" ? "active" : ""}`}>
                 <p className="adminSidebar-text">팀 목록</p>

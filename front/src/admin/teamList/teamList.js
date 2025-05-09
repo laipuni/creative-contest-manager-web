@@ -4,7 +4,6 @@ import AdminHeader from "../components/adminHeader/adminHeader";
 import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import "../../styles/pagination.css"
 import apiClient from "../../templates/apiClient";
-import {all} from "axios";
 
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
@@ -176,7 +175,7 @@ const TeamList = () => {
         <div className="admin-teamList-container">
             <AdminHeader/>
             <div className="admin-main-container">
-                <AdminSidebar/>
+                <AdminSidebar height='800px'/>
                 <div className="admin-teamList-main-container">
                     <div className="admin-teamList-header">
                         <div className="admin-teamList-titlebox">
@@ -214,25 +213,31 @@ const TeamList = () => {
                                 합격자 선정
                             </button>
                         </div>
-                        <div className="admin-teamList-body-title">
+                        <div className="admin-teamList-body-title" style={{backgroundColor: 'darkgray'}}>
                             <div className="admin-teamList-body-title-textbox">
-                                <p className="admin-teamList-body-title-text">팀 이름</p>
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>팀 이름</p>
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
-                                <p className="admin-teamList-body-title-text">팀장 id</p>
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>팀장 id</p>
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
-                                <p className="admin-teamList-body-title-text">합격자</p>
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>합격자</p>
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
-                                <p className="admin-teamList-body-title-text">합격 여부</p>
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>합격 여부</p>
                             </div>
                         </div>
-                        {testData.map(team => (
-                            <div key={team.id} className="admin-teamList-body-title">
+                        {testData.map((team, index) => (
+                            <div
+                                key={team.id}
+                                className="admin-teamList-body-title"
+                                style={{
+                                    backgroundColor: index % 2 === 0 ? 'white' : 'rgba(121, 30, 182, 0.12)'
+                                }}
+                            >
                                 <div className="admin-teamList-body-title-textbox">
                                     <p className="admin-teamList-body-title-text">{team.name}</p>
                                 </div>
