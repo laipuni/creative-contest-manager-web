@@ -286,7 +286,7 @@
 
 .testManage-modal-box {
     position: relative;
-    width: 380px;
+    width: 450px;
     padding: 24px 28px;
     background-color: white;
     border-radius: 8px;
@@ -317,7 +317,8 @@
 
 .testManage-date-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 16px;
 }
 
 .testManage-modal-confirm-btn {

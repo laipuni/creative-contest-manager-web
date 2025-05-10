@@ -25,6 +25,7 @@ const TestManage = () => {
     const [isRegistered, setIsRegistered] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const [showRestoreModal, setShowRestoreModal] = useState(false); // 대회 복구 안내
+    const [season, setSeason] = useState(null);
 
     // --- 문제 등록 관련 상태 ---
     const [commonQuiz, setCommonQuiz] = useState([]);         // 등록된 COMMON 문제
@@ -100,9 +101,9 @@ const TestManage = () => {
             return;
         }
 
-        const contestTitle = `${latestContest.season+1}회차 cps 경진대회`;
+        const contestTitle = `${season}회차 cps 경진대회`;
         apiClient.post('/api/admin/contests', {
-            title: contestTitle, season: latestContest.season+1,
+            title: contestTitle, season,
             registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
             contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
         }, {skipErrorHandler: true})
@@ -146,9 +147,9 @@ const TestManage = () => {
                 return;
             }
 
-            const contestTitle = `${latestContest.season}회차 cps 경진대회`;
+            const contestTitle = `${season}회차 cps 경진대회`;
             apiClient.put('/api/admin/contests', {
-                title: contestTitle, season: latestContest.season, contestId: latestContest.contestId,
+                title: contestTitle, season, contestId: latestContest.contestId,
                 registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
                 contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
             }, {skipErrorHandler: true})
@@ -220,12 +221,21 @@ const TestManage = () => {
 
     //일정 삭제 - soft
     const handleDeleteDate = () => {
-        apiClient.delete('/api/admin/contests', {
-            data: { contestId: latestContest.contestId }})
-            .then((res)=>{
-                setIsRegistered(!isRegistered);
+        apiClient.get('/api/admin/contests/deleted')
+            .then((res) => {
+                const nextSeason = latestContest.season + 1;
+                const matchedContest = res.data.data.deletedContestList.find(
+                    (contest) => contest.season === nextSeason
+                );
+                const matchedContestId = matchedContest?.contestId;
+                apiClient.delete('/api/admin/contests', {
+                    data: { contestId: matchedContestId }})
+                    .then((res)=>{
+                        alert('삭제 완료');
+                        setIsRegistered(!isRegistered);
+                    })
+                    .catch((err)=>{})
             })
-            .catch((err)=>{})
     }
 
     //일정 복구
@@ -485,6 +495,18 @@ const TestManage = () => {
                                             {/* X 버튼 */}
                                             <button className="testManage-modal-close" onClick={handleCloseModal}>X
                                             </button>
+                                            <div className="testManage-modal-content" style={{flexDirection: 'row', gap: '40px'}}>
+                                                <p className="testManage-label">회차</p>
+                                                <input
+                                                    style={{alignSelf: 'center', width: '100px'}}
+                                                    value={season}
+                                                    onChange={(e) => {
+                                                        const onlyNums = e.target.value.replace(/[^0-9]/g, '');
+                                                        setSeason(onlyNums);
+                                                    }}
+                                                />
+
+                                            </div>
 
                                             {/* 날짜 입력 영역 */}
                                             <div className="testManage-modal-content">
