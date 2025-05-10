@@ -1,15 +1,14 @@
 package com.example.cpsplatform.contest.repository;
 
 import com.example.cpsplatform.contest.Contest;
-import com.example.cpsplatform.problem.domain.Problem;
-import com.example.cpsplatform.problem.domain.ProblemType;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +31,8 @@ public interface ContestRepository extends JpaRepository<Contest,Long> {
     @Query(value = "SELECT * FROM Contest WHERE deleted = true", nativeQuery = true)
     List<Contest> findDeletedContestById();
 
+    @Modifying
+    @Query(value = "delete from Contest where id = :contestId", nativeQuery = true)
+    void hardDeleteById(@Param("contestId") Long contestId);
 }
 

@@ -4,6 +4,7 @@ import com.example.cpsplatform.certificate.domain.Certificate;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CertificateRepository extends JpaRepository<Certificate,Long>, CertificateRepositoryCustom {
@@ -12,4 +13,6 @@ public interface CertificateRepository extends JpaRepository<Certificate,Long>, 
     Optional<Certificate> findById(Long certificatedId);
 
     void deleteAllByTeamId(Long teamId);
+
+    List<Certificate> findAllByContestId(Long contestId);
 }

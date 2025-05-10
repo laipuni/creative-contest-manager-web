@@ -35,4 +35,8 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     //유저가 해당 팀에 속해있는지 확인하는 쿼리
     @Query(value = "select exists (select 1 from MemberTeam mt where mt.team.id = :teamId and  mt.member.loginId = :loginId)")
     boolean existsByTeamIdAndLoginId(@Param("teamId") Long teamId, @Param("loginId") String loginId);
+
+    @Modifying
+    @Query(value = "delete from MemberTeam where id in :memberTeamIds",nativeQuery = true)
+    void hardDeleteAllByIdIn(@Param("memberTeamIds") List<Long> memberTeamIds);
 }

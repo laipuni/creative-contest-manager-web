@@ -2,12 +2,14 @@ package com.example.cpsplatform.contest.admin.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
+import com.example.cpsplatform.contest.admin.controller.request.HardDeleteContestRequest;
 import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
 import com.example.cpsplatform.contest.admin.request.WinnerTeamsRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
+import com.example.cpsplatform.contest.admin.service.ContestDeleteService;
 import com.example.cpsplatform.exception.DuplicateDataException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ContestAdminController {
 
     private final ContestAdminService contestAdminService;
+    private final ContestDeleteService contestDeleteService;
 
     //최신 대회 정보를 받아오는 api
     @AdminLog
@@ -101,5 +104,12 @@ public class ContestAdminController {
     public ApiResponse<DeletedContestListResponse> recoverContest(){
         DeletedContestListResponse response = contestAdminService.findDeletedContest();
         return ApiResponse.ok(response);
+    }
+
+    @AdminLog
+    @DeleteMapping("/hard")
+    public ApiResponse<Object> removeCompletelyContest(@Valid @RequestBody HardDeleteContestRequest request){
+        contestDeleteService.deleteCompletelyContest(request.getContestId());
+        return ApiResponse.ok(null);
     }
 }
