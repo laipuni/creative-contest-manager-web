@@ -113,8 +113,20 @@ const TestManage = () => {
                 alert('대회가 등록되었습니다');
             })
             .catch((err)=>{
-                if(err.response.data.message === '동일한 회의 대회가 있습니다.')
-                    setShowRestoreModal(true);
+                if(err.response.data.message === '동일한 회의 대회가 있습니다.') {
+                    apiClient.get('/api/admin/contests/deleted')
+                        .then((res) => {
+                            const matchedContest = res.data.data.deletedContestList.find(
+                                (contest) => contest.season === Number(season)
+                            )
+                            if(matchedContest)
+                                setShowRestoreModal(true);
+                            else
+                                alert('해당 회차의 대회가 이미 존재합니다.')
+                        })
+                        .catch((err)=>{})
+
+                }
             })
     };
 
@@ -221,30 +233,21 @@ const TestManage = () => {
 
     //일정 삭제 - soft
     const handleDeleteDate = () => {
-        apiClient.get('/api/admin/contests/deleted')
-            .then((res) => {
-                const nextSeason = latestContest.season + 1;
-                const matchedContest = res.data.data.deletedContestList.find(
-                    (contest) => contest.season === nextSeason
-                );
-                const matchedContestId = matchedContest?.contestId;
-                apiClient.delete('/api/admin/contests', {
-                    data: { contestId: matchedContestId }})
-                    .then((res)=>{
-                        alert('삭제 완료');
-                        setIsRegistered(!isRegistered);
-                    })
-                    .catch((err)=>{})
+        apiClient.delete('/api/admin/contests', {
+            data: { contestId: latestContest.contestId },})
+            .then((res)=>{
+                alert('삭제 완료');
+                setIsRegistered(!isRegistered);
             })
+            .catch((err)=>{})
     }
 
     //일정 복구
     const handleRestore = () => {
         apiClient.get('/api/admin/contests/deleted')
             .then((res) => {
-                const nextSeason = latestContest.season + 1;
                 const matchedContest = res.data.data.deletedContestList.find(
-                    (contest) => contest.season === nextSeason
+                    (contest) => contest.season === Number(season)
                 );
                 const matchedContestId = matchedContest?.contestId;
                 apiClient.patch(`/api/admin/contests/${matchedContestId}/recover`)
@@ -260,7 +263,23 @@ const TestManage = () => {
 
     //일정 삭제 - hard
     const handleHardDelete = () => {
-
+        apiClient.get('/api/admin/contests/deleted')
+            .then((res) => {
+                const matchedContest = res.data.data.deletedContestList.find(
+                    (contest) => contest.season === Number(season)
+                );
+                const matchedContestId = matchedContest?.contestId;
+                apiClient.delete('/api/admin/contests/hard', {
+                    data: {contestId: latestContest.contestId},
+                })
+                    .then((res) => {
+                        alert('삭제 완료');
+                        setIsRegistered(!isRegistered);
+                    })
+                    .catch((err) => {
+                    })
+            })
+            .catch((err)=>{})
     }
     //문제 체크박스 선택
     const toggleTypeCheck = (type) => {
