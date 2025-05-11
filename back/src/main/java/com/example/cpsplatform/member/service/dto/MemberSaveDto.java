@@ -29,11 +29,12 @@ public class MemberSaveDto {
     private Organization organization;
 
     public Member toEntity(CryptoService cryptoService, PasswordEncoder passwordEncoder){
-        Address address = toEncryptedAddress(cryptoService);
-        String encodedPhoneNumber = cryptoService.encryptAES(phoneNumber);
-        String encodedPassword = passwordEncoder.encode(password);
-        return Member.of(this.loginId,encodedPassword,this.name,this.email,this.gender,
-                this.birth,address,encodedPhoneNumber,organization);
+        return Member.of(loginId,password,
+                street, city, zipCode, detail,
+                name,email,gender, birth,
+                phoneNumber,organization,
+                cryptoService,passwordEncoder
+        );
     }
 
     public Address toEncryptedAddress(CryptoService cryptoService) {

@@ -1,33 +1,26 @@
 package com.example.cpsplatform.member.controller.request;
 
+import com.example.cpsplatform.auth.service.dto.RegisterRequestDto;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.domain.organization.company.Company;
 import com.example.cpsplatform.member.domain.organization.company.FieldType;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
-import com.example.cpsplatform.auth.service.dto.RegisterRequestDto;
+import com.example.cpsplatform.member.service.dto.UpdateMyProfileDto;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @ValidOrganization
-@AllArgsConstructor
 @NoArgsConstructor
-public class MemberRegisterRequest implements OrganizationRequest{
-
-    @Size(min = 4, max = 12, message = "로그인 ID는 4-12자 이내여야 합니다")
-    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "로그인 ID는 영문자와 숫자만 가능합니다")
-    private String loginId;
-
-    @Size(min = 4, max = 8, message = "비밀번호는 4-8자 이내여야 합니다")
-    private String password;
-
-    @NotBlank(message = "비밀번호확인은 필수입니다")
-    private String confirmPassword;
+public class MyProfileUpdateRequest implements OrganizationRequest{
 
     @NotBlank(message = "이름은 필수입니다")
     private String name;
@@ -66,37 +59,14 @@ public class MemberRegisterRequest implements OrganizationRequest{
     @NotBlank(message = "학년(부서)는 필수입니다")
     private String position;
 
-    public RegisterRequestDto toRegisterRequest() {
-        StudentType studentType = StudentType.findStudentTypeBy(organizationType);
-        FieldType fieldType = FieldType.findFiledType(organizationType);
-
-        Organization organization = createOrganization(studentType, fieldType);
-
-        return new RegisterRequestDto(
-                loginId, password, confirmPassword,
+    public UpdateMyProfileDto toUpdateMyProfileDto(String loginId) {
+        return new UpdateMyProfileDto(
+                loginId,
                 name, birth, gender,
                 street, city, zipCode, detail,
-                phoneNumber, email, organization
+                phoneNumber, email, organizationType,
+                organizationName,position
         );
-    }
-
-    private Organization createOrganization(StudentType studentType, FieldType fieldType) {
-        if (studentType != null) {
-            int grade = parsePositionToGrade(position);
-            return new School(organizationName, studentType, grade);
-        }
-        if (fieldType != null) {
-            return new Company(organizationName, position, fieldType);
-        }
-        throw new IllegalArgumentException("해당 직업을 찾을 수 없습니다.");
-    }
-
-    private int parsePositionToGrade(String position) {
-        try {
-            return Integer.parseInt(position);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("학생의 학년(grade)을 숫자로 입력해주세요: " + position);
-        }
     }
 
 }

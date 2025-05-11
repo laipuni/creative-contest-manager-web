@@ -5,6 +5,7 @@ import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.member.service.dto.MemberSaveDto;
+import com.example.cpsplatform.member.service.dto.MemberUpdateDto;
 import com.example.cpsplatform.security.encoder.CryptoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,5 +56,12 @@ public class MemberService {
 
     public boolean isUsernameExists(String username) {
         return memberRepository.existsByLoginId(username);
+    }
+
+    @Transactional
+    public void update(final MemberUpdateDto dto) {
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("유저를 수정하는데 실패했습니다."));
+        member.update(dto, cryptoService);
     }
 }

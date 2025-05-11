@@ -3,6 +3,7 @@ package com.example.cpsplatform.member.controller;
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.member.controller.request.MemberRegisterRequest;
 import com.example.cpsplatform.auth.service.RegisterService;
+import com.example.cpsplatform.member.controller.request.MyProfileUpdateRequest;
 import com.example.cpsplatform.member.controller.response.MyProfileResponse;
 import com.example.cpsplatform.member.service.MemberService;
 import com.example.cpsplatform.security.domain.SecurityMember;
@@ -34,5 +35,11 @@ public class MemberController {
     public ApiResponse<MyProfileResponse> getMyInfo(@AuthenticationPrincipal SecurityMember securityMember){
         MyProfileResponse myProfileResponse = memberService.getMyInformation(securityMember.getUsername());
         return ApiResponse.ok(myProfileResponse);
+    }
+
+    @PatchMapping("/api/members/my-profile")
+    public ApiResponse<Object> updateMyInfo(@Valid @RequestBody MyProfileUpdateRequest request, @AuthenticationPrincipal SecurityMember securityMember){
+        registerService.updateMyInformation(request.toUpdateMyProfileDto(securityMember.getUsername()));
+        return ApiResponse.ok(null);
     }
 }
