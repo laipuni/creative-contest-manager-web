@@ -30,7 +30,7 @@ public class MemberController {
         return ApiResponse.ok(result);
     }
 
-    @GetMapping("/api/me")
+    @GetMapping("/api/members/my-profile")
     public ApiResponse<MyProfileResponse> getMyInfo(@AuthenticationPrincipal SecurityMember securityMember){
         MyProfileResponse myProfileResponse = memberService.getMyInformation(securityMember.getUsername());
         return ApiResponse.ok(myProfileResponse);
