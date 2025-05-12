@@ -74,7 +74,7 @@ public class File extends BaseEntity {
                                                 final Long size, final String path, final FileType fileType, Problem problem){
         if(problem == null){
             //todo 엔티티 생성 위반 예외 만들기(500 or 400)
-            throw new IllegalArgumentException("해당 대회 문제 파일은 대회 정보가 필수입니다.");
+            throw new IllegalArgumentException("해당 대회 문제 파일은 문제 정보가 필수입니다.");
         }
 
         File file = File.builder()
@@ -96,7 +96,7 @@ public class File extends BaseEntity {
                                                 final Long size, final String path, final FileType fileType, TeamSolve teamSolve){
         if(teamSolve == null){
             //todo 엔티티 생성 위반 예외 만들기(500 or 400)
-            throw new IllegalArgumentException("해당 답안지 제출 파일은 제출 정보가 필수입니다.");
+            throw new IllegalArgumentException("해당 답안지 제출 파일은 답안지 정보가 필수입니다.");
         }
 
         return File.builder()
