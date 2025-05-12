@@ -1,8 +1,9 @@
 package com.example.cpsplatform.certificate.controller;
 
 import com.example.cpsplatform.ApiResponse;
-import com.example.cpsplatform.certificate.controller.response.SearchCertificateResponse;
+import com.example.cpsplatform.certificate.controller.response.UserSearchCertificateResponse;
 import com.example.cpsplatform.certificate.domain.CertificateType;
+import com.example.cpsplatform.certificate.repository.dto.UserSearchCertificateCond;
 import com.example.cpsplatform.certificate.service.CertificateService;
 import com.example.cpsplatform.certificate.service.dto.DownloadCertificateResult;
 import com.example.cpsplatform.security.domain.SecurityMember;
@@ -21,11 +22,20 @@ public class CertificateController {
     private final CertificateService certificateService;
 
     @GetMapping("/api/v1/certificates")
-    public ApiResponse<SearchCertificateResponse> searchCertificates(@RequestParam(value = "page",defaultValue = "0") int page,
-                                                                     @RequestParam(value = "order",defaultValue = "desc") String order,
-                                                                     @RequestParam(value = "type", defaultValue = "")CertificateType certificateType,
-                                                                     @AuthenticationPrincipal SecurityMember securityMember){
-        SearchCertificateResponse response = certificateService.searchCertificates(page,order,certificateType,securityMember.getUsername());
+    public ApiResponse<UserSearchCertificateResponse> searchCertificates(@RequestParam(value = "page",defaultValue = "0") int page,
+                                                                         @RequestParam(value = "page_size",defaultValue = "10") int pageSize,
+                                                                         @RequestParam(value = "order",defaultValue = "desc") String order,
+                                                                         @RequestParam(value = "type", defaultValue = "")String certificateType,
+                                                                         @AuthenticationPrincipal SecurityMember securityMember){
+        UserSearchCertificateResponse response = certificateService.searchCertificates(
+                new UserSearchCertificateCond(
+                        page,
+                        pageSize,
+                        order,
+                        CertificateType.findCertificateType(certificateType),
+                        securityMember.getUsername()
+                )
+        );
         return ApiResponse.ok(response);
     }
 

@@ -1,4 +1,4 @@
-package com.example.cpsplatform.certificate.controller.response;
+package com.example.cpsplatform.certificate.repository.dto;
 
 import com.example.cpsplatform.PagingUtils;
 import lombok.AllArgsConstructor;
@@ -8,25 +8,22 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-import static com.example.cpsplatform.contest.admin.service.ContestAdminService.CONTEST_PAGE_SIZE;
-
 @Getter
 @Builder
 @AllArgsConstructor
-public class SearchCertificateResponse {
-
+public class AdminSearchCertificateResponse {
     private int totalPage;
     private int page;
     private int firstPage;
     private int lastPage;
     private int size;
-    private List<SearchCertificateDto> certificateDtoList;
+    private List<AdminSearchCertificateDto> certificateDtoList;
 
-    public static SearchCertificateResponse of(Page<SearchCertificateDto> certificateDtoPage){
-        int firstPage = PagingUtils.getStartPage(certificateDtoPage.getNumber(), CONTEST_PAGE_SIZE);
+    public static AdminSearchCertificateResponse of(Page<AdminSearchCertificateDto> certificateDtoPage){
+        int firstPage = PagingUtils.getStartPage(certificateDtoPage.getNumber(), certificateDtoPage.getSize());
         int lastPage = PagingUtils.getEndPage(firstPage,certificateDtoPage.getTotalPages());
 
-        return SearchCertificateResponse.builder()
+        return AdminSearchCertificateResponse.builder()
                 .totalPage(certificateDtoPage.getTotalPages())
                 .page(certificateDtoPage.getNumber())
                 .firstPage(firstPage)
@@ -35,6 +32,4 @@ public class SearchCertificateResponse {
                 .certificateDtoList(certificateDtoPage.getContent())
                 .build();
     }
-
-
 }

@@ -1,14 +1,13 @@
 package com.example.cpsplatform.certificate.repository;
 
 
-import com.example.cpsplatform.certificate.controller.response.SearchCertificateDto;
-import com.example.cpsplatform.certificate.controller.response.SearchCertificateResponse;
-import com.example.cpsplatform.certificate.domain.CertificateType;
-
-import java.util.List;
+import com.example.cpsplatform.certificate.controller.response.UserSearchCertificateResponse;
+import com.example.cpsplatform.certificate.repository.dto.AdminSearchCertificateResponse;
+import com.example.cpsplatform.certificate.repository.dto.AdminSearchCertificateCond;
+import com.example.cpsplatform.certificate.repository.dto.UserSearchCertificateCond;
 
 public interface CertificateRepositoryCustom {
 
-    public SearchCertificateResponse SearchCertificate(final int page, final int pageSize, final String order, final CertificateType certificateType, final String username);
-
+    public UserSearchCertificateResponse SearchUserCertificate(UserSearchCertificateCond cond);
+    public AdminSearchCertificateResponse SearchAdminCertificate(AdminSearchCertificateCond cond);
 }

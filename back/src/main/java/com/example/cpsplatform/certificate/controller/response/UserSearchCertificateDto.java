@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor
-public class SearchCertificateDto {
+public class UserSearchCertificateDto {
 
     private Long certificateId;
     private String title;
@@ -17,8 +17,8 @@ public class SearchCertificateDto {
     private LocalDateTime createdAt;
     private String teamName;
 
-    public static SearchCertificateDto of(final Certificate certificate){
-        return SearchCertificateDto.builder()
+    public static UserSearchCertificateDto of(final Certificate certificate){
+        return UserSearchCertificateDto.builder()
                 .certificateId(certificate.getId())
                 .title(certificate.getContest().getTitle())
                 .teamName(certificate.getTeam().getName())
