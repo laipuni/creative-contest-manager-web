@@ -8,6 +8,19 @@ import axios from "axios";
 const MainHeader = ({underbarWidth = "75%"}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("isAuthenticated"));
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
+    const [userName, setUserName] = useState(null);
+    useEffect(() => {
+        if(isAuthenticated || isAdmin) {
+            apiClient.get('/api/members/my-profile')
+                .then((res) => {
+                    setUserName(res.data.data.name);
+                })
+                .catch((err) => {
+                });
+        }
+    }, []);
+
+
     function handleLogout() {
         apiClient.post('/api/auth/logout')
             .then((res)=>{
@@ -19,6 +32,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                     localStorage.removeItem("isAdmin");
                     setIsAdmin('false');
                 }
+                setUserName(null);
                 window.location.reload();
                 //csrf 토큰 다시 얻어오기
                 axios.get("/api/csrf")
@@ -34,6 +48,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
             <div className="main-header-top">
                 <div className="main-header-menu">
                     <div className="main-header-menu-item">
+                        {userName && <p className="main-header-menu-item-text">{userName}님 환영합니다.</p>}
                         <Link to="/" className="main-header-menu-item-text">HOME</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
