@@ -1,6 +1,7 @@
 package com.example.cpsplatform.file.domain;
 
 import com.example.cpsplatform.BaseEntity;
+import com.example.cpsplatform.notice.domain.Notice;
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
 import jakarta.persistence.*;
@@ -55,9 +56,12 @@ public class File extends BaseEntity {
     @JoinColumn(name = "team_solve_id")
     private TeamSolve teamSolve;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Notice notice;
+
     @Builder
     private File(final String name, final String originalName, final FileExtension extension, final String mimeType,
-                final Long size, final String path, final FileType fileType, final Problem problem, final TeamSolve teamSolve) {
+                final Long size, final String path, final FileType fileType, final Problem problem, final TeamSolve teamSolve, final Notice notice) {
         this.name = name;
         this.originalName = originalName;
         this.extension = extension;
@@ -68,6 +72,7 @@ public class File extends BaseEntity {
         this.deleted = false;
         this.problem = problem;
         this.teamSolve = teamSolve;
+        this.notice = notice;
     }
 
     public static File createContestProblemFile(final String name, final String originalName, final FileExtension extension, final String mimeType,
@@ -93,7 +98,7 @@ public class File extends BaseEntity {
     }
 
     public static File createProblemAnswerFile(final String name, final String originalName, final FileExtension extension, final String mimeType,
-                                                final Long size, final String path, final FileType fileType, TeamSolve teamSolve){
+                                                final Long size, final String path, TeamSolve teamSolve){
         if(teamSolve == null){
             //todo 엔티티 생성 위반 예외 만들기(500 or 400)
             throw new IllegalArgumentException("해당 답안지 제출 파일은 답안지 정보가 필수입니다.");
@@ -106,13 +111,38 @@ public class File extends BaseEntity {
                 .mimeType(mimeType)
                 .size(size)
                 .path(path)
-                .fileType(fileType)
+                .fileType(FileType.TEAM_SOLUTION)
                 .teamSolve(teamSolve)
                 .build();
     }
 
+    public static File createNoticeFile(final String name, final String originalName, final FileExtension extension, final String mimeType,
+                                               final Long size, final String path, Notice notice){
+        if(notice == null){
+            //todo 엔티티 생성 위반 예외 만들기(500 or 400)
+            throw new IllegalArgumentException("해당 공지사항 파일은 등록할 공지사항의 정보가 필수입니다.");
+        }
+
+        File file = File.builder()
+                .name(name)
+                .originalName(originalName)
+                .extension(extension)
+                .mimeType(mimeType)
+                .size(size)
+                .path(path)
+                .fileType(FileType.NOTICE)
+                .notice(notice)
+                .build();
+        notice.addFile(file); // 연관관계 형성
+        return file;
+    }
+
     public void setProblem(Problem problem){
         this.problem = problem;
+    }
+
+    public void setNotice(Notice notice){
+        this.notice = notice;
     }
 
     @Override
