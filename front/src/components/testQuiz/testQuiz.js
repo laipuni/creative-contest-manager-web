@@ -1,30 +1,48 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './testQuiz.css'
 import '../../styles/styles.css'
 import apiClient from "../../templates/apiClient";
 import rocket from "../../styles/images/solve_icon.png";
+import PDFPreview from "../pdfPreview/pdfPreview";
 
 const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz, contestInfo, answer, teamInfo, setIsPosted}) => {
     const maxLength = 500;
     const inputId = `file-upload-${quiz?.section || quizTitle}`;
-    //예선 문제 다운로드
-    const handleDownloadProblem = () => {
-        apiClient.get(`/api/contests/${contestInfo.contestId}/files/${quiz.fileList[0].fileId}`, {
-            responseType: 'blob',
-            skipErrorHandler: true
-        }).then(res => {
-            const blob = new Blob([res.data]);
-            const fileUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = fileUrl;
-            link.download = quiz.title || "문제파일.pdf";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }).catch(err => {
-            alert('문제 파일을 다운로드할 수 없습니다.');
-        });
+    const [showPreview, setShowPreview] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    //미리보기 토글
+    const togglePreview = () => {
+        if (!showPreview) {
+            apiClient.get(`/api/contests/${contestInfo.contestId}/files/${quiz.fileList[0].fileId}`, {
+                responseType: 'blob',
+                skipErrorHandler: true
+            }).then(res => {
+                const blob = new Blob([res.data], { type: 'application/pdf' });
+                setPreviewUrl(blob);
+            }).catch(err => {
+            });
+        }
+        setShowPreview(!showPreview);
     };
+    // //예선 문제 다운로드
+    // const handleDownloadProblem = () => {
+    //     apiClient.get(`/api/contests/${contestInfo.contestId}/files/${quiz.fileList[0].fileId}`, {
+    //         responseType: 'blob',
+    //         skipErrorHandler: true
+    //     }).then(res => {
+    //         const blob = new Blob([res.data]);
+    //         const fileUrl = window.URL.createObjectURL(blob);
+    //         const link = document.createElement('a');
+    //         link.href = fileUrl;
+    //         link.download = quiz.title || "문제파일.pdf";
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+    //     }).catch(err => {
+    //         alert('문제 파일을 다운로드할 수 없습니다.');
+    //     });
+    // };
 
     //제출된 답안 파일 다운로드
     const handleDownloadAnswer = () => {
@@ -86,14 +104,14 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
         <div className="quiz-container">
             <div className="quiz-titlebox">
                 <p className="quiz-title-text">{quizTitle} 문제</p>
-                {quiz && <p onClick={handleDownloadProblem} className="quiz-title-button">📄</p>}
+                {quiz && <p onClick={togglePreview} className="quiz-title-button">📄</p>}
                 <button className="registerInfo-bot-button"
                         onClick={handleSubmitAnswer}
                         style={{cursor: "pointer", position: "absolute", width: '150px', right: '170px'}}>
                     <img src={rocket} alt='rocket' className="submit-rocket-img"/>제출하기
                 </button>
             </div>
-            <p className="quiz-info-text">※ 문제 우측의 파일 모양 아이콘을 눌러 다운로드하세요</p>
+            <p className="quiz-info-text">※ 문제 우측의 파일 아이콘을 통해 미리보기를 켜거나 끌 수 있습니다</p>
             <div className="quiz-underline"></div>
             <div className="quiz-mainbox">
                 <div className="quiz-file-box">
@@ -179,6 +197,12 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
                     </div>
                 </div>
             </div>
+            {/* 미리보기 표시 */}
+            {showPreview && previewUrl && (
+                <div className="pdf-preview">
+                    <PDFPreview blob={previewUrl} />
+                </div>
+            )}
         </div>
     );
 };
