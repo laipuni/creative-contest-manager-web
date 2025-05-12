@@ -18,6 +18,7 @@ import QnA from "../supportPage/qnaPage/qna";
 import TeamList from "../admin/teamList/teamList";
 import TestManage from "../admin/testManage/testManage";
 import FindIdPage from "../auth/login/member/findIdPage";
+import ResetPasswordPage from "../auth/login/member/resetPwPage";
 
 function AppRoutes() {
     const location = useLocation();
@@ -59,6 +60,7 @@ function AppRoutes() {
             <Route path="join/register" element={<Join2 />}></Route>
             <Route path="member/login" element={<MemberLogin />}></Route>
             <Route path="member/login/findId" element={<FindIdPage />}></Route>
+            <Route path="member/login/resetPw" element={<ResetPasswordPage />}></Route>
             <Route path="admin/login" element={<AdminLogin />}></Route>
             <Route path="test/info" element={<TestInfo />}></Route>
             <Route path="register/info" element={<RegisterInfo />}></Route>
