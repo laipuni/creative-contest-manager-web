@@ -1,7 +1,7 @@
 package com.example.cpsplatform.team.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.cpsplatform.contest.Contest;
@@ -24,13 +24,10 @@ import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoDto;
 import com.example.cpsplatform.team.service.dto.TeamCreateDto;
 import com.example.cpsplatform.team.service.dto.TeamUpdateDto;
-import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -465,7 +462,11 @@ class TeamServiceTest {
         assertThat(myTeamInfoByContestDto.getTeamId()).isEqualTo(team.getId());
         assertThat(myTeamInfoByContestDto.getTeamName()).isEqualTo("이팀");
         assertThat(myTeamInfoByContestDto.getLeaderLoginId()).isEqualTo("yi");
-        assertThat(myTeamInfoByContestDto.getMemberIds()).containsExactlyInAnyOrder("yi", "kim");
+        assertThat(myTeamInfoByContestDto.getMembers())
+                .extracting("memberId","loginId","name")
+                .containsExactlyInAnyOrder(
+                        tuple(member.getId(),member.getLoginId(),member.getName()),
+                        tuple(member2.getId(),member2.getLoginId(),member2.getName()));
         assertThat(myTeamInfoByContestDto.getCreatedAt()).isNotNull();
     }
 

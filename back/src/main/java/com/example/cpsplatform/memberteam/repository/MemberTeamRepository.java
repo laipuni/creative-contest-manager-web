@@ -14,6 +14,8 @@ import org.springframework.data.repository.query.Param;
 public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     boolean existsByMember(Member member);
     void deleteAllByTeam(Team team);
+
+    @EntityGraph(attributePaths = {"member","team"})
     List<MemberTeam> findAllByTeamId(Long teamId);
 
     @Modifying
