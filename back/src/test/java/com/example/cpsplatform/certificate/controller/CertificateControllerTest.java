@@ -1,11 +1,10 @@
 package com.example.cpsplatform.certificate.controller;
 
 import com.example.cpsplatform.auth.service.AuthService;
-import com.example.cpsplatform.certificate.admin.controller.CertificateAdminController;
-import com.example.cpsplatform.certificate.admin.service.CertificateAdminService;
-import com.example.cpsplatform.certificate.controller.response.SearchCertificateDto;
-import com.example.cpsplatform.certificate.controller.response.SearchCertificateResponse;
+import com.example.cpsplatform.certificate.controller.response.UserSearchCertificateDto;
+import com.example.cpsplatform.certificate.controller.response.UserSearchCertificateResponse;
 import com.example.cpsplatform.certificate.domain.CertificateType;
+import com.example.cpsplatform.certificate.repository.dto.UserSearchCertificateCond;
 import com.example.cpsplatform.certificate.service.CertificateService;
 import com.example.cpsplatform.certificate.service.dto.DownloadCertificateResult;
 import com.example.cpsplatform.member.domain.Member;
@@ -87,8 +86,8 @@ class CertificateControllerTest {
     @Test
     void searchCertificatesWithDefaultParameters() throws Exception {
         //given
-        SearchCertificateResponse mockResponse = createMockResponse();
-        when(certificateService.searchCertificates(anyInt(), anyString(), isNull(), anyString()))
+        UserSearchCertificateResponse mockResponse = createMockResponse();
+        when(certificateService.searchCertificates(any(UserSearchCertificateCond.class)))
                 .thenReturn(mockResponse);
 
         //when
@@ -114,8 +113,8 @@ class CertificateControllerTest {
     @Test
     void searchCertificatesWithType() throws Exception {
         //given
-        SearchCertificateResponse mockResponse = createMockResponse();
-        when(certificateService.searchCertificates(anyInt(), anyString(), Mockito.any(CertificateType.class), anyString()))
+        UserSearchCertificateResponse mockResponse = createMockResponse();
+        when(certificateService.searchCertificates(any(UserSearchCertificateCond.class)))
                 .thenReturn(mockResponse);
 
         //when
@@ -143,9 +142,9 @@ class CertificateControllerTest {
     @Test
     void searchCertificatesWithPage() throws Exception {
         //given
-        SearchCertificateResponse mockResponse = createMockResponse();
+        UserSearchCertificateResponse mockResponse = createMockResponse();
 
-        when(certificateService.searchCertificates(anyInt(), anyString(), isNull(), anyString()))
+        when(certificateService.searchCertificates(any(UserSearchCertificateCond.class)))
                 .thenReturn(mockResponse);
 
         //when
@@ -167,9 +166,9 @@ class CertificateControllerTest {
     @Test
     void searchCertificatesWithOrder() throws Exception {
         //given
-        SearchCertificateResponse mockResponse = createMockResponse();
+        UserSearchCertificateResponse mockResponse = createMockResponse();
 
-        when(certificateService.searchCertificates(anyInt(), anyString(), isNull(), anyString()))
+        when(certificateService.searchCertificates(any(UserSearchCertificateCond.class)))
                 .thenReturn(mockResponse);
 
         //when
@@ -207,10 +206,10 @@ class CertificateControllerTest {
                 .andExpect(status().isOk());
     }
 
-    private SearchCertificateResponse createMockResponse() {
-        List<SearchCertificateDto> certificateDtoList = new ArrayList<>();
+    private UserSearchCertificateResponse createMockResponse() {
+        List<UserSearchCertificateDto> certificateDtoList = new ArrayList<>();
 
-        SearchCertificateDto dto1 = SearchCertificateDto.builder()
+        UserSearchCertificateDto dto1 = UserSearchCertificateDto.builder()
                 .certificateId(1L)
                 .title("인증서 제목 1")
                 .certificateType(CertificateType.PRELIMINARY)
@@ -218,7 +217,7 @@ class CertificateControllerTest {
                 .teamName("팀 이름 1")
                 .build();
 
-        SearchCertificateDto dto2 = SearchCertificateDto.builder()
+        UserSearchCertificateDto dto2 = UserSearchCertificateDto.builder()
                 .certificateId(2L)
                 .title("인증서 제목 2")
                 .certificateType(CertificateType.FINAL)
@@ -229,7 +228,7 @@ class CertificateControllerTest {
         certificateDtoList.add(dto1);
         certificateDtoList.add(dto2);
 
-        SearchCertificateResponse response = SearchCertificateResponse.builder()
+        UserSearchCertificateResponse response = UserSearchCertificateResponse.builder()
                 .certificateDtoList(certificateDtoList)
                 .firstPage(0)
                 .lastPage(10)
