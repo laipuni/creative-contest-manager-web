@@ -104,6 +104,56 @@ const TestSubmit = () => {
         setFile(file);
     }
 
+    //답 제출
+    const handleSubmitAnswer = () => {
+        // 파일 체크
+        if (!file1 || !file2) {
+            alert('각 답안의 첨부파일을 모두 등록해주세요. (기존에 제출했던 답 있는 경우 덮어쓰기 필요)');
+            return;
+        }
+
+        const submitSingleAnswer = (quiz, fileVal, textVal) => {
+            const formData = new FormData();
+
+            const requestData = {
+                problemId: quiz.problemId,
+                contents: textVal || ""
+            };
+
+            formData.append("request", new Blob(
+                [JSON.stringify(requestData)],
+                { type: "application/json" }
+            ));
+
+            formData.append("file", fileVal);
+
+            return apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                skipErrorHandler: true
+            });
+        };
+
+        Promise.all([
+            submitSingleAnswer(quiz1, file1, text1),
+            submitSingleAnswer(quiz2, file2, text2)
+        ])
+            .then(() => {
+                alert('답안이 제출되었습니다.');
+                navigate("/test/realTest/info")
+            })
+            .catch((err) => {
+                const message = err?.response?.data?.message;
+                if (message === 'Maximum upload size exceeded') {
+                    alert('파일 용량 초과');
+                } else {
+                    alert(message || '제출 중 오류가 발생했습니다.');
+                }
+            });
+    };
+
+
 
     return (
         <div className="testInfo-page-container">
@@ -134,8 +184,12 @@ const TestSubmit = () => {
                             answer={answer2}
                             teamInfo={teamInfo}
                         />
+                        <button className="registerInfo-bot-button"
+                                onClick={handleSubmitAnswer}
+                                style={{cursor: "pointer", alignSelf: "center"}}>
+                            <img src={rocket} alt='rocket' className="submit-rocket-img"/>제출하기
+                        </button>
                     </div>
-
                 </div>
             </div>
         </div>

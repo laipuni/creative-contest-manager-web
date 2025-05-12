@@ -63,53 +63,11 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
         });
     };
 
-    //답 제출
-    const handleSubmitAnswer = () => {
-        if (!fileVal) {
-            alert('파일을 새로 등록해주세요. (기존에 있는 경우 덮어쓰기 필요)');
-            return;
-        }
-        const formData = new FormData();
-        // request 필드 (문제 ID + 텍스트 답변)
-        const requestData = {
-            problemId: quiz.problemId,
-            contents: textVal || ""
-        };
-
-        formData.append("request", new Blob(
-            [JSON.stringify(requestData)],
-            { type: "application/json" }
-        ));
-
-        formData.append("file", fileVal);
-
-        apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }, skipErrorHandler: true
-        })
-            .then(() => {
-                alert('제출이 완료되었습니다.');
-            })
-            .catch((err) => {
-                if(err.response.data.message === 'Maximum upload size exceeded')
-                    alert('파일 용량 초과');
-                else{
-                    alert(err.response.data.message);
-                }
-            });
-    }
-
     return (
         <div className="quiz-container">
             <div className="quiz-titlebox">
                 <p className="quiz-title-text">{quizTitle} 문제</p>
                 {quiz && <p onClick={togglePreview} className="quiz-title-button">📄</p>}
-                <button className="registerInfo-bot-button"
-                        onClick={handleSubmitAnswer}
-                        style={{cursor: "pointer", position: "absolute", width: '150px', right: '170px'}}>
-                    <img src={rocket} alt='rocket' className="submit-rocket-img"/>제출하기
-                </button>
             </div>
             <p className="quiz-info-text">※ 문제 우측의 파일 아이콘을 통해 미리보기를 켜거나 끌 수 있습니다</p>
             <div className="quiz-underline"></div>
