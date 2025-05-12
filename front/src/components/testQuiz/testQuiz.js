@@ -130,6 +130,11 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
                     <label htmlFor={inputId} className="quiz-file-button">
                         파일 등록
                     </label>
+                    {fileVal ? (
+                        <span>✅</span> // 체크 표시 (체크 마크)
+                    ) : (
+                        <span>❌</span> // X 표시 (엑스 마크)
+                    )}
                 </div>
 
                 <div className="quiz-underline" style={{ marginTop: '-10px', order: '0' }}></div>
