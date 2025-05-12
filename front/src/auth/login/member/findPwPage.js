@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import './emailVerificationModal.css';
-import apiClient from "../../templates/apiClient";
+import '../../../components/modals/emailVerificationModal.css';
+import apiClient from "../../../templates/apiClient";
 
 function FindIdModal({ onClose }) {
     const [emailInput, setEmailInput] = useState('');

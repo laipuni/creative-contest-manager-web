@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import './emailVerificationModal.css';
-import apiClient from "../../templates/apiClient";
+import '../../../components/modals/emailVerificationModal.css';
+import apiClient from "../../../templates/apiClient";
 
-function FindIdModal({ onClose }) {
+function FindIdPage({ onClose }) {
     const [emailInput, setEmailInput] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [isVerificationSent, setIsVerificationSent] = useState(false);
@@ -102,4 +102,4 @@ function FindIdModal({ onClose }) {
     );
 }
 
-export default FindIdModal;
+export default FindIdPage;
