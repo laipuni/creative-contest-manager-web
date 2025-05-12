@@ -113,7 +113,7 @@ const TestSubmit = () => {
                     <Sidebar/>
                     <div className="testInfo-main-container">
                         <TestQuiz
-                            quizTitle='문제 1 (공통)'
+                            quizTitle='공통'
                             textVal={text1}
                             textOnChange={(e) => setText1(e.target.value)}
                             fileVal={file1}
@@ -124,7 +124,7 @@ const TestSubmit = () => {
                             teamInfo={teamInfo}
                         />
                         <TestQuiz
-                            quizTitle={'문제 2 (' + level + ')'}
+                            quizTitle={'수준별'}
                             textVal={text2}
                             textOnChange={(e) => setText2(e.target.value)}
                             fileVal={file2}

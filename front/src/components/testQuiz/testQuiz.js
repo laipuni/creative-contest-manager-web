@@ -85,7 +85,7 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
     return (
         <div className="quiz-container">
             <div className="quiz-titlebox">
-                <p className="quiz-title-text">{quizTitle}</p>
+                <p className="quiz-title-text">{quizTitle} 문제</p>
                 {quiz && <p onClick={handleDownloadProblem} className="quiz-title-button">📄</p>}
                 <button className="registerInfo-bot-button"
                         onClick={handleSubmitAnswer}
