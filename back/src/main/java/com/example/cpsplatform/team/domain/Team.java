@@ -68,6 +68,10 @@ public class Team extends BaseEntity {
                 .build();
     }
 
+    public boolean isWinner(){
+        return this.winner;
+    }
+
     public void updateTeamName(String newName) {
         if (newName != null && !newName.isBlank()) {
             this.name = newName;
@@ -80,7 +84,7 @@ public class Team extends BaseEntity {
         }
     }
 
-    public void changeAsWinner(){
-        this.winner = true;
+    public void changeWinner(boolean isWinner){
+        this.winner = isWinner;
     }
 }

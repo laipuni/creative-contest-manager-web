@@ -8,6 +8,7 @@ import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
+import com.example.cpsplatform.contest.admin.request.WinnerTeamsRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
 import com.example.cpsplatform.contest.admin.service.ContestDeleteService;
 import com.example.cpsplatform.member.domain.Member;
@@ -30,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -773,11 +775,61 @@ class ContestAdminControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
                 )
+                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("삭제할 대회의 정보는 필수입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("합격/불합격 처리한 팀들의 정보를 받아 처리한 뒤 정상적으로 응답한다.")
+    @Test
+    void toggleWinnerTeams() throws Exception {
+        //given
+        Long contestId = 1L;
+        List<Long> teamIds = List.of(1L,2L);
+        WinnerTeamsRequest request = new WinnerTeamsRequest(teamIds);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(patch("/api/admin/contests/{contestId}/winners", contestId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value("200"))
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andDo(print());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("합격/불합격 처리한 팀들의 정보를 받아 처리한 뒤 정상적으로 응답한다.")
+    @Test
+    void toggleWinnerTeamsWithEmptyTeamIds() throws Exception {
+        //given
+        Long contestId = 1L;
+        List<Long> teamIds = Collections.emptyList();
+        WinnerTeamsRequest request = new WinnerTeamsRequest(teamIds);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(patch("/api/admin/contests/{contestId}/winners", contestId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("본선에 진출할 팀들의 정보는 필수입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 }
