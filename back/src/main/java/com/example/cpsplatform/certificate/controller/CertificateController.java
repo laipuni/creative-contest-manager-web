@@ -39,7 +39,7 @@ public class CertificateController {
         return ApiResponse.ok(response);
     }
 
-    @GetMapping("/api/certificate/{certificateId}")
+    @GetMapping("/api/certificates/{certificateId}")
     public ResponseEntity<byte[]> downloadCertificate(@PathVariable("certificateId") Long certificateId,
                                                       @AuthenticationPrincipal SecurityMember securityMember){
         DownloadCertificateResult result = certificateService.downloadCertificate(securityMember.getUsername(), certificateId);
