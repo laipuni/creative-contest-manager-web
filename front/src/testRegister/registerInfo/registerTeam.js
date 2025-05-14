@@ -24,24 +24,29 @@ const RegisterTeam = () => {
             .then((res)=>{
                 if(res.data.data){
                     setContestInfo(res.data.data);
-                    if(teamInfo){
-                            const leaderId = teamInfo.leaderLoginId;
-                            const members = teamInfo.memberIds.filter(id => id !== leaderId);
-
-                            setTeamName(teamInfo.teamName);
-
-                            // 멤버 수에 따라 분기
-                            if (members.length === 2) {
-                                setTeamMate1(members[0]);
-                                setTeamMate2(members[1]);
-                            } else  {
-                                setTeamMate1(members[0]);
-                            }
-                    }
                 }
             })
             .catch((e)=>{})
     }, []);
+
+    useEffect(() => {
+        if (teamInfo) {
+            const leaderId = teamInfo.leaderLoginId;
+            const members = teamInfo.members
+                .filter(member => member.loginId !== leaderId)
+                .map(member => member.loginId); // ← loginId만 추출
+
+            setTeamName(teamInfo.teamName);
+
+            if (members.length === 2) {
+                setTeamMate1(members[0]);
+                setTeamMate2(members[1]);
+            } else {
+                setTeamMate1(members[0] || '');
+                setTeamMate2('');
+            }
+        }
+    }, [teamInfo]);
 
     const handleRegisterTeam = (e) => {
         e.preventDefault();
@@ -77,7 +82,7 @@ const RegisterTeam = () => {
                     navigate('/register/info');
                 })
                 .catch((err) => {
-                    alert(err);
+                    alert(err.response.data.message);
                 })
         }
     }
