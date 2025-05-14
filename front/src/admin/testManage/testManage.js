@@ -141,25 +141,21 @@ const TestManage = () => {
             alert('등록을 먼저 해주세요');
             return;
         }
-        setTempRegisterStartDate(registerStartDate);
-        setTempRegisterEndDate(registerEndDate);
-        setTempStartDate(startDate);
-        setTempEndDate(endDate);
+        const parseDate = (d) =>
+            typeof d === 'string' ? new Date(d.replace(/\./g, '-')) : d;
+
+        setSeason(Number(latestContest.season));
+        setTempRegisterStartDate(parseDate(registerStartDate));
+        setTempRegisterEndDate(parseDate(registerEndDate));
+        setTempStartDate(parseDate(startDate));
+        setTempEndDate(parseDate(endDate));
         setIsEditMode(true);
         setIsDateModalOpen(true);
     };
 
     const handleConfirm = () => {
         if (isEditMode) {
-            // 문자열 또는 Date 모두 처리
-            const parseDate = (d) => typeof d === 'string' ? new Date(d.replace(/\./g, '-')) : d;
-
-            const rStart = parseDate(tempRegisterStartDate);
-            const rEnd = parseDate(tempRegisterEndDate);
-            const cStart = parseDate(tempStartDate);
-            const cEnd = parseDate(tempEndDate);
-
-            if ((rStart > rEnd) || (cStart > cEnd)) {
+            if ((tempStartDate > tempEndDate) || (startDate > endDate)) {
                 alert('종료일이 시작일보다 빠르게 설정되었습니다.');
                 return;
             }
@@ -187,10 +183,12 @@ const TestManage = () => {
     const handleCloseModal = () => {
         // 수정 모드일 경우 원래 값 유지
         if (isEditMode) {
-            setTempRegisterStartDate(registerStartDate);
-            setTempRegisterEndDate(registerEndDate);
-            setTempStartDate(startDate);
-            setTempEndDate(endDate);
+            setSeason('');
+            setTempRegisterStartDate(null);
+            setTempRegisterEndDate(null);
+            setTempStartDate(null);
+            setTempEndDate(null);
+            setIsEditMode(false);
         }
         setIsDateModalOpen(false);
     };
