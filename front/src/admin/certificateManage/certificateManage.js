@@ -104,6 +104,10 @@ const CertificateManage = () => {
                     <div className="admin-teamList-body">
                         <div className="admin-teamList-body-title" style={{backgroundColor: 'darkgray'}}>
                             <div className="admin-teamList-body-title-textbox">
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>회차</p>
+                            </div>
+                            <div className="admin-teamList-body-verticalLine"></div>
+                            <div className="admin-teamList-body-title-textbox">
                                 <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>팀 이름</p>
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
@@ -113,6 +117,10 @@ const CertificateManage = () => {
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
                                 <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>유저 id</p>
+                            </div>
+                            <div className="admin-teamList-body-verticalLine"></div>
+                            <div className="admin-teamList-body-title-textbox">
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>유저 이름</p>
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
@@ -128,6 +136,10 @@ const CertificateManage = () => {
                                 }}
                             >
                                 <div className="admin-teamList-body-title-textbox">
+                                    <p className="admin-teamList-body-title-text">{cert.season}</p>
+                                </div>
+                                <div className="admin-teamList-body-verticalLine"></div>
+                                <div className="admin-teamList-body-title-textbox">
                                     <p className="admin-teamList-body-title-text">{cert.teamName}</p>
                                 </div>
                                 <div className="admin-teamList-body-verticalLine"></div>
@@ -135,10 +147,21 @@ const CertificateManage = () => {
                                     <p className="admin-teamList-body-title-text">{cert.certificateType === 'FINAL' ? '본선' : '예선'}</p>
                                 </div>
                                 <div className="admin-teamList-body-verticalLine"></div>
+                                <div className="admin-teamList-body-title-textbox">
+                                    <p className="admin-teamList-body-title-text">{cert.loginId}</p>
+                                </div>
+                                <div className="admin-teamList-body-verticalLine"></div>
+                                <div className="admin-teamList-body-title-textbox">
+                                    <p className="admin-teamList-body-title-text">{cert.name}</p>
+                                </div>
+                                <div className="admin-teamList-body-verticalLine"></div>
                                 <div className="admin-teamList-body-title-textbox" style={{justifyContent: 'center'}}>
                                     <button className="admin-teamList-body-title-text"
-                                            onClick={()=> {handleDeleteCertificate(cert.certificateId)}}
-                                            style={{width: 'fit-content', height: "fit-content", padding: '10px 5px'}}>X</button>
+                                            onClick={() => {
+                                                handleDeleteCertificate(cert.certificateId)
+                                            }}
+                                            style={{width: 'fit-content', height: "fit-content", padding: '10px 5px'}}>X
+                                    </button>
                                 </div>
                             </div>
                         ))}
