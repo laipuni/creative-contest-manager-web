@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -52,6 +53,41 @@ public class NoticeFileService {
         return failedFiles;
     }
 
+    @Transactional
+    public List<String> deleteNoticeFiles(final List<Long> deleteFileIds) {
+        if (deleteFileIds == null || deleteFileIds.isEmpty()) {
+            log.info("삭제할 공지사항 첨부 파일이 없습니다.");
+            return Collections.emptyList();
+        }
+        List<File> files = fileRepository.findAllById(deleteFileIds);
+        if (files.isEmpty()) {
+            log.warn("삭제 요청된 파일({}) 에 해당하는 파일을 찾을 수 없습니다.", deleteFileIds);
+            return Collections.emptyList();
+        }
+
+        log.info("{} 공지사항 첨부 파일({})들을 외부스토리지에서 삭제합니다.", NOTICE_FILE_UPLOAD_LOG, deleteFileIds);
+
+        //외부 스토리지 삭제
+        List<Long> successfullyDeletedIds = new ArrayList<>();
+        List<String> deleteFailedFilenames = new ArrayList<>();
+        for (File file : files) {
+            try {
+                fileStorage.delete(file.getPath(), file.getName());
+                successfullyDeletedIds.add(file.getId());
+            } catch (Exception e) {
+                log.error("파일 스토리지에서 파일 삭제 실패: {}, 오류: {}", file.getId(), e.getMessage(), e);
+                deleteFailedFilenames.add(file.getOriginalName());
+            }
+        }
+
+        //성공적으로 외부 스토리지에 삭제된 파일들의 메타데이터만 삭제
+        if (!successfullyDeletedIds.isEmpty()) {
+            fileRepository.hardDeleteAllByIdIn(successfullyDeletedIds);
+            log.info("공지사항 첨부 파일 {}개를 DB에서 성공적으로 삭제했습니다.", successfullyDeletedIds.size());
+        }
+        return deleteFailedFilenames;
+    }
+
 
     private static File createNoticeFile(final Notice notice, final FileSource fileSource, final String path) {
         return File.createNoticeFile(
@@ -69,5 +105,4 @@ public class NoticeFileService {
         //ex) "/notice/pdf"
         return "/notice/" + fileSource.getExtension().getExtension();
     }
-
 }

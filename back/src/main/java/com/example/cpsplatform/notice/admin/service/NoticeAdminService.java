@@ -32,4 +32,14 @@ public class NoticeAdminService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 접근입니다."));
         return noticeRepository.save(Notice.of(title,content,member));
     }
+
+    @Transactional
+    public Notice modify(final Long noticeId, final String title, final String content, final String username) {
+        log.info("{} 관리자({})님이 \"{}\" 공지사항을 수정합니다.",
+                NOTICE_ADMIN_LOG, username, title);
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new IllegalArgumentException("수정할 공지사항이 존재하지 않습니다."));
+        notice.modify(title,content);
+        return notice;
+    }
 }
