@@ -5,6 +5,7 @@ import logo from '../../styles/images/trophy.png'
 import { Link } from 'react-router-dom'
 import apiClient from "../../templates/apiClient";
 import axios from "axios";
+import {FaUser} from "react-icons/fa";
 const MainHeader = ({underbarWidth = "75%"}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("isAuthenticated"));
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
@@ -47,8 +48,11 @@ const MainHeader = ({underbarWidth = "75%"}) => {
         <div className="main-header-container">
             <div className="main-header-top">
                 <div className="main-header-menu">
+                    <div className="main-header-user-welcome">
+                        <FaUser/>
+                        <span>{userName}님 환영합니다</span>
+                    </div>
                     <div className="main-header-menu-item">
-                        {userName && <p className="main-header-menu-item-text">{userName}님 환영합니다.</p>}
                         <Link to="/" className="main-header-menu-item-text">HOME</Link>
                         <div className="main-header-menu-item-line"></div>
                     </div>
@@ -59,13 +63,13 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                                 <div className="main-header-menu-item-line"></div>
                             </div>
                             <div className="main-header-menu-item">
-                            <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
+                                <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
                                 {isAdmin === 'true' && <div className="main-header-menu-item-line"></div>}
                             </div>
                             {isAdmin === 'true' &&
-                            <div className="main-header-menu-item">
-                            <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
-                            </div>
+                                <div className="main-header-menu-item">
+                                    <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
+                                </div>
                             }
                         </>}
                     {(isAuthenticated === 'true' || isAdmin === 'true') &&
