@@ -165,7 +165,12 @@ const TeamList = () => {
 
     const handleBulkPass = () => {
         console.log("합격 처리할 팀 ID:", checkedTeamIds);
+        apiClient.patch(`/api/admin/contests/${contestId}/winners`, {teamIds: checkedTeamIds})
+            .then((res)=>{
+                alert('합격자 선정 완료');
 
+            })
+            .catch((err)=>{})
         // 여기에서 API 호출 등 합격 처리 로직 수행
     };
 
