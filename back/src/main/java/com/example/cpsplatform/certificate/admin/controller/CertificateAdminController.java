@@ -33,7 +33,7 @@ public class CertificateAdminController {
 
     @AdminLog
     @GetMapping("/api/admin/certificates/search")
-    public ApiResponse<AdminSearchCertificateResponse> deleteCertificate(@RequestParam(value = "page",defaultValue = "0") int page,
+    public ApiResponse<AdminSearchCertificateResponse> searchCertificate(@RequestParam(value = "page",defaultValue = "0") int page,
                                                                     @RequestParam(value = "page_size",defaultValue = "10") int pageSize,
                                                                     @RequestParam(value = "order_type",defaultValue = "createdAt") String orderType,
                                                                     @RequestParam(value = "direction",defaultValue = "asc") String direction,

@@ -4,7 +4,10 @@ import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -26,4 +29,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByLoginId(String LoginId);
 
+    @Query("select mt.member from MemberTeam mt where mt.team.id = :teamId")
+    List<Member> findAllByTeamId(@Param("teamId") Long teamId);
 }

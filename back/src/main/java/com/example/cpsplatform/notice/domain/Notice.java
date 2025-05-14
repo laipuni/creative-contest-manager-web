@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -73,4 +74,8 @@ public class Notice extends BaseEntity {
         files.clear();
     }
 
+    public void modify(final String title, final String content) {
+        this.title = StringUtils.hasText(title) ? title : this.title;
+        this.content = StringUtils.hasText(content) ? content : this.content;
+    }
 }
