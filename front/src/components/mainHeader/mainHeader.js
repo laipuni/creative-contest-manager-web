@@ -48,16 +48,18 @@ const MainHeader = ({underbarWidth = "75%"}) => {
         <div className="main-header-container">
             <div className="main-header-top">
                 <div className="main-header-menu">
-                    <div className="main-header-user-welcome">
-                        <FaUser/>
-                        <span>{userName}님 환영합니다</span>
-                    </div>
-                    <div className="main-header-menu-item">
-                        <Link to="/" className="main-header-menu-item-text">HOME</Link>
-                        <div className="main-header-menu-item-line"></div>
-                    </div>
+                    {(isAuthenticated === 'true' || isAdmin === 'true') &&
+                        <div className="main-header-user-welcome">
+                            <FaUser/>
+                            <span>{userName}님 환영합니다</span>
+                        </div>
+                    }
                     {isAuthenticated !== 'true' && isAdmin !== 'true' &&
-                        <>
+                        <div className="main-header-menu" style={{justifyContent: 'flex-end'}}>
+                            <div className="main-header-menu-item">
+                                <Link to="/" className="main-header-menu-item-text">HOME</Link>
+                                <div className="main-header-menu-item-line"></div>
+                            </div>
                             <div className="main-header-menu-item">
                                 <Link to="/member/login" className="main-header-menu-item-text">LOGIN</Link>
                                 <div className="main-header-menu-item-line"></div>
@@ -66,14 +68,13 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                                 <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
                                 {isAdmin === 'true' && <div className="main-header-menu-item-line"></div>}
                             </div>
-                            {isAdmin === 'true' &&
-                                <div className="main-header-menu-item">
-                                    <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
-                                </div>
-                            }
-                        </>}
+                        </div>}
                     {(isAuthenticated === 'true' || isAdmin === 'true') &&
                         <>
+                            <div className="main-header-menu-item">
+                                <Link to="/" className="main-header-menu-item-text">HOME</Link>
+                                <div className="main-header-menu-item-line"></div>
+                            </div>
                             <div className="main-header-menu-item">
                                 <p onClick={handleLogout} style={{cursor: 'pointer'}}
                                    className="main-header-menu-item-text">LOGOUT</p>
