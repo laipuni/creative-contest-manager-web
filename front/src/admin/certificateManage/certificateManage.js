@@ -39,7 +39,7 @@ const CertificateManage = () => {
     const [searchType, setSearchType] = useState('loginId');
     const [keyword, setKeyword] = useState('');
     const [searchKeyword, setSearchKeyword] = useState('');
-    const [searched, setSearched] = useState(false);
+    const [edited, setEdited] = useState(false);
 
     //증명서 목록 불러오기
     useEffect(() => {
@@ -52,13 +52,24 @@ const CertificateManage = () => {
                 setCertificates(res.data.data.certificateDtoList);
                 setLastPage(res.data.data.lastPage);
             });
-    }, [currentPage, searched]);
+    }, [currentPage, edited]);
 
 
     const handleSearchCertificates = () => {
         setSearchKeyword(keyword);
         setCurrentPage(1);
-        setSearched(!searched);
+        setEdited(!edited);
+    }
+
+    const handleDeleteCertificate = (certificateId) => {
+        apiClient.delete('/api/admin/certificates', {data: certificateId})
+            .then((res) => {
+                alert('증명서 삭제 완료');
+                setEdited(!edited);
+            })
+            .catch((err) => {
+
+            })
     }
 
     return (
@@ -99,6 +110,14 @@ const CertificateManage = () => {
                             <div className="admin-teamList-body-title-textbox">
                                 <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>증명서 유형</p>
                             </div>
+                            <div className="admin-teamList-body-verticalLine"></div>
+                            <div className="admin-teamList-body-title-textbox">
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>유저 id</p>
+                            </div>
+                            <div className="admin-teamList-body-verticalLine"></div>
+                            <div className="admin-teamList-body-title-textbox">
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>삭제</p>
+                            </div>
                         </div>
                         {certificates.map((cert) => (
                             <div
@@ -115,13 +134,19 @@ const CertificateManage = () => {
                                 <div className="admin-teamList-body-title-textbox">
                                     <p className="admin-teamList-body-title-text">{cert.certificateType === 'FINAL' ? '본선' : '예선'}</p>
                                 </div>
+                                <div className="admin-teamList-body-verticalLine"></div>
+                                <div className="admin-teamList-body-title-textbox" style={{justifyContent: 'center'}}>
+                                    <button className="admin-teamList-body-title-text"
+                                            onClick={()=> {handleDeleteCertificate(cert.certificateId)}}
+                                            style={{width: 'fit-content', height: "fit-content", padding: '10px 5px'}}>X</button>
+                                </div>
                             </div>
                         ))}
 
                     </div>
                     <div className="pastTest-pagination-container">
                         <div className="pastTest-pagination">
-                        {lastPage !== 0 && <Pagination
+                            {lastPage !== 0 && <Pagination
                                 totalPages={lastPage}
                                 currentPage={currentPage}
                                 onPageChange={setCurrentPage}
