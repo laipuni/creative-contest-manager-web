@@ -129,6 +129,9 @@ const TestManage = () => {
                         .catch((err)=>{})
 
                 }
+                else{
+                    alert(err.response.data.message);
+                }
             })
     };
 
@@ -193,7 +196,7 @@ const TestManage = () => {
     };
 
 
-    // 날짜 포맷을 'yyyy.MM.dd'로 변환
+    // 날짜 포맷을 'yyyy.MM.dd HH:mm'로 변환
     const formatDate = (date) => {
         if (typeof date === 'string') {
             // 이미 포맷처리 된 경우
@@ -203,32 +206,36 @@ const TestManage = () => {
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
             const d = String(date.getDate()).padStart(2, '0');
-            return `${y}.${m}.${d}`;
+            const h = String(date.getHours()).padStart(2, '0');
+            const min = String(date.getMinutes()).padStart(2, '0');
+            return `${y}.${m}.${d} ${h}:${min}`;
         }
     };
 
-    // 날짜를 UTC+9 형태로 변환
-    const toISOStringWithUTC9 = (value) => {
-        // 이미 문자열인 경우 (ex. "2025.05.15")
-        if (typeof value === 'string') {
-            // 문자열 -> Date로 파싱 (format: yyyy.MM.dd 기준)
-            const [year, month, day] = value.split('.').map(Number);
-            if (!year || !month || !day) return value; // 파싱 실패 시 그대로 반환
 
-            const localDate = new Date(year, month - 1, day);
+    // 날짜를 UTC+9 기준 ISO 문자열로 변환
+    const toISOStringWithUTC9 = (value) => {
+        if (typeof value === 'string') {
+            // 문자열 -> Date로 파싱 (format: yyyy.MM.dd or yyyy.MM.dd HH:mm)
+            const [datePart, timePart = '00:00'] = value.split(' ');
+            const [year, month, day] = datePart.split('.').map(Number);
+            const [hour, minute] = timePart.split(':').map(Number);
+
+            if (!year || !month || !day) return value;
+
+            const localDate = new Date(year, month - 1, day, hour || 0, minute || 0);
             const utcDate = new Date(localDate.getTime() + 9 * 60 * 60 * 1000);
             return utcDate.toISOString();
         }
 
-        // Date 객체인 경우
         if (value instanceof Date) {
             const utcDate = new Date(value.getTime() + 9 * 60 * 60 * 1000);
             return utcDate.toISOString();
         }
 
-        // 다른 타입이면 그대로 반환
         return value;
     };
+
 
 
 
@@ -551,7 +558,11 @@ const TestManage = () => {
                                                                     selectsStart
                                                                     startDate={tempRegisterStartDate}
                                                                     endDate={tempRegisterEndDate}
-                                                                    dateFormat="yyyy.MM.dd"
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    showTimeSelect
+                                                                    timeFormat="HH:mm"
+                                                                    timeIntervals={30}
+                                                                    timeCaption="시간"
                                                                 />
                                                                 <span className="testManage-tilde">~</span>
                                                                 <DatePicker
@@ -561,7 +572,11 @@ const TestManage = () => {
                                                                     startDate={tempRegisterStartDate}
                                                                     endDate={tempRegisterEndDate}
                                                                     minDate={tempRegisterStartDate}
-                                                                    dateFormat="yyyy.MM.dd"
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    showTimeSelect
+                                                                    timeFormat="HH:mm"
+                                                                    timeIntervals={30}
+                                                                    timeCaption="시간"
                                                                 />
                                                             </div>
                                                         </div>
@@ -575,7 +590,11 @@ const TestManage = () => {
                                                                     selectsStart
                                                                     startDate={tempStartDate}
                                                                     endDate={tempEndDate}
-                                                                    dateFormat="yyyy.MM.dd"
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    showTimeSelect
+                                                                    timeFormat="HH:mm"
+                                                                    timeIntervals={30}
+                                                                    timeCaption="시간"
                                                                 />
                                                                 <span className="testManage-tilde">~</span>
                                                                 <DatePicker
@@ -585,7 +604,11 @@ const TestManage = () => {
                                                                     startDate={tempStartDate}
                                                                     endDate={tempEndDate}
                                                                     minDate={tempStartDate}
-                                                                    dateFormat="yyyy.MM.dd"
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    showTimeSelect
+                                                                    timeFormat="HH:mm"
+                                                                    timeIntervals={30}
+                                                                    timeCaption="시간"
                                                                 />
                                                             </div>
                                                         </div>
