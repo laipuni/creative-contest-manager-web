@@ -19,6 +19,7 @@ import TeamList from "../admin/teamList/teamList";
 import TestManage from "../admin/testManage/testManage";
 import FindIdPage from "../auth/login/member/findIdPage";
 import ResetPasswordPage from "../auth/login/member/resetPwPage";
+import Certificates from "../admin/certificates/certificates";
 
 function AppRoutes() {
     const location = useLocation();
@@ -73,6 +74,7 @@ function AppRoutes() {
             <Route path="qna" element={<QnA/>}></Route>
             <Route path="admin/teamList" element={<TeamList />}></Route>
             <Route path="admin/testManage" element={<TestManage />}></Route>
+            <Route path="admin/certificates" element={<Certificates />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );
