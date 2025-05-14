@@ -70,18 +70,19 @@ const RegisterInfo = () => {
                                     <div className="registerInfo-bot-content">
                                         <p className="registerInfo-bot-text">{teamInfo.teamName}</p>
                                         {(() => {
-                                            const members = teamInfo.memberIds.filter(id => id !== teamInfo.leaderLoginId);
-                                            const filledMembers = [...members, ...Array(2 - members.length).fill('x')];
-                                            return filledMembers.map((id, index) => (
-                                                <p className="registerInfo-bot-text" key={index}>{id}</p>
+                                            const members = teamInfo.members.filter(member => member.name !== teamInfo.leaderName);
+                                            const filledMembers = [...members, ...Array(2 - members.length).fill({ name: 'x' })];
+                                            return filledMembers.map((member, index) => (
+                                                <p className="registerInfo-bot-text" key={index}>{member.name}</p>
                                             ));
                                         })()}
                                         <p className="registerInfo-bot-text">
                                             {format(new Date(teamInfo.createdAt), 'yyyy-MM-dd')}
                                         </p>
-                                        <p className="registerInfo-bot-text">{teamInfo.leaderLoginId}</p>
+                                        <p className="registerInfo-bot-text">{teamInfo.leaderName}</p>
                                     </div>
                                 )}
+
                                 <div className="registerInfo-bot-buttonbox">
                                     {teamInfo &&
                                         <Link to="/register/team" state={{teamInfo}} className="registerInfo-bot-button" >
