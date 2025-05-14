@@ -44,7 +44,7 @@ const CertificateManage = () => {
     //증명서 목록 불러오기
     useEffect(() => {
         const params = searchKeyword
-            ? { page: currentPage - 1, keyword: searchKeyword, type: searchType }
+            ? { page: currentPage - 1, keyword: searchKeyword, search_type: searchType }
             : { page: currentPage - 1 };
 
         apiClient.get('/api/admin/certificates/search', { params })
