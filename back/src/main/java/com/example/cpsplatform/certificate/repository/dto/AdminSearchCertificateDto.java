@@ -19,13 +19,7 @@ public class AdminSearchCertificateDto {
     private CertificateType certificateType;
     private LocalDateTime createdAt;
     private String teamName;
-
-    public static AdminSearchCertificateDto of(final Certificate certificate){
-        return AdminSearchCertificateDto.builder()
-                .certificateId(certificate.getId())
-                .title(certificate.getContest().getTitle())
-                .teamName(certificate.getTeam().getName())
-                .createdAt(certificate.getCreatedAt())
-                .build();
-    }
+    private String loginId;
+    private String name;
+    private int season;
 }
