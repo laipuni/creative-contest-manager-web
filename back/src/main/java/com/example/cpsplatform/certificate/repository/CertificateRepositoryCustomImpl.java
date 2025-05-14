@@ -115,7 +115,7 @@ public class CertificateRepositoryCustomImpl implements CertificateRepositoryCus
      */
     @Override
     public AdminSearchCertificateResponse SearchAdminCertificate(final AdminSearchCertificateCond cond) {
-        log.info("확인증({})을 리스트 조회(page : {}, page = {}, order = {})", cond.getPage(),cond.getPageSize(),cond.getOrderType());
+        log.info("확인증({})을 리스트 조회(page : {}, pageSize = {}, order = {})", cond.getPage(),cond.getPageSize(),cond.getOrderType());
 
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
         List<AdminSearchCertificateDto> result = queryFactory.select(
@@ -124,7 +124,10 @@ public class CertificateRepositoryCustomImpl implements CertificateRepositoryCus
                                 certificate.title,
                                 certificate.certificateType,
                                 certificate.createdAt,
-                                team.name
+                                team.name,
+                                member.loginId,
+                                member.name,
+                                contest.season
                         )
                 )
                 .from(certificate)

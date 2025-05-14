@@ -176,6 +176,9 @@ class CertificateAdminControllerTest {
                         .certificateType(CertificateType.FINAL)
                         .title("본선 참여 진출증")
                         .teamName("A팀")
+                        .loginId("loginId")
+                        .name("name")
+                        .season(16)
                         .createdAt(LocalDateTime.now())
                         .build()
         );
@@ -212,7 +215,10 @@ class CertificateAdminControllerTest {
                 .andExpect(jsonPath("$.data.certificateDtoList[0].certificateType").value("FINAL"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].title").value("본선 참여 진출증"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].teamName").value("A팀"))
-                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists());
+                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists())
+                .andExpect(jsonPath("$.data.certificateDtoList[0].loginId").value("loginId"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].name").value("name"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].season").value(16));
     }
 
     @WithMockUser(roles = "ADMIN")
@@ -226,6 +232,9 @@ class CertificateAdminControllerTest {
                         .certificateType(CertificateType.FINAL)
                         .title("본선 참여 진출증")
                         .teamName("A팀")
+                        .loginId("loginId")
+                        .name("name")
+                        .season(16)
                         .createdAt(LocalDateTime.now())
                         .build()
         );
@@ -262,7 +271,10 @@ class CertificateAdminControllerTest {
                 .andExpect(jsonPath("$.data.certificateDtoList[0].certificateType").value("FINAL"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].title").value("본선 참여 진출증"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].teamName").value("A팀"))
-                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists());
+                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists())
+                .andExpect(jsonPath("$.data.certificateDtoList[0].loginId").value("loginId"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].name").value("name"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].season").value(16));
     }
 
     @WithMockUser(roles = "ADMIN")
@@ -276,6 +288,9 @@ class CertificateAdminControllerTest {
                         .certificateType(CertificateType.PRELIMINARY)
                         .title("예선 확인증")
                         .teamName("A팀")
+                        .loginId("loginId")
+                        .name("name")
+                        .season(16)
                         .createdAt(LocalDateTime.now())
                         .build()
         );
@@ -312,7 +327,10 @@ class CertificateAdminControllerTest {
                 .andExpect(jsonPath("$.data.certificateDtoList[0].certificateType").value("PRELIMINARY"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].title").value("예선 확인증"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].teamName").value("A팀"))
-                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists());
+                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists())
+                .andExpect(jsonPath("$.data.certificateDtoList[0].loginId").value("loginId"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].name").value("name"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].season").value(16));
     }
 
     @WithMockUser(roles = "ADMIN")
@@ -326,6 +344,9 @@ class CertificateAdminControllerTest {
                         .certificateType(CertificateType.PRELIMINARY)
                         .title("예선 확인증")
                         .teamName("A팀")
+                        .loginId("loginId")
+                        .name("name")
+                        .season(16)
                         .createdAt(LocalDateTime.now())
                         .build()
         );
@@ -360,6 +381,10 @@ class CertificateAdminControllerTest {
                 .andExpect(jsonPath("$.data.certificateDtoList[0].certificateType").value("PRELIMINARY"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].title").value("예선 확인증"))
                 .andExpect(jsonPath("$.data.certificateDtoList[0].teamName").value("A팀"))
-                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists());
+                .andExpect(jsonPath("$.data.certificateDtoList[0].createdAt").exists())
+                .andExpect(jsonPath("$.data.certificateDtoList[0].loginId").value("loginId"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].name").value("name"))
+                .andExpect(jsonPath("$.data.certificateDtoList[0].season").value(16));
+
     }
 }
