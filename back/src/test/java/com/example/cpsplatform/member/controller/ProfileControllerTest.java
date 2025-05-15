@@ -34,6 +34,7 @@ import static com.example.cpsplatform.member.domain.organization.school.StudentT
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -747,6 +748,31 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
                 .andExpect(jsonPath("$.message").value("세션이 존재하지 않습니다."))
                 .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("유저의 간단 프로필 정보를 요청받아 정상정으로 응답한다.")
+    @Test
+    void getUserInfo() throws Exception {
+        //given
+        String loginId = "loginId";
+        String name = "name";
+        Member member = Member.builder().loginId(loginId).name(name).password("password").role(Role.USER).build();
+        SecurityMember securityMember = new SecurityMember(member);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(securityMember, null, securityMember.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        //when
+        //then
+        mockMvc.perform(
+                        get("/api/members/user-info")
+                                .with(csrf())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(OK.value()))
+                .andExpect(jsonPath("$.data.loginId").value(loginId))
+                .andExpect(jsonPath("$.data.name").value(name));
     }
 
     private MyProfileUpdateRequest getMyProfileUpdateRequest() {

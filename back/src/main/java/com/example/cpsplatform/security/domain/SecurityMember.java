@@ -11,10 +11,12 @@ import java.util.List;
 public class SecurityMember extends User {
 
     private Long userSeq;
+    private String name;
 
     public SecurityMember(final Member member) {
         super(member.getLoginId(), member.getPassword(), getAuthorize(member));
         this.userSeq = member.getId();
+        this.name = member.getName();
     }
 
     private static List<SimpleGrantedAuthority> getAuthorize(Member member){
