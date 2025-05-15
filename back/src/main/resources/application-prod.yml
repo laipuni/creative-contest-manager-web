@@ -16,6 +16,7 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
+      useSsl: false
       ssl:
         enabled: true #TLS 설정으로
 
