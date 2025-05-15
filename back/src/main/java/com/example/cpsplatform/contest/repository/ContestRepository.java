@@ -24,15 +24,16 @@ public interface ContestRepository extends JpaRepository<Contest,Long> {
     Optional<Contest> findLatestContest();
 
     //임시 삭제인 대회의 정보를 단건 조회 쿼리
-    @Query(value = "SELECT * FROM Contest WHERE id = :id AND deleted = true", nativeQuery = true)
+    @Query(value = "SELECT * FROM contest c WHERE id = :id AND deleted = true", nativeQuery = true)
     Optional<Contest> findDeletedContestById(@Param("id") Long contestId);
 
     //임시 삭제인 대회의 정보를 리스트로 받아오는 쿼리
-    @Query(value = "SELECT * FROM Contest WHERE deleted = true", nativeQuery = true)
+    @Query(value = "SELECT * FROM contest WHERE deleted = true", nativeQuery = true)
     List<Contest> findDeletedContestById();
 
+    //임시 삭제 상태인 대회를 완전히 삭제하는 쿼리
     @Modifying
-    @Query(value = "delete from Contest where id = :contestId", nativeQuery = true)
+    @Query(value = "delete from contest where id = :contestId", nativeQuery = true)
     void hardDeleteById(@Param("contestId") Long contestId);
 }
 
