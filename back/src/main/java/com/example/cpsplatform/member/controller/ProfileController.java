@@ -8,6 +8,7 @@ import com.example.cpsplatform.auth.controller.response.ProfilePasswordVerifyRes
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.member.controller.request.MyProfileUpdateRequest;
 import com.example.cpsplatform.member.controller.response.MyProfileResponse;
+import com.example.cpsplatform.member.controller.response.UserInfoResponse;
 import com.example.cpsplatform.member.service.ProfileService;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import jakarta.validation.Valid;
@@ -85,4 +86,13 @@ public class ProfileController {
         return ApiResponse.ok(null);
     }
 
+    /**
+     * 유저의 프로필 정보를 받는 api
+     * @param securityMember 로그인 정보가 들어있는 파라미터
+     * @return 이름, 아이디 값을 반환한다.
+     */
+    @GetMapping("/api/members/user-info")
+    public ApiResponse<UserInfoResponse> getUserInfo(@AuthenticationPrincipal SecurityMember securityMember){
+        return ApiResponse.ok(UserInfoResponse.of(securityMember.getUsername(), securityMember.getName()));
+    }
 }
