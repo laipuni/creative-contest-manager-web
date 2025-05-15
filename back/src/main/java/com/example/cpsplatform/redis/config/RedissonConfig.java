@@ -18,12 +18,16 @@ public class RedissonConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
+    @Value("${spring.data.redis.useSsl}")
+    private boolean useSsl;
+
     @Bean
     public RedissonClient redissonClient() {
+        String protocol = useSsl ? "rediss" : "redis";
         Config config = new Config();
         //Redis 서버 연결 설정
         config.useSingleServer()
-                .setAddress(String.format("rediss://%s:%d",redisHost,redisPort));
+                .setAddress(String.format("%s://%s:%d",protocol,redisHost,redisPort));
         //직렬화 Jackson JSON 방식 설정
         config.setCodec(new JsonJacksonCodec());
         return Redisson.create(config);
