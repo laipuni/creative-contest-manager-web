@@ -14,7 +14,14 @@ export default function DeletedContestList({ onRestore, onHardDelete, onClose })
             })
             .catch((err) => {
             });
-    }, [isEdited, deletedContests]);
+    }, []);
+
+    const handleRestoreClick = (season) => {
+        onRestore(season).then(() => {
+            setDeletedContests((prev) => prev.filter(c => c.season !== season));
+        });
+    };
+
 
     return (
         <div className="deletedmodal-container">
@@ -42,7 +49,7 @@ export default function DeletedContestList({ onRestore, onHardDelete, onClose })
                                 <button
                                     onClick={() => {
                                         setIsEdited(!isEdited);
-                                        onRestore(contest.season)}}
+                                        handleRestoreClick(contest.season)}}
                                     className="deletedmodal-restore"
                                 >
                                     복구

@@ -260,22 +260,22 @@ const TestManage = () => {
 
     //일정 복구
     const handleRestore = (season) => {
-        apiClient.get('/api/admin/contests/deleted')
+        return apiClient.get('/api/admin/contests/deleted')
             .then((res) => {
                 const matchedContest = res.data.data.deletedContestList.find(
                     (contest) => contest.season === Number(season)
                 );
                 const matchedContestId = matchedContest?.contestId;
-                apiClient.patch(`/api/admin/contests/${matchedContestId}/recover`)
-                    .then((res) => {
-                        alert('복구 완료');
-                        setIsDateModalOpen(false);
-                        setShowRestoreModal(false);
-                        setIsRegistered(!isRegistered);
-                    })
-                    .catch((err)=>{})
+                return apiClient.patch(`/api/admin/contests/${matchedContestId}/recover`);
             })
-    }
+            .then(() => {
+                alert('복구 완료');
+                setIsDateModalOpen(false);
+                setShowRestoreModal(false);
+                setIsRegistered(prev => !prev);
+            });
+    };
+
 
     //일정 삭제 - hard
     const handleHardDelete = (season) => {

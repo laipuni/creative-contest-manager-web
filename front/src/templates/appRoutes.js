@@ -9,7 +9,7 @@ import TestInfo from "../testRegister/testInfo/testInfo";
 import RegisterInfo from "../testRegister/registerInfo/registerInfo";
 import RegisterTeam from "../testRegister/registerInfo/registerTeam";
 import NotFound from "../notFound/notFound";
-import MyProfile from "../auth/myProfile";
+import MyProfile from "../auth/profile/myProfile";
 import TestSubmitInfo from "../testTake/realTest/testSubmitInfo";
 import TestSubmit from "../testTake/realTest/testSubmit";
 import PastTest from "../testTake/pastTest/pastTest";
@@ -20,6 +20,7 @@ import TestManage from "../admin/testManage/testManage";
 import FindIdPage from "../auth/login/member/findIdPage";
 import ResetPasswordPage from "../auth/login/member/resetPwPage";
 import CertificateManage from "../admin/certificateManage/certificateManage";
+import ProfileSelect from "../auth/profile/profileSelect";
 
 function AppRoutes() {
     const location = useLocation();
@@ -61,7 +62,8 @@ function AppRoutes() {
             <Route path="test/info" element={<TestInfo />}></Route>
             <Route path="register/info" element={<RegisterInfo />}></Route>
             <Route path="register/team" element={<RegisterTeam />}></Route>
-            <Route path="member/profile" element={<MyProfile />}></Route>
+            <Route path="member/profile" element={<ProfileSelect />}></Route>
+            <Route path="member/profile/edit" element={<MyProfile />}></Route>
             <Route path="test/realTest/info" element={<TestSubmitInfo />}></Route>
             <Route path="test/realTest/submit" element={<TestSubmit />}></Route>
             <Route path="test/pastTest" element={<PastTest />}></Route>
