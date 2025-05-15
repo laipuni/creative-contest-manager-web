@@ -5,13 +5,11 @@ import SubHeader from "../../../components/subHeader/subHeader";
 import locker from "../../../styles/images/locker.png"
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import apiClient from "../../../templates/apiClient";
-import FindIdModal from "../../../components/modals/findIdModal";
-import FindPwModal from "../../../components/modals/findPwModal";
+import FindIdPage from "./findIdPage";
+import FindPwModal from "./resetPwPage";
 const MemberLogin = () => {
     const [userId, setUserId] = useState('')
     const [password, setPassword] = useState('')
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isPwModalOpen, setIsPwModalOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const redirectPath = location.state?.from || '/';
@@ -32,11 +30,6 @@ const MemberLogin = () => {
                 alert(err.response.data.message);
             })
     }
-
-    function handleClose() {
-        setIsModalOpen(false);
-    }
-
 
     return (
         <div className="login-page-container">
@@ -67,14 +60,12 @@ const MemberLogin = () => {
                             />
                             <div className="login-forgotpw">
                                 <button type="button"
-                                        onClick={()=>{setIsModalOpen(true)}}
+                                        onClick={()=>{navigate('/member/login/findId')}}
                                         className="login-forgotpw-text">아이디 찾기</button>
-                                {isModalOpen && <FindIdModal onClose={handleClose} /> }
                                 <p className="login-forgotpw-text" style={{color: 'black'}}>/</p>
                                 <button type="button"
-                                        onClick={() => {setIsPwModalOpen(true)}}
+                                        onClick={() => {navigate('/member/login/resetPw')}}
                                         className="login-forgotpw-text">비밀번호 찾기</button>
-                                {isPwModalOpen && <FindPwModal onClose={()=>{setIsPwModalOpen(false)}}/>}
                             </div>
                             <button type="submit" className="login-button">로그인</button>
                         </div>

@@ -1,0 +1,19 @@
+.scrolltop-button {
+    position: fixed;
+    bottom: 30px;
+    right: 50px;
+    background-color: #bbbbbb;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: background-color 0.2s ease;
+}
+
+.scrolltop-button:hover {
+    background-color: #0056b3;
+}

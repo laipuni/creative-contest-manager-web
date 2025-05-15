@@ -49,31 +49,28 @@ const MyProfile = () => {
     /*--------------학년(부서)------------------------*/
     const [detailJob, setDetailJob] = useState('');
 
-    /*-----------------정보 예시(추후 삭제)-------------*/
+    /*-----------------정보 불러오기-------------*/
     useEffect(() => {
-        setName('홍길동');
-        setBirthday('20000000');
-        setPostcode('11111');
-        setAddress('대구광역시 ...')
-        setEmail('abc@gmail.com')
-        setPrefix('010');
-        setMiddle('0000');
-        setLast('0000');
-        setDetailAddress('xx아파트');
-        setJob('초등학생');
-        setDetailJob(2);
-        setGender('MAN');
-        setSelectedSchool({schoolName: 'xx초등학교', region: '', estType: ''})
-    }, []);
-    /*------------------정보 불러오기-----------------
-    useEffect(() => {
-        apiClient.get('/api/vi/profile')
+        apiClient.get('/api/members/my-profile')
             .then((res) => {
-
+                const profile = res.data.data;
+                setName(profile.name);
+                setBirthday(profile.birth.replace(/-/g, ""));
+                setPostcode(profile.zipCode);
+                setAddress(profile.street);
+                setEmail(profile.email);
+                setPrefix(profile.phoneNumber.slice(0,3));
+                setMiddle(profile.phoneNumber.slice(3,7));
+                setLast(profile.phoneNumber.slice(7,11));
+                setDetailAddress(profile.detail);
+                setJob(profile.organizationType);
+                setGender(profile.gender === '남자' ? 'MAN' : 'WOMAN');
+                setWorkPlace(profile.organizationName);
+                setSelectedSchool({schoolName: profile.organizationName, region: '', estType: ''});
+                setDetailJob(profile.position);
             })
             .catch((err)=>{})
     }, []);
-    */
 
     /*----------------정보 수정------------------------*/
     const handleSignup = (e) => {

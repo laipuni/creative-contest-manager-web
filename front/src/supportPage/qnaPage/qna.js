@@ -28,11 +28,7 @@ const QnA = () => {
             const windowHeight = window.innerHeight;
             const docHeight = document.documentElement.scrollHeight;
 
-            console.log("scrollY + windowHeight:", scrollY + windowHeight);
-            console.log("docHeight:", docHeight);
-
             const atBottom = scrollY + windowHeight >= docHeight - 200;
-            console.log("atBottom:", atBottom);
             setShowScrollButton(!atBottom);
         };
 

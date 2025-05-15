@@ -4,6 +4,7 @@ import AdminHeader from "../components/adminHeader/adminHeader";
 import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import "../../styles/pagination.css"
 import apiClient from "../../templates/apiClient";
+import {useNavigate} from "react-router-dom";
 
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
@@ -41,6 +42,7 @@ const TeamList = () => {
     const [contestId, setContestId] = useState(null);
     const [lastPage, setLastPage] = useState(0);
     const [checkedTeamIds, setCheckedTeamIds] = useState([]);
+    const navigate = useNavigate();
 
     //회차 정보 받아오기
     useEffect(() => {
@@ -49,7 +51,7 @@ const TeamList = () => {
         let allContests = [];
 
         const fetchContests = () => {
-            apiClient.get(`/api/admin/contests?page=${page}`)
+            apiClient.get(`/api/admin/contests?page=${page}`, {skipErrorHandler: true})
                 .then((res) => {
                     const data = res.data.data;
                     lastPage = data.lastPage;
@@ -70,6 +72,13 @@ const TeamList = () => {
                     }
                 })
                 .catch((err) => {
+                    if(err.response.status === 401){
+                        alert('권한이 없습니다.');
+                        navigate('/');
+                    }
+                    else{
+                        alert(err.response.data.message);
+                    }
                 });
         };
 
@@ -165,7 +174,12 @@ const TeamList = () => {
 
     const handleBulkPass = () => {
         console.log("합격 처리할 팀 ID:", checkedTeamIds);
+        apiClient.patch(`/api/admin/contests/${contestId}/winners`, {teamIds: checkedTeamIds})
+            .then((res)=>{
+                alert('합격자 선정 완료');
 
+            })
+            .catch((err)=>{})
         // 여기에서 API 호출 등 합격 처리 로직 수행
     };
 

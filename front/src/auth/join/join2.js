@@ -122,6 +122,7 @@ const Join2 = () => {
                     //로그인 바로 진행
                     apiClient.post('/api/auth/login', {username: userId, password})
                         .then((res)=>{
+                            localStorage.setItem("isAuthenticated", "true");
                             navigate('/');
                         })
                         .catch((err)=>{})

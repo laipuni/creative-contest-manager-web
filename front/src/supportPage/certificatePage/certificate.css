@@ -25,3 +25,14 @@
     text-align: center;
     color: #000000;
 }
+
+.certificate-download-button {
+    width: 100%;
+    font-size: 12px;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-decoration: underline;
+    cursor: pointer;
+}

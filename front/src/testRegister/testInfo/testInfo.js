@@ -24,10 +24,10 @@ const TestInfo = () => {
                   const start = new Date(res.data.data.startTime);
                   const end = new Date(res.data.data.endTime);
                   setSeason(res.data.data.season);
-                  setStartDate(format(start, 'yyyy-MM-dd'));
-                  setEndDate(format(end, 'yyyy-MM-dd'));
-                  setRegisterStartDate(format(registerStart, 'yyyy-MM-dd'));
-                  setRegisterEndDate(format(registerEnd, 'yyyy-MM-dd'));
+                  setStartDate(format(start, 'yyyy.MM.dd HH:mm'));
+                  setEndDate(format(end, 'yyyy.MM.dd HH:mm'));
+                  setRegisterStartDate(format(registerStart, 'yyyy.MM.dd HH:mm'));
+                  setRegisterEndDate(format(registerEnd, 'yyyy.MM.dd HH:mm'));
               }
           });
     }, [])
