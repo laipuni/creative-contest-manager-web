@@ -32,7 +32,7 @@ const RegisterInfo = () => {
 
     const handleDeleteTeam = () => {
         apiClient.delete('/api/teams', {
-            data: {teamId: teamInfo.teamId}, skipErrorHandler: true})
+            data: {teamId: teamInfo.teamId, contestId: contestInfo.contestId}, skipErrorHandler: true})
             .then((res)=>{
                 setTeamInfo(null);
             })
@@ -66,15 +66,23 @@ const RegisterInfo = () => {
                                     <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">팀장</p>
                                 </div>
-                                {teamInfo && <div className="registerInfo-bot-content">
-                                    <p className="registerInfo-bot-text">{teamInfo.teamName}</p>
-                                    {teamInfo.memberIds.filter(id => id !== teamInfo.leaderLoginId)
-                                        .map((id, index) => (
-                                        <p className="registerInfo-bot-text" key={index+1}>{id}</p>
-                                    ))}
-                                    <p className="registerInfo-bot-text">{format(new Date(teamInfo.createdAt), 'yyyy-MM-dd')}</p>
-                                    <p className="registerInfo-bot-text">{teamInfo.leaderLoginId}</p>
-                                </div>}
+                                {teamInfo && (
+                                    <div className="registerInfo-bot-content">
+                                        <p className="registerInfo-bot-text">{teamInfo.teamName}</p>
+                                        {(() => {
+                                            const members = teamInfo.members.filter(member => member.name !== teamInfo.leaderName);
+                                            const filledMembers = [...members, ...Array(2 - members.length).fill({ name: 'x' })];
+                                            return filledMembers.map((member, index) => (
+                                                <p className="registerInfo-bot-text" key={index}>{member.name}</p>
+                                            ));
+                                        })()}
+                                        <p className="registerInfo-bot-text">
+                                            {format(new Date(teamInfo.createdAt), 'yyyy-MM-dd')}
+                                        </p>
+                                        <p className="registerInfo-bot-text">{teamInfo.leaderName}</p>
+                                    </div>
+                                )}
+
                                 <div className="registerInfo-bot-buttonbox">
                                     {teamInfo &&
                                         <Link to="/register/team" state={{teamInfo}} className="registerInfo-bot-button" >

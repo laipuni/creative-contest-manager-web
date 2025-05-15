@@ -5,9 +5,32 @@ import logo from '../../styles/images/trophy.png'
 import { Link } from 'react-router-dom'
 import apiClient from "../../templates/apiClient";
 import axios from "axios";
+import {FaUser} from "react-icons/fa";
 const MainHeader = ({underbarWidth = "75%"}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("isAuthenticated"));
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
+    const [userName, setUserName] = useState(null);
+    useEffect(() => {
+        if(isAuthenticated || isAdmin) {
+            apiClient.get('/api/members/my-profile', {skipErrorHandler: true})
+                .then((res) => {
+                    setUserName(res.data.data.name);
+                })
+                .catch((err) => {
+                    if(err.response.status === 401) {
+                        localStorage.removeItem("isAuthenticated");
+                        localStorage.removeItem("isAdmin");
+                        setIsAuthenticated(false);
+                        setIsAdmin(false);
+                    }
+                    else{
+                        alert(err.response.data.message);
+                    }
+                });
+        }
+    }, []);
+
+
     function handleLogout() {
         apiClient.post('/api/auth/logout')
             .then((res)=>{
@@ -19,6 +42,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
                     localStorage.removeItem("isAdmin");
                     setIsAdmin('false');
                 }
+                setUserName(null);
                 window.location.reload();
                 //csrf 토큰 다시 얻어오기
                 axios.get("/api/csrf")
@@ -33,28 +57,33 @@ const MainHeader = ({underbarWidth = "75%"}) => {
         <div className="main-header-container">
             <div className="main-header-top">
                 <div className="main-header-menu">
-                    <div className="main-header-menu-item">
-                        <Link to="/" className="main-header-menu-item-text">HOME</Link>
-                        <div className="main-header-menu-item-line"></div>
-                    </div>
+                    {(isAuthenticated === 'true' || isAdmin === 'true') &&
+                        <div className="main-header-user-welcome">
+                            <FaUser/>
+                            <span>{userName}님 환영합니다</span>
+                        </div>
+                    }
                     {isAuthenticated !== 'true' && isAdmin !== 'true' &&
-                        <>
+                        <div className="main-header-menu" style={{justifyContent: 'flex-end'}}>
+                            <div className="main-header-menu-item">
+                                <Link to="/" className="main-header-menu-item-text">HOME</Link>
+                                <div className="main-header-menu-item-line"></div>
+                            </div>
                             <div className="main-header-menu-item">
                                 <Link to="/member/login" className="main-header-menu-item-text">LOGIN</Link>
                                 <div className="main-header-menu-item-line"></div>
                             </div>
                             <div className="main-header-menu-item">
-                            <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
+                                <Link to="/join/policy" className="main-header-menu-item-text">JOIN</Link>
                                 {isAdmin === 'true' && <div className="main-header-menu-item-line"></div>}
                             </div>
-                            {isAdmin === 'true' &&
-                            <div className="main-header-menu-item">
-                            <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
-                            </div>
-                            }
-                        </>}
+                        </div>}
                     {(isAuthenticated === 'true' || isAdmin === 'true') &&
                         <>
+                            <div className="main-header-menu-item">
+                                <Link to="/" className="main-header-menu-item-text">HOME</Link>
+                                <div className="main-header-menu-item-line"></div>
+                            </div>
                             <div className="main-header-menu-item">
                                 <p onClick={handleLogout} style={{cursor: 'pointer'}}
                                    className="main-header-menu-item-text">LOGOUT</p>
