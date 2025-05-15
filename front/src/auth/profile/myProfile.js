@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
-import SubHeader from "../components/subHeader/subHeader";
+import SubHeader from "../../components/subHeader/subHeader";
 import DaumPostcode from "react-daum-postcode";
-import EmailVerificationModal from "../components/modals/emailVerificationModal";
-import SchoolSearchModal from "../components/modals/schoolSearchModal";
-import apiClient from "../templates/apiClient";
+import EmailVerificationModal from "../../components/modals/emailVerificationModal";
+import SchoolSearchModal from "../../components/modals/schoolSearchModal";
+import apiClient from "../../templates/apiClient";
 import {useNavigate} from "react-router-dom";
-import MainHeader from "../components/mainHeader/mainHeader";
+import MainHeader from "../../components/mainHeader/mainHeader";
 
 const MyProfile = () => {
     const navigate = useNavigate();
