@@ -1,6 +1,5 @@
 package com.example.cpsplatform.member.service;
 
-import com.example.cpsplatform.MaskingUtils;
 import com.example.cpsplatform.auth.controller.response.ProfilePasswordVerifyResponse;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.service.SessionService;
@@ -196,8 +195,8 @@ class ProfileServiceTest {
         assertThat(response.getStreet()).isEqualTo("street");
         assertThat(response.getZipCode()).isEqualTo("zipCode");
         assertThat(response.getDetail()).isEqualTo("detail");
-        assertThat(response.getPhoneNumber()).isEqualTo(MaskingUtils.maskPhoneNumber("01012341234"));
-        assertThat(response.getEmail()).isEqualTo(MaskingUtils.maskEmail("email@email.com"));
+        assertThat(response.getPhoneNumber()).isEqualTo("01012341234");
+        assertThat(response.getEmail()).isEqualTo("email@email.com");
         assertThat(response.getOrganizationType()).isEqualTo("대학생");
         assertThat(response.getOrganizationName()).isEqualTo("xx대학교");
         assertThat(response.getPosition()).isEqualTo("4");

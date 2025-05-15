@@ -1,6 +1,5 @@
 package com.example.cpsplatform.member.controller.response;
 
-import com.example.cpsplatform.MaskingUtils;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import java.time.LocalDate;
