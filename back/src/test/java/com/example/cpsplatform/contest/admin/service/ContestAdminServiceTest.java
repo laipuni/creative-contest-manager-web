@@ -171,7 +171,7 @@ class ContestAdminServiceTest {
     }
 
     @Transactional
-    @DisplayName("수정할 대회가 존재하지 않으면 예외가 발생한다.")
+    @DisplayName("대회를 임시 삭제한다.")
     @Test
     void deleteContest(){
         //given

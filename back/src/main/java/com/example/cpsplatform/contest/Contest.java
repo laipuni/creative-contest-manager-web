@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@SQLDelete(sql = "UPDATE Contest SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE contest SET deleted = true WHERE id=?")
 @SQLRestriction("deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Contest extends BaseEntity {
