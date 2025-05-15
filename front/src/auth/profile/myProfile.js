@@ -225,7 +225,7 @@ const MyProfile = () => {
 
     return (
         <div className="join2-page-container">
-            <MainHeader/>
+            <MainHeader isProfile='true'/>
             <div className="join2-content-container">
                 <div className="join1-title">
                     <p className="join1-title-text">내 정보</p>
