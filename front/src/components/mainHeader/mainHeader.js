@@ -64,7 +64,7 @@ const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
                         </div>
                     }
                     {isAuthenticated !== 'true' && isAdmin !== 'true' &&
-                        <div className="main-header-menu" style={{justifyContent: 'flex-end'}}>
+                        <div className="main-header-menu" style={{justifyContent: 'flex-end', padding: '5px'}}>
                             <div className="main-header-menu-item">
                                 <Link to="/" className="main-header-menu-item-text">HOME</Link>
                                 <div className="main-header-menu-item-line"></div>
