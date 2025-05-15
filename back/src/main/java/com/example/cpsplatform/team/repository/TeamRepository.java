@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -41,5 +42,5 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
             "where m.loginId = :loginId and t.contest.id = :contestId")
     Optional<Team> findTeamByMemberLoginIdAndContestId(@Param("loginId") String loginId,@Param("contestId") Long contestId);
 
-
+    List<Team> findAllByContestId(Long contestId);
 }

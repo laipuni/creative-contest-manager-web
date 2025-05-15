@@ -7,9 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProblemRepository extends JpaRepository<Problem,Long> {
@@ -30,4 +32,10 @@ public interface ProblemRepository extends JpaRepository<Problem,Long> {
           AND p.section = :section
     """)
     Optional<Problem> findWithFilesByContestIdAndSection(@Param("contestId") Long contestId, @Param("section") Section section);
+
+    List<Problem> findAllByContestId(Long contestId);
+
+    @Modifying
+    @Query("delete from Problem where id in :problemIds")
+    void hardDeleteAllByIdIn(@Param("problemIds") List<Long> problemIds);
 }

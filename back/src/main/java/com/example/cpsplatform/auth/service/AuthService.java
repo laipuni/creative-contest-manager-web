@@ -117,12 +117,13 @@ public class AuthService {
      *
      * @param recipient 수신자 정보
      * @param authCode 검증할 인증코드
-     * @param strategyType 인증 전략 유형
+     * @param strategyType 인증 전략 유형 (register : email or phone
+     * @param storeStrategyType 해당 이메일/휴대폰 번호가 인증되었음을 시스템에 기록 유형
      */
-    public void verifySignup(final String recipient, final String authCode, final String strategyType){
-        log.info("{} 회원가입 인증 수신자='{}', 전략='{}'", AUTH_SERVICE_LOG, recipient, strategyType);
+    public void verifyContactCode(final String recipient, final String authCode, final String strategyType, final String storeStrategyType){
+        log.info("{} 인증 정보 검증, 수신자='{}', 전략='{}'", AUTH_SERVICE_LOG, recipient, strategyType);
         verifyAuthCode(recipient,authCode,strategyType);
-        AuthCodeStrategy authCodeStrategy = strategyMap.get("signup_verify");
+        AuthCodeStrategy authCodeStrategy = strategyMap.get(storeStrategyType);
         if(authCodeStrategy == null){
             //해당 인증 수단은 존재하지 않는다면 예외 발생
             throw new UnsupportedAuthenticationTypeException();

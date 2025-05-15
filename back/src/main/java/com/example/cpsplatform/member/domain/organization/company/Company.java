@@ -1,9 +1,7 @@
 package com.example.cpsplatform.member.domain.organization.company;
 
 import com.example.cpsplatform.member.domain.organization.Organization;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,17 +12,22 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue(value = "company")
 public class Company extends Organization {
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false,length = 20)
+    private FieldType fieldType;
+
     @Column(nullable = false,length = 50)
     private String position;
 
-    public Company(final String name, final String position) {
+    public Company(final String name, final String position, final FieldType fieldType) {
         super(name);
         this.position = position;
+        this.fieldType = fieldType;
     }
 
     @Override
     public String getOrganizationType() {
-        return "직장인";
+        return fieldType.getDescription();
     }
 
     @Override

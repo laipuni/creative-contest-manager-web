@@ -1,5 +1,8 @@
 package com.example.cpsplatform.contest.admin.service;
 
+import com.example.cpsplatform.certificate.domain.Certificate;
+import com.example.cpsplatform.certificate.domain.CertificateType;
+import com.example.cpsplatform.certificate.repository.CertificateRepository;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
@@ -7,13 +10,15 @@ import com.example.cpsplatform.contest.admin.service.dto.ContestDeleteDto;
 import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
 import com.example.cpsplatform.contest.admin.service.dto.WinnerTeamsDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +39,8 @@ public class ContestAdminService {
     private final ContestRepository contestRepository;
     private final TeamRepository teamRepository;
     private final TeamNumberRepository teamNumberRepository;
+    private final CertificateRepository certificateRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void createContest(ContestCreateDto createDto){
@@ -88,16 +95,65 @@ public class ContestAdminService {
     }
 
     @Transactional
-    public void selectWinnerTeams(final Long contestId, final WinnerTeamsDto winnerTeamsDto) {
+    public void toggleWinnerTeams(final Long contestId, final WinnerTeamsDto winnerTeamsDto) {
         List<Team> teams = teamRepository.findAllById(winnerTeamsDto.getTeamIds());
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(() -> new IllegalArgumentException("우승팀을 선정할 대회가 존재하지 않습니다."));
+
+        List<Long> teamsToDeleteCertificates = new ArrayList<>();
+        List<Certificate> certificatesToCreate = new ArrayList<>();
+
         for (Team team : teams) {
-            if (!Objects.equals(team.getContest().getId(), contestId)) {
-                throw new IllegalArgumentException("해당 팀(" + team.getId() + ")은 해당 대회에 속하지 않습니다.");
+            if (team.isWinner()) {
+                handleDemotion(team, contest, teamsToDeleteCertificates);
+            } else {
+                handlePromotion(team, contest, certificatesToCreate);
             }
-            team.changeAsWinner();
+        }
+
+        deleteFinalCertificates(contest, teamsToDeleteCertificates);
+        saveFinalCertificates(contest, certificatesToCreate);
+    }
+
+    private void handleDemotion(Team team, Contest contest, List<Long> teamsToDeleteCertificates) {
+        log.info("{} 대회(id:{})에 참가한 팀(id:{})을 불합격 상태로 변경", ADMIN_CONTEST_LOG, contest.getId(), team.getId());
+        team.changeWinner(false);
+        teamsToDeleteCertificates.add(team.getId());
+    }
+
+    private void handlePromotion(Team team, Contest contest, List<Certificate> certificatesToCreate) {
+        log.info("{} 대회(id:{})에 참가한 팀(id:{})을 합격 상태로 변경", ADMIN_CONTEST_LOG, contest.getId(), team.getId());
+        team.changeWinner(true);
+
+        List<Member> members = memberRepository.findAllByTeamId(team.getId());
+        for (Member member : members) {
+            log.info("{} 유저(id:{})의 본선 진출 확인증을 생성", ADMIN_CONTEST_LOG, member.getId());
+            Certificate certificate = Certificate.createFinalCertificate(
+                    UUID.randomUUID().toString(),
+                    member,
+                    team,
+                    contest
+            );
+            certificatesToCreate.add(certificate);
         }
     }
-      
+
+    private void deleteFinalCertificates(Contest contest, List<Long> teamIds) {
+        if (!teamIds.isEmpty()) {
+            log.info("{} 예선 대회(id:{})에 불합격으로 변경된 팀들 = ({})의 본선 진출증 삭제",
+                    ADMIN_CONTEST_LOG, contest.getId(), teamIds);
+            certificateRepository.deleteAllByTeam_IdInAndCertificateType(teamIds, CertificateType.FINAL);
+        }
+    }
+
+    private void saveFinalCertificates(Contest contest, List<Certificate> certificates) {
+        if (!certificates.isEmpty()) {
+            log.info("{} 예선 대회(id:{})에 합격한 팀에 유저들의 본선 진출증 생성",
+                    ADMIN_CONTEST_LOG, contest.getId());
+            certificateRepository.saveAll(certificates);
+        }
+    }
+
     public ContestLatestResponse findContestLatest() {
         log.info("{} 최신 대회를 조회 시도",ADMIN_CONTEST_LOG);
         return contestRepository.findLatestContest()

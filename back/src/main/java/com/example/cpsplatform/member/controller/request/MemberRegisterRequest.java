@@ -3,6 +3,7 @@ package com.example.cpsplatform.member.controller.request;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.domain.organization.company.Company;
+import com.example.cpsplatform.member.domain.organization.company.FieldType;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.auth.service.dto.RegisterRequestDto;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @ValidOrganization
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberRegisterRequest {
+public class MemberRegisterRequest implements OrganizationRequest{
 
     @Size(min = 4, max = 12, message = "로그인 ID는 4-12자 이내여야 합니다")
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "로그인 ID는 영문자와 숫자만 가능합니다")
@@ -65,18 +66,37 @@ public class MemberRegisterRequest {
     @NotBlank(message = "학년(부서)는 필수입니다")
     private String position;
 
-    public RegisterRequestDto toRegisterRequest(){
+    public RegisterRequestDto toRegisterRequest() {
         StudentType studentType = StudentType.findStudentTypeBy(organizationType);
-        Organization organization = getOrganization(studentType);
-        return new RegisterRequestDto(loginId,password,confirmPassword,
-                name,birth,gender,street,city,zipCode,detail,phoneNumber,email,organization);
+        FieldType fieldType = FieldType.findFiledType(organizationType);
+
+        Organization organization = createOrganization(studentType, fieldType);
+
+        return new RegisterRequestDto(
+                loginId, password, confirmPassword,
+                name, birth, gender,
+                street, city, zipCode, detail,
+                phoneNumber, email, organization
+        );
     }
 
-    private Organization getOrganization(final StudentType studentType){
-        if(studentType != null){
-            return new School(organizationName, studentType, Integer.parseInt(position));
-        } else{
-            return new Company(organizationName, position);
+    private Organization createOrganization(StudentType studentType, FieldType fieldType) {
+        if (studentType != null) {
+            int grade = parsePositionToGrade(position);
+            return new School(organizationName, studentType, grade);
+        }
+        if (fieldType != null) {
+            return new Company(organizationName, position, fieldType);
+        }
+        throw new IllegalArgumentException("해당 직업을 찾을 수 없습니다.");
+    }
+
+    private int parsePositionToGrade(String position) {
+        try {
+            return Integer.parseInt(position);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("학생의 학년(grade)을 숫자로 입력해주세요: " + position);
         }
     }
+
 }

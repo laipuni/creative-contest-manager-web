@@ -20,14 +20,21 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
 
+    @Value("${spring.data.redis.useSsl}")
+    private boolean useSsl;
+
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
-        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);
-        LettuceClientConfiguration clientConfiguration = LettuceClientConfiguration.builder()
-                .useSsl()
-                .build();
-        return new LettuceConnectionFactory(configuration,clientConfiguration);
+        if(useSsl){
+            RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);
+            LettuceClientConfiguration clientConfiguration = LettuceClientConfiguration.builder()
+                    .useSsl()
+                    .build();
+            return new LettuceConnectionFactory(configuration,clientConfiguration);
+        } else{
+            return new LettuceConnectionFactory(redisHost,redisPort);
+        }
     }
 
     @Bean

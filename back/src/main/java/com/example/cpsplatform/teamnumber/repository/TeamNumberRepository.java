@@ -1,6 +1,7 @@
 package com.example.cpsplatform.teamnumber.repository;
 
 import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import jakarta.persistence.LockModeType;
 import java.util.Optional;
@@ -14,4 +15,5 @@ public interface TeamNumberRepository extends JpaRepository<TeamNumber, Long> {
     @Query("select tn from TeamNumber tn where tn.contest.id = :contestId")
     Optional<TeamNumber> getLockedNumberForContest(@Param("contestId") Long contestId);
 
+    Optional<TeamNumber> findByContestId(Long contestId);
 }

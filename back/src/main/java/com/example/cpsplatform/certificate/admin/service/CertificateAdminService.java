@@ -2,15 +2,14 @@ package com.example.cpsplatform.certificate.admin.service;
 
 import com.example.cpsplatform.certificate.domain.Certificate;
 import com.example.cpsplatform.certificate.repository.CertificateRepository;
+import com.example.cpsplatform.certificate.repository.dto.AdminSearchCertificateCond;
+import com.example.cpsplatform.certificate.repository.dto.AdminSearchCertificateResponse;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.member.domain.Member;
-import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.team.domain.Team;
-import com.example.cpsplatform.team.repository.TeamRepository;
-import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -68,5 +67,9 @@ public class CertificateAdminService {
         log.debug("{} 확인증(id:{}) 제거 시도",CERTIFICATE_ADMIN_LOG,certificateId);
         certificateRepository.deleteById(certificateId);
         log.info("{} 확인증(id:{}) 제거",CERTIFICATE_ADMIN_LOG,certificateId);
+    }
+
+    public AdminSearchCertificateResponse searchCertificates(final AdminSearchCertificateCond cond) {
+        return certificateRepository.SearchAdminCertificate(cond);
     }
 }

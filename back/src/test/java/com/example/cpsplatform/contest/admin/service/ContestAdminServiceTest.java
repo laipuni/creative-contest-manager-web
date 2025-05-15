@@ -1,5 +1,8 @@
 package com.example.cpsplatform.contest.admin.service;
 
+import com.example.cpsplatform.certificate.domain.Certificate;
+import com.example.cpsplatform.certificate.domain.CertificateType;
+import com.example.cpsplatform.certificate.repository.CertificateRepository;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.admin.controller.response.DeletedContestListResponse;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
@@ -17,6 +20,8 @@ import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.memberteam.domain.MemberTeam;
+import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -38,7 +43,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
+import static com.example.cpsplatform.certificate.domain.CertificateType.FINAL;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,13 +60,19 @@ class ContestAdminServiceTest {
     ContestRepository contestRepository;
 
     @Autowired
-    private MemberRepository memberRepository;
+    MemberRepository memberRepository;
 
     @Autowired
-    private TeamRepository teamRepository;
+    TeamRepository teamRepository;
+
+    @Autowired
+    MemberTeamRepository memberTeamRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    CertificateRepository certificateRepository;
 
     @Autowired
     EntityManager entityManager;
@@ -263,7 +276,7 @@ class ContestAdminServiceTest {
         WinnerTeamsDto dto = new WinnerTeamsDto(winnerTeamIds);
 
         // when
-        contestAdminService.selectWinnerTeams(contest.getId(), dto);
+        contestAdminService.toggleWinnerTeams(contest.getId(), dto);
 
         // then
         List<Team> result = teamRepository.findAllById(winnerTeamIds);
@@ -358,6 +371,210 @@ class ContestAdminServiceTest {
                         tuple(contest1.getId(), contest1.getTitle(), contest1.getSeason()),
                         tuple(contest2.getId(), contest2.getTitle(), contest2.getSeason())
                 );
+    }
+
+    @DisplayName("팀들의 예선 합격 여부를 바꿀 때, 합격 처리할 팀만 있을 경우 합격과 확인증만 생성한다.")
+    @Test
+    void toggleWinnerTeamsWithOnlyWinnerTeams(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(1)
+                .registrationStartAt(now.minusDays(5)) //테스트 시점 5일 전
+                .registrationEndAt(now.plusDays(2)) //테스트 시점 2일 후 마감
+                .startTime(now.plusDays(3)) //테스트 시점 3일 후 시작
+                .endTime(now.plusHours(4)) //테스트 시점 4일 후
+                .build();
+        contestRepository.save(contest);
+
+        //팀의 팀장 유저 세팅
+        Member member1 = createAndSaveMember("member1");
+        Member member2 = createAndSaveMember("member2");
+        Member member3 = createAndSaveMember("member3");
+        Member member4 = createAndSaveMember("member4");
+
+        //팀 세팅
+        Team team1 = createAndSaveTeam(member1, contest, "001", false);
+        Team team2 = createAndSaveTeam(member2, contest, "002", false);
+        Team team3 = createAndSaveTeam(member3, contest, "003", false);
+        Team team4 = createAndSaveTeam(member4, contest, "004", false);
+
+        WinnerTeamsDto winnerTeamsDto = new WinnerTeamsDto(List.of(
+                team1.getId(),team2.getId(),team3.getId(),team4.getId()
+        ));
+
+        //when
+        contestAdminService.toggleWinnerTeams(contest.getId(),winnerTeamsDto);
+
+        //then
+        List<Team> teams = teamRepository.findAll();
+        List<Certificate> certificates = certificateRepository.findAll();
+
+        assertThat(teams).hasSize(4)
+                .extracting("winner")
+                .containsExactly(true,true,true,true);
+        assertThat(certificates).hasSize(4)
+                .extracting("certificateType")
+                .containsExactly(FINAL,FINAL,FINAL,FINAL);
+    }
+
+    @DisplayName("팀들의 예선 합격 여부를 바꿀 때, 합격,불합격 처리할 팀이 있을 경우 합격과 확인증만 생성한다.")
+    @Test
+    void toggleWinnerTeamsWithWinnerTeamAndLoserTeam(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(1)
+                .registrationStartAt(now.minusDays(5)) //테스트 시점 5일 전
+                .registrationEndAt(now.plusDays(2)) //테스트 시점 2일 후 마감
+                .startTime(now.plusDays(3)) //테스트 시점 3일 후 시작
+                .endTime(now.plusHours(4)) //테스트 시점 4일 후
+                .build();
+        contestRepository.save(contest);
+
+        //팀의 팀장 유저 세팅
+        Member member1 = createAndSaveMember("member1");
+        Member member2 = createAndSaveMember("member2");
+        Member member3 = createAndSaveMember("member3");
+        Member member4 = createAndSaveMember("member4");
+
+        //팀 세팅
+        Team team1 = createAndSaveTeam(member1, contest, "001", false); // 불합격 -> 합격
+        Team team2 = createAndSaveTeam(member2, contest, "002", false); // 불합격 -> 합격
+        Team team3 = createAndSaveTeam(member3, contest, "003", true);  // 합격 -> 불합격
+        Team team4 = createAndSaveTeam(member4, contest, "004", true);  // 합격 -> 불합격
+
+        //본선 확인증 세팅
+        Certificate certificate1 = createAndSaveCertificate(member3, contest, team3);
+        Certificate certificate2 = createAndSaveCertificate(member4, contest, team4);
+
+        //영속성 컨텍스트 비우기
+        entityManager.flush();
+        entityManager.clear();
+
+        WinnerTeamsDto winnerTeamsDto = new WinnerTeamsDto(List.of(
+                team1.getId(),team2.getId(),team3.getId(),team4.getId()
+        ));
+
+        //when
+        contestAdminService.toggleWinnerTeams(contest.getId(),winnerTeamsDto);
+
+        //then
+        List<Team> teams = teamRepository.findAll();
+        List<Certificate> certificates = certificateRepository.findAll();
+
+        assertThat(teams).hasSize(4)
+                .extracting("winner")
+                .containsExactly(true,true,false,false);
+        assertThat(certificates).hasSize(2)
+                .extracting("certificateType")
+                .containsExactly(FINAL,FINAL);
+    }
+
+    @DisplayName("팀들의 예선 합격 여부를 바꿀 때, 불합격 처리할 팀만 있을 경우 합격과 확인증만 생성한다.")
+    @Test
+    void toggleWinnerTeamsWithOnlyLoserTeam(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .season(1)
+                .registrationStartAt(now.minusDays(5)) //테스트 시점 5일 전
+                .registrationEndAt(now.plusDays(2)) //테스트 시점 2일 후 마감
+                .startTime(now.plusDays(3)) //테스트 시점 3일 후 시작
+                .endTime(now.plusHours(4)) //테스트 시점 4일 후
+                .build();
+        contestRepository.save(contest);
+
+        //팀의 팀장 유저 세팅
+        Member member1 = createAndSaveMember("member1");
+        Member member2 = createAndSaveMember("member2");
+        Member member3 = createAndSaveMember("member3");
+        Member member4 = createAndSaveMember("member4");
+
+        //팀 세팅
+        Team team1 = createAndSaveTeam(member1, contest, "001", true); // 합격 -> 불합격
+        Team team2 = createAndSaveTeam(member2, contest, "002", true); // 합격 -> 불합격
+        Team team3 = createAndSaveTeam(member3, contest, "003", true);  // 합격 -> 불합격
+        Team team4 = createAndSaveTeam(member4, contest, "004", true);  // 합격 -> 불합격
+
+        //본선 확인증 세팅
+        Certificate certificate1 = createAndSaveCertificate(member1, contest, team1);
+        Certificate certificate2 = createAndSaveCertificate(member2, contest, team2);
+        Certificate certificate3 = createAndSaveCertificate(member3, contest, team3);
+        Certificate certificate4 = createAndSaveCertificate(member4, contest, team4);
+
+        //영속성 컨텍스트 비우기
+        entityManager.flush();
+        entityManager.clear();
+
+        WinnerTeamsDto winnerTeamsDto = new WinnerTeamsDto(List.of(
+                team1.getId(),team2.getId(),team3.getId(),team4.getId()
+        ));
+
+        //when
+        contestAdminService.toggleWinnerTeams(contest.getId(),winnerTeamsDto);
+
+        //then
+        List<Team> teams = teamRepository.findAll();
+        List<Certificate> certificates = certificateRepository.findAll();
+
+        assertThat(teams).hasSize(4)
+                .extracting("winner")
+                .containsExactly(false,false,false,false);
+        assertThat(certificates).isEmpty();
+    }
+
+    private Member createAndSaveMember(String loginId) {
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx대학교", StudentType.COLLEGE, 4);
+        String phoneNumber = "010" + UUID.randomUUID().toString().replaceAll("[^0-9]", "").substring(0, 8);
+        Member member = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email(loginId + "@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber(phoneNumber)
+                .name("리더")
+                .organization(school)
+                .build();
+        return memberRepository.save(member);
+    }
+
+    private Team createAndSaveTeam(Member leader, Contest contest, String teamNumber, boolean isWinner) {
+        Team team = Team.builder()
+                .name("팀 이름")
+                .winner(isWinner)
+                .leader(leader)
+                .teamNumber(teamNumber)
+                .contest(contest)
+                .build();
+        Team savedTeam = teamRepository.save(team);
+
+        MemberTeam memberTeam = MemberTeam.builder()
+                .team(savedTeam)
+                .member(leader)
+                .build();
+        memberTeamRepository.save(memberTeam);
+
+        return savedTeam;
+    }
+
+    private Certificate createAndSaveCertificate(Member member, Contest contest, Team team){
+        Certificate certificate = Certificate.builder()
+                .title("본선 진출 확인증")
+                .certificateType(FINAL)
+                .serialNumber(UUID.randomUUID().toString())
+                .contest(contest)
+                .team(team)
+                .member(member)
+                .build();
+        return certificateRepository.save(certificate);
     }
 
 }

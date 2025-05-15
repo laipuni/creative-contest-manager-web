@@ -3,11 +3,14 @@ package com.example.cpsplatform.contest.admin;
 import com.example.cpsplatform.admin.aop.AdminLogProxy;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.contest.admin.controller.ContestAdminController;
+import com.example.cpsplatform.contest.admin.controller.request.HardDeleteContestRequest;
 import com.example.cpsplatform.contest.admin.controller.response.*;
 import com.example.cpsplatform.contest.admin.request.CreateContestRequest;
 import com.example.cpsplatform.contest.admin.request.DeleteContestRequest;
 import com.example.cpsplatform.contest.admin.request.UpdateContestRequest;
+import com.example.cpsplatform.contest.admin.request.WinnerTeamsRequest;
 import com.example.cpsplatform.contest.admin.service.ContestAdminService;
+import com.example.cpsplatform.contest.admin.service.ContestDeleteService;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
@@ -28,11 +31,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,6 +64,9 @@ class ContestAdminControllerTest {
 
     @MockitoBean
     ContestAdminService contestAdminService;
+
+    @MockitoBean
+    ContestDeleteService contestDeleteService;
 
     @WithMockUser(roles = "ADMIN")
     @DisplayName("관리자가 대회 목록을 조회하면 해당 페이지의 대회 목록이 반환된다")
@@ -728,5 +734,102 @@ class ContestAdminControllerTest {
                 .andExpect(jsonPath("$.data.deletedContestList[1].title").value("삭제된 테스트 대회 2"))
                 .andExpect(jsonPath("$.data.deletedContestList[1].season").value(17))
                 .andDo(print());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("대회 완전 삭제 요청을 받아서 정상적으로 삭제하고 응답한다.")
+    @Test
+    void removeCompletelyContest() throws Exception {
+        //given
+
+        HardDeleteContestRequest request = new HardDeleteContestRequest(1L);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(delete("/api/admin/contests/hard")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andDo(print());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("대회 완전 삭제 요청을 받아서 정상적으로 삭제하고 응답한다.")
+    @Test
+    void removeCompletelyContestWithNullContestId() throws Exception {
+        //given
+
+        HardDeleteContestRequest request = new HardDeleteContestRequest(null);
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(delete("/api/admin/contests/hard")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("삭제할 대회의 정보는 필수입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("합격/불합격 처리한 팀들의 정보를 받아 처리한 뒤 정상적으로 응답한다.")
+    @Test
+    void toggleWinnerTeams() throws Exception {
+        //given
+        Long contestId = 1L;
+        List<Long> teamIds = List.of(1L,2L);
+        WinnerTeamsRequest request = new WinnerTeamsRequest(teamIds);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(patch("/api/admin/contests/{contestId}/winners", contestId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andDo(print());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("합격/불합격 처리한 팀들의 정보를 받아 처리한 뒤 정상적으로 응답한다.")
+    @Test
+    void toggleWinnerTeamsWithEmptyTeamIds() throws Exception {
+        //given
+        Long contestId = 1L;
+        List<Long> teamIds = Collections.emptyList();
+        WinnerTeamsRequest request = new WinnerTeamsRequest(teamIds);
+
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(patch("/api/admin/contests/{contestId}/winners", contestId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("본선에 진출할 팀들의 정보는 필수입니다."))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 }

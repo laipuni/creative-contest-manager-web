@@ -16,9 +16,16 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
+      useSsl: false
       ssl:
         enabled: true #TLS 설정으로
 
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: true  # 한번 리졸빙한 html을 캐싱
 
   mail:
     host: smtp.gmail.com

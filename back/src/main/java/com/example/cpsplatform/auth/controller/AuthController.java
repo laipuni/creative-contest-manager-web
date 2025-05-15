@@ -1,6 +1,7 @@
 package com.example.cpsplatform.auth.controller;
 
 import com.example.cpsplatform.ApiResponse;
+import com.example.cpsplatform.auth.controller.request.ProfileCodeVerifyRequest;
 import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.controller.request.*;
@@ -36,7 +37,7 @@ public class AuthController {
 
     @PostMapping("/api/verify-register-code")
     public ApiResponse<Object> verifyRegisterAuthCode(@Valid @RequestBody AuthCodeVerifyRequest request){
-        authService.verifySignup(request.getRecipient(), request.getAuthCode(), request.getStrategyType());
+        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(),"signup_verify");
         return ApiResponse.ok(null);
     }
 
@@ -61,6 +62,18 @@ public class AuthController {
     @PostMapping("/api/password-reset")
     public ApiResponse<Object> resetPassword(@Valid @RequestBody PasswordResetRequest request){
         passwordResetService.resetPassword(request.toResetPasswordDto());
+        return ApiResponse.ok(null);
+    }
+
+    @PostMapping("api/v1/send-update-profile-code")
+    public ApiResponse<Object> sendProfileUpdateCode(@Valid @RequestBody ProfileCodeSendRequest request){
+        authService.sendAuthCode(request.getRecipient(), request.getSenderType(), request.getStrategyType());
+        return ApiResponse.ok(null);
+    }
+
+    @PostMapping("api/v1/verify-update-profile-code")
+    public ApiResponse<Object> sendProfileUpdateCode(@Valid @RequestBody ProfileCodeVerifyRequest request){
+        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(),"profile_update_verify");
         return ApiResponse.ok(null);
     }
 

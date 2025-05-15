@@ -67,6 +67,21 @@ public class Certificate extends BaseEntity {
         return String.format("%d회 예선 참가 확인증",season);
     }
 
+    public static Certificate createFinalCertificate(final String serialNumber, final Member member, final Team team, final Contest contest) {
+        return Certificate.builder()
+                .title(getFinalCertificateTitle(contest.getSeason()))
+                .member(member)
+                .team(team)
+                .contest(contest)
+                .certificateType(CertificateType.FINAL)
+                .serialNumber(serialNumber)
+                .build();
+    }
+
+    private static String getFinalCertificateTitle(final int season){
+        return String.format("%d회 예선 참가 확인증",season);
+    }
+
     public boolean isOwner(final String loginId){
         return member.getLoginId().equals(loginId);
     }

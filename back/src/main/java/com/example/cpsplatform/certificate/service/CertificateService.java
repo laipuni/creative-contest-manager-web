@@ -1,9 +1,10 @@
 package com.example.cpsplatform.certificate.service;
 
-import com.example.cpsplatform.certificate.controller.response.SearchCertificateResponse;
+import com.example.cpsplatform.certificate.controller.response.UserSearchCertificateResponse;
 import com.example.cpsplatform.certificate.domain.Certificate;
 import com.example.cpsplatform.certificate.domain.CertificateType;
 import com.example.cpsplatform.certificate.repository.CertificateRepository;
+import com.example.cpsplatform.certificate.repository.dto.UserSearchCertificateCond;
 import com.example.cpsplatform.certificate.service.dto.DownloadCertificateResult;
 import com.example.cpsplatform.exception.UnsupportedCertificateTypeException;
 import com.example.cpsplatform.template.exporter.CertificateExporter;
@@ -27,8 +28,8 @@ public class CertificateService {
     private final Map<CertificateType, CertificateExporter> certificateExporterMap;
 
 
-    public SearchCertificateResponse searchCertificates(final int page, final String order, final CertificateType certificateType, final String username) {
-        return certificateRepository.SearchCertificate(page,CERTIFICATE_PAGE_SIZE,order,certificateType,username);
+    public UserSearchCertificateResponse searchCertificates(final UserSearchCertificateCond cond) {
+        return certificateRepository.SearchUserCertificate(cond);
     }
 
     public DownloadCertificateResult downloadCertificate(final String loginId, final Long certificateId){

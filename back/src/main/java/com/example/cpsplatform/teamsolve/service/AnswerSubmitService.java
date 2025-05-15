@@ -146,7 +146,6 @@ public class AnswerSubmitService {
                 fileSource.getMimeType(),
                 fileSource.getSize(),
                 path,
-                FileType.TEAM_SOLUTION,
                 teamSolve
         );
     }

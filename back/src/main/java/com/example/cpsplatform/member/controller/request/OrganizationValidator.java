@@ -4,12 +4,12 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class OrganizationValidator implements ConstraintValidator<ValidOrganization, MemberRegisterRequest> {
+public class OrganizationValidator implements ConstraintValidator<ValidOrganization, OrganizationRequest> {
 
     private static final String INVALID_GRADE = "학년은 숫자만 입력해주세요.";
 
     @Override
-    public boolean isValid(final MemberRegisterRequest value, final ConstraintValidatorContext context) {
+    public boolean isValid(final OrganizationRequest value, final ConstraintValidatorContext context) {
         StudentType studentType = StudentType.findStudentTypeBy(value.getOrganizationType());
 
         if (studentType == null) {

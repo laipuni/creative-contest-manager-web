@@ -60,6 +60,8 @@ public class AuthConfig {
         strategyMap.put("findId",new FindIdAuthCodeStrategy());
         strategyMap.put("password_auth",new PasswordAuthCodeStrategy());
         strategyMap.put("signup_verify",new SignUpVerifyStrategy());
+        strategyMap.put("profile_update",new ProfileUpdateAuthCodeStrategy());
+        strategyMap.put("profile_update_verify",new ProfileUpdateVerifyStrategy());
         return strategyMap;
     }
 

@@ -26,12 +26,9 @@ import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,24 +135,14 @@ public class TeamService {
     public MyTeamInfoByContestDto getMyTeamInfoByContest(Long contestId, String loginId){
         Contest contest = contestRepository.findById(contestId)
                 .orElseThrow(()->new IllegalArgumentException("해당 대회는 존재하지 않습니다."));
-        Member member = memberRepository.findMemberByLoginId(loginId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 팀원은 존재하지 않습니다."));
-        Team team = teamRepository.findTeamByMemberAndContest(member.getLoginId(),contest.getId())
+        Team team = teamRepository.findTeamByMemberAndContest(loginId,contest.getId())
                 .orElseThrow(()->new IllegalArgumentException("해당하는 팀이 존재하지 않습니다."));
-
         List<MemberTeam> memberTeams = memberTeamRepository.findAllByTeamId(team.getId());
-        List<String> memberIds = memberTeams.stream()
-                .map(mt -> mt.getMember().getLoginId())
+        List<Member> members = memberTeams.stream()
+                .map(MemberTeam::getMember)
                 .toList(); //본인이 속한 팀의 멤버들 리스트
 
-        return new MyTeamInfoByContestDto(
-                team.getId(),
-                team.getName(),
-                team.getLeader().getLoginId(),
-                memberIds,
-                team.getCreatedAt(),
-                contest.getId()
-        );
+        return MyTeamInfoByContestDto.of(team, members, contest);
     }
 
     private void addMembersToTeam(List<String> memberIds, Team team,Contest contest) {

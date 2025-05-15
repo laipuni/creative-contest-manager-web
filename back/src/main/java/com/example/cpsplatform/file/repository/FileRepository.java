@@ -33,4 +33,15 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
 
     @Query("select exists (select f from File f inner join f.teamSolve ts where ts.team.id = :teamId and f.id = :fileId and f.deleted = false and f.fileType = :fileType)")
     boolean existsAnswerFileForTeam(@Param("teamId") Long teamId, @Param("fileId") Long fileId, @Param("fileType") FileType fileType);
+
+    //팀들의 답안지 파일을 조회
+    List<File> findAllByTeamSolve_IdIn(List<Long> teamSolveIds);
+
+    //대회 문제 파일 조회
+    List<File> findAllByProblem_IdIn(List<Long> problemIds);
+
+
+    @Modifying
+    @Query(value = "delete from File where id in :fileIds",nativeQuery = true)
+    void hardDeleteAllByIdIn(@Param("fileIds")List<Long> fileIds);
 }
