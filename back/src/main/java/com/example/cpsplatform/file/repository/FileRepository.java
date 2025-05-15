@@ -42,6 +42,6 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
 
 
     @Modifying
-    @Query(value = "delete from File where id in :fileIds",nativeQuery = true)
+    @Query(value = "delete from file where id in :fileIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("fileIds")List<Long> fileIds);
 }

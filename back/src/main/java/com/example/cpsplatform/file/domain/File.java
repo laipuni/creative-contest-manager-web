@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
-@SQLDelete(sql = "UPDATE File SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE file SET deleted = true WHERE id=?")
 @SQLRestriction("deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class File extends BaseEntity {

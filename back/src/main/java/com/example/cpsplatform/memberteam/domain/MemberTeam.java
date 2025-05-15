@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "Member_team")
+@Table(name = "member_team")
 public class MemberTeam extends BaseEntity{
 
     @Id

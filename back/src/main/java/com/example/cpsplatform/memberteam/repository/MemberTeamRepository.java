@@ -39,6 +39,6 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     boolean existsByTeamIdAndLoginId(@Param("teamId") Long teamId, @Param("loginId") String loginId);
 
     @Modifying
-    @Query(value = "delete from MemberTeam where id in :memberTeamIds",nativeQuery = true)
+    @Query(value = "delete from member_team where id in :memberTeamIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("memberTeamIds") List<Long> memberTeamIds);
 }
