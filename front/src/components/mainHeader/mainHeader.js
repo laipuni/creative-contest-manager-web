@@ -12,11 +12,20 @@ const MainHeader = ({underbarWidth = "75%"}) => {
     const [userName, setUserName] = useState(null);
     useEffect(() => {
         if(isAuthenticated || isAdmin) {
-            apiClient.get('/api/members/my-profile')
+            apiClient.get('/api/members/my-profile', {skipErrorHandler: true})
                 .then((res) => {
                     setUserName(res.data.data.name);
                 })
                 .catch((err) => {
+                    if(err.response.status === 401) {
+                        localStorage.removeItem("isAuthenticated");
+                        localStorage.removeItem("isAdmin");
+                        setIsAuthenticated(false);
+                        setIsAdmin(false);
+                    }
+                    else{
+                        alert(err.response.data.message);
+                    }
                 });
         }
     }, []);
