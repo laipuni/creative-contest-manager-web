@@ -12,7 +12,7 @@ const MainHeader = ({underbarWidth = "75%"}) => {
     const [userName, setUserName] = useState(null);
     useEffect(() => {
         if(isAuthenticated || isAdmin) {
-            apiClient.get('/api/members/my-profile', {skipErrorHandler: true})
+            apiClient.get('/api/members/user-info', {skipErrorHandler: true})
                 .then((res) => {
                     setUserName(res.data.data.name);
                 })
