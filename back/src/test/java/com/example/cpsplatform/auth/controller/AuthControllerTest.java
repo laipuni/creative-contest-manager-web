@@ -5,7 +5,6 @@ import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.auth.service.PasswordResetService;
-import com.example.cpsplatform.auth.service.PasswordResetSessionService;
 import com.example.cpsplatform.auth.service.dto.PasswordConfirmDto;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.auth.service.RegisterService;

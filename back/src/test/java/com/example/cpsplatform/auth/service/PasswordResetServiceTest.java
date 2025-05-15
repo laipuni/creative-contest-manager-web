@@ -23,9 +23,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.cpsplatform.auth.service.RedisPasswordResetSessionService.PASSWORD_SESSION_KEY;
+import static com.example.cpsplatform.auth.service.session.RedisSessionService.PASSWORD_SESSION_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class PasswordResetServiceTest {
@@ -65,7 +64,7 @@ class PasswordResetServiceTest {
         //when
         //then
         Assertions.assertThatThrownBy(() -> passwordResetService.resetPassword(passwordResetDto))
-                .isInstanceOf(InvalidPasswordResetSessionException.class)
+                .isInstanceOf(InvalidSessionException.class)
                 .hasMessageMatching("세션이 만료되었습니다.");
     }
 

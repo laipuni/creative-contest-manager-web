@@ -59,13 +59,17 @@ public class MyProfileUpdateRequest implements OrganizationRequest{
     @NotBlank(message = "학년(부서)는 필수입니다")
     private String position;
 
+    @NotBlank(message = "세션이 존재하지 않습니다.")
+    private String session;
+
     public UpdateMyProfileDto toUpdateMyProfileDto(String loginId) {
         return new UpdateMyProfileDto(
                 loginId,
                 name, birth, gender,
                 street, city, zipCode, detail,
                 phoneNumber, email, organizationType,
-                organizationName,position
+                organizationName,position,
+                session
         );
     }
 

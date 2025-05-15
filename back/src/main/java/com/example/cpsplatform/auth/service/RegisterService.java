@@ -53,25 +53,6 @@ public class RegisterService {
         return FindIdResponse.of(loginId);
     }
 
-    @Transactional
-    public void updateMyInformation(final UpdateMyProfileDto dto) {
-        log.info("유저({})가 자신의 프로필을 업데이트합니다.",dto.getLoginId());
-        //인증 코드 확인
-        Member member = memberService.findMemberByLoginId(dto.getLoginId());
-
-        //이메일이 바뀌었을 경우
-        if(member.isChangedEmail(dto.getEmail())){
-            log.info("유저({})가 자신의 이메일을 업데이트합니다.",dto.getLoginId());
-            //만약 인증하지 않은 경우, AuthCodeMismatchException 예외가 발생함
-            authService.verifyAuthCode(dto.getEmail(),dto.getEmail(),"profile_update_verify");
-        }
-
-        //if)추후 핸드폰 번호가 바뀌었을 경우, 핸드폰 검증이 필요한 경우도 추가
-        //유저 정보 업데이트
-        memberService.update(dto.toMemberUpdateDto(member.getId()));
-        log.info("유저({})가 자신의 프로필을 업데이트합니다.",dto.getLoginId());
-    }
-
     private String findLoginId(final FindIdDto findIdDto) {
         Member member = switch (findIdDto.getSenderType()) {
             case "email" -> memberService.findMemberByEmail(findIdDto.getRecipient());

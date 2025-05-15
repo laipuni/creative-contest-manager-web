@@ -3,13 +3,17 @@ package com.example.cpsplatform.auth.controller;
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.auth.controller.request.ProfileCodeVerifyRequest;
 import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
+import com.example.cpsplatform.auth.controller.response.ProfilePasswordVerifyResponse;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.controller.request.*;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.auth.service.PasswordResetService;
 import com.example.cpsplatform.auth.service.RegisterService;
+import com.example.cpsplatform.member.service.ProfileService;
+import com.example.cpsplatform.security.domain.SecurityMember;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +25,7 @@ public class AuthController {
     private final AuthService authService;
     private final RegisterService registerService;
     private final PasswordResetService passwordResetService;
+    private final ProfileService profileService;
 
     @PostMapping("/api/v1/send-auth-code")
     public ApiResponse<Object> sendAuthCode(@Valid @RequestBody AuthCodeSendRequest request){
@@ -65,16 +70,5 @@ public class AuthController {
         return ApiResponse.ok(null);
     }
 
-    @PostMapping("api/v1/send-update-profile-code")
-    public ApiResponse<Object> sendProfileUpdateCode(@Valid @RequestBody ProfileCodeSendRequest request){
-        authService.sendAuthCode(request.getRecipient(), request.getSenderType(), request.getStrategyType());
-        return ApiResponse.ok(null);
-    }
-
-    @PostMapping("api/v1/verify-update-profile-code")
-    public ApiResponse<Object> sendProfileUpdateCode(@Valid @RequestBody ProfileCodeVerifyRequest request){
-        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(),"profile_update_verify");
-        return ApiResponse.ok(null);
-    }
 
 }

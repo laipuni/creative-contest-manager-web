@@ -47,13 +47,6 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
     }
 
-    public MyProfileResponse getMyInformation(final String loginId){
-        log.debug("유저({})의 프로필 조회 시도", loginId);
-        Member member = memberRepository.findMemberByLoginId(loginId)
-                .orElseThrow(()->new IllegalArgumentException("프로필 정보를 불러오는데 실패했습니다."));
-        return MyProfileResponse.of(member);
-    }
-
     public boolean isUsernameExists(String username) {
         return memberRepository.existsByLoginId(username);
     }
