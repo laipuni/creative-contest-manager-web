@@ -9,6 +9,7 @@ import testImage from "../../styles/images/admin_register_problem.png";
 import apiClient from "../../templates/apiClient";
 import axios from "axios";
 import DeletedContestList from "../components/deletedContestList/deletedContestList";
+import {useNavigate} from "react-router-dom";
 
 const TestManage = () => {
     // --- 일정 관련 상태 ---
@@ -41,10 +42,11 @@ const TestManage = () => {
         '초/중등': false,
         '고등/일반': false
     });
+    const navigate = useNavigate();
 
     //최초 랜더링 시 마지막 대회 정보 들고오기
     useEffect(() => {
-        apiClient.get('/api/admin/contests/latest')
+        apiClient.get('/api/admin/contests/latest', {skipErrorHandler: true})
             .then((res) => {
                 if(res.data.data){
                    setLatestContest({
@@ -66,7 +68,15 @@ const TestManage = () => {
                     setEndDate(null);
                 }
             })
-            .catch((err)=>{})
+            .catch((err)=>{
+                if(err.response.status === 401){
+                    alert('권한이 없습니다.');
+                    navigate('/');
+                }
+                else{
+                    alert(err.response.data.message);
+                }
+            })
     }, [isRegistered], [isDeleted])
 
     //최초 랜더링 or 대회 삭제됐을 때 문제 갱신

@@ -4,6 +4,7 @@ import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import "../../styles/pagination.css"
 import apiClient from "../../templates/apiClient";
 import { FaSearch } from 'react-icons/fa';
+import {useNavigate} from "react-router-dom";
 
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
@@ -40,6 +41,7 @@ const CertificateManage = () => {
     const [keyword, setKeyword] = useState('');
     const [searchKeyword, setSearchKeyword] = useState('');
     const [edited, setEdited] = useState(false);
+    const navigate = useNavigate();
 
     //증명서 목록 불러오기
     useEffect(() => {
@@ -47,10 +49,19 @@ const CertificateManage = () => {
             ? { page: currentPage - 1, keyword: searchKeyword, search_type: searchType }
             : { page: currentPage - 1 };
 
-        apiClient.get('/api/admin/certificates/search', { params })
+        apiClient.get('/api/admin/certificates/search', { params , skipErrorHandler: true })
             .then((res) => {
                 setCertificates(res.data.data.certificateDtoList);
                 setLastPage(res.data.data.lastPage);
+            })
+            .catch((err)=>{
+                if(err.response.status === 401){
+                    alert('권한이 없습니다.');
+                    navigate('/');
+                }
+                else{
+                    alert(err.response.data.message);
+                }
             });
     }, [currentPage, edited]);
 

@@ -40,11 +40,6 @@ function AppRoutes() {
                 navigate('/member/login', {replace: true, state: {from: location.pathname}});
             }
         }
-        if (isAdminPath){
-            if (localStorage.getItem("isAdmin") !== "true"){
-                navigate('/admin/login', {replace: true, state: {from: location.pathname}});
-            }
-        }
 
         if (location.pathname === "/admin/login"){
             if (localStorage.getItem("isAdmin") === "true"){
