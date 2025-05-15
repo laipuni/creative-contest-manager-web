@@ -13,7 +13,7 @@ const SubHeader = () => {
                     <p className="main-logo-text"
                        style={{fontSize: 10, width:'fit-content'}}>Creative Problem<br />Solving Festival</p>
                 </Link>
-                <div className="main-header-menu">
+                <div className="main-header-menu" style={{justifyContent: 'flex-end'}}>
                     <div className="main-header-menu-item">
                         <Link to="/" className="main-header-menu-item-text">HOME</Link>
                         <div className="main-header-menu-item-line"></div>
