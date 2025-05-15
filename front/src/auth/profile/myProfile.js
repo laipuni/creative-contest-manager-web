@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
-import SubHeader from "../components/subHeader/subHeader";
+import SubHeader from "../../components/subHeader/subHeader";
 import DaumPostcode from "react-daum-postcode";
-import EmailVerificationModal from "../components/modals/emailVerificationModal";
-import SchoolSearchModal from "../components/modals/schoolSearchModal";
-import apiClient from "../templates/apiClient";
+import EmailVerificationModal from "../../components/modals/emailVerificationModal";
+import SchoolSearchModal from "../../components/modals/schoolSearchModal";
+import apiClient from "../../templates/apiClient";
 import {useNavigate} from "react-router-dom";
-import MainHeader from "../components/mainHeader/mainHeader";
+import MainHeader from "../../components/mainHeader/mainHeader";
 
 const MyProfile = () => {
     const navigate = useNavigate();
@@ -225,7 +225,7 @@ const MyProfile = () => {
 
     return (
         <div className="join2-page-container">
-            <MainHeader/>
+            <MainHeader isProfile='true'/>
             <div className="join2-content-container">
                 <div className="join1-title">
                     <p className="join1-title-text">내 정보</p>

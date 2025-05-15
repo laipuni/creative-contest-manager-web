@@ -31,7 +31,7 @@ const Certificate = () => {
     };
 
     const downloadCertificate = (certificateId, title) => {
-        apiClient.get(`/api/certificate/${certificateId}`, {
+        apiClient.get(`/api/certificates/${certificateId}`, {
             responseType: 'blob'
         }).then(res => {
             const blob = new Blob([res.data], { type: 'application/pdf' });
