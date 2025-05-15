@@ -52,6 +52,8 @@ public class PreliminaryCertificateExporter implements CertificateExporter{
         map.put("birth", convertDateToString(member.getBirth()));
         map.put("organizationName", member.getOrganization().getName());
         map.put("teamName", team.getName());
+        map.put("teamNumber",team.getTeamNumber());
+        map.put("registrationDate",convertDateTimeToString(team.getCreatedAt()));
         map.put("title", contest.getTitle());
         map.put("date", getContestDateTime(contest));
         map.put("createdDate",convertDateToString(LocalDate.from(certificate.getCreatedAt())));
@@ -70,6 +72,17 @@ public class PreliminaryCertificateExporter implements CertificateExporter{
                 localDate.getYear(),
                 localDate.getMonthValue(),
                 localDate.getDayOfMonth()
+        );
+    }
+
+    private String convertDateTimeToString(LocalDateTime localDateTime) {
+        //ex)2025년 05월 06일 15:00
+        return String.format("%d년 %02d월 %02d일 %02d:%02d",
+                localDateTime.getYear(),
+                localDateTime.getMonthValue(),
+                localDateTime.getDayOfMonth(),
+                localDateTime.getHour(),
+                localDateTime.getMinute()
         );
     }
 
