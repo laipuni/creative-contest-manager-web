@@ -32,7 +32,7 @@
 .main-header-menu {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
     gap: 0px; /* 메뉴 간 간격 조정 */
     width: 100%;
@@ -233,4 +233,13 @@
     flex: none;
     order: 2;
     flex-grow: 0;
+}
+
+.main-header-user-welcome {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #555;
+    gap: 6px;
+    width: 85%;
 }

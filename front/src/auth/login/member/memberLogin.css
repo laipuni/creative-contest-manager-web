@@ -53,12 +53,6 @@
     width: 50%;
     height: fit-content;
 
-
-    /* Inside auto layout */
-    flex: none;
-    order: 1;
-    flex-grow: 0;
-
 }
 
 .login-title {
@@ -75,7 +69,6 @@
     height: fit-content;
     /* Inside auto layout */
     flex: none;
-    order: 0;
     align-self: stretch;
     flex-grow: 0;
 
@@ -100,10 +93,7 @@
     width: 100%;
     height: fit-content;
 
-
-    /* Inside auto layout */
     flex: none;
-    order: 1;
     align-self: stretch;
     flex-grow: 0;
 
@@ -122,9 +112,7 @@
     height: fit-content;
 
 
-    /* Inside auto layout */
     flex: none;
-    order: 0;
     align-self: stretch;
     flex-grow: 0;
 
@@ -146,11 +134,7 @@
 
     /* CoolGray/90 */
     color: #21272A;
-
-
-    /* Inside auto layout */
     flex: none;
-    order: 0;
     align-self: stretch;
     flex-grow: 0;
 
@@ -179,9 +163,7 @@
     border-right: none;
     border-bottom: 1px solid #C1C7CD;
 
-    /* Inside auto layout */
     flex: none;
-    order: 1;
     align-self: stretch;
     flex-grow: 0;
 
@@ -201,9 +183,7 @@
     height: fit-content;
 
 
-    /* Inside auto layout */
     flex: none;
-    order: 2;
     align-self: stretch;
     flex-grow: 0;
 
@@ -239,7 +219,6 @@
 
     box-sizing: border-box;
 
-    /* Auto layout */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -249,28 +228,20 @@
     width: 80%;
     height: fit-content;
 
-    /* Primary/60 */
     background: #0F62FE;
-    /* Primary/60 */
     border: 2px solid #0F62FE;
 
-    /* Inside auto layout */
     flex: none;
-    order: 3;
     align-self: stretch;
     flex-grow: 0;
-    /* Button Text */
 
-    /* Button/M */
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
     line-height: 100%;
-    /* identical to box height, or 16px */
-    letter-spacing: 0.5px;
 
-    /* Default/White */
+    letter-spacing: 0.5px;
     color: #FFFFFF;
 
 
@@ -285,9 +256,7 @@
     /* CoolGray/20 */
     border: 1px solid #DDE1E6;
 
-    /* Inside auto layout */
     flex: none;
-    order: 2;
     align-self: stretch;
     flex-grow: 0;
 
@@ -306,9 +275,7 @@
     height: fit-content;
 
 
-    /* Inside auto layout */
     flex: none;
-    order: 3;
     align-self: stretch;
     flex-grow: 0;
 
@@ -331,10 +298,7 @@
 
     color: #000000;
 
-
-    /* Inside auto layout */
     flex: none;
-    order: 0;
     flex-grow: 0;
     margin: 0px -20px;
 
@@ -355,11 +319,7 @@
     text-align: left;
 
     color: #001D6C;
-
-
-    /* Inside auto layout */
     flex: none;
-    order: 1;
     flex-grow: 0;
     text-decoration: none;
 }

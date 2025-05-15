@@ -17,6 +17,9 @@ import Certificate from "../supportPage/certificatePage/certificate";
 import QnA from "../supportPage/qnaPage/qna";
 import TeamList from "../admin/teamList/teamList";
 import TestManage from "../admin/testManage/testManage";
+import FindIdPage from "../auth/login/member/findIdPage";
+import ResetPasswordPage from "../auth/login/member/resetPwPage";
+import CertificateManage from "../admin/certificateManage/certificateManage";
 
 function AppRoutes() {
     const location = useLocation();
@@ -37,11 +40,6 @@ function AppRoutes() {
                 navigate('/member/login', {replace: true, state: {from: location.pathname}});
             }
         }
-        if (isAdminPath){
-            if (localStorage.getItem("isAdmin") !== "true"){
-                navigate('/admin/login', {replace: true, state: {from: location.pathname}});
-            }
-        }
 
         if (location.pathname === "/admin/login"){
             if (localStorage.getItem("isAdmin") === "true"){
@@ -57,6 +55,8 @@ function AppRoutes() {
             <Route path="join/policy" element={<Join1 />}></Route>
             <Route path="join/register" element={<Join2 />}></Route>
             <Route path="member/login" element={<MemberLogin />}></Route>
+            <Route path="member/login/findId" element={<FindIdPage />}></Route>
+            <Route path="member/login/resetPw" element={<ResetPasswordPage />}></Route>
             <Route path="admin/login" element={<AdminLogin />}></Route>
             <Route path="test/info" element={<TestInfo />}></Route>
             <Route path="register/info" element={<RegisterInfo />}></Route>
@@ -69,6 +69,7 @@ function AppRoutes() {
             <Route path="qna" element={<QnA/>}></Route>
             <Route path="admin/teamList" element={<TeamList />}></Route>
             <Route path="admin/testManage" element={<TestManage />}></Route>
+            <Route path="admin/certificates" element={<CertificateManage />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );

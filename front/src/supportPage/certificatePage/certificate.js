@@ -1,73 +1,68 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
+import Pagination from  "../../styles/pagination.css";
 import supportLogo from "../../styles/images/support_logo.png";
-import "./certificate.css"
-
-import {format} from 'date-fns'
+import "./certificate.css";
+import { format } from 'date-fns';
 import apiClient from "../../templates/apiClient";
 
-//출력 예시
-const exampleData = [
-    {
-        testYear: "2024",
-        certificateType: "예선합격증",
-        fileLink: "example_File_2024_prelim",
-    },
-    {
-        testYear: "2023",
-        certificateType: "본선참가확인서",
-        fileLink: "example_File_2023_final",
-    },
-    {
-        testYear: "2022",
-        certificateType: "수료증",
-        fileLink: "example_File_2022_completion",
-    },
-    {
-        testYear: "2021",
-        certificateType: "참가확인서",
-        fileLink: "example_File_2021_participation",
-    },
-    {
-        testYear: "2020",
-        certificateType: "예선합격증",
-        fileLink: "example_File_2020_prelim",
-    }
-];
-
-
 const Certificate = () => {
-    const [testYear, setTestYear] = useState('');
-    const [certificateType, setCertificateType] = useState('');
-    const [fileLink, setFileLink] = useState('');
+    const [certificates, setCertificates] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [pdfUrl, setPdfUrl] = useState(null);
+
 
     useEffect(() => {
-        setTestYear(exampleData.testYear);
-        setCertificateType(exampleData.certificateType);
-        setFileLink(exampleData.fileLink);
-    }, []);
+        fetchCertificates(currentPage);
+    }, [currentPage]);
 
-    /*-----------------접수 내역 가져오기---------
-    apiClient.get('/api/certificate/info'})
-        .then((res)=>{
-            setTestYear(exampleData.testYear);
-            setCertificateType(exampleData.certificateType);
-            setFileLink(exampleData.fileLink);
+    const fetchCertificates = (page) => {
+        apiClient.get('/api/v1/certificates', {
+            params: { page: page - 1 } // 백엔드는 0부터 시작
+        }).then(res => {
+            const data = res.data.data;
+            setCertificates(data.certificateDtoList);
+            setTotalPages(data.totalPage);
+        }).catch(err => {
         });
+    };
 
-     */
+    const downloadCertificate = (certificateId, title) => {
+        apiClient.get(`/api/certificate/${certificateId}`, {
+            responseType: 'blob'
+        }).then(res => {
+            const blob = new Blob([res.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${title}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }).catch(err => {;
+        });
+    };
+
+    const getCertificateLabel = (type) => {
+        return type === "PRELIMINARY" ? "예선참가확인증" : "본선참가확인증";
+    };
 
     return (
         <div className="testInfo-page-container">
             <div className="testInfo-page-inner-container">
-                <MainHeader underbarWidth="95%"/>
+                <MainHeader underbarWidth="95%" />
                 <div className="testInfo-content-container">
-                    <Sidebar/>
+                    <Sidebar />
                     <div className="testInfo-main-container">
-                        <CategoryLogo logoTitle={"증명서 발급"} imgSrc={supportLogo}
-                            backgroundColor={'linear-gradient(90deg, #4000FF 0%, #EFFD85 100%)'}/>
+                        <CategoryLogo
+                            logoTitle={"증명서 발급"}
+                            imgSrc={supportLogo}
+                            backgroundColor={'linear-gradient(90deg, #4000FF 0%, #EFFD85 100%)'}
+                        />
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
                                 <p className="registerInfo-top-title">응시 내역</p>
@@ -82,23 +77,37 @@ const Certificate = () => {
                                     <p className="registerInfo-bot-text">파일</p>
                                 </div>
                                 <ul className="certificate-list">
-                                    {exampleData.map(item => (
-                                        <li key={item.id}>
+                                    {certificates.map(cert => (
+                                        <li key={cert.certificateId}>
                                             <div className="registerInfo-bot-content">
-                                                <p className="certificate-text">{item.testYear}</p>
-                                                <p className="certificate-text">{item.certificateType}</p>
-                                                <p className="certificate-text">{item.fileLink}</p>
+                                                <p className="certificate-text">{format(new Date(cert.createdAt), 'yyyy')}</p>
+                                                <p className="certificate-text">{getCertificateLabel(cert.certificateType)}</p>
+                                                <button
+                                                    className="certificate-download-button"
+                                                    onClick={() => downloadCertificate(cert.certificateId, cert.title)}
+                                                >
+                                                    {cert.title}.pdf
+                                                </button>
                                             </div>
                                         </li>
                                     ))}
                                 </ul>
+                                {totalPages > 1 && (
+                                    <div className="pastTest-pagination-container">
+                                        <Pagination
+                                            totalPages={totalPages}
+                                            currentPage={currentPage}
+                                            onPageChange={setCurrentPage}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 };
 
 export default Certificate;
