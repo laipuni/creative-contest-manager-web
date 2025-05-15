@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -193,5 +194,94 @@ class ContestRepositoryTest {
         assertThat(contest).isEqualTo(contest4);
     }
 
+    @DisplayName("임시 삭제된 대회를 ID로 단건 조회할 수 있다")
+    @Test
+    void findDeletedContestById() {
+        //given
+        Contest deleted = Contest.builder()
+                .title("삭제된 대회")
+                .description("삭제 테스트")
+                .season(99)
+                .registrationStartAt(now().minusDays(3))
+                .registrationEndAt(now().minusDays(1))
+                .startTime(now())
+                .endTime(now().plusDays(1))
+                .deleted(true)
+                .build();
+
+        Contest saved = contestRepository.save(deleted);
+
+        // when
+        Optional<Contest> found = contestRepository.findDeletedContestById(saved.getId());
+
+        // then
+        assertThat(found).isPresent();
+        assertThat(found.get().getTitle()).isEqualTo("삭제된 대회");
+        assertThat(found.get().isDeleted()).isTrue();
+    }
+
+    @DisplayName("임시 삭제된 대회 목록을 전체 조회할 수 있다")
+    @Test
+    void findAllDeletedContests() {
+        //given
+        Contest deleted1 = Contest.builder()
+                .title("삭제 대회 1")
+                .description("설명1")
+                .season(101)
+                .registrationStartAt(now().minusDays(4))
+                .registrationEndAt(now().minusDays(2))
+                .startTime(now())
+                .endTime(now().plusDays(2))
+                .deleted(true)
+                .build();
+
+        Contest deleted2 = Contest.builder()
+                .title("삭제 대회 2")
+                .description("설명2")
+                .season(102)
+                .registrationStartAt(now().minusDays(4))
+                .registrationEndAt(now().minusDays(2))
+                .startTime(now())
+                .endTime(now().plusDays(2))
+                .deleted(true)
+                .build();
+
+        contestRepository.saveAll(List.of(deleted1, deleted2));
+
+        // when
+        List<Contest> deletedContests = contestRepository.findDeletedContestById();
+
+        // then
+        assertThat(deletedContests).hasSize(2);
+        assertThat(deletedContests).extracting("title")
+                .containsExactlyInAnyOrder("삭제 대회 1", "삭제 대회 2");
+    }
+
+    @DisplayName("임시 삭제된 대회를 실제로 DB에서 완전히 삭제할 수 있다")
+    @Test
+    void hardDeleteDeletedContest() {
+        //given
+        Contest deleted = Contest.builder()
+                .title("삭제 대상 대회")
+                .description("삭제 대상 설명")
+                .season(103)
+                .registrationStartAt(now().minusDays(4))
+                .registrationEndAt(now().minusDays(2))
+                .startTime(now())
+                .endTime(now().plusDays(2))
+                .deleted(true)
+                .build();
+
+        Contest saved = contestRepository.save(deleted);
+
+        Long contestId = saved.getId();
+
+        //when
+        contestRepository.hardDeleteById(contestId);
+
+        //then
+        Optional<Contest> afterDelete = contestRepository.findDeletedContestById(contestId);
+        assertThat(afterDelete).isEmpty();
+    }
 
 }

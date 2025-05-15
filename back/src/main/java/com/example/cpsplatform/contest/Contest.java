@@ -49,7 +49,7 @@ public class Contest extends BaseEntity {
 
     @Builder
     private Contest(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
-                   final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime) {
+                   final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime,final boolean deleted) {
         this.title = title;
         this.description = description;
         this.season = season;
@@ -57,7 +57,7 @@ public class Contest extends BaseEntity {
         this.registrationEndAt = registrationEndAt;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.deleted = false;
+        this.deleted = deleted;
     }
 
     public static Contest of(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
@@ -73,6 +73,7 @@ public class Contest extends BaseEntity {
                 .registrationEndAt(registrationEndAt)
                 .startTime(startTime)
                 .endTime(endTime)
+                .deleted(false)
                 .build();
     }
 
