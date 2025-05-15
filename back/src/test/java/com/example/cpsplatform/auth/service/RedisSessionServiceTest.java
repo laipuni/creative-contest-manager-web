@@ -1,8 +1,6 @@
 package com.example.cpsplatform.auth.service;
 
-import com.example.cpsplatform.auth.service.dto.PasswordResetDto;
-import com.example.cpsplatform.member.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
+import com.example.cpsplatform.auth.service.session.SessionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,17 +11,17 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.UUID;
 
-import static com.example.cpsplatform.auth.service.RedisPasswordResetSessionService.PASSWORD_SESSION_KEY;
+import static com.example.cpsplatform.auth.service.session.RedisSessionService.PASSWORD_SESSION_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class RedisPasswordResetSessionServiceTest {
+class RedisSessionServiceTest {
 
     //테스트용으로 id를 선언하고, 각각의 테스트에서 사용한 뒤 해당 id의 key값들만 제거하면 됨
     public static final String testId = "testId";
 
     @Autowired
-    PasswordResetSessionService passwordResetSessionService;
+    SessionService sessionService;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -38,7 +36,7 @@ class RedisPasswordResetSessionServiceTest {
     void storePasswordResetSession(){
         //given
         //when
-        passwordResetSessionService.storePasswordResetSession(testId);
+        sessionService.storeSession(testId, SessionType.PASSWORD_RESET);
         //then
         assertThat(redisTemplate.hasKey(PASSWORD_SESSION_KEY + testId))
                 .isTrue();
@@ -52,7 +50,7 @@ class RedisPasswordResetSessionServiceTest {
         String session = UUID.randomUUID().toString();
         operations.set(PASSWORD_SESSION_KEY + testId, session);
         //when
-        passwordResetSessionService.confirmPasswordResetSession(testId,session);
+        sessionService.confirmSession(testId,session,SessionType.PASSWORD_RESET);
         //then
         assertThat(redisTemplate.hasKey(PASSWORD_SESSION_KEY + testId))
                 .isFalse();

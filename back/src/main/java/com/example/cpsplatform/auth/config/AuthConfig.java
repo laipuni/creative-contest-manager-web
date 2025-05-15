@@ -6,8 +6,8 @@ import com.example.cpsplatform.auth.generator.AuthCodeGenerator;
 import com.example.cpsplatform.auth.generator.UUIDAuthCodeGenerator;
 import com.example.cpsplatform.auth.sender.AuthCodeSender;
 import com.example.cpsplatform.auth.sender.EmailAuthCodeSender;
-import com.example.cpsplatform.auth.service.PasswordResetSessionService;
-import com.example.cpsplatform.auth.service.RedisPasswordResetSessionService;
+import com.example.cpsplatform.auth.service.SessionService;
+import com.example.cpsplatform.auth.service.session.RedisSessionService;
 import com.example.cpsplatform.auth.storage.AuthCodeStorage;
 import com.example.cpsplatform.auth.storage.RedisAuthCodeStorage;
 import com.example.cpsplatform.auth.strategy.*;
@@ -16,7 +16,6 @@ import com.example.cpsplatform.template.renderer.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,8 +48,8 @@ public class AuthConfig {
     }
 
     @Bean
-    public PasswordResetSessionService passwordResetSessionService(){
-        return new RedisPasswordResetSessionService(redisRepository);
+    public SessionService passwordResetSessionService(){
+        return new RedisSessionService(redisRepository);
     }
 
     @Bean

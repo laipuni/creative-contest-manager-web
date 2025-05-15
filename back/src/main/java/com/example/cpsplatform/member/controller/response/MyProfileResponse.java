@@ -1,8 +1,11 @@
 package com.example.cpsplatform.member.controller.response;
 
+import com.example.cpsplatform.MaskingUtils;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import java.time.LocalDate;
+
+import com.example.cpsplatform.security.encoder.CryptoService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,19 +27,24 @@ public class MyProfileResponse {
     private String organizationName;
     private String position;
 
-    public static MyProfileResponse of(Member member){
+    public static MyProfileResponse of(Member member, CryptoService cryptoService){
 
         Organization organization = member.getOrganization();
+
+        String phoneNumber = cryptoService.decryptAES(member.getPhoneNumber());
+        String email = cryptoService.decryptAES(member.getEmail());
+        String street = cryptoService.decryptAES(member.getAddress().getStreet());
+        String detail = cryptoService.decryptAES(member.getAddress().getDetail());
 
         return MyProfileResponse.builder()
                 .name(member.getName())
                 .birth(member.getBirth())
                 .gender(member.getGender().getDescription())
-                .street(member.getAddress().getStreet())
+                .street(street)
                 .zipCode(member.getAddress().getZipCode())
-                .detail(member.getAddress().getDetail())
-                .phoneNumber(member.getPhoneNumber())
-                .email(member.getEmail())
+                .detail(detail)
+                .phoneNumber(phoneNumber)
+                .email(email)
                 .organizationType(organization.getOrganizationType())
                 .organizationName(member.getOrganization().getName())
                 .position(organization.getPosition())

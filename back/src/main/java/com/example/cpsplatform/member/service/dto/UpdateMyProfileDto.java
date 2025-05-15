@@ -25,6 +25,7 @@ public class UpdateMyProfileDto {
     private String organizationType;
     private String organizationName;
     private String position;
+    private String session;
 
     public MemberUpdateDto toMemberUpdateDto(Long memberId) {
         return MemberUpdateDto.of(

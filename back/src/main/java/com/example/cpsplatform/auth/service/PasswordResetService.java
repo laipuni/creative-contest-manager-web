@@ -3,6 +3,7 @@ package com.example.cpsplatform.auth.service;
 import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
 import com.example.cpsplatform.auth.service.dto.PasswordConfirmDto;
 import com.example.cpsplatform.auth.service.dto.PasswordResetDto;
+import com.example.cpsplatform.auth.service.session.SessionType;
 import com.example.cpsplatform.exception.PasswordMismatchException;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.service.MemberService;
@@ -12,13 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.cpsplatform.auth.service.session.SessionType.PASSWORD_RESET;
+
 @Service
 @RequiredArgsConstructor
 public class PasswordResetService {
 
     private final MemberService memberService;
     private final AuthService authService;
-    private final PasswordResetSessionService passwordResetSessionService;
+    private final SessionService sessionService;
     private final PasswordEncoder passwordEncoder;
 
     public void sendPasswordResetAuthCode(PasswordResetCodeDto resetCodeDto){
@@ -40,15 +43,15 @@ public class PasswordResetService {
 
     public PasswordConfirmResponse confirmPasswordAuthCode(PasswordConfirmDto confirmDto){
         authService.verifyAuthCode(confirmDto.getRecipient(), confirmDto.getAuthCode(), "password_auth");
-        String session = passwordResetSessionService.storePasswordResetSession(confirmDto.getLoginId());
+        String session = sessionService.storeSession(confirmDto.getLoginId(), PASSWORD_RESET);
         return new PasswordConfirmResponse(session);
     }
 
     @Transactional
     public void resetPassword(PasswordResetDto passwordDto){
         //비밀번호 재설정 세션이 유효한지 체크
-        passwordResetSessionService.confirmPasswordResetSession(
-                passwordDto.getLoginId(),passwordDto.getSession()
+        sessionService.confirmSession(
+                passwordDto.getLoginId(),passwordDto.getSession(), PASSWORD_RESET
         );
 
         //재설정할 비밀번호와 비밀번호 확인이 같은지 확인
