@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import TestQuiz from "../../components/testQuiz/testQuiz";
@@ -11,7 +11,6 @@ const TestSubmit = () => {
     const [file1, setFile1] = useState(null);
     const [text2, setText2] = useState('');
     const [file2, setFile2] = useState(null);
-    const [level, setLevel] = useState('');
     const [quiz1, setQuiz1] = useState(null);
     const [quiz2, setQuiz2] = useState(null);
     const [answer1, setAnswer1] = useState(null);
@@ -49,7 +48,7 @@ const TestSubmit = () => {
     // 문제 가져오기
     useEffect(() => {
         if(teamInfo) {
-            apiClient.get(`/api/problems/team/${teamInfo.teamId}`)
+            apiClient.get(`/api/contests/${contestInfo.contestId}/teams/${teamInfo.teamId}/problems/section`)
                 .then((res) => {
                     const problems = res.data.data;
                     problems.forEach((problem) => {
@@ -57,16 +56,11 @@ const TestSubmit = () => {
                             setQuiz1(problem);
                         } else {
                             setQuiz2(problem);
-                            if(problem.problemType === 'HIGH_NORMAL')
-                                setLevel('고등/일반');
-                            else
-                                setLevel('초/중등');
                         }
                     });
                 })
                 .catch((e) => {
                 });
-            setLevel('초/중등');
         }
     }, [teamInfo])
 
