@@ -19,13 +19,15 @@ export default function DeletedContestList({ onRestore, onHardDelete, onClose })
     const handleDeleteClick = (contestId) => {
         onHardDelete(contestId).then(() => {
             setDeletedContests((prev) => prev.filter(c => c.contestId !== contestId));
-        });
+        })
+            .catch((err) => {alert(err.response.data.message)});
     };
 
     const handleRestoreClick = (contestId) => {
         onRestore(contestId).then(() => {
             setDeletedContests((prev) => prev.filter(c => c.contestId !== contestId));
-        });
+        })
+            .catch((err) => {alert(err.response.data.message)});
     };
 
 

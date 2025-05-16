@@ -260,15 +260,13 @@ const TestManage = () => {
 
     //일정 복구
     const handleRestore = (contestId) => {
-        return apiClient.patch(`/api/admin/contests/${contestId}/recover`)
+        return apiClient.patch(`/api/admin/contests/${contestId}/recover`, {skipErrorHandler: true})
             .then(() => {
                 alert('복구 완료');
                 setIsDateModalOpen(false);
                 setShowRestoreModal(false);
                 setIsRegistered(prev => !prev);
             })
-            .catch((err) => {
-            });
     };
 
 
@@ -276,13 +274,11 @@ const TestManage = () => {
     //일정 삭제 - hard
     const handleHardDelete = (contestId) => {
         return apiClient.delete('/api/admin/contests/hard', {
-                data: {contestId},
+                data: {contestId}, skipErrorHandler: true
             })
                 .then((res) => {
                     alert('삭제 완료');
                     setIsRegistered(!isRegistered);
-                })
-                .catch((err) => {
                 })
     }
     //문제 체크박스 선택
