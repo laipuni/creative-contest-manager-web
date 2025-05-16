@@ -11,10 +11,10 @@ const Sidebar = () => {
             <p className="sidebar-title">시험 정보</p>
             <div className="sidebar-content">
                 <Link to="/test/info" className={`sidebar-text ${location.pathname === "/test/info" ? "active" : ""}`}>
-                    예선시험 안내
+                    대회참가 안내
                 </Link>
                 <Link to="/register/info" className={`sidebar-text 
-                ${location.pathname.startsWith("/register") ? "active" : ""}`}>예선시험 접수</Link>
+                ${location.pathname.startsWith("/register") ? "active" : ""}`}>대회참가 접수</Link>
             </div>
             <div className="sidebar-underline"></div>
             <p className="sidebar-title">문제 풀기</p>

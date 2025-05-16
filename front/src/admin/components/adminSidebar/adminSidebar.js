@@ -13,7 +13,7 @@ const AdminSidebar = ({height}) => {
             </Link>
             <Link to="/admin/testManage"
                   className={`adminSidebar-category ${location.pathname === "/admin/testManage" ? "active" : ""}`}>
-                <p className="adminSidebar-text">예선 관리</p>
+                <p className="adminSidebar-text">대회 관리</p>
             </Link>
             <Link to="/admin/certificates"
                   className={`adminSidebar-category ${location.pathname === "/admin/certificates" ? "active" : ""}`}>

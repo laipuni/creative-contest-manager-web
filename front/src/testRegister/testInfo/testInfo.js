@@ -12,7 +12,6 @@ const TestInfo = () => {
     const [registerEndDate, setRegisterEndDate] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [season, setSeason] = useState(null);
 
     //시험 일정 가정
     useEffect(() => {
@@ -23,7 +22,6 @@ const TestInfo = () => {
                   const registerEnd = new Date(res.data.data.registrationEndAt);
                   const start = new Date(res.data.data.startTime);
                   const end = new Date(res.data.data.endTime);
-                  setSeason(res.data.data.season);
                   setStartDate(format(start, 'yyyy.MM.dd HH:mm'));
                   setEndDate(format(end, 'yyyy.MM.dd HH:mm'));
                   setRegisterStartDate(format(registerStart, 'yyyy.MM.dd HH:mm'));
@@ -40,8 +38,7 @@ const TestInfo = () => {
                 <div className="testInfo-content-container">
                     <Sidebar />
                     <div className="testInfo-main-container">
-                        {season && <CategoryLogo logoTitle={`${season}회차 예선시험 안내`} imgSrc={trophyLogo}/>}
-                        {!season && <CategoryLogo logoTitle={`예선시험 안내`} imgSrc={trophyLogo}/>}
+                        <CategoryLogo logoTitle={`대회참가 안내`} imgSrc={trophyLogo}/>
                         <div className="testInfo-text-container">
                             <div className="testInfo-text-inner-container">
                                 <div className="testInfo-textbox">
