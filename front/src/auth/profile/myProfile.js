@@ -195,7 +195,7 @@ const MyProfile = () => {
         cursor: 'pointer',
     };
 
-    /*------------------- 휴대폰번호 기능(post시 prefix, middle, last 합치기) ----------------*/
+    /*------------------- 연락처 기능(post시 prefix, middle, last 합치기) ----------------*/
     const handleMiddleChange = (e) => {
         const value = e.target.value;
         setMiddle(value);
@@ -355,12 +355,24 @@ const MyProfile = () => {
                                         value={prefix}
                                         onChange={(e) => setPrefix(e.target.value)}
                                         required>
+                                        <option value="064">064</option>
+                                        <option value="063">063</option>
+                                        <option value="062">062</option>
+                                        <option value="061">061</option>
+                                        <option value="055">055</option>
+                                        <option value="054">054</option>
+                                        <option value="053">053</option>
+                                        <option value="052">052</option>
+                                        <option value="051">051</option>
+                                        <option value="044">044</option>
+                                        <option value="043">043</option>
+                                        <option value="042">042</option>
+                                        <option value="041">041</option>
+                                        <option value="033">033</option>
+                                        <option value="032">032</option>
+                                        <option value="031">031</option>
+                                        <option value="02">02</option>
                                         <option value="010">010</option>
-                                        <option value="011">011</option>
-                                        <option value="016">016</option>
-                                        <option value="017">017</option>
-                                        <option value="018">018</option>
-                                        <option value="019">019</option>
                                     </select>
                                     <p className="info-message2">-</p>
                                     <input
@@ -443,7 +455,7 @@ const MyProfile = () => {
                             <div className="join2-main-border-left">
                                 {!job && <p className="join2-left-text">* 학교(소속)</p>}
                                 {isSchool.includes(job) && <p className="join2-left-text">* 학교</p>}
-                                {job && !isSchool.includes(job) && <p className="join2-left-text">* 소속</p>}
+                                {job && !isSchool.includes(job) && <p className="join2-left-text">소속</p>}
                             </div>
                             <div className="join2-main-border-right">
                                 <div className="join2-right-row">
@@ -480,8 +492,7 @@ const MyProfile = () => {
                                             value={workPlace}
                                             onChange={(e) => {
                                                 setWorkPlace(e.target.value)
-                                            }}
-                                            required>
+                                            }}>
                                         </input>}
                                 </div>
                             </div>
@@ -490,7 +501,7 @@ const MyProfile = () => {
                             <div className="join2-main-border-left" style={{borderBottom: 'none'}}>
                                 {!job && <p className="join2-left-text">* 학년(부서)</p>}
                                 {isSchool.includes(job) && <p className="join2-left-text">* 학년</p>}
-                                {job && !isSchool.includes(job) && <p className="join2-left-text">* 부서</p>}
+                                {job && !isSchool.includes(job) && <p className="join2-left-text">부서</p>}
                             </div>
                             <div className="join2-main-border-right" style={{borderBottom: 'none'}}>
                                 <div className="join2-right-row">
@@ -534,7 +545,6 @@ const MyProfile = () => {
                                             type="text"
                                             className="join2-id-input"
                                             value={detailJob}
-                                            required
                                             onChange={(e) => {
                                                 setDetailJob(e.target.value)
                                             }}
