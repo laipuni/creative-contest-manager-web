@@ -100,8 +100,8 @@ const Join2 = () => {
             return new Date(year, month, day);
         }
 
-        apiClient.post('/api/v1/members', {
-            loginId : userId,
+        const payload = {
+            loginId: userId,
             password,
             confirmPassword: passwordCheck,
             name,
@@ -111,12 +111,14 @@ const Join2 = () => {
             city: sido,
             zipCode: postcode,
             detail: detailAddress,
-            phoneNumber : prefix+middle+last,
+            phoneNumber: prefix + middle + last,
             email,
             organizationType: job.slice(2),
-            organizationName: workPlace,
-            position: detailJob,
-        }, )
+            ...(workPlace && { organizationName: workPlace }),
+            ...(detailJob && { position: detailJob }),
+        };
+
+        apiClient.post('/api/v1/members', payload)
             .then((res) => {
                 if(res.data.code === 200){
                     //로그인 바로 진행
@@ -574,7 +576,7 @@ const Join2 = () => {
                             <div className="join2-main-border-left">
                                 {!job && <p className="join2-left-text">* 학교(소속)</p>}
                                 {job.startsWith('s') && <p className="join2-left-text">* 학교</p>}
-                                {job.startsWith('p') && <p className="join2-left-text">* 소속</p>}
+                                {job.startsWith('p') && <p className="join2-left-text">소속</p>}
                             </div>
                             <div className="join2-main-border-right">
                                 <div className="join2-right-row">
@@ -612,7 +614,7 @@ const Join2 = () => {
                                             onChange={(e) => {
                                                 setWorkPlace(e.target.value)
                                             }}
-                                            required>
+                                            >
                                         </input>}
                                 </div>
                             </div>
@@ -621,7 +623,7 @@ const Join2 = () => {
                             <div className="join2-main-border-left" style={{borderBottom: 'none'}}>
                                 {!job && <p className="join2-left-text">* 학년(부서)</p>}
                                 {job.startsWith('s') && <p className="join2-left-text">* 학년</p>}
-                                {job.startsWith('p') && <p className="join2-left-text">* 부서</p>}
+                                {job.startsWith('p') && <p className="join2-left-text">부서</p>}
                             </div>
                             <div className="join2-main-border-right" style={{borderBottom: 'none'}}>
                                 <div className="join2-right-row">
@@ -665,7 +667,6 @@ const Join2 = () => {
                                             type="text"
                                             className="join2-id-input"
                                             value={detailJob}
-                                            required
                                             onChange={(e) => {
                                                 setDetailJob(e.target.value)
                                             }}
