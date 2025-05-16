@@ -4,11 +4,13 @@ import DaumPostcode from "react-daum-postcode";
 import EmailVerificationModal from "../../components/modals/emailVerificationModal";
 import SchoolSearchModal from "../../components/modals/schoolSearchModal";
 import apiClient from "../../templates/apiClient";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import MainHeader from "../../components/mainHeader/mainHeader";
 
 const MyProfile = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const session = location.state?.session;
     /*--------------이름--------------*/
     const [name, setName] = useState('');
     /*--------------생일--------------*/
@@ -51,7 +53,7 @@ const MyProfile = () => {
 
     /*-----------------정보 불러오기-------------*/
     useEffect(() => {
-        apiClient.get('/api/members/my-profile')
+        apiClient.get(`/api/members/my-profile?session=${session}`, {skipErrorHandler: true})
             .then((res) => {
                 const profile = res.data.data;
                 setName(profile.name);
@@ -69,7 +71,16 @@ const MyProfile = () => {
                 setSelectedSchool({schoolName: profile.organizationName, region: '', estType: ''});
                 setDetailJob(profile.position);
             })
-            .catch((err)=>{})
+            .catch((err)=>{
+                if(err.response?.status === 401) {
+                    alert('세션이 만료되어 비밀번호 재확인이 필요합니다.')
+                    navigate('/member/profile/auth')
+                }
+                else {
+                    alert(err.response?.data.message);
+                    navigate('/member/profile/auth');
+                }
+            })
     }, []);
 
     /*----------------정보 수정------------------------*/
