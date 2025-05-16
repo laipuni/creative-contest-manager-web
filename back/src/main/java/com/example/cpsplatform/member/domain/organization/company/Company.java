@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Getter
@@ -13,25 +14,20 @@ import lombok.NoArgsConstructor;
 public class Company extends Organization {
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false,length = 20)
+    @Column(nullable = false, length = 20)
     private FieldType fieldType;
 
-    @Column(nullable = false,length = 50)
+    @Column(nullable = false, length = 50)
     private String position;
 
     public Company(final String name, final String position, final FieldType fieldType) {
-        super(name);
-        this.position = position;
+        super(StringUtils.hasText(name) ? name : "없음");
+        this.position = StringUtils.hasText(position) ? position : "없음";
         this.fieldType = fieldType;
     }
 
     @Override
     public String getOrganizationType() {
         return fieldType.getDescription();
-    }
-
-    @Override
-    public String getPosition() {
-        return this.position;
     }
 }

@@ -24,7 +24,6 @@ import java.time.Year;
 @Table(name = "member", uniqueConstraints = {
         @UniqueConstraint(name = "uk_member_login_id", columnNames = {"login_id"}),
         @UniqueConstraint(name = "uk_member_email", columnNames = {"email"}),
-        @UniqueConstraint(name = "uk_member_phone_number", columnNames = {"phone_number"}),
         @UniqueConstraint(name = "uk_member_organization_id", columnNames = {"organization_id"})
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
