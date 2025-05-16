@@ -31,6 +31,8 @@ const RegisterInfo = () => {
     }, []);
 
     const handleDeleteTeam = () => {
+        const confirmed = window.confirm("정말 삭제하시겠습니까?");
+        if (!confirmed) return;
         apiClient.delete('/api/teams', {
             data: {teamId: teamInfo.teamId, contestId: contestInfo.contestId}, skipErrorHandler: true})
             .then((res)=>{
