@@ -21,6 +21,12 @@ import java.time.Year;
 
 @Entity
 @Getter
+@Table(name = "member", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_member_login_id", columnNames = {"login_id"}),
+        @UniqueConstraint(name = "uk_member_email", columnNames = {"email"}),
+        @UniqueConstraint(name = "uk_member_phone_number", columnNames = {"phone_number"}),
+        @UniqueConstraint(name = "uk_member_organization_id", columnNames = {"organization_id"})
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 
@@ -28,7 +34,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "login_id",nullable = false,unique = true,updatable = false,length = 12)
+    @Column(name = "login_id",nullable = false,updatable = false,length = 12)
     private String loginId;
 
     @Column(name = "password",nullable = false)
@@ -37,7 +43,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, name = "email")
     private String email;
 
     @Column(length = 20, nullable = false)
@@ -54,10 +60,11 @@ public class Member extends BaseEntity {
     @Embedded
     private Address address;
 
-    @Column(nullable = false, name = "phone_number", unique = true)
+    @Column(nullable = false, name = "phone_number")
     private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "organization_id")
     private Organization organization;
 
     @Builder

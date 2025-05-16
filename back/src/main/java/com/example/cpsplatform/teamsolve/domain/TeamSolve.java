@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "team_solve")
+@Table(name = "team_solve",uniqueConstraints =
+       @UniqueConstraint(name = "uk_team_solve_teamid_problemid",columnNames = {"team_id","problem_id"})
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamSolve extends BaseEntity {
 
@@ -20,11 +22,11 @@ public class TeamSolve extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false,name = "team_id")
     private Team team;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false,name = "problem_id")
     private Problem problem;
 
     private String content;

@@ -2,9 +2,12 @@ package com.example.cpsplatform.exception.controller;
 
 import com.example.cpsplatform.exception.*;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
+import com.example.cpsplatform.exception.controller.dto.UniqueConstraintMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,12 +15,34 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Map;
-
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse<Object> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        String message = "중복된 데이터가 존재합니다.";
+        String constraintName = extractConstraintName(e);
+
+        if (constraintName != null) {
+            log.debug("[DataIntegrityViolationException] 유니크 제약 조건 위반: {}", constraintName);
+            //ex) contenst.uk_xxxx_xxxx -> uk_xxxx_xxxx 분리
+            message = UniqueConstraintMessage.findUniqueConstraintMessage(constraintName.split("\\.")[1]);
+        }
+        return ApiErrorResponse.of(HttpStatus.BAD_REQUEST, message, null);
+    }
+
+    private String extractConstraintName(Throwable e) {
+        while (e != null) {
+            if (e instanceof ConstraintViolationException) {
+                return ((ConstraintViolationException) e).getConstraintName();
+            }
+            e = e.getCause();
+        }
+        return null;
+    }
 
     @ExceptionHandler(UnsupportedCertificateTypeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

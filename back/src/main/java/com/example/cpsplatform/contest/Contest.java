@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Table(name = "contest", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_contest_season", columnNames = {"season"})
+})
 @SQLDelete(sql = "UPDATE contest SET deleted = true WHERE id=?")
 @SQLRestriction("deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,7 +33,7 @@ public class Contest extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private int season;
 
     @Column(nullable = false,name = "registration_start_at")

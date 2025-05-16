@@ -14,6 +14,9 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
+@Table(name = "file", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_file_team_solve_id", columnNames = {"team_solve_id"})
+})
 @SQLDelete(sql = "UPDATE file SET deleted = true WHERE id=?")
 @SQLRestriction("deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
