@@ -21,6 +21,7 @@ import FindIdPage from "../auth/login/member/findIdPage";
 import ResetPasswordPage from "../auth/login/member/resetPwPage";
 import CertificateManage from "../admin/certificateManage/certificateManage";
 import ProfileSelect from "../auth/profile/profileSelect";
+import PasswordAuth from "../auth/profile/passwordAuth";
 
 function AppRoutes() {
     const location = useLocation();
@@ -63,6 +64,7 @@ function AppRoutes() {
             <Route path="register/info" element={<RegisterInfo />}></Route>
             <Route path="register/team" element={<RegisterTeam />}></Route>
             <Route path="member/profile" element={<ProfileSelect />}></Route>
+            <Route path="member/profile/auth" element={<PasswordAuth />}></Route>
             <Route path="member/profile/edit" element={<MyProfile />}></Route>
             <Route path="test/realTest/info" element={<TestSubmitInfo />}></Route>
             <Route path="test/realTest/submit" element={<TestSubmit />}></Route>
