@@ -18,14 +18,17 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"contest_id", "team_number"}))
+@Table(name = "team",uniqueConstraints = {
+    @UniqueConstraint(name = "uk_team_contestid_number",columnNames = {"contest_id", "team_number"}),
+    @UniqueConstraint(name = "uk_team_name",columnNames = {"name"})
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100, name = "name")
     private String name;
 
     @Column(nullable = false)

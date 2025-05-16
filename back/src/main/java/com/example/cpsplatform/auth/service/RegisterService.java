@@ -34,13 +34,7 @@ public class RegisterService {
                 request.getEmail(), request.getEmail(), "signup_verify");
 
         if(result){
-            //인증 코드가 적절한 경우
-            try {
-                //todo 회원 중복 예외 다른방식으로 처리 요함
-                memberService.save(request.toMemberSaveDto());
-            } catch (DataIntegrityViolationException e){
-                throw new DuplicateDataException("중복된 회원이 존재합니다.");
-            }
+            memberService.save(request.toMemberSaveDto());
         }
     }
 

@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "team_number",uniqueConstraints =
+        @UniqueConstraint(name = "uk_team_number_contestid",columnNames = "contest_id")
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamNumber {
     @Id
@@ -17,7 +20,7 @@ public class TeamNumber {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contest_id", unique = true, nullable = false)
+    @JoinColumn(name = "contest_id", nullable = false)
     private Contest contest;
 
     @Column(nullable = false)

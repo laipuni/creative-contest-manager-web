@@ -16,6 +16,7 @@ import java.util.Set;
 
 @Entity
 @Getter
+@Table(name = "notice")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice extends BaseEntity {
 

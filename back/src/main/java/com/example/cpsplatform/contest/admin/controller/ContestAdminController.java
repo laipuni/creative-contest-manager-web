@@ -49,24 +49,14 @@ public class ContestAdminController {
     @AdminLog
     @PostMapping
     public ApiResponse<Object> createContest(@Valid @RequestBody CreateContestRequest request){
-        try{
-            //todo 추후 데이터 중복 예외 일괄 처리 요함
-            contestAdminService.createContest(request.toContestCreateDto());
-        } catch (DataIntegrityViolationException e){
-            throw new DuplicateDataException("동일한 회의 대회가 있습니다.");
-        }
+        contestAdminService.createContest(request.toContestCreateDto());
         return ApiResponse.ok(null);
     }
 
     @AdminLog
     @PutMapping
     public ApiResponse<Object> updateContest(@Valid @RequestBody UpdateContestRequest request){
-        try{
-            //todo 추후 데이터 중복 예외 일괄 처리 요함
-            contestAdminService.updateContest(request.toContestUpdateDto());
-        } catch (DataIntegrityViolationException e){
-            throw new DuplicateDataException("동일한 회의 대회가 있습니다.");
-        }
+        contestAdminService.updateContest(request.toContestUpdateDto());
         return ApiResponse.ok(null);
     }
 

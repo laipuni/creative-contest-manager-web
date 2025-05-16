@@ -17,9 +17,11 @@ import java.util.Set;
 @Entity
 @Getter
 @Table(
+        name = "problem",uniqueConstraints = {
         //ex) 16회 대회에 초/중 섹션에 1번 문제가 복수일 경우를 유니크 제약 위반
-        uniqueConstraints = @UniqueConstraint(columnNames = {"contest_id", "section", "problem_order"})
-)
+        @UniqueConstraint(name = "uk_problem_contest_section_order", columnNames = {"contest_id", "section", "problem_order"}),
+        @UniqueConstraint(name = "uk_problem_title",columnNames = "title")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Problem extends BaseEntity {
 
@@ -27,7 +29,7 @@ public class Problem extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true,name = "title")
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +37,7 @@ public class Problem extends BaseEntity {
     private Contest contest;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "section")
     private Section section;
 
     @Column
