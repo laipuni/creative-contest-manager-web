@@ -572,7 +572,7 @@ const Join2 = () => {
                                         <option value="s_중학생">중학생</option>
                                         <option value="s_고등학생">고등학생</option>
                                         <option value="s_대학생">대학생</option>
-                                        <option value="p_컴퓨터/인터넷">컴퓨터/인터넷</option>
+                                        <option value="p_컴퓨터">컴퓨터/인터넷</option>
                                         <option value="p_언론">언론</option>
                                         <option value="p_공무원">공무원</option>
                                         <option value="p_군인">군인</option>

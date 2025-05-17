@@ -450,7 +450,7 @@ const MyProfile = () => {
                                         <option value="중학생">중학생</option>
                                         <option value="고등학생">고등학생</option>
                                         <option value="대학생">대학생</option>
-                                        <option value="컴퓨터/인터넷">컴퓨터/인터넷</option>
+                                        <option value="컴퓨터">컴퓨터/인터넷</option>
                                         <option value="언론">언론</option>
                                         <option value="공무원">공무원</option>
                                         <option value="군인">군인</option>
