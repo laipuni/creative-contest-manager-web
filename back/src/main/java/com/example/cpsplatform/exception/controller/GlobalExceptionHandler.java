@@ -10,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse<Object> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        String message = "중복된 데이터가 존재합니다.";
+        String message = null;
         String constraintName = extractConstraintName(e);
 
         if (constraintName != null) {
@@ -31,7 +32,13 @@ public class GlobalExceptionHandler {
             //ex) contenst.uk_xxxx_xxxx -> uk_xxxx_xxxx 분리
             message = UniqueConstraintMessage.findUniqueConstraintMessage(constraintName.split("\\.")[1]);
         }
-        return ApiErrorResponse.of(HttpStatus.BAD_REQUEST, message, null);
+
+        if(StringUtils.hasText(message)){
+            //Unique 제약 조건에 맞는 메세지를 찾았을 경우
+            return ApiErrorResponse.of(HttpStatus.BAD_REQUEST, message, null);
+        } else{
+            log.warn("[DataIntegrityViolationException] 기타 제약 조건 위반", e);
+            return ApiErrorResponse.of(HttpStatus.BAD_REQUEST, "요청한 데이터에 문제가 있습니다. 입력값을 확인해주세요.", null);        }
     }
 
     private String extractConstraintName(Throwable e) {
