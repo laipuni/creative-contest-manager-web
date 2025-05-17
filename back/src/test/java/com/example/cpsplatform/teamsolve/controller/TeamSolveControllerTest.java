@@ -14,10 +14,12 @@ import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.security.service.LoginFailService;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.service.TeamService;
 import com.example.cpsplatform.teamsolve.controller.request.SubmitTeamAnswerRequest;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.example.cpsplatform.teamsolve.service.AnswerSubmitService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +30,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,8 +46,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -106,7 +108,7 @@ class TeamSolveControllerTest {
 
     @DisplayName("팀 답안지 제출 요청을 받아서 정상적으로 응답한다.")
     @Test
-    void submitTeamAnswers() throws Exception {
+    void submitAnswerTemporary() throws Exception {
         //given
         Long problemId = 1L;
 
@@ -145,7 +147,7 @@ class TeamSolveControllerTest {
 
     @DisplayName("팀 답안지 요청을 받았을 때, 답안지를 제출할 문제의 id가 없을 경우 에외가 발생한다.")
     @Test
-    void submitTeamAnswersWithNullProblemIds() throws Exception {
+    void submitAnswerTemporaryWithNullProblemIds() throws Exception {
         //given
         Long problemId = null;
 
@@ -199,14 +201,14 @@ class TeamSolveControllerTest {
                 .build();
 
         //테스트용 DTO 생성
-        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, "문제 풀이",1L,"팀A", Section.ELEMENTARY_MIDDLE, LocalDateTime.now(), 2);
+        GetTeamAnswerDto dto1 = new GetTeamAnswerDto(1L, "문제 풀이",1L,"팀A", Section.ELEMENTARY_MIDDLE, TeamSolveType.TEMP,LocalDateTime.now());
         dto1.setFileInfo(file1);
 
 
-        GetTeamAnswerResponse response = new GetTeamAnswerResponse(List.of(dto1));
+        GetTeamAnswerResponse response = new GetTeamAnswerResponse(0, SubmitStatus.TEMPORARY,List.of(dto1));
 
         //서비스 모의 설정
-        when(answerSubmitService.getAnswer(anyLong(), anyString())).thenReturn(response);
+        when(answerSubmitService.getAnswer(anyLong(), anyString(), any(TeamSolveType.class))).thenReturn(response);
 
         //When
         //Then
@@ -238,4 +240,19 @@ class TeamSolveControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("임시 저장된 답안을 최종적으로 제출하는 요청을 받아 정상적으로 응답한다.")
+    @Test
+    void submitTeamAnswersComplete() throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/contests/{contestId}/team-solves/complete",1L)
+                        .with(csrf())
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
 }
