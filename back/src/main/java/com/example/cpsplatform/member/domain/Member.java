@@ -93,10 +93,12 @@ public class Member extends BaseEntity {
         String encodedPhoneNumber = cryptoService.encryptAES(phoneNumber);
         //비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(password);
+        //이메일 암호화
+        String encodedEmail = cryptoService.encryptAES(email);
 
         return Member.builder()
                 .loginId(loginId)
-                .email(email)
+                .email(encodedEmail)
                 .password(encodedPassword)
                 .gender(gender)
                 .birth(birth)
