@@ -1,9 +1,8 @@
 package com.example.cpsplatform.teamsolve.controller.response;
 
-import lombok.AccessLevel;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -11,5 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 public class GetTeamAnswerResponse {
 
+    private int finalSubmitCount;
+    private SubmitStatus status;
     private List<GetTeamAnswerDto> teamAnswerList;
+
 }

@@ -17,6 +17,11 @@ public interface TeamSolveRepository extends JpaRepository<TeamSolve,Long>, Team
     @Query("select ts from TeamSolve ts where ts.team.id = :teamId and ts.problem.id = :problemId and ts.teamSolveType = :teamSolveType")
     Optional<TeamSolve> findByTeamIdAndProblemId(@Param("teamId") Long teamId, @Param("problemId") Long problemId, @Param("teamSolveType")TeamSolveType teamSolveType);
 
+    //해당 대회의 답안지 정보들을 조회하는 쿼리
+    @Query("select ts from TeamSolve ts join ts.team t where t.id = :teamId and t.contest.id = :contestId and ts.teamSolveType = :teamSolveType")
+    List<TeamSolve> findAllByTeamIdAndContestIdAndTeamSolveType(@Param("teamId") Long teamId, @Param("contestId") Long contestId, @Param("teamSolveType")TeamSolveType teamSolveType);
+
+
     //팀 id 리스트로 팀들의 답안지를 불러오는 쿼리
     @Query(value = "select * from team_solve where team_id IN (:teamIds)"
             ,nativeQuery = true)

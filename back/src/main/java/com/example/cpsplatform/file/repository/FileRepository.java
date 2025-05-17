@@ -38,6 +38,10 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     List<File> findAllByTeamSolve_IdIn(List<Long> teamSolveIds);
 
     @Modifying
+    @Query(value = "delete from file where team_solve_id in :teamSolveIds",nativeQuery = true)
+    int hardDeleteAllByTeamSolveIdIn(@Param("teamSolveIds")List<Long> teamSolveIds);
+
+    @Modifying
     @Query(value = "delete from file where id in :fileIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("fileIds")List<Long> fileIds);
 

@@ -53,6 +53,7 @@ public class File extends BaseEntity {
     private boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "problem_id")
     private Problem problem;
 
     @OneToOne(fetch = FetchType.LAZY)
