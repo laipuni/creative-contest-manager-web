@@ -49,4 +49,8 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     @Modifying
     @Query(value = "delete from member_team where id in :memberTeamIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("memberTeamIds") List<Long> memberTeamIds);
+
+    @Query("select mt from MemberTeam mt join mt.team t where mt.member.id = :memberId and t.contest.id = :contestId")
+    List<MemberTeam> findByMemberIdAndContestId(@Param("memberId") Long memberId, @Param("contestId") Long contestId);
+
 }
