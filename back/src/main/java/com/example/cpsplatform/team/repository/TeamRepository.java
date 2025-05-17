@@ -42,5 +42,10 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
             "where m.loginId = :loginId and t.contest.id = :contestId")
     Optional<Team> findTeamByMemberLoginIdAndContestId(@Param("loginId") String loginId,@Param("contestId") Long contestId);
 
-    List<Team> findAllByContestId(Long contestId);
+    //네이티브 쿼리라서 임시 삭제된 대회의 팀까지 불러올 수 있으니 주의
+    @Query(value = "select * from team where contest_id = :contestId"
+            ,nativeQuery = true)
+    List<Team> findAllByContestIdNative(@Param("contestId") Long contestId);
+
+
 }

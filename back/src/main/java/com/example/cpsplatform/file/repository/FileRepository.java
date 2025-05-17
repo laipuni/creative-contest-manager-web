@@ -37,11 +37,18 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     //팀들의 답안지 파일을 조회
     List<File> findAllByTeamSolve_IdIn(List<Long> teamSolveIds);
 
-    //대회 문제 파일 조회
-    List<File> findAllByProblem_IdIn(List<Long> problemIds);
-
-
     @Modifying
     @Query(value = "delete from file where id in :fileIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("fileIds")List<Long> fileIds);
+
+    //팀들의 답안지 파일을 조회, 네이티브 쿼리 버전
+    @Query(value = "select * from file where team_solve_id in (:teamSolveIds)"
+            ,nativeQuery = true)
+    List<File> findAllByTeamSolve_IdInNative(@Param("teamSolveIds") List<Long> teamSolveIds);
+
+    //대회 문제 파일 조회, 네이티브 쿼리 버전
+    @Query(value = "select * from file where problem_id in (:problemIds)"
+            ,nativeQuery = true)
+    List<File> findAllByProblem_IdInNative(@Param("problemIds")List<Long> problemIds);
+
 }
