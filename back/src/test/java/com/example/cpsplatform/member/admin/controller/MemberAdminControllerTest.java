@@ -143,7 +143,7 @@ public class MemberAdminControllerTest {
         // when & then
         mockMvc.perform(
                         get("/api/admin/v1/members")
-                                .param("search", "홍길동")
+                                .param("keyword", "홍길동")
                                 .param("search_type", "name")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON))

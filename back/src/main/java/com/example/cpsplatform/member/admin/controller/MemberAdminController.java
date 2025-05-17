@@ -26,7 +26,7 @@ public class MemberAdminController {
     public ApiResponse<MemberInfoListResponse> searchMember(@RequestParam(value = "page",defaultValue = "0") int page,
                                                             @RequestParam(value = "page_size",defaultValue = "10") int pageSize,
                                                             @RequestParam(value = "order",defaultValue = "desc") String order,
-                                                            @RequestParam(value = "search",defaultValue = "") String search,
+                                                            @RequestParam(value = "keyword",defaultValue = "") String search,
                                                             @RequestParam(value = "gender",required = false) String gender,
                                                             @RequestParam(value = "search_type",defaultValue = "") String searchType,
                                                             @RequestParam(value = "start_date",required = false) LocalDateTime startDate,
