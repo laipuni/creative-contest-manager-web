@@ -150,7 +150,7 @@ public class TeamService {
         for (String loginId : memberIds) {
             Member member = memberRepository.findMemberByLoginId(loginId)
                     .orElseThrow(()->new IllegalArgumentException(String.format("%s는 존재하지 않는 계정입니다.",loginId)));
-            boolean result = memberTeamRepository.existsByContestIdAndLoginId(contest.getId(), loginId);
+            boolean result = memberTeamRepository.existsByContestIdAndMemberId(contest.getId(), member.getId());
             if(result){
                 //추가할려는 팀원이 같은 대회에 다른 팀에 속해있는 경우
                 throw new ContestJoinException(String.format("%s님은 이미 해당 대회에 소속된 팀이 있습니다.",loginId));

@@ -30,6 +30,14 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
             "and mt.team.contest.id = :contestId)")
     boolean existsByContestIdAndLoginId(@Param("contestId") Long contestId, @Param("loginId") String loginId);
 
+    @Query(value = "select exists " +
+            "(select mt " +
+            "from MemberTeam mt " +
+            "where mt.member.id = :memberId " +
+            "and mt.team.contest.id = :contestId)")
+    boolean existsByContestIdAndMemberId(@Param("contestId") Long contestId, @Param("memberId") Long memberId);
+
+
     //해당 대회에 참여자를 조회하는 쿼리
     @Query("select mt from MemberTeam mt join fetch mt.member m join fetch mt.team t where t.contest.id = :contestId")
     List<MemberTeam> findAllByContestId(@Param("contestId") Long contestId);
