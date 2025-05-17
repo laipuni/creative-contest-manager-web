@@ -6,6 +6,8 @@ import com.example.cpsplatform.member.admin.controller.response.MemberInfoListRe
 import com.example.cpsplatform.member.domain.QMember;
 import com.example.cpsplatform.member.repository.dto.AdminMemberSearchCond;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -51,7 +53,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
                 .where(filterBy(cond))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy()
+                .orderBy(orderBy(cond))
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory.select(member.count())
@@ -109,5 +111,10 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
                     new BooleanBuilder(member.organization.name.contains(cond.getKeyword()));
             default -> new BooleanBuilder();
         };
+    }
+
+    private OrderSpecifier[] orderBy(final AdminMemberSearchCond cond){
+        Order direction = "desc".equalsIgnoreCase(cond.getOrder()) ? Order.DESC : Order.ASC;
+        return new OrderSpecifier[]{new OrderSpecifier<>(direction, member.createdAt)};
     }
 }
