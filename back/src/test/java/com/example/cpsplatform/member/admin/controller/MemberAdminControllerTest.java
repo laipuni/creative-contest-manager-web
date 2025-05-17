@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.service.RegisterService;
 import com.example.cpsplatform.member.admin.MemberAdminService;
+import com.example.cpsplatform.member.admin.controller.response.MemberDetailInfoResponse;
 import com.example.cpsplatform.member.admin.controller.response.MemberInfoListDto;
 import com.example.cpsplatform.member.admin.controller.response.MemberInfoListResponse;
+import com.example.cpsplatform.member.controller.response.MyProfileResponse;
 import com.example.cpsplatform.member.domain.Gender;
+import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.company.Company;
 import com.example.cpsplatform.member.domain.organization.company.FieldType;
@@ -15,14 +18,18 @@ import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.member.service.MemberService;
 import com.example.cpsplatform.member.service.ProfileService;
 import com.example.cpsplatform.security.config.SecurityConfig;
+import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -33,7 +40,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -224,5 +231,51 @@ public class MemberAdminControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.data.memberInfos.length()").value(1))
                 .andExpect(jsonPath("$.data.memberInfos[0].loginId").value("user1"));
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("유저의 정보를 상세 조회한다.")
+    @Test
+    void getMemberDetailInfo() throws Exception {
+        //given
+        //자신의 프로필 응답값 Mock 처리
+        MemberDetailInfoResponse response = MemberDetailInfoResponse.builder()
+                .name("홍길동")
+                .birth(LocalDate.of(1999, 1, 1))
+                .gender("남성")
+                .street("서울 강남구 역삼동")
+                .zipCode("12345")
+                .detail("101호")
+                .phoneNumber("01012345678")
+                .email("hong@example.com")
+                .organizationType("학교")
+                .organizationName("서울대학교")
+                .position("학생")
+                .build();
+
+        Mockito.when(memberAdminService.getMemberDetailInfo(anyLong())).thenReturn(response);
+
+
+        //when
+        //then
+        mockMvc.perform(
+                        get("/api/admin/members/{memberId}",1L)
+                                .with(csrf())
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.name").value("홍길동"))
+                .andExpect(jsonPath("$.data.birth").value("1999-01-01"))
+                .andExpect(jsonPath("$.data.gender").value("남성"))
+                .andExpect(jsonPath("$.data.street").value("서울 강남구 역삼동"))
+                .andExpect(jsonPath("$.data.zipCode").value("12345"))
+                .andExpect(jsonPath("$.data.detail").value("101호"))
+                .andExpect(jsonPath("$.data.phoneNumber").value("01012345678"))
+                .andExpect(jsonPath("$.data.email").value("hong@example.com"))
+                .andExpect(jsonPath("$.data.organizationType").value("학교"))
+                .andExpect(jsonPath("$.data.organizationName").value("서울대학교"))
+                .andExpect(jsonPath("$.data.position").value("학생"));
     }
 }
