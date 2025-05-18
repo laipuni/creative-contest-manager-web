@@ -199,7 +199,8 @@ const TeamList = () => {
                 <div className="admin-teamList-main-container">
                     <div className="admin-teamList-header">
                         <div className="admin-teamList-titlebox">
-                            <div className="admin-teamList-title">팀 목록</div>
+                            <div className="admin-teamList-title">팀 목록
+                                <span style={{fontSize: '12px' , color: 'red'}}>*팀 이름 클릭 시 답안 상세조회 가능</span></div>
                             <div className="admin-teamList-underline"></div>
                         </div>
                         <div className="admin-teamList-selectbox">
@@ -259,17 +260,17 @@ const TeamList = () => {
                         </div>
                         {testData.map((team, index) => (
                             <div
-                                onClick={() => {
-                                    setTeamAnswerModal({ open: true, teamId: team.teamId, teamName: team.name });
-                                }}
                                 key={team.teamId}
                                 className="admin-teamList-body-title"
                                 style={{
-                                    cursor: 'pointer',
                                     backgroundColor: index % 2 === 0 ? 'white' : 'rgba(121, 30, 182, 0.12)'
                                 }}
                             >
-                                <div className="admin-teamList-body-title-textbox">
+                                <div className="admin-teamList-body-title-textbox"
+                                     onClick={() => {
+                                         setTeamAnswerModal({ open: true, teamId: team.teamId, teamName: team.name });
+                                     }}
+                                     style={{cursor: 'pointer'}}>
                                     <p className="admin-teamList-body-title-text">{team.name}</p>
                                 </div>
                                 <div className="admin-teamList-body-verticalLine"></div>
