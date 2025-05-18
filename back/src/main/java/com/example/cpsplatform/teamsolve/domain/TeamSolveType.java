@@ -17,11 +17,11 @@ public enum TeamSolveType {
     private final String key;
     private final String label;
     private static final Map<String,TeamSolveType> solveTypeMap = Arrays.stream(TeamSolveType.values()).collect(
-            Collectors.toMap(TeamSolveType::getLabel,teamSolveType -> teamSolveType)
+            Collectors.toMap(TeamSolveType::getKey,teamSolveType -> teamSolveType)
     );
 
     public static TeamSolveType findTeamSolveType(String key){
-        return solveTypeMap.get(key);
+        return solveTypeMap.get(key.toLowerCase());
     }
 
 }
