@@ -9,10 +9,7 @@ import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeAddRequest;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeModifyRequest;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchDto;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
+import com.example.cpsplatform.notice.admin.controller.response.*;
 import com.example.cpsplatform.notice.admin.service.NoticeAdminService;
 import com.example.cpsplatform.notice.admin.service.NoticeFacadeService;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
@@ -407,5 +404,50 @@ class NoticeAdminControllerTest {
                 .andExpect(jsonPath("$.data.noticeSearchDtoList[0].writer").value("admin"))
                 .andExpect(jsonPath("$.data.noticeSearchDtoList[0].createdAt").exists());
     }
+
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @DisplayName("공지사항 상세 조회를 성공적으로 수행한다.")
+    void getNoticeDetail_success() throws Exception {
+        // given
+        Long noticeId = 1L;
+        List<NoticeDetailFileDto> fileDtos = List.of(
+                NoticeDetailFileDto.builder()
+                        .fileId(10L)
+                        .fileName("example.pdf")
+                        .build()
+        );
+
+        NoticeDetailResponse response = NoticeDetailResponse.builder()
+                .noticeId(noticeId)
+                .title("공지사항 제목")
+                .viewCount(123L)
+                .writer("관리자")
+                .writerEmail("admin@example.com")
+                .createAt(LocalDateTime.of(2025, 5, 18, 10, 30))
+                .updatedAt(LocalDateTime.of(2025, 5, 18, 11, 0))
+                .content("공지사항 본문")
+                .fileList(fileDtos)
+                .build();
+
+        when(noticeFacadeService.getNoticeDetail(noticeId)).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/admin/notices/{noticeId}", noticeId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.data.noticeId").value(noticeId))
+                .andExpect(jsonPath("$.data.title").value("공지사항 제목"))
+                .andExpect(jsonPath("$.data.viewCount").value(123))
+                .andExpect(jsonPath("$.data.writer").value("관리자"))
+                .andExpect(jsonPath("$.data.writerEmail").value("admin@example.com"))
+                .andExpect(jsonPath("$.data.createAt").value("2025-05-18T10:30:00"))
+                .andExpect(jsonPath("$.data.updatedAt").value("2025-05-18T11:00:00"))
+                .andExpect(jsonPath("$.data.content").value("공지사항 본문"))
+                .andExpect(jsonPath("$.data.fileList[0].fileId").value(10))
+                .andExpect(jsonPath("$.data.fileList[0].fileName").value("example.pdf"));
+    }
+
 
 }

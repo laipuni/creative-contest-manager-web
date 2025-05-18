@@ -15,6 +15,8 @@ import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailFileDto;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.notice.domain.Notice;
@@ -513,6 +515,54 @@ class NoticeFacadeServiceTest {
         assertThat(notices).isEmpty();
         assertThat(files).isEmpty();
     }
+
+    @DisplayName("공지사항 ID를 통해 상세 정보를 조회하고, 해당 첨부파일 리스트도 함께 확인한다.")
+    @Test
+    void getNoticeDetail() {
+        //given
+        Member admin = createAndSaveAdmin("admin");
+        Notice notice = noticeRepository.save(
+                Notice.builder()
+                        .title("공지사항 제목")
+                        .content("공지사항 본문")
+                        .writer(admin)
+                        .viewCount(0L)
+                        .build()
+        );
+
+        File file = fileRepository.save(
+                File.builder()
+                        .name("첨부파일.pdf")
+                        .originalName("첨부파일.pdf")
+                        .extension(FileExtension.PDF)
+                        .mimeType(FileExtension.PDF.getMimeType())
+                        .size(1024L)
+                        .path("/notice/pdf")
+                        .fileType(FileType.NOTICE)
+                        .notice(notice)
+                        .build()
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        NoticeDetailResponse response = noticeFacadeService.getNoticeDetail(notice.getId());
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getNoticeId()).isEqualTo(notice.getId());
+        assertThat(response.getTitle()).isEqualTo("공지사항 제목");
+        assertThat(response.getContent()).isEqualTo("공지사항 본문");
+        assertThat(response.getWriter()).isEqualTo(admin.getName());
+        assertThat(response.getWriterEmail()).isEqualTo(admin.getEmail());
+        assertThat(response.getFileList()).hasSize(1);
+
+        NoticeDetailFileDto fileDto = response.getFileList().get(0);
+        assertThat(fileDto.getFileId()).isEqualTo(file.getId());
+        assertThat(fileDto.getFileName()).isEqualTo("첨부파일.pdf");
+    }
+
 
 
     private Member createAndSaveAdmin(String loginId) {
