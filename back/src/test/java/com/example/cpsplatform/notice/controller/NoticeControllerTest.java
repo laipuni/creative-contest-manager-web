@@ -1,5 +1,7 @@
 package com.example.cpsplatform.notice.controller;
 
+import com.example.cpsplatform.file.FileAccessService;
+import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailFileDto;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
@@ -44,6 +46,12 @@ class NoticeControllerTest {
 
     @MockitoBean
     LoginFailService loginFailService;
+
+    @MockitoBean
+    FileAccessService fileAccessService;
+
+    @MockitoBean
+    FileDownloadService fileDownloadService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -110,8 +118,8 @@ class NoticeControllerTest {
     @WithMockUser(roles = "User")
     @Test
     @DisplayName("유저가 공지사항 상세 조회를 성공적으로 수행한다.")
-    void getNoticeDetail_success() throws Exception {
-        // given
+    void getNoticeDetail() throws Exception {
+        //given
         Long noticeId = 1L;
         List<UserNoticeDetailFileDto> fileDtos = List.of(
                 UserNoticeDetailFileDto.builder()
@@ -150,6 +158,19 @@ class NoticeControllerTest {
                 .andExpect(jsonPath("$.data.content").value("공지사항 본문"))
                 .andExpect(jsonPath("$.data.fileList[0].fileId").value(10))
                 .andExpect(jsonPath("$.data.fileList[0].fileName").value("example.pdf"));
+    }
+
+    @WithMockUser
+    @DisplayName("유저가 공지사항을 다운로드 요청을 성공한다.")
+    @Test
+    void downloadNoticeFile() throws Exception {
+        //given
+        //when
+        //then
+        mockMvc.perform(get("/api/notices/{noticeId}/files/{fileId}/download", 1L,1L))
+                .andDo(print())
+                .andExpect(status().isOk());
+
     }
 
 }
