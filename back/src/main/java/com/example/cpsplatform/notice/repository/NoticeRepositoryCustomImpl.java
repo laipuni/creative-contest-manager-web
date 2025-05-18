@@ -2,7 +2,10 @@ package com.example.cpsplatform.notice.repository;
 
 import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchDto;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
+import com.example.cpsplatform.notice.controller.response.UserNoticeSearchDto;
+import com.example.cpsplatform.notice.controller.response.UserNoticeSearchResponse;
 import com.example.cpsplatform.notice.repository.dto.AdminSearchNoticeCond;
+import com.example.cpsplatform.notice.repository.dto.UserSearchNoticeCond;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -85,6 +88,67 @@ public class NoticeRepositoryCustomImpl implements NoticeRepositoryCustom{
     }
 
     private OrderSpecifier[] orderByAdminCond(final AdminSearchNoticeCond cond){
+        if(!StringUtils.hasText(cond.getOrderType()) || !StringUtils.hasText(cond.getOrder())){
+            return new OrderSpecifier[0];
+        }
+        Order direction = "asc".equalsIgnoreCase(cond.getOrder()) ? Order.ASC : Order.DESC;
+        return switch (cond.getOrderType()) {
+            case "createdAt" -> //생성 일자
+                    new OrderSpecifier[]{new OrderSpecifier<>(direction, notice.createdAt)};
+            case "viewCount" -> // 조회수
+                    new OrderSpecifier[]{new OrderSpecifier<>(direction, notice.viewCount)};
+            default -> new OrderSpecifier[0];
+        };
+    }
+
+    @Override
+    public UserNoticeSearchResponse searchNoticeByUserCond(final UserSearchNoticeCond cond) {
+        Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
+
+        List<UserNoticeSearchDto> content = queryFactory.select(
+                        Projections.constructor(UserNoticeSearchDto.class,
+                                notice.id,
+                                notice.title,
+                                notice.viewCount,
+                                notice.writer.name,
+                                notice.createdAt
+                        )
+                )
+                .from(notice)
+                .where(filterByUserCond(cond))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(orderByUserCond(cond))
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory.select(notice.count())
+                .from(notice)
+                .where()
+                .orderBy();
+
+        Page<UserNoticeSearchDto> searchDtoPage = PageableExecutionUtils.getPage(
+                content, pageable, countQuery::fetchOne
+        );
+
+        return UserNoticeSearchResponse.of(searchDtoPage);
+    }
+
+    private BooleanBuilder filterByUserCond(final UserSearchNoticeCond cond){
+        return fiterByUserCondKeyword(cond);
+    }
+
+    private BooleanBuilder fiterByUserCondKeyword(final UserSearchNoticeCond cond){
+        if(!StringUtils.hasText(cond.getSearchType()) || !StringUtils.hasText(cond.getKeyword())){
+            return new BooleanBuilder();
+        }
+        return switch (cond.getSearchType()) {
+            case "title" -> //유저의 이름
+                    new BooleanBuilder(notice.title.contains(cond.getKeyword()));
+            default -> new BooleanBuilder();
+        };
+    }
+
+    private OrderSpecifier[] orderByUserCond(final UserSearchNoticeCond cond){
         if(!StringUtils.hasText(cond.getOrderType()) || !StringUtils.hasText(cond.getOrder())){
             return new OrderSpecifier[0];
         }
