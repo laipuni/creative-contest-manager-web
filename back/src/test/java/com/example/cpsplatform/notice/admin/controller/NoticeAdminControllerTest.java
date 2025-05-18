@@ -1,7 +1,6 @@
 package com.example.cpsplatform.notice.admin.controller;
 
 import com.example.cpsplatform.auth.service.RegisterService;
-import com.example.cpsplatform.file.admin.FileAdminController;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.member.domain.Member;
@@ -11,7 +10,7 @@ import com.example.cpsplatform.notice.admin.controller.request.NoticeAddRequest;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeModifyRequest;
 import com.example.cpsplatform.notice.admin.controller.response.*;
 import com.example.cpsplatform.notice.admin.service.NoticeAdminService;
-import com.example.cpsplatform.notice.admin.service.NoticeFacadeService;
+import com.example.cpsplatform.notice.admin.service.NoticeAdminFacadeService;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.SecurityMember;
@@ -19,7 +18,6 @@ import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -32,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,7 +66,7 @@ class NoticeAdminControllerTest {
     FileDownloadService fileDownloadService;
 
     @MockitoBean
-    NoticeFacadeService noticeFacadeService;
+    NoticeAdminFacadeService noticeFacadeService;
 
     @MockitoBean
     NoticeAdminService noticeAdminService;

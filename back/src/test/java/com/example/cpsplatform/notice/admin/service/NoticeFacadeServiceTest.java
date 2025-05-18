@@ -44,7 +44,7 @@ import static org.mockito.Mockito.doAnswer;
 class NoticeFacadeServiceTest {
 
     @Autowired
-    NoticeFacadeService noticeFacadeService;
+    NoticeAdminFacadeService noticeFacadeService;
 
     @Autowired
     NoticeRepository noticeRepository;
