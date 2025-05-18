@@ -1,18 +1,15 @@
 package com.example.cpsplatform.notice.admin.service;
 
-import com.example.cpsplatform.file.decoder.vo.FileSource;
-import com.example.cpsplatform.file.decoder.vo.FileSources;
-import com.example.cpsplatform.file.storage.FileStorage;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
 import com.example.cpsplatform.notice.domain.Notice;
 import com.example.cpsplatform.notice.repository.NoticeRepository;
+import com.example.cpsplatform.notice.repository.dto.AdminSearchNoticeCond;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -47,5 +44,9 @@ public class NoticeAdminService {
     public void deleteNotice(final Long noticeId) {
         log.info("{} 공지사항(id:{})을 삭제합니다.",NOTICE_ADMIN_LOG,noticeId);
         noticeRepository.deleteById(noticeId);
+    }
+
+    public NoticeSearchResponse searchNotice(final AdminSearchNoticeCond cond){
+        return noticeRepository.searchNoticeByAdminCond(cond);
     }
 }
