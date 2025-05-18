@@ -11,31 +11,9 @@ import apiClient from "../../templates/apiClient";
 const TestSubmitInfo = () => {
     const [registerInfo, setRegisterInfo] = useState([]);
     const [contestInfo, setContestInfo] = useState(null);
+    const [submitCnt, setSubmitCnt] = useState(0);
 
     const navigate = useNavigate();
-
-    const mapTeamAnswersToRegisterInfo = (teamAnswerList) => {
-        const info = [
-            { problemType: '공통', section: 'COMMON' },
-            { problemType: '수준별', section: 'NON_COMMON' }
-        ];
-
-        return info.map(({ problemType, section }) => {
-            let target;
-
-            if (section === 'COMMON') {
-                target = teamAnswerList.find(ans => ans.section === 'COMMON');
-            } else {
-                target = teamAnswerList.find(ans => ans.section !== 'COMMON');
-            }
-
-            return {
-                problemType,
-                updatedAt: target ? target.updatedAt : 'X',
-                registerCount: target ? target.modifyCount + 1 : 0
-            };
-        });
-    };
 
     //문제 제출내역 가져오기
     useEffect(() => {
@@ -45,12 +23,10 @@ const TestSubmitInfo = () => {
                     const contestId = res.data.data.contestId;
                     setContestInfo(res.data.data);
 
-                    apiClient.get(`/api/contests/${contestId}/team-solves`, { skipErrorHandler: true })
+                    apiClient.get(`/api/contests/${contestId}/team-solves`, { params: {submit_type: 'submitted' }, skipErrorHandler: true })
                         .then((res) => {
-                            const teamAnswerList = res.data.data.teamAnswerList;
-
-                            const mappedRegisterInfo = mapTeamAnswersToRegisterInfo(teamAnswerList);
-                            setRegisterInfo(mappedRegisterInfo);
+                            setSubmitCnt(res.data.data.finalSubmitCount);
+                            setRegisterInfo(res.data.data.teamAnswerList);
                         })
                         .catch((err) => {
                             if(err.response?.data?.message === '해당 대회에 참여한 팀이 없습니다.'){
@@ -59,10 +35,8 @@ const TestSubmitInfo = () => {
                                 return;
                             }
                             alert(err.response?.data?.message || '팀 문제 정보 불러오기 실패');
-                            setRegisterInfo([
-                                { problemType: '공통', updatedAt: 'X', registerCount: 0 },
-                                { problemType: '수준별', updatedAt: 'X', registerCount: 0 }
-                            ]);
+                            setRegisterInfo(
+                                { updatedAt: 'X', registerCount: 0 });
                         });
                 }
             })
@@ -96,10 +70,8 @@ const TestSubmitInfo = () => {
                 <div className="testInfo-content-container">
                     <Sidebar/>
                     <div className="testInfo-main-container">
-                        {contestInfo && <CategoryLogo logoTitle={`${contestInfo.season}회차 예선문제 풀기`} imgSrc={testLogo} imageWidth='18%'
-                                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'}/>}
-                        {!contestInfo && <CategoryLogo logoTitle={`예선문제 풀기`} imgSrc={testLogo} imageWidth='18%'
-                                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'}/>}
+                        <CategoryLogo logoTitle={`예선문제 풀기`} imgSrc={testLogo} imageWidth='18%'
+                                                      backgroundColor={'linear-gradient(90deg, #FF6200 0%, #FDEB85 100%)'}/>
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
                                 <p className="registerInfo-top-title">제출 내역</p>
@@ -107,26 +79,24 @@ const TestSubmitInfo = () => {
                             </div>
                             <div className="registerInfo-body-bot">
                                 <div className="registerInfo-bot-title">
-                                    <p className="registerInfo-bot-text">문제유형</p>
-                                    <div className="registerInfo-bot-line"></div>
                                     <p className="registerInfo-bot-text">제출일자</p>
-                                    <div className="registerInfo-bot-line"></div>
+                                    <div className="registerInfo-bot-line" style={{width: '5%'}}></div>
                                     <p className="registerInfo-bot-text">제출횟수</p>
                                 </div>
-                                {registerInfo.length > 0 &&
+                                {registerInfo.registerCount > 0 ? (
                                     <>
                                         <div className="registerInfo-bot-content">
-                                            <p className="registerInfo-bot-text">{registerInfo[0].problemType}</p>
-                                            <p className="registerInfo-bot-text">{formatDate(registerInfo[0].updatedAt)}</p>
-                                            <p className="registerInfo-bot-text">{registerInfo[0].registerCount}</p>
-                                        </div>
-                                        <div className="registerInfo-bot-content">
-                                            <p className="registerInfo-bot-text">{registerInfo[1].problemType}</p>
-                                            <p className="registerInfo-bot-text">{formatDate(registerInfo[1].updatedAt)}</p>
-                                            <p className="registerInfo-bot-text">{registerInfo[1].registerCount}</p>
+                                            <p className="registerInfo-bot-text">{formatDate(registerInfo.updatedAt)}</p>
+                                            <p className="registerInfo-bot-text">{submitCnt}</p>
                                         </div>
                                     </>
-                                }
+                                ) : (
+                                    <>
+                                        <div className="registerInfo-bot-content">
+                                            <p className="registerInfo-bot-text">답안 제출내역 없음</p>
+                                        </div>
+                                    </>
+                                )}
                                 <div className="registerInfo-bot-buttonbox">
                                     <div onClick={handleValidationContest} className="registerInfo-bot-button"
                                          style={{cursor: 'pointer'}}>
