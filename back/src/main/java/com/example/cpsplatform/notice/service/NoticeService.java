@@ -3,7 +3,9 @@ package com.example.cpsplatform.notice.service;
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
+import com.example.cpsplatform.notice.controller.response.UserNoticeDetailResponse;
 import com.example.cpsplatform.notice.controller.response.UserNoticeSearchResponse;
+import com.example.cpsplatform.notice.domain.Notice;
 import com.example.cpsplatform.notice.repository.NoticeRepository;
 import com.example.cpsplatform.notice.repository.dto.AdminSearchNoticeCond;
 import com.example.cpsplatform.notice.repository.dto.UserSearchNoticeCond;
@@ -23,4 +25,5 @@ public class NoticeService {
     public UserNoticeSearchResponse searchNotice(final UserSearchNoticeCond cond) {
         return noticeRepository.searchNoticeByUserCond(cond);
     }
+
 }

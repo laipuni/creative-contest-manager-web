@@ -12,7 +12,7 @@ import com.example.cpsplatform.notice.admin.controller.request.NoticeModifyReque
 import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
 import com.example.cpsplatform.notice.admin.service.NoticeAdminService;
-import com.example.cpsplatform.notice.admin.service.NoticeFacadeService;
+import com.example.cpsplatform.notice.admin.service.NoticeAdminFacadeService;
 import com.example.cpsplatform.notice.repository.dto.AdminSearchNoticeCond;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import jakarta.validation.Valid;
@@ -21,14 +21,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class NoticeAdminController {
 
-    private final NoticeFacadeService noticeFacadeService;
+    private final NoticeAdminFacadeService noticeFacadeService;
     private final NoticeAdminService noticeAdminService;
 
     @AdminLog

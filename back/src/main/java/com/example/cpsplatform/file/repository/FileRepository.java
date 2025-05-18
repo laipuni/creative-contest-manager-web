@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     int hardDeleteAllByTeamSolveIdIn(@Param("teamSolveIds")List<Long> teamSolveIds);
 
     @Modifying
+    @Transactional
     @Query(value = "delete from file where id in :fileIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("fileIds")List<Long> fileIds);
 

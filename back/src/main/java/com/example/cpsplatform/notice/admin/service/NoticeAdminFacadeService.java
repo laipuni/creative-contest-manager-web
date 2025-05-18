@@ -10,7 +10,6 @@ import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,7 @@ import java.util.StringJoiner;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class NoticeFacadeService {
+public class NoticeAdminFacadeService {
 
     private final NoticeAdminService noticeAdminService;
     private final NoticeFileService noticeFileService;
