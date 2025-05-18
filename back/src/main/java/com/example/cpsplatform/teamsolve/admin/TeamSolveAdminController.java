@@ -2,6 +2,7 @@ package com.example.cpsplatform.teamsolve.admin;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
+import com.example.cpsplatform.teamsolve.admin.controller.response.TeamSolveDetailResponse;
 import com.example.cpsplatform.teamsolve.admin.controller.response.TeamSolveListResponse;
 import com.example.cpsplatform.teamsolve.admin.service.TeamSolveAdminService;
 import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
@@ -23,6 +24,14 @@ public class TeamSolveAdminController {
                                                                  @RequestParam(value = "team_solve_type",defaultValue = "") String teamSolveType){
         TeamSolveType type = TeamSolveType.findTeamSolveType(teamSolveType);
         TeamSolveListResponse response = teamSolveAdminService.getTeamSolveByTeam(teamId, type);
+        return ApiResponse.ok(response);
+    }
+
+    @AdminLog
+    @GetMapping("/api/admin/v1/teams/{teamId}/team-solves/{teamSolveId}")
+    public ApiResponse<TeamSolveDetailResponse> getTeamSolveDetail(@PathVariable("teamId")Long teamId,
+                                                                   @PathVariable("teamSolveId")Long teamSolveId){
+        TeamSolveDetailResponse response = teamSolveAdminService.getTeamSolveDetail(teamId, teamSolveId);
         return ApiResponse.ok(response);
     }
 }
