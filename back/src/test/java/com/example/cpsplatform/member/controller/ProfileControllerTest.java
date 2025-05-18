@@ -108,12 +108,13 @@ class ProfileControllerTest {
 
         Mockito.when(profileService.getMyInformation(anyString(),anyString())).thenReturn(response);
 
+        String session = "session";
 
         //when
         //then
         mockMvc.perform(
                 get("/api/members/my-profile")
-                        .param("session","session")
+                        .param("session", session)
                         .with(csrf())
                 )
                 .andDo(print())
@@ -130,7 +131,8 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.data.email").value("hong@example.com"))
                 .andExpect(jsonPath("$.data.organizationType").value("학교"))
                 .andExpect(jsonPath("$.data.organizationName").value("서울대학교"))
-                .andExpect(jsonPath("$.data.position").value("학생"));
+                .andExpect(jsonPath("$.data.position").value("학생"))
+                .andExpect(jsonPath("$.data.session").value(session));
 
     }
 

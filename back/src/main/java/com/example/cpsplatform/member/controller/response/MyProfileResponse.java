@@ -25,6 +25,7 @@ public class MyProfileResponse {
     private String organizationType;
     private String organizationName;
     private String position;
+    private String session;
 
     public static MyProfileResponse of(Member member, CryptoService cryptoService){
 
@@ -48,5 +49,9 @@ public class MyProfileResponse {
                 .organizationName(member.getOrganization().getName())
                 .position(organization.getPosition())
                 .build();
+    }
+
+    public void setSession(String session){
+        this.session = session;
     }
 }

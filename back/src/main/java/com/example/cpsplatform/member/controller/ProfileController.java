@@ -69,6 +69,7 @@ public class ProfileController {
     public ApiResponse<MyProfileResponse> getMyInfo(@RequestParam(value = "session",defaultValue = "") String session,
                                                     @AuthenticationPrincipal SecurityMember securityMember){
         MyProfileResponse myProfileResponse = profileService.getMyInformation(securityMember.getUsername(),session);
+        myProfileResponse.setSession(session);
         return ApiResponse.ok(myProfileResponse);
     }
 
