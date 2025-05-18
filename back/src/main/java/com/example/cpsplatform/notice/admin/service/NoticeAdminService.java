@@ -42,4 +42,10 @@ public class NoticeAdminService {
         notice.modify(title,content);
         return notice;
     }
+
+    @Transactional
+    public void deleteNotice(final Long noticeId) {
+        log.info("{} 공지사항(id:{})을 삭제합니다.",NOTICE_ADMIN_LOG,noticeId);
+        noticeRepository.deleteById(noticeId);
+    }
 }

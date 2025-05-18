@@ -55,4 +55,8 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
             ,nativeQuery = true)
     List<File> findAllByProblem_IdInNative(@Param("problemIds")List<Long> problemIds);
 
+
+    //공지사항의 id로 첨부파일들을 조회하는 쿼리
+    List<File> findAllByNoticeId(Long noticeId);
+
 }

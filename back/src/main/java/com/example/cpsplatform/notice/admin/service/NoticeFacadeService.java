@@ -1,6 +1,7 @@
 package com.example.cpsplatform.notice.admin.service;
 
 import com.example.cpsplatform.file.decoder.vo.FileSources;
+import com.example.cpsplatform.file.service.FileService;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
@@ -23,6 +24,7 @@ public class NoticeFacadeService {
 
     private final NoticeAdminService noticeAdminService;
     private final NoticeFileService noticeFileService;
+    private final FileService fileService;
 
     @Transactional
     public NoticeAddResponse publishNotice(final String title, final String content, final String username, final FileSources fileSources){
@@ -42,7 +44,7 @@ public class NoticeFacadeService {
         return NoticeAddResponse.of(true,message, notice.getId());
     }
 
-    @Modifying
+    @Transactional
     public NoticeModifyResponse modifyNotice(final NoticeModifyDto noticeModifyDto, final FileSources fileSources) {
         Notice notice = noticeAdminService.modify(noticeModifyDto.getNoticeId(),
                 noticeModifyDto.getTitle(),
@@ -130,4 +132,9 @@ public class NoticeFacadeService {
                 totalDeleteCount, deleteFailedFileNames.size(), joiner);
     }
 
+    @Transactional
+    public void deleteNotice(final Long noticeId) {
+        noticeFileService.clearNoticeFiles(noticeId);
+        noticeAdminService.deleteNotice(noticeId);
+    }
 }

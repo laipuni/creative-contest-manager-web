@@ -127,7 +127,7 @@ public class File extends BaseEntity {
             throw new IllegalArgumentException("해당 공지사항 파일은 등록할 공지사항의 정보가 필수입니다.");
         }
 
-        File file = File.builder()
+        return File.builder()
                 .name(name)
                 .originalName(originalName)
                 .extension(extension)
@@ -137,8 +137,6 @@ public class File extends BaseEntity {
                 .fileType(FileType.NOTICE)
                 .notice(notice)
                 .build();
-        notice.addFile(file); // 연관관계 형성
-        return file;
     }
 
     public void setProblem(Problem problem){
