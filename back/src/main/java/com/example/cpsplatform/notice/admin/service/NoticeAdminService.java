@@ -49,4 +49,10 @@ public class NoticeAdminService {
     public NoticeSearchResponse searchNotice(final AdminSearchNoticeCond cond){
         return noticeRepository.searchNoticeByAdminCond(cond);
     }
+
+    public Notice findByNoticeId(final Long noticeId) {
+        log.info("{} 공지사항(id:{})을 조회합니다.",NOTICE_ADMIN_LOG,noticeId);
+        return noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공지사항은 존재하지 않습니다."));
+    }
 }

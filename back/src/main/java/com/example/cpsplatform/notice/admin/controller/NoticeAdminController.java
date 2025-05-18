@@ -4,6 +4,7 @@ import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.file.decoder.MultipartDecoder;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeAddRequest;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeDeleteRequest;
@@ -73,4 +74,12 @@ public class NoticeAdminController {
         );
         return ApiResponse.ok(response);
     }
+
+    @AdminLog
+    @GetMapping("/api/admin/notices/{noticeId}")
+    public ApiResponse<NoticeDetailResponse> getNoticeDetail(@PathVariable("noticeId") Long noticeId){
+        NoticeDetailResponse response = noticeFacadeService.getNoticeDetail(noticeId);
+        return ApiResponse.ok(response);
+    }
+
 }

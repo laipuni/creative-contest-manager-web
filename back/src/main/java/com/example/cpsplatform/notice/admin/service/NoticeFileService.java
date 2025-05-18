@@ -119,4 +119,11 @@ public class NoticeFileService {
         fileRepository.hardDeleteAllByIdIn(fileIds);
 
     }
+
+    public List<File> findNoticeFiles(final Long noticeId) {
+        List<File> files = fileRepository.findAllByNoticeId(noticeId);
+        log.info("{} 답안지(id:{})의 첨부파일들(id : {})을 조회합니다.",
+                NOTICE_FILE_UPLOAD_LOG, noticeId, files.stream().map(File::getId).toList());
+        return files;
+    }
 }

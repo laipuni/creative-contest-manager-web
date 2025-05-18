@@ -1,8 +1,10 @@
 package com.example.cpsplatform.notice.admin.service;
 
 import com.example.cpsplatform.file.decoder.vo.FileSources;
+import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.service.FileService;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.notice.domain.Notice;
@@ -136,5 +138,11 @@ public class NoticeFacadeService {
     public void deleteNotice(final Long noticeId) {
         noticeFileService.clearNoticeFiles(noticeId);
         noticeAdminService.deleteNotice(noticeId);
+    }
+
+    public NoticeDetailResponse getNoticeDetail(final Long noticeId) {
+        List<File> files = noticeFileService.findNoticeFiles(noticeId);
+        Notice notice = noticeAdminService.findByNoticeId(noticeId);
+        return NoticeDetailResponse.of(notice,files);
     }
 }
