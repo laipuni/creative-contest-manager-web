@@ -2,6 +2,8 @@ package com.example.cpsplatform.notice.controller;
 
 import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.admin.annotaion.AdminLog;
+import com.example.cpsplatform.file.FileAccessService;
+import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
 import com.example.cpsplatform.notice.controller.response.UserNoticeDetailResponse;
@@ -10,6 +12,7 @@ import com.example.cpsplatform.notice.repository.dto.AdminSearchNoticeCond;
 import com.example.cpsplatform.notice.repository.dto.UserSearchNoticeCond;
 import com.example.cpsplatform.notice.service.NoticeService;
 import com.example.cpsplatform.notice.service.NoticeUserFacadeService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +25,8 @@ public class NoticeController {
 
     private final NoticeService noticeService;
     private final NoticeUserFacadeService noticeUserFacadeService;
+    private final FileAccessService fileAccessService;
+    private final FileDownloadService fileDownloadService;
 
     @GetMapping("/api/notices/search")
     public ApiResponse<UserNoticeSearchResponse> searchNotices(@RequestParam(value = "page",defaultValue = "0") int page,
@@ -43,4 +48,12 @@ public class NoticeController {
         return ApiResponse.ok(response);
     }
 
+    @AdminLog
+    @GetMapping("/api/notices/{noticeId}/files/{fileId}/download")
+    public void downloadNoticeFile(@PathVariable("noticeId") Long noticeId,
+                                   @PathVariable("fileId") Long fileId,
+                                   HttpServletResponse response){
+        fileAccessService.validateNoticeFileAccess(noticeId,fileId);
+        fileDownloadService.download(fileId,response);
+    }
 }

@@ -46,4 +46,18 @@ public class FileAccessService {
         }
     }
 
+    /**
+     * 공지사항에 첨부된 파일인지 검증하는 메서드
+     * 만약 공지사항에 첨부되지 않고, 해당 api로는 접근하면 안되는 파일일 경우 예외 발생
+     * @param noticeId 파일이 첨부된 공지사항의 pk
+     * @param fileId 첨부된 파일의 pk
+     */
+    public void validateNoticeFileAccess(final Long noticeId, final Long fileId) {
+        //해당 파일이 공지사항 파일인지 확인
+        boolean result = fileRepository.existsFileByNoticeId(noticeId, fileId);
+        if(!result){
+            //만약 해당 공지사항의 첨부파일이 아닌 경우
+            throw new FileDownloadAuthException("해당 파일을 다운로드 받을 권한이 없습니다.");
+        }
+    }
 }

@@ -61,4 +61,7 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     //공지사항의 id로 첨부파일들을 조회하는 쿼리
     List<File> findAllByNoticeId(Long noticeId);
 
+    @Query(value = "select exists (select f from File f where f.notice.id = :noticeId and f.id = :fileId)")
+    boolean existsFileByNoticeId(@Param("noticeId")Long noticeId, @Param("fileId") Long fileId);
+
 }
