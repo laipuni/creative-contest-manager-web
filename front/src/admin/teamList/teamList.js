@@ -5,6 +5,7 @@ import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import "../../styles/pagination.css"
 import apiClient from "../../templates/apiClient";
 import {useNavigate} from "react-router-dom";
+import TeamAnswerList from "../components/teamAnswerList/teamAnswerList";
 
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
@@ -42,6 +43,11 @@ const TeamList = () => {
     const [contestId, setContestId] = useState(null);
     const [lastPage, setLastPage] = useState(0);
     const [checkedTeamIds, setCheckedTeamIds] = useState([]);
+    const [teamAnswerModal, setTeamAnswerModal] = useState({
+        open: false,
+        teamId: null,
+        teamName: null,
+    });
     const navigate = useNavigate();
 
     //회차 정보 받아오기
@@ -227,6 +233,13 @@ const TeamList = () => {
                                 합격자 선정
                             </button>
                         </div>
+                        {teamAnswerModal.open && teamAnswerModal.teamId && (
+                            <TeamAnswerList
+                                teamId={teamAnswerModal.teamId}
+                                teamName={teamAnswerModal.teamName}
+                                onClose={() => setTeamAnswerModal({ open: false, teamId: null, teamName: null })}
+                            />
+                        )}
                         <div className="admin-teamList-body-title" style={{backgroundColor: 'darkgray'}}>
                             <div className="admin-teamList-body-title-textbox">
                                 <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>팀 이름</p>
@@ -246,9 +259,13 @@ const TeamList = () => {
                         </div>
                         {testData.map((team, index) => (
                             <div
-                                key={team.id}
+                                onClick={() => {
+                                    setTeamAnswerModal({ open: true, teamId: team.teamId, teamName: team.name });
+                                }}
+                                key={team.teamId}
                                 className="admin-teamList-body-title"
                                 style={{
+                                    cursor: 'pointer',
                                     backgroundColor: index % 2 === 0 ? 'white' : 'rgba(121, 30, 182, 0.12)'
                                 }}
                             >
