@@ -11,6 +11,9 @@ import com.example.cpsplatform.notice.admin.controller.request.NoticeAddRequest;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeModifyRequest;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchDto;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
+import com.example.cpsplatform.notice.admin.service.NoticeAdminService;
 import com.example.cpsplatform.notice.admin.service.NoticeFacadeService;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.security.config.SecurityConfig;
@@ -29,15 +32,21 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,6 +73,9 @@ class NoticeAdminControllerTest {
 
     @MockitoBean
     NoticeFacadeService noticeFacadeService;
+
+    @MockitoBean
+    NoticeAdminService noticeAdminService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -101,7 +113,7 @@ class NoticeAdminControllerTest {
                 .noticeId(noticeId)
                 .build();
 
-        Mockito.when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
+        when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -151,7 +163,7 @@ class NoticeAdminControllerTest {
                 .noticeId(noticeId)
                 .build();
 
-        Mockito.when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
+        when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -208,7 +220,7 @@ class NoticeAdminControllerTest {
                 noticeId
         );
 
-        Mockito.when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
+        when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -266,7 +278,7 @@ class NoticeAdminControllerTest {
                 noticeId
         );
 
-        Mockito.when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
+        when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -326,7 +338,7 @@ class NoticeAdminControllerTest {
                 noticeId
         );
 
-        Mockito.when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
+        when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -346,5 +358,54 @@ class NoticeAdminControllerTest {
                 .andExpect(jsonPath("$.data.noticeId").value(noticeId));
     }
 
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @DisplayName("공지사항 검색 API - 검색 조건 없이 전체 조회")
+    void searchNoticesWithoutKeyword() throws Exception {
+        // given
+        List<NoticeSearchDto> notices = List.of(
+                NoticeSearchDto.builder()
+                        .noticeId(1L)
+                        .title("공지사항 제목")
+                        .viewCount(123L)
+                        .writer("admin")
+                        .createdAt(LocalDateTime.now())
+                        .build()
+        );
+
+        NoticeSearchResponse response = NoticeSearchResponse.builder()
+                .totalPage(1)
+                .page(0)
+                .firstPage(0)
+                .lastPage(1)
+                .size(1)
+                .noticeSearchDtoList(notices)
+                .build();
+
+        //when
+        when(noticeAdminService.searchNotice(any())).thenReturn(response);
+
+        //then
+        mockMvc.perform(get("/api/admin/notices/search")
+                        .param("page", "0")
+                        .param("page_size", "10")
+                        .param("keyword", "")
+                        .param("search_type", "")
+                        .param("order", "desc")
+                        .param("order_type", "createdAt"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.data.totalPage").value(1))
+                .andExpect(jsonPath("$.data.page").value(0))
+                .andExpect(jsonPath("$.data.firstPage").value(0))
+                .andExpect(jsonPath("$.data.lastPage").value(1))
+                .andExpect(jsonPath("$.data.size").value(1))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].noticeId").value(1))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].title").value("공지사항 제목"))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].viewCount").value(123))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].writer").value("admin"))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].createdAt").exists());
+    }
 
 }
