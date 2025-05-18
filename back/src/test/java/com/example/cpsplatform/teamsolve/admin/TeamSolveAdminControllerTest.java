@@ -9,6 +9,7 @@ import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.example.cpsplatform.team.service.TeamService;
+import com.example.cpsplatform.teamsolve.admin.controller.response.TeamSolveDetailResponse;
 import com.example.cpsplatform.teamsolve.admin.controller.response.TeamSolveListDto;
 import com.example.cpsplatform.teamsolve.admin.controller.response.TeamSolveListResponse;
 import com.example.cpsplatform.teamsolve.admin.service.TeamSolveAdminService;
@@ -18,6 +19,7 @@ import com.example.cpsplatform.teamsolve.service.AnswerSubmitService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -125,4 +127,71 @@ class TeamSolveAdminControllerTest {
 
     }
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("답안지 상세 조회, 답안지의 파일이 존재하는 경우")
+    @Test
+    void getTeamSolveDetail() throws Exception {
+        //given
+        TeamSolveDetailResponse response = TeamSolveDetailResponse.builder()
+                .teamSolveId(1L)
+                .problemTitle("문제 제목")
+                .section(Section.COMMON)
+                .problemOrder(1)
+                .teamSolveType(TeamSolveType.SUBMITTED)
+                .content("답안지 본문")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .fileId(1L) //파일 존재
+                .fileName("답안지.pdf")
+                .build();
+
+        Mockito.when(teamSolveAdminService.getTeamSolveDetail(anyLong(),anyLong()))
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/v1/teams/{teamId}/team-solves/{teamSolveId}", 1L, 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.teamSolveId").value(response.getTeamSolveId()))
+                .andExpect(jsonPath("$.data.problemTitle").value(response.getProblemTitle()))
+                .andExpect(jsonPath("$.data.section").value("COMMON"))
+                .andExpect(jsonPath("$.data.problemOrder").value(response.getProblemOrder()))
+                .andExpect(jsonPath("$.data.teamSolveType").value("SUBMITTED"))
+                .andExpect(jsonPath("$.data.content").value(response.getContent()))
+                .andExpect(jsonPath("$.data.fileId").value(response.getFileId()))
+                .andExpect(jsonPath("$.data.fileName").value(response.getFileName()));
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("답안지 상세 조회, 답안지의 파일이 없는 경우")
+    @Test
+    void getTeamSolveDetailWithNotFile() throws Exception {
+        //given
+        TeamSolveDetailResponse response = TeamSolveDetailResponse.builder()
+                .teamSolveId(1L)
+                .problemTitle("문제 제목")
+                .section(Section.COMMON)
+                .problemOrder(1)
+                .teamSolveType(TeamSolveType.SUBMITTED)
+                .content("답안지 본문")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        Mockito.when(teamSolveAdminService.getTeamSolveDetail(anyLong(),anyLong()))
+                .thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/v1/teams/{teamId}/team-solves/{teamSolveId}", 1L, 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.teamSolveId").value(response.getTeamSolveId()))
+                .andExpect(jsonPath("$.data.problemTitle").value(response.getProblemTitle()))
+                .andExpect(jsonPath("$.data.section").value("COMMON"))
+                .andExpect(jsonPath("$.data.problemOrder").value(response.getProblemOrder()))
+                .andExpect(jsonPath("$.data.teamSolveType").value("SUBMITTED"))
+                .andExpect(jsonPath("$.data.content").value(response.getContent()))
+                .andExpect(jsonPath("$.data.fileId").isEmpty())
+                .andExpect(jsonPath("$.data.fileName").isEmpty());
+    }
 }
