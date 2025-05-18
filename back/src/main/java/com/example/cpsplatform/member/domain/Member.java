@@ -146,7 +146,11 @@ public class Member extends BaseEntity {
                 cryptoService
         );
 
-        changeEmail(dto.getEmail());
+        if(StringUtils.hasText(dto.getEmail())){
+            //새로 바꿀 이메일을 암호화
+            String newEmail = cryptoService.encryptAES(dto.getEmail());
+            changeEmail(newEmail);
+        }
         this.name = StringUtils.hasText(dto.getName()) ? dto.getName() : this.name;
         this.gender = dto.getGender() != null ? dto.getGender() : this.gender;
         this.birth = dto.getBirth() != null ? dto.getBirth() : this.birth;
