@@ -33,6 +33,7 @@ const MyProfile = () => {
 
     /*--------------이메일------------------*/
     const [email, setEmail] = useState('');
+    const [tempEmail, setTempEmail] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     /*--------------직업------------------*/
     const [job, setJob] = useState('');
@@ -61,6 +62,7 @@ const MyProfile = () => {
                 setPostcode(profile.zipCode);
                 setAddress(profile.street);
                 setEmail(profile.email);
+                setSido(profile.city);
                 setPrefix(profile.phoneNumber.slice(0,3));
                 setMiddle(profile.phoneNumber.slice(3,7));
                 setLast(profile.phoneNumber.slice(7,11));
@@ -112,20 +114,23 @@ const MyProfile = () => {
             return new Date(year, month, day);
         }
 
-        apiClient.post('/api/v1/editProfile', {
+        const payload = {
             name,
             birth: changeBirth(),
             gender,
-            street: postcode,
+            street: address,
             city: sido,
-            zipCode: address,
+            zipCode: postcode,
             detail: detailAddress,
-            phoneNumber : prefix+middle+last,
-            email,
-            organizationType: job.slice(2),
-            organizationName: workPlace,
-            position: detailJob,
-        }, )
+            phoneNumber: prefix + middle + last,
+            organizationType: job,
+            ...(email !== tempEmail && {tempEmail}),
+            ...(workPlace && { organizationName: workPlace }),
+            ...(detailJob && { position: detailJob }),
+            session
+        };
+
+        apiClient.patch('/api/members/my-profile', payload, {skipErrorHandler: true})
             .then((res) => {
                 if(res.data.code === 200){
                     alert('회원정보가 수정되었습니다')
@@ -133,8 +138,11 @@ const MyProfile = () => {
                 }
             })
             .catch((err)=>{
+                alert(err.response?.data.message);
+                if(err.response?.data.message === '세션이 존재하지 않습니다.'){
+                    navigate('/member/profile/auth')
                 }
-            )
+            })
     }
 
     const handleExit = () => {
@@ -230,7 +238,7 @@ const MyProfile = () => {
     };
 
     const handleVerifyEmail = (verifiedEmail) => {
-        setEmail(verifiedEmail);
+        setTempEmail(verifiedEmail);
     };
 
 
@@ -415,8 +423,12 @@ const MyProfile = () => {
                             </div>
                         </div>
                         <div className="join2-main-border">
-                            {isModalOpen && <EmailVerificationModal onClose={handleCloseModal}
-                                                                    onVerify={handleVerifyEmail}/>}
+                            {isModalOpen &&
+                                <EmailVerificationModal
+                                    onClose={handleCloseModal}
+                                    onVerify={handleVerifyEmail}
+                                    isEdit = {true}
+                                />}
                             <div className="join2-main-border-left">
                                 <p className="join2-left-text">* 이메일</p>
                             </div>
