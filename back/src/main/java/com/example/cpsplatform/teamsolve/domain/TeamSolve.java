@@ -4,6 +4,7 @@ import com.example.cpsplatform.BaseEntity;
 import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.team.domain.Team;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,8 @@ public class TeamSolve extends BaseEntity {
     @Column(nullable = false, name = "team_solve_type")
     private TeamSolveType teamSolveType;
 
+    @Column(length = 500)
+    @Size(max = 500)
     private String content;
 
     @Builder
