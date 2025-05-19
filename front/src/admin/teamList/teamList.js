@@ -47,6 +47,7 @@ const TeamList = () => {
         open: false,
         teamId: null,
         teamName: null,
+        contestId: null,
     });
     const navigate = useNavigate();
 
@@ -238,7 +239,8 @@ const TeamList = () => {
                             <TeamAnswerList
                                 teamId={teamAnswerModal.teamId}
                                 teamName={teamAnswerModal.teamName}
-                                onClose={() => setTeamAnswerModal({ open: false, teamId: null, teamName: null })}
+                                contestId={contestId}
+                                onClose={() => setTeamAnswerModal({ open: false, teamId: null, teamName: null, contestId: null })}
                             />
                         )}
                         <div className="admin-teamList-body-title" style={{backgroundColor: 'darkgray'}}>
@@ -268,7 +270,7 @@ const TeamList = () => {
                             >
                                 <div className="admin-teamList-body-title-textbox"
                                      onClick={() => {
-                                         setTeamAnswerModal({ open: true, teamId: team.teamId, teamName: team.name });
+                                         setTeamAnswerModal({ open: true, teamId: team.teamId, teamName: team.name, contestId: contestId });
                                      }}
                                      style={{cursor: 'pointer'}}>
                                     <p className="admin-teamList-body-title-text">{team.name}</p>
