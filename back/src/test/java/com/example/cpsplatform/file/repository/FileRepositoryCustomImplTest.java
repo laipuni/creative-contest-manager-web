@@ -17,9 +17,11 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -115,11 +117,19 @@ class FileRepositoryCustomImplTest {
 
         memberRepository.save(member);
 
-        Team team = Team.builder().name("xx팀").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("xx팀")
+                .winner(false)
+                .teamNumber("001")
+                .finalSubmitCount(0)
+                .status(SubmitStatus.FINAL)
+                .leader(member)
+                .contest(contest)
+                .build();
         teamRepository.save(team);
 
-        TeamSolve teamSolve1 = TeamSolve.builder().team(team).problem(highNormalProblem).build();
-        TeamSolve teamSolve2 = TeamSolve.builder().team(team).problem(highNormalProblem).build();
+        TeamSolve teamSolve1 = TeamSolve.builder().team(team).teamSolveType(TeamSolveType.SUBMITTED).problem(highNormalProblem).build();
+        TeamSolve teamSolve2 = TeamSolve.builder().team(team).teamSolveType(TeamSolveType.SUBMITTED).problem(commonProblem).build();
         teamSolveRepository.saveAll(List.of(teamSolve1,teamSolve2));
 
         File file1 = File.builder()
@@ -154,7 +164,7 @@ class FileRepositoryCustomImplTest {
                 .extracting("fileId", "fileExtension", "section", "teamName", "season", "problemOrder")
                 .containsExactlyInAnyOrder(
                         tuple(file1.getId(), FileExtension.PDF, Section.HIGH_NORMAL, "xx팀", 17, 1),
-                        tuple(file2.getId(), FileExtension.PDF, Section.HIGH_NORMAL, "xx팀", 17, 1)
+                        tuple(file2.getId(), FileExtension.PDF, Section.COMMON, "xx팀", 17, 1)
                 );
     }
 
@@ -211,10 +221,22 @@ class FileRepositoryCustomImplTest {
 
         memberRepository.save(member);
 
-        Team team = Team.builder().name("xx팀").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("xx팀")
+                .winner(false)
+                .teamNumber("001")
+                .finalSubmitCount(0)
+                .status(SubmitStatus.FINAL)
+                .leader(member)
+                .contest(contest)
+                .build();
         teamRepository.save(team);
 
-        TeamSolve teamSolve = TeamSolve.builder().team(team).problem(highNormalProblem).build();
+        TeamSolve teamSolve = TeamSolve.builder().
+                team(team)
+                .teamSolveType(TeamSolveType.SUBMITTED)
+                .problem(highNormalProblem)
+                .build();
         teamSolveRepository.save(teamSolve);
 
         File file = File.builder()
@@ -232,7 +254,7 @@ class FileRepositoryCustomImplTest {
 
 
         //when
-        List<Long> result = fileRepository.findFileIdsByContestIdInTeamSolve(contest.getId());
+        List<Long> result = fileRepository.findFileIdsByContestIdInTeamSolve(contest.getId(), TeamSolveType.SUBMITTED);
 
         //then
         assertThat(result).hasSize(1);
