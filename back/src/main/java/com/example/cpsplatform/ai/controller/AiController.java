@@ -1,9 +1,11 @@
 package com.example.cpsplatform.ai.controller;
 
 import com.example.cpsplatform.ApiResponse;
-import com.example.cpsplatform.ai.controller.request.QuestionGenerateRequest;
+import com.example.cpsplatform.ai.admin.controller.request.QuestionGenerateRequest;
+import com.example.cpsplatform.ai.admin.service.dto.QuestionDto;
+import com.example.cpsplatform.ai.controller.request.FaqRequest;
+import com.example.cpsplatform.ai.controller.response.FaqResponse;
 import com.example.cpsplatform.ai.service.AiApiService;
-import com.example.cpsplatform.ai.service.dto.QuestionDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +20,9 @@ public class AiController {
 
     private final AiApiService aiApiService;
 
-    @PostMapping("/generate")
-    public ApiResponse<List<QuestionDto>> generateQuestions(@RequestBody QuestionGenerateRequest request) {
-        List<QuestionDto> result = aiApiService.generateQuestions(request);
+    @PostMapping("/qa")
+    public ApiResponse<FaqResponse> generateFaq(@RequestBody FaqRequest request) {
+        FaqResponse result = aiApiService.getAnswerFromFaqChatBot(request);
         return ApiResponse.ok(result);
     }
 }
