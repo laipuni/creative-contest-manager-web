@@ -69,7 +69,7 @@ public class TeamSolveController {
 
     @GetMapping("/api/contests/{contestId}/team-solves")
     public ApiResponse<GetTeamAnswerResponse> getAnswerSubmissionRequest(@PathVariable("contestId")Long contestId,
-                                                                         @RequestParam(value = "submit_type", required = false) String submitType,
+                                                                         @RequestParam(value = "submit_type", defaultValue = "") String submitType,
                                                                          @AuthenticationPrincipal SecurityMember member){
         GetTeamAnswerResponse response = answerSubmitService.getAnswer(
                 contestId,
