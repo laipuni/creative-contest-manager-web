@@ -91,16 +91,8 @@ const TeamAnswerList = ({onClose, teamId, teamName, contestId}) => {
                             <textarea
                                 value={detail?.content}
                                 readOnly
-                                style={{
-                                    width: '100%',
-                                    resize: 'none',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '4px',
-                                    padding: '8px',
-                                    backgroundColor: '#f9f9f9',
-                                    fontSize: '12px'
-                                }}
-                                rows={4}
+                                className="teamAnswerList-textarea"
+                                rows={8}
                             />
                             </div>
                         </div>
