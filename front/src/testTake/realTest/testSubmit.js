@@ -100,11 +100,6 @@ const TestSubmit = () => {
 
     //답 제출
     const handleSubmitAnswer = () => {
-        // 파일 체크
-        if (!file1 || !file2) {
-            alert('각 답안의 첨부파일을 모두 등록해주세요. (기존에 제출했던 답 있는 경우 덮어쓰기 필요)');
-            return;
-        }
 
         const submitSingleAnswer = (quiz, fileVal, textVal) => {
             const formData = new FormData();
@@ -118,8 +113,8 @@ const TestSubmit = () => {
                 [JSON.stringify(requestData)],
                 { type: "application/json" }
             ));
-
-            formData.append("file", fileVal);
+            if(fileVal)
+                formData.append("file", fileVal);
 
             return apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves`, formData, {
                 headers: {
@@ -146,8 +141,6 @@ const TestSubmit = () => {
                 }
             });
     };
-
-
 
     return (
         <div className="testInfo-page-container">
@@ -181,7 +174,7 @@ const TestSubmit = () => {
                         <button className="registerInfo-bot-button"
                                 onClick={handleSubmitAnswer}
                                 style={{cursor: "pointer", alignSelf: "center"}}>
-                            <img src={rocket} alt='rocket' className="submit-rocket-img"/>제출하기
+                            <img src={rocket} alt='rocket' className="submit-rocket-img"/>저장하기
                         </button>
                     </div>
                 </div>
