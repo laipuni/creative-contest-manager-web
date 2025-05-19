@@ -1,4 +1,4 @@
-package com.example.cpsplatform.ai.controller.request;
+package com.example.cpsplatform.ai.admin.controller.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

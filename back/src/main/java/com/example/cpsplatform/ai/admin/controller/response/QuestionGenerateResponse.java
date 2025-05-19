@@ -1,4 +1,4 @@
-package com.example.cpsplatform.ai.controller.response;
+package com.example.cpsplatform.ai.admin.controller.response;
 
 import java.util.List;
 import lombok.AccessLevel;
