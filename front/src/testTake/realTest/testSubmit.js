@@ -67,7 +67,7 @@ const TestSubmit = () => {
     //답안 가져오기
     useEffect(() => {
         if (teamInfo) {
-            apiClient.get(`/api/contests/${contestInfo.contestId}/team-solves`)
+            apiClient.get(`/api/contests/${contestInfo.contestId}/team-solves`, {params: {submit_type: 'temp'}})
                 .then((res) => {
                     const answerList = res.data.data.teamAnswerList;
                     answerList.forEach((answer) => {
@@ -129,7 +129,7 @@ const TestSubmit = () => {
             submitSingleAnswer(quiz2, file2, text2)
         ])
             .then(() => {
-                alert('답안이 제출되었습니다.');
+                alert('답안이 임시 저장되었습니다. 마감 기한 내에 최종 제출을 완료해 주세요.');
                 navigate("/test/realTest/info")
             })
             .catch((err) => {
