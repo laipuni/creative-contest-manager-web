@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class QuestionGenerateRequest {
     private String topic;
-    private String type;
+    private String level;
     private int count;
 }
