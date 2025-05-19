@@ -38,12 +38,14 @@ const MemberList = () => {
     const [keyword, setKeyword] = useState('');
     const [searchKeyword, setSearchKeyword] = useState('');
     const [members, setMembers] = useState([]);
+    const [isEdited, setIsEdited] = useState(false);
+    const [gender, setGender] = useState('');
     const navigate = useNavigate();
     //유저 목록 불러오기
     useEffect(() => {
         const params = searchKeyword
-            ? { page: currentPage - 1, keyword: searchKeyword, search_type: searchType }
-            : { page: currentPage - 1 };
+            ? { page: currentPage - 1, keyword: searchKeyword, search_type: searchType, gender }
+            : { page: currentPage - 1, gender };
 
         apiClient.get('/api/admin/v1/members', { params , skipErrorHandler: true })
             .then((res) => {
@@ -59,7 +61,14 @@ const MemberList = () => {
                     alert(err.response.data.message);
                 }
             });
-    }, [currentPage]);
+    }, [currentPage, isEdited]);
+
+    const handleSearchMembers = () => {
+        setSearchKeyword(keyword);
+        setCurrentPage(1);
+        setIsEdited(!isEdited);
+    }
+
     return (
         <div className="admin-teamList-container">
             <AdminHeader/>
@@ -67,11 +76,19 @@ const MemberList = () => {
                 <AdminSidebar height='800px'/>
                 <div className="admin-teamList-main-container">
                     <div className="admin-teamList-header">
-                        <div className="admin-teamList-titlebox" style={{width: '70%'}}>
+                        <div className="admin-teamList-titlebox" style={{width: '60%'}}>
                             <div className="admin-teamList-title">회원 목록</div>
                             <div className="admin-teamList-underline"></div>
                         </div>
                         <div className="admin-teamList-selectbox">
+                            <select
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)}
+                                required>
+                                <option value="">---</option>
+                                <option value="남자">남자</option>
+                                <option value="여자">여자</option>
+                            </select>
                             <select
                                 value={searchType}
                                 onChange={(e) => setSearchType(e.target.value)}
@@ -85,7 +102,7 @@ const MemberList = () => {
                                 required
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
-                                        //handleSearchCertificates()
+                                        handleSearchMembers();
                                     }
                                 }}
                             >
