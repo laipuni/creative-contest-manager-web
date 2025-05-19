@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MemberInfoListDto {
 
+    private Long memberId;
     private String loginId;
     private String name;
     private Role role;

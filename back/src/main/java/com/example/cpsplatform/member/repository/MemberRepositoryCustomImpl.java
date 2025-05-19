@@ -39,6 +39,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
         Pageable pageable = PageRequest.of(cond.getPage(), cond.getPageSize());
         List<MemberInfoListDto> content = queryFactory.select(
                         Projections.constructor(MemberInfoListDto.class,
+                                member.id,
                                 member.loginId,
                                 member.name,
                                 member.role,

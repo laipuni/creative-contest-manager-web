@@ -86,9 +86,9 @@ public class MemberAdminControllerTest {
         //given
         Company company = new Company("xx전자","대리", FieldType.COMPUTER);
         List<MemberInfoListDto> members = Arrays.asList(
-                new MemberInfoListDto("user1", "홍길동", Role.USER, LocalDate.of(1990, 1, 1),
+                new MemberInfoListDto(1L,"user1", "홍길동", Role.USER, LocalDate.of(1990, 1, 1),
                         Gender.MAN, company, LocalDateTime.now()),
-                new MemberInfoListDto("user2", "김철수", Role.USER, LocalDate.of(1992, 3, 15),
+                new MemberInfoListDto(2L,"user2", "김철수", Role.USER, LocalDate.of(1992, 3, 15),
                         Gender.MAN, company, LocalDateTime.now())
         );
 
@@ -125,7 +125,7 @@ public class MemberAdminControllerTest {
         //given
         Company company = new Company("xx전자","대리", FieldType.COMPUTER);
         List<MemberInfoListDto> members = Arrays.asList(
-                new MemberInfoListDto("user1", "홍길동", Role.USER, LocalDate.of(1990, 1, 1),
+                new MemberInfoListDto(1L,"user1", "홍길동", Role.USER, LocalDate.of(1990, 1, 1),
                         Gender.MAN, company, LocalDateTime.now())
         );
 
@@ -161,9 +161,9 @@ public class MemberAdminControllerTest {
         //given
         Company company = new Company("xx전자","대리", FieldType.COMPUTER);
         List<MemberInfoListDto> members = Arrays.asList(
-                new MemberInfoListDto("user1", "홍길동", Role.USER, LocalDate.of(1990, 1, 1),
+                new MemberInfoListDto(1L,"user1", "홍길동", Role.USER, LocalDate.of(1990, 1, 1),
                         Gender.MAN, company, LocalDateTime.now()),
-                new MemberInfoListDto("user3", "박민수", Role.USER, LocalDate.of(1988, 5, 20),
+                new MemberInfoListDto(2L,"user3", "박민수", Role.USER, LocalDate.of(1988, 5, 20),
                         Gender.MAN, company, LocalDateTime.now())
         );
 
@@ -203,7 +203,7 @@ public class MemberAdminControllerTest {
         LocalDateTime oneMonthAgo = now.minusMonths(1);
 
         List<MemberInfoListDto> members = Arrays.asList(
-                new MemberInfoListDto("user1", "홍길동", com.example.cpsplatform.member.domain.Role.USER, LocalDate.of(1990, 1, 1),
+                new MemberInfoListDto(1L,"user1", "홍길동", com.example.cpsplatform.member.domain.Role.USER, LocalDate.of(1990, 1, 1),
                         Gender.MAN, company, now.minusDays(15))
         );
 
