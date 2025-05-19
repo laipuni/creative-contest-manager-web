@@ -97,7 +97,7 @@ const Join2 = () => {
             const year = parseInt(birthday.slice(0, 4), 10);
             const month = parseInt(birthday.slice(4, 6), 10) - 1;
             const day = parseInt(birthday.slice(6, 8), 10);
-            return new Date(year, month, day);
+            return new Date(year, month, day, 9);
         }
 
         const payload = {
