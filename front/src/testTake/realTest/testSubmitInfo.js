@@ -7,11 +7,19 @@ import rocket from "../../styles/images/solve_icon.png"
 import {Link, useNavigate} from "react-router-dom";
 import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
+import TeamAnswerList from "../../admin/components/teamAnswerList/teamAnswerList";
+import ContestAnswerList from "../../components/contestAnswerList/contestAnswerList";
 
 const TestSubmitInfo = () => {
     const [registerInfo, setRegisterInfo] = useState([]);
     const [contestInfo, setContestInfo] = useState(null);
     const [submitCnt, setSubmitCnt] = useState(0);
+    const [teamAnswerModal, setTeamAnswerModal] = useState({
+        open: false,
+        answers: null,
+        teamName: null,
+        contestId: null,
+    });
 
     const navigate = useNavigate();
 
@@ -59,7 +67,7 @@ const TestSubmitInfo = () => {
 
     //날짜 형태로 파싱
     const formatDate = (date) => {
-        if(date !== 'X') return format(new Date(date), 'yyyy-MM-dd')
+        if(date !== 'X') return format(new Date(date), 'yyyy-MM-dd HH:mm')
         else return date;
     }
 
@@ -79,15 +87,30 @@ const TestSubmitInfo = () => {
                             </div>
                             <div className="registerInfo-body-bot">
                                 <div className="registerInfo-bot-title">
-                                    <p className="registerInfo-bot-text">제출일자</p>
+                                    <p className="registerInfo-bot-text">제출일시</p>
                                     <div className="registerInfo-bot-line" style={{width: '5%'}}></div>
                                     <p className="registerInfo-bot-text">제출횟수</p>
+                                    <div className="registerInfo-bot-line" style={{width: '5%'}}></div>
+                                    <p className="registerInfo-bot-text">제출된 답안</p>
                                 </div>
-                                {registerInfo.registerCount > 0 ? (
+                                {teamAnswerModal.open && teamAnswerModal.answers && (
+                                    <ContestAnswerList
+                                        answers={teamAnswerModal.answers}
+                                        teamName={teamAnswerModal.teamName}
+                                        contestId={contestInfo.contestId}
+                                        onClose={() => setTeamAnswerModal({ open: false, answers: null, teamName: null, contestId: null })}
+                                    />
+                                )}
+                                {submitCnt > 0 ? (
                                     <>
                                         <div className="registerInfo-bot-content">
-                                            <p className="registerInfo-bot-text">{formatDate(registerInfo.updatedAt)}</p>
+                                            <p className="registerInfo-bot-text">{formatDate(registerInfo[0].updatedAt)}</p>
                                             <p className="registerInfo-bot-text">{submitCnt}</p>
+                                            <p className="registerInfo-bot-text"
+                                               style={{cursor: 'pointer'}}
+                                               onClick={() => {
+                                                   setTeamAnswerModal({ open: true, answers: registerInfo, teamName: registerInfo[0].teamName, contestId: contestInfo.contestId });
+                                               }}>📄</p>
                                         </div>
                                     </>
                                 ) : (
