@@ -7,6 +7,10 @@ const AdminSidebar = ({height}) => {
     //TODO- 데이터 분석 페이지 링크 연동
     return (
         <div className="adminSidebar-container" style={{height: height}}>
+            <Link to="/admin/memberList"
+                  className={`adminSidebar-category ${location.pathname === "/admin/memberList" ? "active" : ""}`}>
+                <p className="adminSidebar-text">회원 목록</p>
+            </Link>
             <Link to="/admin/teamList"
                   className={`adminSidebar-category ${location.pathname === "/admin/teamList" ? "active" : ""}`}>
                 <p className="adminSidebar-text">팀 목록</p>

@@ -22,6 +22,7 @@ import ResetPasswordPage from "../auth/login/member/resetPwPage";
 import CertificateManage from "../admin/certificateManage/certificateManage";
 import ProfileSelect from "../auth/profile/profileSelect";
 import PasswordAuth from "../auth/profile/passwordAuth";
+import MemberList from "../admin/memberList/memberList";
 
 function AppRoutes() {
     const location = useLocation();
@@ -71,6 +72,7 @@ function AppRoutes() {
             <Route path="test/pastTest" element={<PastTest />}></Route>
             <Route path="certificate/info" element={<Certificate />}></Route>
             <Route path="qna" element={<QnA/>}></Route>
+            <Route path="admin/memberList" element={<MemberList />}></Route>
             <Route path="admin/teamList" element={<TeamList />}></Route>
             <Route path="admin/testManage" element={<TestManage />}></Route>
             <Route path="admin/certificates" element={<CertificateManage />}></Route>

@@ -95,7 +95,7 @@ const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
                             </div>
                             {isAdmin === 'true' &&
                                 <div className="main-header-menu-item">
-                                    <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
+                                    <Link to="/admin/memberList" className="main-header-menu-item-text">ADMIN</Link>
                                 </div>
                             }
                         </>}
