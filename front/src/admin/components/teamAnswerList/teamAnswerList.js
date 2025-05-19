@@ -89,7 +89,7 @@ const TeamAnswerList = ({onClose, teamId, teamName, contestId}) => {
                             {/* 텍스트 답안 (content) 표시 */}
                             <div style={{marginTop: '6px'}}>
                             <textarea
-                                value={detail.content}
+                                value={detail?.content}
                                 readOnly
                                 style={{
                                     width: '100%',
