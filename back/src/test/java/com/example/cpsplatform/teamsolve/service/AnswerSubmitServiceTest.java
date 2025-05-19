@@ -3,6 +3,7 @@ package com.example.cpsplatform.teamsolve.service;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
+import com.example.cpsplatform.exception.TemporaryAnswerNotFoundException;
 import com.example.cpsplatform.file.decoder.vo.FileSource;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.file.domain.File;
@@ -26,28 +27,22 @@ import com.example.cpsplatform.problem.repository.ProblemRepository;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
-import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
 import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import com.example.cpsplatform.teamsolve.service.dto.FinalSubmitAnswerDto;
 import com.example.cpsplatform.teamsolve.service.dto.SubmitAnswerDto;
-import jakarta.persistence.Column;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static com.example.cpsplatform.team.domain.SubmitStatus.NOT_SUBMITTED;
@@ -91,8 +86,6 @@ class AnswerSubmitServiceTest {
 
     @MockitoBean
     FileStorage fileStorage;
-
-    FileSources fileSources;
 
     //해당 테스트에서 사용할 테스트 전역 변수들
     LocalDateTime now;

@@ -3,6 +3,7 @@ package com.example.cpsplatform.teamsolve.service;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
+import com.example.cpsplatform.exception.TemporaryAnswerNotFoundException;
 import com.example.cpsplatform.file.decoder.vo.FileSource;
 import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.repository.FileRepository;
@@ -171,9 +172,12 @@ public class AnswerSubmitService {
     }
 
     private Team validateTeamLeader(final String loginId, final Long contestId) {
+        log.info("트랜잭션 시작 - Thread: {}", Thread.currentThread().getName());
         log.debug("{} 유저(id:{})가 대회(id:{})에 팀장인지 확인",ANSWER_SUBMIT_LOG, loginId,contestId);
-        return teamRepository.findTeamByContestIdAndLeaderId(contestId, loginId)
+        Team team = teamRepository.findTeamByContestIdAndLeaderIdWithLock(contestId, loginId)
                 .orElseThrow(() -> new ContestJoinException("답안지는 팀장만이 제출할 수 있습니다."));
+        log.info("트랜잭션 종료 - Thread: {}", Thread.currentThread().getName());
+        return team;
     }
 
     private Contest validateContest(final Long contestId, final LocalDateTime now) {

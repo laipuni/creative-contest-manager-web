@@ -5,12 +5,11 @@ import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.team.domain.Team;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
@@ -29,9 +28,11 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     @EntityGraph(attributePaths = {"leader"})
     Page<Team> findTeamListByContest(Contest contest, Pageable pageable);
 
+
     //해당 대회에 팀장으로 맡고있는 팀이 존재하는지 여부를 확인하는 쿼리
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select t from Team t where t.contest.id = :contestId and t.leader.loginId = :leaderLoginId")
-    Optional<Team> findTeamByContestIdAndLeaderId(@Param("contestId") Long contestId, @Param("leaderLoginId") String leaderLoginId);
+    Optional<Team> findTeamByContestIdAndLeaderIdWithLock(@Param("contestId") Long contestId, @Param("leaderLoginId") String leaderLoginId);
 
 
     //유저의 아이디와 대회의 id를 받아서 해당 대회에 참여한 팀의 정보를 조회하는 쿼리

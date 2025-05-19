@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public interface TeamSolveRepository extends JpaRepository<TeamSolve,Long>, TeamSolveRepositoryCustom{
     //해당 문제에 제출한 팀의 답안지 정보를 조회하는 쿼리
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select ts from TeamSolve ts where ts.team.id = :teamId and ts.problem.id = :problemId and ts.teamSolveType = :teamSolveType")
     Optional<TeamSolve> findByTeamIdAndProblemId(@Param("teamId") Long teamId, @Param("problemId") Long problemId, @Param("teamSolveType")TeamSolveType teamSolveType);
 

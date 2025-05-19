@@ -1,4 +1,4 @@
-package com.example.cpsplatform.teamsolve.service;
+package com.example.cpsplatform.exception;
 
 public class TemporaryAnswerNotFoundException extends RuntimeException {
 
