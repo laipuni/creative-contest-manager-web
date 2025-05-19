@@ -1,4 +1,4 @@
-package com.example.cpsplatform.ai.service.dto;
+package com.example.cpsplatform.ai.admin.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
