@@ -1,14 +1,12 @@
 package com.example.cpsplatform.ai.service;
 
-
-import com.example.cpsplatform.ai.controller.request.QuestionGenerateRequest;
-import com.example.cpsplatform.ai.service.dto.QuestionDto;
-import java.util.List;
+import com.example.cpsplatform.ai.controller.request.FaqRequest;
+import com.example.cpsplatform.ai.controller.response.FaqResponse;
 
 public interface AiApiService {
 
     String getTest(String reqeust);
     TestResponse postTest(TestRequest request);
 
-    List<QuestionDto> generateQuestions(QuestionGenerateRequest request);
+    FaqResponse getAnswerFromFaqChatBot(FaqRequest request);
 }

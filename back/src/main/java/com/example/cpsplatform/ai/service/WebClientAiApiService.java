@@ -1,9 +1,7 @@
 package com.example.cpsplatform.ai.service;
 
-import com.example.cpsplatform.ai.controller.request.QuestionGenerateRequest;
-import com.example.cpsplatform.ai.controller.response.QuestionGenerateResponse;
-import com.example.cpsplatform.ai.service.dto.QuestionDto;
-import java.util.List;
+import com.example.cpsplatform.ai.controller.request.FaqRequest;
+import com.example.cpsplatform.ai.controller.response.FaqResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class WebClientAiApiService implements AiApiService{
@@ -41,23 +39,13 @@ public class WebClientAiApiService implements AiApiService{
     }
 
     @Override
-    public List<QuestionDto> generateQuestions(QuestionGenerateRequest request){
-        String url = "/generate";
-        QuestionGenerateResponse response = webClient.post()
+    public FaqResponse getAnswerFromFaqChatBot(FaqRequest request){
+        String url = "/qa";
+        return webClient.post()
                 .uri(url)
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(QuestionGenerateResponse.class)
+                .bodyToMono(FaqResponse.class)
                 .block();
-        return response.getResponse().stream()
-                .map(this::responseMakeToDto)
-                .toList();
-    }
-
-    private QuestionDto responseMakeToDto(String line){
-        String[] parts = line.split("\n", 2);
-        String question = parts[0].trim();
-        String answer = parts[1].trim();
-        return new QuestionDto(question, answer);
     }
 }
