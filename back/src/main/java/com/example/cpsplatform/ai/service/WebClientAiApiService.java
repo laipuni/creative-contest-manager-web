@@ -2,7 +2,9 @@ package com.example.cpsplatform.ai.service;
 
 import com.example.cpsplatform.ai.controller.request.FaqRequest;
 import com.example.cpsplatform.ai.controller.response.FaqResponse;
+import com.example.cpsplatform.exception.AiServerException;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 public class WebClientAiApiService implements AiApiService{
 
@@ -41,11 +43,19 @@ public class WebClientAiApiService implements AiApiService{
     @Override
     public FaqResponse getAnswerFromFaqChatBot(FaqRequest request){
         String url = "/qa";
-        return webClient.post()
-                .uri(url)
-                .bodyValue(request)
-                .retrieve()
-                .bodyToMono(FaqResponse.class)
-                .block();
+        try {
+            return webClient.post()
+                    .uri(url)
+                    .bodyValue(request)
+                    .retrieve()
+                    .bodyToMono(FaqResponse.class)
+                    .block();
+        }catch (WebClientResponseException.BadRequest e){
+            throw new AiServerException("잘못된 요청입니다.", 400, e);
+        }catch (WebClientResponseException e) {
+            throw new AiServerException("AI 서비스 호출에 실패하였습니다.", e.getRawStatusCode(), e);
+        }catch (Exception e) {
+            throw new AiServerException("AI 서비스 처리 중 오류가 발생했습니다.", 500, e);
+        }
     }
 }
