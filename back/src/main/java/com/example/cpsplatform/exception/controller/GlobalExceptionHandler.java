@@ -10,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -141,4 +142,11 @@ public class GlobalExceptionHandler {
         );
     }
 
+    //에러 코드가 400, 500 등 여러개여서 ResponseEntity사용
+    @ExceptionHandler(AiServerException.class)
+    public ResponseEntity<ApiErrorResponse<Object>> handleAiServerException(AiServerException ex) {
+        return ResponseEntity
+                .status(ex.getStatus())
+                .body(ApiErrorResponse.of(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null));
+    }
 }
