@@ -4,6 +4,7 @@ import com.example.cpsplatform.ai.admin.controller.request.QuestionGenerateReque
 import com.example.cpsplatform.ai.admin.controller.response.QuestionGenerateResponse;
 import com.example.cpsplatform.ai.admin.service.dto.QuestionDto;
 import com.example.cpsplatform.exception.AiServerException;
+import com.example.cpsplatform.exception.ClientRequestException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,11 +34,11 @@ public class AiAdminService{
                     .map(this::responseMakeToDto)
                     .toList();
         }catch (WebClientResponseException.BadRequest e){
-            throw  new AiServerException("잘못된 요청입니다.", 400, e);
+            throw  new ClientRequestException("잘못된 요청입니다.");
         }catch (WebClientResponseException e) {
-            throw new AiServerException("AI 서비스 호출에 실패하였습니다.", e.getRawStatusCode(), e);
+            throw new AiServerException("AI 서비스 호출에 실패하였습니다.");
         }catch (Exception e) {
-            throw new AiServerException("AI 서비스 처리 중 오류가 발생했습니다.", 500, e);
+            throw new AiServerException("AI 서비스 시스템 처리 중 오류가 발생했습니다.");
         }
     }
 
