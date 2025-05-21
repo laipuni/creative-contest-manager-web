@@ -4,6 +4,7 @@ import com.example.cpsplatform.ApiResponse;
 import com.example.cpsplatform.ai.controller.request.FaqRequest;
 import com.example.cpsplatform.ai.controller.response.FaqResponse;
 import com.example.cpsplatform.ai.service.AiApiService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,7 @@ public class AiController {
     private final AiApiService aiApiService;
 
     @PostMapping("/api/questions")
-    public ApiResponse<FaqResponse> generateFaq(@RequestBody FaqRequest request) {
+    public ApiResponse<FaqResponse> generateFaq(@Valid @RequestBody FaqRequest request) {
         FaqResponse result = aiApiService.getAnswerFromFaqChatBot(request);
         return ApiResponse.ok(result);
     }

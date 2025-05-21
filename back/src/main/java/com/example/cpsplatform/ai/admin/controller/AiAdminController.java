@@ -5,6 +5,7 @@ import com.example.cpsplatform.admin.annotaion.AdminLog;
 import com.example.cpsplatform.ai.admin.controller.request.QuestionGenerateRequest;
 import com.example.cpsplatform.ai.admin.service.AiAdminService;
 import com.example.cpsplatform.ai.admin.service.dto.QuestionDto;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class AiAdminController {
 
     @AdminLog
     @PostMapping("/generate")
-    public ApiResponse<List<QuestionDto>> generateQuestions(@RequestBody QuestionGenerateRequest request) {
+    public ApiResponse<List<QuestionDto>> generateQuestions(@Valid @RequestBody QuestionGenerateRequest request) {
         List<QuestionDto> result = aiAdminService.generateQuestions(request);
         return ApiResponse.ok(result);
     }
