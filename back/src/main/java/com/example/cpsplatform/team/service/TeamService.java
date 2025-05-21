@@ -5,6 +5,7 @@ import com.example.cpsplatform.certificate.repository.CertificateRepository;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
+import com.example.cpsplatform.exception.DuplicateDataException;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import com.example.cpsplatform.member.domain.organization.school.School;
@@ -50,6 +51,10 @@ public class TeamService {
     public Long createTeam(String leaderId, TeamCreateDto createDto){
         Member leader = memberRepository.findMemberByLoginId(leaderId)
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
+
+        if (teamRepository.existsByName(createDto.getTeamName())) {
+            throw new DuplicateDataException("중복된 팀명이 존재합니다.");
+        }
 
         Contest contest = findContestById(createDto.getContestId());
         log.info("조회된 대회: {} (id: {})", contest.getTitle(), contest.getId());
