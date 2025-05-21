@@ -50,6 +50,7 @@ const TeamList = () => {
         contestId: null,
     });
     const navigate = useNavigate();
+    const [edited, setEdited] = useState(false);
 
     //회차 정보 받아오기
     useEffect(() => {
@@ -116,10 +117,6 @@ const TeamList = () => {
             setTestData(data.teamList);   // 팀 리스트
             setLastPage(data.lastPage);   // 전체 페이지 수
             setCurrentPage(1);            // 현재 페이지 초기화
-            const initiallyChecked = data.teamList
-                .filter(team => team.winner === true)
-                .map(team => team.teamId);
-            setCheckedTeamIds(initiallyChecked);
         }).catch((err) => {
         });
     }, [testYear, level]);
@@ -139,7 +136,7 @@ const TeamList = () => {
             setTestData(data.teamList);
         }).catch((err) => {
         });
-    }, [currentPage]);
+    }, [currentPage, edited]);
 
     /*------------해당 대회 답안 일괄 다운로드-----------*/
     function handleDownload() {
@@ -170,7 +167,7 @@ const TeamList = () => {
     }
 
 
-    /*------------합격자 선정------------------*/
+    /*------------합격자 토글------------------*/
     const toggleTeamSelection = (teamId) => {
         setCheckedTeamIds(prev =>
             prev.includes(teamId)
@@ -180,14 +177,13 @@ const TeamList = () => {
     };
 
     const handleBulkPass = () => {
-        console.log("합격 처리할 팀 ID:", checkedTeamIds);
         apiClient.patch(`/api/admin/contests/${contestId}/winners`, {teamIds: checkedTeamIds})
             .then((res)=>{
-                alert('합격자 선정 완료');
-
+                alert('합격자 수정 완료');
+                setEdited(!edited);
+                setCheckedTeamIds([]);
             })
             .catch((err)=>{})
-        // 여기에서 API 호출 등 합격 처리 로직 수행
     };
 
 
@@ -232,7 +228,7 @@ const TeamList = () => {
                                 className="admin-pass-button"
                                 onClick={() => handleBulkPass()}
                             >
-                                합격자 선정
+                                합격자 수정
                             </button>
                         </div>
                         {teamAnswerModal.open && teamAnswerModal.teamId && (
@@ -257,7 +253,7 @@ const TeamList = () => {
                             </div>
                             <div className="admin-teamList-body-verticalLine"></div>
                             <div className="admin-teamList-body-title-textbox">
-                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>합격 여부</p>
+                                <p className="admin-teamList-body-title-text" style={{fontWeight: 'bold'}}>합격자 수정 선택</p>
                             </div>
                         </div>
                         {testData.map((team, index) => (
