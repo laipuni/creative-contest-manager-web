@@ -43,4 +43,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     Optional<Team> findTeamByMemberLoginIdAndContestId(@Param("loginId") String loginId,@Param("contestId") Long contestId);
 
     List<Team> findAllByContestId(Long contestId);
+
+    boolean existsByName(String name);
 }
