@@ -114,6 +114,8 @@ const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
                             <Link to="/test/realTest/info" className="main-header-bot-text">문제풀이</Link>
                             <span className="main-header-bot-circle"></span>
                             <Link to="/qna" className="main-header-bot-text">QnA</Link>
+                            <span className="main-header-bot-circle"></span>
+                            <Link to="/community/notice" className="main-header-bot-text">커뮤니티</Link>
                         </div>
                     </div>
                 </div>

@@ -23,6 +23,8 @@ import CertificateManage from "../admin/certificateManage/certificateManage";
 import ProfileSelect from "../auth/profile/profileSelect";
 import PasswordAuth from "../auth/profile/passwordAuth";
 import MemberList from "../admin/memberList/memberList";
+import NoticeList from "../community/notice/noticeList";
+import FreeBoard from "../community/freeBoard/freeBoard";
 
 function AppRoutes() {
     const location = useLocation();
@@ -55,6 +57,8 @@ function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element={<Main />}></Route>
+            <Route path="community/notice" element={<NoticeList />}></Route>
+            <Route path="community/freeBoard" element={<FreeBoard />}></Route>
             <Route path="join/policy" element={<Join1 />}></Route>
             <Route path="join/register" element={<Join2 />}></Route>
             <Route path="member/login" element={<MemberLogin />}></Route>
