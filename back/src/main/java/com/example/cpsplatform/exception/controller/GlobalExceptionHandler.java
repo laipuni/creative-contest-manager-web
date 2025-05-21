@@ -142,11 +142,22 @@ public class GlobalExceptionHandler {
         );
     }
 
-    //에러 코드가 400, 500 등 여러개여서 ResponseEntity사용
     @ExceptionHandler(AiServerException.class)
-    public ResponseEntity<ApiErrorResponse<Object>> handleAiServerException(AiServerException ex) {
-        return ResponseEntity
-                .status(ex.getStatus())
-                .body(ApiErrorResponse.of(HttpStatus.valueOf(ex.getStatus()), ex.getMessage(), null));
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse<Object> handleAiServerException(AiServerException ex) {
+        return ApiErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                null);
+    }
+
+    @ExceptionHandler(ClientRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse<Object> handleClientRequest(ClientRequestException ex) {
+        return ApiErrorResponse.of(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                null
+        );
     }
 }
