@@ -100,10 +100,6 @@ public class TeamService {
         Contest contest = findContestById(updateDto.getContestId());
         validateContestJoin(contest);
 
-        if (teamRepository.existsByName(updateDto.getTeamName())) {
-            throw new DuplicateDataException("중복된 팀명이 존재합니다.");
-        }
-
         team.updateTeamName(updateDto.getTeamName());
         memberTeamRepository.deleteAllByTeamExceptLeader(team, team.getLeader());
         //팀원들의 확인증 제거
