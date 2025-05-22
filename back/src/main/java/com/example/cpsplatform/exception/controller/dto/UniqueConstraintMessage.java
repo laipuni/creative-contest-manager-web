@@ -38,7 +38,7 @@ public enum UniqueConstraintMessage {
 
     //Team 관련 제약조건
     TEAM_CONTEST_NUMBER("uk_team_contestid_number", "해당 대회에 이미 같은 번호의 팀이 존재합니다."),
-    TEAM_NAME("uk_team_name", "이미 사용 중인 팀 이름입니다."),
+    TEAM_NAME("uk_contestid_team_name", "이미 해당 대회에 사용 중인 팀 이름입니다."),
 
     //TeamNumber 관련 제약조건
     TEAM_NUMBER_CONTEST("uk_team_number_contestid", "해당 대회의 팀 번호가 이미 등록되어 있습니다."),
