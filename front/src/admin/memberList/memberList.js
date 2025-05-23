@@ -4,6 +4,7 @@ import AdminHeader from "../components/adminHeader/adminHeader";
 import AdminSidebar from "../components/adminSidebar/adminSidebar";
 import {FaSearch} from "react-icons/fa";
 import {useNavigate} from "react-router-dom";
+import DetailComponent from "./detailComponent";
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -40,6 +41,8 @@ const MemberList = () => {
     const [members, setMembers] = useState([]);
     const [isEdited, setIsEdited] = useState(false);
     const [gender, setGender] = useState('');
+    const [memberDetails, setMemberDetails] = useState([]);
+    const [openMemberId, setOpenMemberId] = useState(null);
     const navigate = useNavigate();
     //유저 목록 불러오기
     useEffect(() => {
@@ -68,6 +71,20 @@ const MemberList = () => {
         setCurrentPage(1);
         setIsEdited(!isEdited);
     }
+
+    const handleClick = (member) => {
+        if (openMemberId === member.loginId) {
+            setOpenMemberId(null);
+            return;
+        }
+        setOpenMemberId(member.loginId);
+        apiClient.get(`/api/admin/members/${member.memberId}`)
+            .then((res) => {
+                setMemberDetails(res.data.data);
+            })
+            .catch((err)=>{})
+    }
+
 
     return (
         <div className="admin-teamList-container">
@@ -133,30 +150,37 @@ const MemberList = () => {
                             </div>
                         </div>
                         {members.map((member) => (
-                            <div
-                                key={member.loginId}
-                                className="admin-teamList-body-title"
-                            >
-                                <div className="admin-teamList-body-title-textbox">
-                                    <p className="admin-teamList-body-title-text">{member.loginId}</p>
+                            <React.Fragment key={member.loginId}>
+                                <div
+                                    onClick={()=>handleClick(member)}
+                                    key={member.loginId}
+                                    className="admin-teamList-body-title"
+                                    style={{cursor: 'pointer'}}
+                                >
+                                    <div className="admin-teamList-body-title-textbox">
+                                        <p className="admin-teamList-body-title-text">{member.loginId}</p>
+                                    </div>
+                                    <div className="admin-teamList-body-verticalLine"></div>
+                                    <div className="admin-teamList-body-title-textbox">
+                                        <p className="admin-teamList-body-title-text">{member.name}</p>
+                                    </div>
+                                    <div className="admin-teamList-body-verticalLine"></div>
+                                    <div className="admin-teamList-body-title-textbox">
+                                        <p className="admin-teamList-body-title-text">{member.birth}</p>
+                                    </div>
+                                    <div className="admin-teamList-body-verticalLine"></div>
+                                    <div className="admin-teamList-body-title-textbox">
+                                        <p className="admin-teamList-body-title-text">{member.gender === 'MAN' ? '남자' : '여자'}</p>
+                                    </div>
+                                    <div className="admin-teamList-body-verticalLine"></div>
+                                    <div className="admin-teamList-body-title-textbox">
+                                        <p className="admin-teamList-body-title-text">{member.organization.organizationType}({member.organization.name})</p>
+                                    </div>
                                 </div>
-                                <div className="admin-teamList-body-verticalLine"></div>
-                                <div className="admin-teamList-body-title-textbox">
-                                    <p className="admin-teamList-body-title-text">{member.name}</p>
-                                </div>
-                                <div className="admin-teamList-body-verticalLine"></div>
-                                <div className="admin-teamList-body-title-textbox">
-                                    <p className="admin-teamList-body-title-text">{member.birth}</p>
-                                </div>
-                                <div className="admin-teamList-body-verticalLine"></div>
-                                <div className="admin-teamList-body-title-textbox">
-                                    <p className="admin-teamList-body-title-text">{member.gender === 'MAN' ? '남자' : '여자'}</p>
-                                </div>
-                                <div className="admin-teamList-body-verticalLine"></div>
-                                <div className="admin-teamList-body-title-textbox">
-                                    <p className="admin-teamList-body-title-text">{member.organization.organizationType}({member.organization.name})</p>
-                                </div>
-                            </div>
+                                {openMemberId === member.loginId && (
+                                    <DetailComponent data={memberDetails} />
+                                )}
+                            </React.Fragment>
                         ))}
 
                     </div>
