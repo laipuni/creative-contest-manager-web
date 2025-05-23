@@ -23,6 +23,9 @@ const AdminSidebar = ({height}) => {
                   className={`adminSidebar-category ${location.pathname === "/admin/certificates" ? "active" : ""}`}>
                 <p className="adminSidebar-text">증명서 관리</p>
             </Link>
+            <Link to="/admin/notices" className={`adminSidebar-category ${location.pathname === "/admin/notices" ? "active" : ""}`} >
+                <p className="adminSidebar-text">공지사항</p>
+            </Link>
             <div className="adminSidebar-category">
                 <p className="adminSidebar-text">데이터 분석</p>
             </div>

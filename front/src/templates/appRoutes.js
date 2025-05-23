@@ -25,6 +25,7 @@ import PasswordAuth from "../auth/profile/passwordAuth";
 import MemberList from "../admin/memberList/memberList";
 import NoticeList from "../community/notice/noticeList";
 import FreeBoard from "../community/freeBoard/freeBoard";
+import NoticeManage from "../admin/notice/noticeManage";
 
 function AppRoutes() {
     const location = useLocation();
@@ -80,6 +81,7 @@ function AppRoutes() {
             <Route path="admin/teamList" element={<TeamList />}></Route>
             <Route path="admin/testManage" element={<TestManage />}></Route>
             <Route path="admin/certificates" element={<CertificateManage />}></Route>
+            <Route path="admin/notices" element={<NoticeManage />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );
