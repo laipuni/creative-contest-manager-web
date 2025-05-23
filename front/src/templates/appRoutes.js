@@ -28,6 +28,7 @@ import FreeBoard from "../community/freeBoard/freeBoard";
 import NoticeManage from "../admin/notice/noticeManage";
 import NoticeWrite from "../admin/notice/noticeWrite";
 import NoticeDetail from "../admin/notice/noticeDetail";
+import NoticeViewDetail from "../community/notice/noticeViewDetail";
 
 function AppRoutes() {
     const location = useLocation();
@@ -61,6 +62,7 @@ function AppRoutes() {
         <Routes>
             <Route path="/" element={<Main />}></Route>
             <Route path="community/notice" element={<NoticeList />}></Route>
+            <Route path="community/notice/:noticeId" element={<NoticeViewDetail />}></Route>
             <Route path="community/freeBoard" element={<FreeBoard />}></Route>
             <Route path="join/policy" element={<Join1 />}></Route>
             <Route path="join/register" element={<Join2 />}></Route>
@@ -85,7 +87,7 @@ function AppRoutes() {
             <Route path="admin/certificates" element={<CertificateManage />}></Route>
             <Route path="admin/notices" element={<NoticeManage />}></Route>
             <Route path="admin/notices/write" element={<NoticeWrite />}></Route>
-            <Route path="admin/notices/detail" element={<NoticeDetail />}></Route>
+            <Route path="admin/notices/:noticeId" element={<NoticeDetail />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );

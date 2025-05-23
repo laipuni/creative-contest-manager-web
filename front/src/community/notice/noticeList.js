@@ -42,6 +42,7 @@ const NoticeList = () => {
     const [notices, setNotices] = useState([]);
     const [searchType, setSearchType] = useState(null);
     const [isEdited, setIsEdited] = useState(false);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -112,12 +113,14 @@ const NoticeList = () => {
                                 <div className="pastTest-bot-quiz-container">
                                     <ul className="pastTest-list">
                                         {notices.map(item => (
-                                            <li key={item.id}>
+                                            <li key={item.noticeId}>
                                                 <div className="pastTest-bot-title-container"
                                                      style={{background: 'white', gap: '5px', padding: '0px 20px'}}>
                                                     <div className="pastTest-file-container">
                                                         <p className="pastTest-bot-leftTitle"
+                                                           onClick={()=>navigate(`/community/notice/${item.noticeId}`)}
                                                            style={{
+                                                               cursor: "pointer",
                                                                width: '30%',
                                                                textAlign: 'left',
                                                            }}>{item.title}</p>
