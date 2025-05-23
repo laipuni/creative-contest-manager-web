@@ -34,6 +34,9 @@ dependencies {
     //s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+    //logback
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
     //redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.45.1'
 
