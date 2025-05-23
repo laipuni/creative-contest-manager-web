@@ -6,6 +6,7 @@ import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import trophyLogo from "../../styles/images/test_info_logo.png";
 import {format} from "date-fns";
+import {FaSearch} from "react-icons/fa";
 
 function Pagination({ totalPages, currentPage, onPageChange }) {
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -41,28 +42,20 @@ const NoticeList = () => {
     const [notices, setNotices] = useState([]);
     const [searchType, setSearchType] = useState(null);
     const [isEdited, setIsEdited] = useState(false);
-    const navigate = useNavigate();
 
 
     useEffect(() => {
         const params = searchKeyword
             ? { page: currentPage - 1, keyword: searchKeyword, search_type: searchType }
             : { page: currentPage - 1 };
-        apiClient.get('/api/notices/search')
+        apiClient.get('/api/notices/search', {params})
             .then((res)=>{
                 setNotices(res.data.data.noticeSearchDtoList);
                 setLastPage(res.data.data.lastPage);
             })
             .catch((err)=>{
-                if(err.response.status === 401){
-                    alert('권한이 없습니다.');
-                    navigate('/');
-                }
-                else{
-                    alert(err.response.data.message);
-                }
             });
-    }, [currentPage]);
+    }, [currentPage, isEdited]);
 
     const handleSearchNotices = () => {
         setSearchKeyword(keyword);
@@ -80,6 +73,27 @@ const NoticeList = () => {
                         <CategoryLogo logoTitle={"공지사항"} imgSrc={trophyLogo} imageWidth='18%'/>
                         <div className="pastTest-container">
                             <div className="pastTest-top-container">
+                                <div className="admin-teamList-selectbox" style={{width: '100%', justifyContent: 'flex-end'}}>
+                                    <select
+                                        value={searchType}
+                                        onChange={(e) => setSearchType(e.target.value)}
+                                        required>
+                                        <option value="">---</option>
+                                        <option value="title">제목</option>
+                                    </select>
+                                    <input
+                                        value={keyword}
+                                        onChange={(e) => setKeyword(e.target.value)}
+                                        required
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSearchNotices();
+                                            }
+                                        }}
+                                    >
+                                    </input>
+                                    <FaSearch style={{cursor: 'pointer'}}/>
+                                </div>
                                 <div className="pastTest-top-underline"></div>
                             </div>
                             <div className="pastTest-bot-container">
@@ -87,7 +101,7 @@ const NoticeList = () => {
                                     <p className="pastTest-bot-leftTitle">제목</p>
                                     <div className="pastTest-verticalLine"></div>
                                     <p className="pastTest-bot-rightTitle"
-                                    style={{width: '10%'}}>작성자</p>
+                                       style={{width: '10%'}}>작성자</p>
                                     <div className="pastTest-verticalLine"></div>
                                     <p className="pastTest-bot-rightTitle"
                                        style={{width: '10%'}}>등록일</p>
@@ -108,7 +122,8 @@ const NoticeList = () => {
                                                                textAlign: 'left',
                                                            }}>{item.title}</p>
                                                     </div>
-                                                    <div className="pastTest-bot-rightTitle" style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
+                                                    <div className="pastTest-bot-rightTitle"
+                                                         style={{width: '100%', display: 'flex', flexDirection: 'row'}}>
                                                         <p className="pastTest-bot-rightTitle"
                                                            style={{width: '30%'}}>{item.writer}</p>
                                                         <p className="pastTest-bot-rightTitle"
