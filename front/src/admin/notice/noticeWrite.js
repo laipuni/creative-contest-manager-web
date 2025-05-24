@@ -106,13 +106,13 @@ const NoticeWrite = () => {
                             />
                             <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
                                 <button type="button" style={{height: 'fit-content'}} onClick={handleFakeClick}>
-                                    파일 선택
+                                    파일 첨부
                                 </button>
                                 {files.length > 0 ? (
                                     <ul className="noticeDetail-content-text" style={{
                                         listStyle: 'none',
                                         paddingLeft: '0',
-                                        marginTop: '15px',
+                                        marginTop: '5px',
                                         flexDirection: 'column'
                                     }}>
                                         {files.map((file, index) => (
