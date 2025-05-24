@@ -26,6 +26,9 @@ const AdminSidebar = ({height}) => {
             <Link to="/admin/notices" className={`adminSidebar-category ${location.pathname.startsWith("/admin/notices") ? "active" : ""}`} >
                 <p className="adminSidebar-text">공지사항</p>
             </Link>
+            <Link to="/admin/quizAI" className={`adminSidebar-category ${location.pathname === "/admin/quizAI" ? "active" : ""}`} >
+                <p className="adminSidebar-text">AI 문제생성</p>
+            </Link>
             <div className="adminSidebar-category">
                 <p className="adminSidebar-text">데이터 분석</p>
             </div>

@@ -29,6 +29,7 @@ import NoticeManage from "../admin/notice/noticeManage";
 import NoticeWrite from "../admin/notice/noticeWrite";
 import NoticeDetail from "../admin/notice/noticeDetail";
 import NoticeViewDetail from "../community/notice/noticeViewDetail";
+import QuizAI from "../admin/quizAI/quizAI";
 
 function AppRoutes() {
     const location = useLocation();
@@ -88,6 +89,7 @@ function AppRoutes() {
             <Route path="admin/notices" element={<NoticeManage />}></Route>
             <Route path="admin/notices/write" element={<NoticeWrite />}></Route>
             <Route path="admin/notices/:noticeId" element={<NoticeDetail />}></Route>
+            <Route path="admin/quizAI" element={<QuizAI />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );
