@@ -20,12 +20,12 @@ import java.util.StringJoiner;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class NoticeAdminFacadeService {
 
     private final NoticeAdminService noticeAdminService;
     private final NoticeFileService noticeFileService;
-    private final FileService fileService;
 
     @Transactional
     public NoticeAddResponse publishNotice(final String title, final String content, final String username, final FileSources fileSources){

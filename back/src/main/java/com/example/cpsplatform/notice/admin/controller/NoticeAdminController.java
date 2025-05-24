@@ -34,7 +34,7 @@ public class NoticeAdminController {
     @PostMapping("/api/admin/notices")
     public ApiResponse<NoticeAddResponse> addNotice(@Valid @RequestPart NoticeAddRequest request,
                                          @AuthenticationPrincipal SecurityMember member,
-                                         @RequestPart List<MultipartFile> files){
+                                         @RequestPart(required = false) List<MultipartFile> files){
         MultipartDecoder multipartDecoder = new MultipartDecoder();
         FileSources fileSources = multipartDecoder.decode(files);
         NoticeAddResponse response = noticeFacadeService.publishNotice(request.getTitle(), request.getContent(), member.getUsername(), fileSources);
@@ -45,7 +45,7 @@ public class NoticeAdminController {
     @PatchMapping("/api/admin/notices")
     public ApiResponse<NoticeModifyResponse> modifyNotice(@Valid @RequestPart NoticeModifyRequest request,
                                                        @AuthenticationPrincipal SecurityMember member,
-                                                       @RequestPart List<MultipartFile> files){
+                                                       @RequestPart(required = false) List<MultipartFile> files){
         MultipartDecoder multipartDecoder = new MultipartDecoder();
         FileSources fileSources = multipartDecoder.decode(files);
 
