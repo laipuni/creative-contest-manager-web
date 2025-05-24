@@ -75,7 +75,7 @@ const NoticeDetail = () => {
     const handleDeleteNotice = () => {
         const result = window.confirm('삭제 후 복구가 불가능합니다. 정말 삭제하시겠습니까?');
         if(!result) return;
-        apiClient.delete('/api/admin/notices', {data: noticeId})
+        apiClient.delete('/api/admin/notices', {data: {noticeId}})
             .then((res)=>{
                 alert('삭제되었습니다');
                 navigate(-1);
