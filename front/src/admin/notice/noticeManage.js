@@ -124,7 +124,9 @@ const NoticeManage = () => {
                                                  style={{background: 'white', gap: '5px', padding: '0px 20px'}}>
                                                 <div className="pastTest-file-container">
                                                     <p className="pastTest-bot-leftTitle"
+                                                       onClick={()=>navigate(`/admin/notices/${item.noticeId}`)}
                                                        style={{
+                                                           cursor: 'pointer',
                                                            width: '30%',
                                                            textAlign: 'left',
                                                        }}>{item.title}</p>
