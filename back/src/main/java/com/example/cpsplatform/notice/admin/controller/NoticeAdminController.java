@@ -55,7 +55,7 @@ public class NoticeAdminController {
 
     @AdminLog
     @DeleteMapping("/api/admin/notices")
-    public ApiResponse<Object> deleteNotice(@Valid @RequestPart NoticeDeleteRequest request){
+    public ApiResponse<Object> deleteNotice(@Valid @RequestBody NoticeDeleteRequest request){
         noticeFacadeService.deleteNotice(request.getNoticeId());
         return ApiResponse.ok(null);
     }

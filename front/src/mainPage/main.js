@@ -23,7 +23,7 @@ const Main = () => {
                             <Link to="/register/info" className="bento-top-content">
                                 <div className="bento-content-textbox">
                                     <p className="bento-content-title">
-                                        예선시험&nbsp;<span style={{color: 'rgba(255, 13, 13, 0.81)'}}>접수</span>
+                                        대회참가&nbsp;<span style={{color: 'rgba(255, 13, 13, 0.81)'}}>접수</span>
                                     </p>
                                     <p className="bento-content-subtitle">
                                         팀장을 통해 팀원의 정보를 입력하고<br />
