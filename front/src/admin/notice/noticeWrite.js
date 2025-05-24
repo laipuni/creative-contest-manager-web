@@ -4,12 +4,14 @@ import './noticeWrite.css';
 import React, {useState} from "react";
 import apiClient from "../../templates/apiClient";
 import {useNavigate} from "react-router-dom";
+import {FaFileAlt} from "react-icons/fa";
 
 const NoticeWrite = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [file, setFile] = useState(null);
+    const [files, setFiles] = useState([]);
     const navigate = useNavigate();
+    const fileInputRef = React.useRef(null);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -25,8 +27,9 @@ const NoticeWrite = () => {
             [JSON.stringify(requestData)],
             { type: "application/json" }
         ));
-        if(file)
-            formData.append('files', file);
+        files.forEach(file => {
+            formData.append("files", file);
+        });
 
         apiClient.post('api/admin/notices', formData, {
             headers: {
@@ -38,6 +41,34 @@ const NoticeWrite = () => {
             })
             .catch((err) => {});
     };
+
+    const handleFileUpload = (e) => {
+        const files = Array.from(e.target.files);
+        setFiles((prev) => [...prev, ...files]);
+        e.target.value = null;
+    };
+
+    const handleDeleteFile = (file) => {
+        setFiles((prev) => prev.filter((f) => f !== file));
+    };
+
+    const handleFakeClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleDownloadLocalFile = (file) => {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url); // 메모리 해제
+    };
+
 
     return (
         <div className="admin-teamList-container">
@@ -68,8 +99,42 @@ const NoticeWrite = () => {
                             />
                             <input
                                 type="file"
-                                onChange={(e) => setFile(e.target.files[0])}
+                                multiple
+                                style={{display: 'none'}}
+                                ref={fileInputRef}
+                                onChange={handleFileUpload}
                             />
+                            <div style={{display: 'flex', flexDirection: 'row', gap: '10px'}}>
+                                <button type="button" style={{height: 'fit-content'}} onClick={handleFakeClick}>
+                                    파일 선택
+                                </button>
+                                {files.length > 0 ? (
+                                    <ul className="noticeDetail-content-text" style={{
+                                        listStyle: 'none',
+                                        paddingLeft: '0',
+                                        marginTop: '15px',
+                                        flexDirection: 'column'
+                                    }}>
+                                        {files.map((file, index) => (
+                                            <li key={index} className="noticeDetail-file-item" style={{width: '100%'}}>
+                                                <FaFileAlt className="noticeDetail-file-icon"/>
+                                                <span
+                                                    onClick={()=>handleDownloadLocalFile(file)}
+                                                    className="noticeDetail-file-name">{file.name}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteFile(file)}
+                                                    style={{marginLeft: '10px', fontSize: '8px'}}
+                                                >
+                                                    X
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="noticeDetail-content-text">선택된 파일 없음</p>
+                                )}
+                            </div>
                             <button type="submit">글 등록</button>
                         </form>
                     </div>
