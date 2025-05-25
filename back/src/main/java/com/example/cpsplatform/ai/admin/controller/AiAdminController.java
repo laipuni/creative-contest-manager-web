@@ -14,14 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/admin/ai")
 @RequiredArgsConstructor
 public class AiAdminController {
 
     private final AiAdminService aiAdminService;
 
     @AdminLog
-    @PostMapping("/generate")
+    @PostMapping("/api/admin/ai/generate")
     public ApiResponse<List<QuestionDto>> generateQuestions(@Valid @RequestBody QuestionGenerateRequest request) {
         List<QuestionDto> result = aiAdminService.generateQuestions(request);
         return ApiResponse.ok(result);
