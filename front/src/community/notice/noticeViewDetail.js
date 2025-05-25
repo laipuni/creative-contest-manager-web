@@ -23,7 +23,9 @@ const NoticeViewDetail = () => {
     }, []);
 
     const handleDownload = (fileId, fileName) => {
-        apiClient.get(`/api/notices/${noticeId}/files/${fileId}/download`)
+        apiClient.get(`/api/notices/${noticeId}/files/${fileId}/download`, {
+            responseType: 'blob'  // 반드시 추가!
+        })
             .then((res)=>{
                 const url = window.URL.createObjectURL(new Blob([res.data]));
                 const link = document.createElement('a');
