@@ -101,7 +101,9 @@ const NoticeDetail = () => {
     };
 
     const handleDownload = (fileId, fileName) => {
-        apiClient.get(`/api/notices/${noticeId}/files/${fileId}/download`)
+        apiClient.get(`/api/notices/${noticeId}/files/${fileId}/download`, {
+            responseType: 'blob'
+        })
             .then((res)=>{
                 const url = window.URL.createObjectURL(new Blob([res.data]));
                 const link = document.createElement('a');

@@ -77,7 +77,7 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
                     <div className="quiz-vertical-line"></div>
 
                     {/* 조건별 다운로드 표시 */}
-                    {!fileVal && !answer.fileId && (
+                    {!fileVal && !answer?.fileId && (
                         <p className="quiz-normal-text" style={{ fontSize: '12px' }}>등록된 파일 없음</p>
                     )}
 
@@ -101,7 +101,7 @@ const TestQuiz = ({quizTitle, textVal, textOnChange, fileVal, fileOnChange, quiz
                         </a>
                     )}
 
-                    {!fileVal && answer.fileId && (
+                    {!fileVal && answer?.fileId && (
                         <a onClick={handleDownloadAnswer}
                            style={{
                                cursor: 'pointer',
