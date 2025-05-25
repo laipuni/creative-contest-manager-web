@@ -38,13 +38,13 @@ public enum UniqueConstraintMessage {
 
     //Team 관련 제약조건
     TEAM_CONTEST_NUMBER("uk_team_contestid_number", "해당 대회에 이미 같은 번호의 팀이 존재합니다."),
-    TEAM_NAME("uk_team_name", "이미 사용 중인 팀 이름입니다."),
+    TEAM_NAME("uk_contestid_team_name", "이미 해당 대회에 사용 중인 팀 이름입니다."),
 
     //TeamNumber 관련 제약조건
     TEAM_NUMBER_CONTEST("uk_team_number_contestid", "해당 대회의 팀 번호가 이미 등록되어 있습니다."),
 
     //TeamSolve 관련 제약조건
-    TEAM_SOLVE_PROBLEM("uk_team_solve_teamid_problemid", "해당 팀이 이미 이 문제에 대한 솔루션을 제출했습니다.");
+    TEAM_SOLVE_PROBLEM("uk_team_solve_teamid_problemid_type", "해당 팀은 이미 이 문제에 대한 솔루션을 제출했습니다.");
 
     private final String constraintName;
     private final String message;
@@ -56,7 +56,7 @@ public enum UniqueConstraintMessage {
         String message = messageMap.get(constraintName);
         if (message == null) {
             log.warn("정의되지 않은 제약조건 이름: {}", constraintName);
-            return "중복된 데이터가 존재합니다";
+            return null;
         }
         return message;
     }

@@ -3,6 +3,7 @@ package com.example.cpsplatform.teamsolve.service;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
+import com.example.cpsplatform.exception.TemporaryAnswerNotFoundException;
 import com.example.cpsplatform.file.decoder.vo.FileSource;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.file.domain.File;
@@ -23,32 +24,32 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
-import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerDto;
 import com.example.cpsplatform.teamsolve.controller.response.GetTeamAnswerResponse;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
+import com.example.cpsplatform.teamsolve.service.dto.FinalSubmitAnswerDto;
 import com.example.cpsplatform.teamsolve.service.dto.SubmitAnswerDto;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
+import static com.example.cpsplatform.team.domain.SubmitStatus.NOT_SUBMITTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Profile("test")
 @Transactional
 @SpringBootTest
 class AnswerSubmitServiceTest {
@@ -85,8 +86,6 @@ class AnswerSubmitServiceTest {
 
     @MockitoBean
     FileStorage fileStorage;
-
-    FileSources fileSources;
 
     //해당 테스트에서 사용할 테스트 전역 변수들
     LocalDateTime now;
@@ -127,7 +126,16 @@ class AnswerSubmitServiceTest {
                 .build();
         contestRepository.save(contest);
 
-        team = Team.builder().contest(contest).teamNumber("001").leader(member).winner(false).name("팀 이름").build();
+        team = Team.builder()
+                .contest(contest)
+                .status(NOT_SUBMITTED)
+                .finalSubmitCount(0)
+                .teamNumber("001")
+                .leader(member)
+                .winner(false)
+                .name("팀 이름")
+                .section(Section.HIGH_NORMAL)
+                .build();
         teamRepository.save(team);
 
         MemberTeam memberTeam = MemberTeam.builder()
@@ -149,6 +157,7 @@ class AnswerSubmitServiceTest {
         teamSolve = TeamSolve.builder()
                 .team(team)
                 .problem(problem)
+                .teamSolveType(TeamSolveType.TEMP)
                 .build();
         teamSolveRepository.save(teamSolve);
 
@@ -172,8 +181,50 @@ class AnswerSubmitServiceTest {
 
     @DisplayName("팀장이 대회 문제들의 답안지를 제출한다.")
     @Test
-    void submitAnswer(){
+    void submitAnswerTemporary(){
         //given
+        String originalFilename1 = "문제1_1.pdf";
+        FileSource fileSource = new FileSource(
+                "upload1.pdf",
+                originalFilename1,
+                new byte[]{1, 2, 3},
+                "application/pdf",
+                FileExtension.PDF,
+                100L
+        );
+        String content = "수정된 내용";
+        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), contest.getId(), problem.getId(), content);
+
+        //when
+        //then
+        assertDoesNotThrow(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto));
+
+        List<TeamSolve> solveList = teamSolveRepository.findAll();
+        assertThat(solveList).hasSize(1);
+        assertThat(solveList.get(0).getContent()).isEqualTo(content);
+
+        //이전파일 삭제
+        assertThat(fileRepository.findById(file.getId())).isEmpty();
+        assertThat(fileRepository.findAll()).hasSize(1);
+        assertThat(fileRepository.findAll().get(0))
+                .extracting("name","originalName","extension","mimeType","size")
+                .containsExactlyInAnyOrder(
+                        fileSource.getUploadFileName(),
+                        originalFilename1,
+                        FileExtension.PDF,
+                        FileExtension.PDF.getMimeType(),
+                        fileSource.getSize()
+                );
+    }
+
+    @DisplayName("팀장이 대회 문제들의 답안지를 제출한다.")
+    @Test
+    void submitAnswerTemporaryWithFirst(){
+        //given
+        //임시 저장된 답안 삭제
+        fileRepository.hardDeleteAllByTeamSolveIdIn(List.of(teamSolve.getId()));
+        teamSolveRepository.delete(teamSolve);
+
         String originalFilename1 = "문제1_1.pdf";
         FileSource fileSource = new FileSource(
                 "upload1.pdf",
@@ -187,7 +238,22 @@ class AnswerSubmitServiceTest {
 
         //when
         //then
-        assertDoesNotThrow(() -> answerSubmitService.submitAnswer(fileSource,answerDto));
+        assertDoesNotThrow(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto));
+
+        List<TeamSolve> solveList = teamSolveRepository.findAll();
+        assertThat(solveList).hasSize(1);
+
+        //파일을 덮어쓴지 확인
+        assertThat(fileRepository.findAll()).hasSize(1);
+        assertThat(fileRepository.findAll().get(0))
+                .extracting("name","originalName","extension","mimeType","size")
+                .containsExactlyInAnyOrder(
+                        fileSource.getUploadFileName(),
+                        originalFilename1,
+                        FileExtension.PDF,
+                        FileExtension.PDF.getMimeType(),
+                        fileSource.getSize()
+                );
     }
 
     @DisplayName("대회 개최 기간이 아닌 시간에 답안지를 제출하면 예외가 발생한다.")
@@ -209,7 +275,7 @@ class AnswerSubmitServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageMatching("현재 대회시간이 아니라 답을 제출할 수 없습니다.");
     }
@@ -233,7 +299,7 @@ class AnswerSubmitServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageMatching("답을 제출할 대회가 존재하지 않습니다.");
     }
@@ -257,7 +323,7 @@ class AnswerSubmitServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto))
                 .isInstanceOf(ContestJoinException.class)
                 .hasMessageMatching("답안지는 팀장만이 제출할 수 있습니다.");
     }
@@ -282,7 +348,7 @@ class AnswerSubmitServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.submitAnswer(fileSource,answerDto))
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("해당 대회 문제는 존재하지 않습니다.");
     }
@@ -295,14 +361,14 @@ class AnswerSubmitServiceTest {
         String loginId = member.getLoginId();
 
         //when
-        GetTeamAnswerResponse response = answerSubmitService.getAnswer(contestId, loginId);
+        GetTeamAnswerResponse response = answerSubmitService.getAnswer(contestId, loginId, null);
 
         //then
         assertThat(response).isNotNull();
         assertThat(response.getTeamAnswerList()).hasSize(1);
         assertThat(response.getTeamAnswerList().get(0))
-                .extracting("teamSolveId","teamName","section","modifyCount","fileId","fileName")
-                .containsExactly(teamSolve.getId(),team.getName(),problem.getSection(),teamSolve.getModifyCount(),file.getId(),file.getOriginalName());
+                .extracting("teamSolveId","teamName","section","fileId","fileName")
+                .containsExactly(teamSolve.getId(),team.getName(),problem.getSection(),file.getId(),file.getOriginalName());
     }
 
     @DisplayName("대회에 참여한 팀이 없으면 예외가 발생한다")
@@ -314,10 +380,171 @@ class AnswerSubmitServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> answerSubmitService.getAnswer(contestId, loginId))
+        assertThatThrownBy(() -> answerSubmitService.getAnswer(contestId, loginId, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("해당 대회에 참여한 팀이 없습니다.");
     }
 
+    @DisplayName("임시 저장된 답안지를 최종 답안지로 제출한다.")
+    @Test
+    void submitAnswerComplete() {
+        //given
+        //기존 최종 제출 답안 생성
+        TeamSolve finalTeamSolve = TeamSolve.builder()
+                .team(team)
+                .problem(problem)
+                .teamSolveType(TeamSolveType.SUBMITTED) //최종 제출 상태
+                .build();
+        teamSolveRepository.save(finalTeamSolve);
 
+        File finalFile = File.builder()
+                .problem(problem)
+                .name("최종제출_문제1.pdf")
+                .originalName("최종제출_문제1.pdf")
+                .fileType(FileType.TEAM_SOLUTION)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .extension(FileExtension.PDF)
+                .size(200L)
+                .path("final_path")
+                .teamSolve(finalTeamSolve)
+                .build();
+        fileRepository.save(finalFile);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //임시 답안은 이미 BeforeEach에서 생성됨 (teamSolve)
+        FinalSubmitAnswerDto answerDto = new FinalSubmitAnswerDto(
+                now,
+                member.getLoginId(),
+                contest.getId()
+        );
+
+
+        //when
+        answerSubmitService.submitAnswerComplete(answerDto);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //then
+        //임시 답안이 최종 답안으로 변경되었는지 확인
+        List<TeamSolve> submittedSolves = teamSolveRepository.findAllByTeamIdAndContestIdAndTeamSolveType(
+                team.getId(), contest.getId(), TeamSolveType.SUBMITTED);
+
+        assertThat(submittedSolves).hasSize(1);
+        assertThat(submittedSolves.get(0).getId()).isEqualTo(teamSolve.getId());
+        assertThat(submittedSolves.get(0).getTeamSolveType()).isEqualTo(TeamSolveType.SUBMITTED);
+
+        //기존 최종 답안이 삭제되었는지 확인
+        assertThat(teamSolveRepository.findById(finalTeamSolve.getId())).isEmpty();
+        assertThat(fileRepository.findById(finalFile.getId())).isEmpty();
+
+        //팀의 최종 제출 상태 확인
+        Team updatedTeam = teamRepository.findById(team.getId()).orElseThrow();
+        assertThat(updatedTeam.getStatus()).isEqualTo(SubmitStatus.FINAL);
+        assertThat(updatedTeam.getFinalSubmitCount()).isEqualTo(0);
+    }
+
+    @DisplayName("최종 제출 시 임시 저장된 답안이 없으면 예외가 발생한다.")
+    @Test
+    void submitAnswerCompleteWithNoTempAnswer() {
+        //given
+        //임시 저장된 답안 삭제
+        fileRepository.hardDeleteAllByTeamSolveIdIn(List.of(teamSolve.getId()));
+        teamSolveRepository.delete(teamSolve);
+
+        FinalSubmitAnswerDto answerDto = new FinalSubmitAnswerDto(
+                now,
+                member.getLoginId(),
+                contest.getId()
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        //then
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerComplete(answerDto))
+                .isInstanceOf(TemporaryAnswerNotFoundException.class)
+                .hasMessageContaining(  "최종 제출할 임시 저장한 답안이 없습니다.");
+    }
+
+    @DisplayName("대회 개최 기간이 아닌 시간에 최종 답안을 제출하면 예외가 발생한다.")
+    @Test
+    void submitAnswerCompleteWithNotOnGoingContest() {
+        //given
+        FinalSubmitAnswerDto answerDto = new FinalSubmitAnswerDto(
+                now.minusDays(5), // 대회 시작 5일 전으로 설정
+                member.getLoginId(),
+                contest.getId()
+        );
+
+        //when
+        //then
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerComplete(answerDto))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageContaining("현재 대회시간이 아니라 답을 제출할 수 없습니다");
+    }
+
+    @DisplayName("팀장이 아닌 사용자가 최종 답안을 제출하면 예외가 발생한다.")
+    @Test
+    void submitAnswerCompleteWithNotLeader() {
+        //given
+        //다른 사용자 생성
+        Member otherMember = Member.builder()
+                .loginId("otherLoginId")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("other@email.com")
+                .address(new Address("street", "city", "zipCode", "detail"))
+                .gender(Gender.MAN)
+                .phoneNumber("01099998888")
+                .name("다른사용자")
+                .organization(new School("xx대학교", StudentType.COLLEGE, 4))
+                .build();
+        memberRepository.save(otherMember);
+
+        //팀에 일반 멤버로 추가
+        MemberTeam otherMemberTeam = MemberTeam.builder()
+                .member(otherMember)
+                .team(team)
+                .build();
+        memberTeamRepository.save(otherMemberTeam);
+
+        FinalSubmitAnswerDto answerDto = new FinalSubmitAnswerDto(
+                now,
+                otherMember.getLoginId(), // 팀장이 아닌 사용자 ID
+                contest.getId()
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        //then
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerComplete(answerDto))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageContaining("답안지는 팀장만이 제출할 수 있습니다");
+    }
+
+    @DisplayName("존재하지 않는 대회에 최종 답안을 제출하면 예외가 발생한다.")
+    @Test
+    void submitAnswerCompleteWithNotExistContest() {
+        //given
+        Long invalidContestId = 9999L;
+
+        FinalSubmitAnswerDto answerDto = new FinalSubmitAnswerDto(
+                now,
+                member.getLoginId(),
+                invalidContestId
+        );
+
+        //when
+        //then
+        assertThatThrownBy(() -> answerSubmitService.submitAnswerComplete(answerDto))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageContaining("답을 제출할 대회가 존재하지 않습니다");
+    }
 }

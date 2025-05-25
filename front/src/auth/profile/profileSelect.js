@@ -13,7 +13,7 @@ const ProfileSelect = () => {
             </div>
             <div className="profileSelect-content-container">
                 <div className="profileSelect-button-container">
-                    <Link to="/member/profile/edit" className="profileSelect-btn">
+                    <Link to="/member/profile/auth" className="profileSelect-btn">
                         <p className="profileSelect-text">👤 내 정보 수정</p>
                     </Link>
                     <Link to="/certificate/info" className="profileSelect-btn" style={{backgroundColor: 'rgba(95, 164, 255, 0.09)'}}>

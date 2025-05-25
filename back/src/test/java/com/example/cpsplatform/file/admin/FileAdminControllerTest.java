@@ -6,6 +6,7 @@ import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -61,7 +62,7 @@ class FileAdminControllerTest {
         String zipName = "test-answers";
         List<Long> fileIds = List.of(1L, 2L, 3L);
 
-        Mockito.when(fileService.getTeamSolveFileIdsByContestId(contestId))
+        Mockito.when(fileService.getTeamSolveFileIdsByContestId(contestId, TeamSolveType.SUBMITTED))
                 .thenReturn(fileIds);
 
         //when

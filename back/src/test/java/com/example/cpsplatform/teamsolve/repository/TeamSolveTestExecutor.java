@@ -1,6 +1,7 @@
 package com.example.cpsplatform.teamsolve.repository;
 
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +16,8 @@ public class TeamSolveTestExecutor {
 
     @Transactional
     public void incrementModifyCount(Long teamId, Long problemId) {
-        TeamSolve teamSolve = teamSolveRepository.findByTeamIdAndProblemId(teamId, problemId)
+        TeamSolve teamSolve = teamSolveRepository.findByTeamIdAndProblemId(teamId, problemId, TeamSolveType.TEMP)
                 .orElseThrow();
-        teamSolve.incrementModifyCount();
     }
 
 }

@@ -51,7 +51,10 @@ public class MemberRegisterRequest implements OrganizationRequest{
     @NotBlank(message = "상세주소는 필수입니다")
     private String detail;
 
-    @Pattern(regexp = "^010\\d{8}$", message = "휴대폰 번호는 010으로 시작하는 11자리 숫자여야 합니다")
+    @Pattern(
+            regexp = "^(01\\d{1}\\d{7,8}|0\\d{1,2}\\d{7,8})$",
+            message = "연락처 형식이 올바르지 않습니다"
+    )
     private String phoneNumber;
 
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})*$", message = "이메일 형식이 올바르지 않습니다")
@@ -60,10 +63,8 @@ public class MemberRegisterRequest implements OrganizationRequest{
     @NotBlank(message = "직업은 필수입니다")
     private String organizationType;
 
-    @NotBlank(message = "학교(소속) 이름은 필수입니다")
     private String organizationName;
 
-    @NotBlank(message = "학년(부서)는 필수입니다")
     private String position;
 
     public RegisterRequestDto toRegisterRequest() {

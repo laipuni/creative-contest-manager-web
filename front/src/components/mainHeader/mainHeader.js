@@ -95,7 +95,7 @@ const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
                             </div>
                             {isAdmin === 'true' &&
                                 <div className="main-header-menu-item">
-                                    <Link to="/admin/teamList" className="main-header-menu-item-text">ADMIN</Link>
+                                    <Link to="/admin/memberList" className="main-header-menu-item-text">ADMIN</Link>
                                 </div>
                             }
                         </>}
@@ -109,11 +109,13 @@ const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
                     </Link>
                     <div className="main-header-bot-right">
                         <div className="main-header-bot-textbox">
-                            <Link to="/test/info" className="main-header-bot-text">시험안내</Link>
+                            <Link to="/test/info" className="main-header-bot-text">대회안내</Link>
                             <span className="main-header-bot-circle"></span>
                             <Link to="/test/realTest/info" className="main-header-bot-text">문제풀이</Link>
                             <span className="main-header-bot-circle"></span>
                             <Link to="/qna" className="main-header-bot-text">QnA</Link>
+                            <span className="main-header-bot-circle"></span>
+                            <Link to="/community/notice" className="main-header-bot-text">커뮤니티</Link>
                         </div>
                     </div>
                 </div>

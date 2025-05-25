@@ -30,6 +30,14 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
             "and mt.team.contest.id = :contestId)")
     boolean existsByContestIdAndLoginId(@Param("contestId") Long contestId, @Param("loginId") String loginId);
 
+    @Query(value = "select exists " +
+            "(select mt " +
+            "from MemberTeam mt " +
+            "where mt.member.id = :memberId " +
+            "and mt.team.contest.id = :contestId)")
+    boolean existsByContestIdAndMemberId(@Param("contestId") Long contestId, @Param("memberId") Long memberId);
+
+
     //해당 대회에 참여자를 조회하는 쿼리
     @Query("select mt from MemberTeam mt join fetch mt.member m join fetch mt.team t where t.contest.id = :contestId")
     List<MemberTeam> findAllByContestId(@Param("contestId") Long contestId);
@@ -41,4 +49,14 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
     @Modifying
     @Query(value = "delete from member_team where id in :memberTeamIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("memberTeamIds") List<Long> memberTeamIds);
+
+    @Query("select mt from MemberTeam mt join mt.team t where mt.member.id = :memberId and t.contest.id = :contestId")
+    List<MemberTeam> findByMemberIdAndContestId(@Param("memberId") Long memberId, @Param("contestId") Long contestId);
+  
+    //네이티브 쿼리로
+    @Query(
+            value = "SELECT * FROM member_team WHERE team_id IN (:teamIds)",
+            nativeQuery = true
+    )
+    List<MemberTeam> findAllByTeamIds(@Param("teamIds") List<Long> teamIds);
 }

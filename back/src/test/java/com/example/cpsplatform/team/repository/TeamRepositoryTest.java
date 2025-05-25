@@ -138,7 +138,7 @@ class TeamRepositoryTest {
         Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
         teamRepository.save(team);
         //when
-        Team result = teamRepository.findTeamByContestIdAndLeaderId(contest.getId(), member.getLoginId()).get();
+        Team result = teamRepository.findTeamByContestIdAndLeaderIdWithLock(contest.getId(), member.getLoginId()).get();
         //then
         assertThat(result).isNotNull()
                 .extracting("name","winner","leader","contest")

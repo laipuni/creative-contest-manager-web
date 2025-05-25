@@ -21,6 +21,15 @@ import FindIdPage from "../auth/login/member/findIdPage";
 import ResetPasswordPage from "../auth/login/member/resetPwPage";
 import CertificateManage from "../admin/certificateManage/certificateManage";
 import ProfileSelect from "../auth/profile/profileSelect";
+import PasswordAuth from "../auth/profile/passwordAuth";
+import MemberList from "../admin/memberList/memberList";
+import NoticeList from "../community/notice/noticeList";
+import FreeBoard from "../community/freeBoard/freeBoard";
+import NoticeManage from "../admin/notice/noticeManage";
+import NoticeWrite from "../admin/notice/noticeWrite";
+import NoticeDetail from "../admin/notice/noticeDetail";
+import NoticeViewDetail from "../community/notice/noticeViewDetail";
+import QuizAI from "../admin/quizAI/quizAI";
 
 function AppRoutes() {
     const location = useLocation();
@@ -53,6 +62,9 @@ function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element={<Main />}></Route>
+            <Route path="community/notice" element={<NoticeList />}></Route>
+            <Route path="community/notice/:noticeId" element={<NoticeViewDetail />}></Route>
+            <Route path="community/freeBoard" element={<FreeBoard />}></Route>
             <Route path="join/policy" element={<Join1 />}></Route>
             <Route path="join/register" element={<Join2 />}></Route>
             <Route path="member/login" element={<MemberLogin />}></Route>
@@ -63,15 +75,21 @@ function AppRoutes() {
             <Route path="register/info" element={<RegisterInfo />}></Route>
             <Route path="register/team" element={<RegisterTeam />}></Route>
             <Route path="member/profile" element={<ProfileSelect />}></Route>
+            <Route path="member/profile/auth" element={<PasswordAuth />}></Route>
             <Route path="member/profile/edit" element={<MyProfile />}></Route>
             <Route path="test/realTest/info" element={<TestSubmitInfo />}></Route>
             <Route path="test/realTest/submit" element={<TestSubmit />}></Route>
             <Route path="test/pastTest" element={<PastTest />}></Route>
             <Route path="certificate/info" element={<Certificate />}></Route>
             <Route path="qna" element={<QnA/>}></Route>
+            <Route path="admin/memberList" element={<MemberList />}></Route>
             <Route path="admin/teamList" element={<TeamList />}></Route>
             <Route path="admin/testManage" element={<TestManage />}></Route>
             <Route path="admin/certificates" element={<CertificateManage />}></Route>
+            <Route path="admin/notices" element={<NoticeManage />}></Route>
+            <Route path="admin/notices/write" element={<NoticeWrite />}></Route>
+            <Route path="admin/notices/:noticeId" element={<NoticeDetail />}></Route>
+            <Route path="admin/quizAI" element={<QuizAI />}></Route>
             <Route path="*" element={<NotFound />}></Route>
         </Routes>
     );

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,11 +38,30 @@ public interface FileRepository extends JpaRepository<File,Long>, FileRepository
     //팀들의 답안지 파일을 조회
     List<File> findAllByTeamSolve_IdIn(List<Long> teamSolveIds);
 
-    //대회 문제 파일 조회
-    List<File> findAllByProblem_IdIn(List<Long> problemIds);
-
+    @Modifying
+    @Query(value = "delete from file where team_solve_id in :teamSolveIds",nativeQuery = true)
+    int hardDeleteAllByTeamSolveIdIn(@Param("teamSolveIds")List<Long> teamSolveIds);
 
     @Modifying
+    @Transactional
     @Query(value = "delete from file where id in :fileIds",nativeQuery = true)
     void hardDeleteAllByIdIn(@Param("fileIds")List<Long> fileIds);
+
+    //팀들의 답안지 파일을 조회, 네이티브 쿼리 버전
+    @Query(value = "select * from file where team_solve_id in (:teamSolveIds)"
+            ,nativeQuery = true)
+    List<File> findAllByTeamSolve_IdInNative(@Param("teamSolveIds") List<Long> teamSolveIds);
+
+    //대회 문제 파일 조회, 네이티브 쿼리 버전
+    @Query(value = "select * from file where problem_id in (:problemIds)"
+            ,nativeQuery = true)
+    List<File> findAllByProblem_IdInNative(@Param("problemIds")List<Long> problemIds);
+
+
+    //공지사항의 id로 첨부파일들을 조회하는 쿼리
+    List<File> findAllByNoticeId(Long noticeId);
+
+    @Query(value = "select exists (select f from File f where f.notice.id = :noticeId and f.id = :fileId)")
+    boolean existsFileByNoticeId(@Param("noticeId")Long noticeId, @Param("fileId") Long fileId);
+
 }

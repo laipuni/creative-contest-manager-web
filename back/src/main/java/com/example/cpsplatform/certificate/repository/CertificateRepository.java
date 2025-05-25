@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,5 +20,7 @@ public interface CertificateRepository extends JpaRepository<Certificate,Long>, 
 
     void deleteAllByTeam_IdInAndCertificateType(List<Long> teamIds, CertificateType certificateType);
 
-    List<Certificate> findAllByContestId(Long contestId);
+    //소프트 딜리트된 contest는 조회가 안되므로 네이티브 쿼리로 조회
+    @Query(value = "select * from certificate where preliminary_contest_id = :contestId",nativeQuery = true)
+    List<Certificate> findAllByContestIdNative(@Param("contestId") Long contestId);
 }

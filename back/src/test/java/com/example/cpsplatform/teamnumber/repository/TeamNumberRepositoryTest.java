@@ -138,7 +138,7 @@ class TeamNumberRepositoryTest {
                             .build();
                     memberRepository.save(teamMember);
 
-                    TeamCreateDto createDto = new TeamCreateDto("테스트", contestId, List.of(memberLoginId));
+                    TeamCreateDto createDto = new TeamCreateDto("테스트" + idx, contestId, List.of(memberLoginId));
                     teamService.createTeam(loginId, createDto);
                 } catch (Exception e) {
                     e.printStackTrace();

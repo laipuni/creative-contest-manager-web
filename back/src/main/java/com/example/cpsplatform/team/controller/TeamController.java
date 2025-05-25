@@ -32,29 +32,17 @@ public class TeamController {
 
     @PostMapping("/api/teams")
     public ApiResponse<Long> createTeam(@RequestBody @Valid CreateTeamRequest createTeamRequest,
-                                    @AuthenticationPrincipal SecurityMember securityMember)
-    {
-        try{
-            Long teamId = teamService.createTeam(
-                    securityMember.getUsername(),
-                    createTeamRequest.toServiceDto());
+                                        @AuthenticationPrincipal SecurityMember securityMember) {
+            Long teamId = teamService.createTeam(securityMember.getUsername(), createTeamRequest.toServiceDto());
             return ApiResponse.ok(teamId);
-        }catch (DataIntegrityViolationException e){
-            throw new DuplicateDataException("중복된 회원이 존재합니다.");
-        }
     }
 
     @PatchMapping("/api/teams/{teamId}")
     public ApiResponse<Void> updateTeam(@PathVariable Long teamId,
                                     @RequestBody @Valid UpdateTeamRequest updateTeamRequest,
-                                    @AuthenticationPrincipal SecurityMember securityMember)
-    {
-        try{
-            teamService.updateTeam(teamId, updateTeamRequest.toServiceDto(), securityMember.getUsername());
-            return ApiResponse.ok(null);
-        }catch (DataIntegrityViolationException e){
-            throw new DuplicateDataException("중복된 회원이 존재합니다.");
-        }
+                                    @AuthenticationPrincipal SecurityMember securityMember) {
+        teamService.updateTeam(teamId, updateTeamRequest.toServiceDto(), securityMember.getUsername());
+        return ApiResponse.ok(null);
     }
 
     @DeleteMapping("/api/teams")

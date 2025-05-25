@@ -99,6 +99,7 @@ class ProfileControllerTest {
                 .street("서울 강남구 역삼동")
                 .zipCode("12345")
                 .detail("101호")
+                .city("서울")
                 .phoneNumber("01012345678")
                 .email("hong@example.com")
                 .organizationType("학교")
@@ -108,12 +109,13 @@ class ProfileControllerTest {
 
         Mockito.when(profileService.getMyInformation(anyString(),anyString())).thenReturn(response);
 
+        String session = "session";
 
         //when
         //then
         mockMvc.perform(
                 get("/api/members/my-profile")
-                        .param("session","session")
+                        .param("session", session)
                         .with(csrf())
                 )
                 .andDo(print())
@@ -125,12 +127,14 @@ class ProfileControllerTest {
                 .andExpect(jsonPath("$.data.gender").value("남성"))
                 .andExpect(jsonPath("$.data.street").value("서울 강남구 역삼동"))
                 .andExpect(jsonPath("$.data.zipCode").value("12345"))
+                .andExpect(jsonPath("$.data.city").value("서울"))
                 .andExpect(jsonPath("$.data.detail").value("101호"))
                 .andExpect(jsonPath("$.data.phoneNumber").value("01012345678"))
                 .andExpect(jsonPath("$.data.email").value("hong@example.com"))
                 .andExpect(jsonPath("$.data.organizationType").value("학교"))
                 .andExpect(jsonPath("$.data.organizationName").value("서울대학교"))
-                .andExpect(jsonPath("$.data.position").value("학생"));
+                .andExpect(jsonPath("$.data.position").value("학생"))
+                .andExpect(jsonPath("$.data.session").value(session));
 
     }
 

@@ -22,6 +22,7 @@ public class AiConfig {
         return new RestTemplate();
     }
 
+    @Bean
     public WebClient webClient() {
         return WebClient.builder()
                 //todo 도커를 사용할 때는 services이름으로 변경해야 함

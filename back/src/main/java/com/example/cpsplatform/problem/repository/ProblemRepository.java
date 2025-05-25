@@ -33,7 +33,11 @@ public interface ProblemRepository extends JpaRepository<Problem,Long> {
     """)
     Optional<Problem> findWithFilesByContestIdAndSection(@Param("contestId") Long contestId, @Param("section") Section section);
 
-    List<Problem> findAllByContestId(Long contestId);
+
+    //네이티브 쿼리라서 삭제된 대회의 문제까지 불러오니 조심
+    @Query( value = "select * from problem where contest_id = :contestId"
+            ,nativeQuery = true)
+    List<Problem> findAllByContestIdNative(@Param("contestId")Long contestId);
 
     @Modifying
     @Query("delete from Problem where id in :problemIds")

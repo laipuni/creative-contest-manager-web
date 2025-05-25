@@ -1,5 +1,6 @@
 package com.example.cpsplatform.security.handler;
 
+import com.example.cpsplatform.ClientIpUtils;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
 import com.example.cpsplatform.security.handler.response.LoginProfile;
 import com.example.cpsplatform.security.service.LoginFailService;
@@ -43,7 +44,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException, ServletException {
         String loginId = (String) request.getAttribute(USERNAME_VALUE);
-        String clientIp = request.getRemoteUser();
+        String clientIp = ClientIpUtils.getClientIp(request);
         if(loginId != null){
             loginFailService.successLogin(loginId,clientIp);
         }

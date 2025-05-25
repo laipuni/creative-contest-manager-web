@@ -6,6 +6,7 @@ import com.example.cpsplatform.file.repository.dto.FileNameDto;
 import com.example.cpsplatform.problem.domain.QProblem;
 import com.example.cpsplatform.team.domain.QTeam;
 import com.example.cpsplatform.teamsolve.domain.QTeamSolve;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -47,13 +48,16 @@ public class FileRepositoryCustomImpl implements FileRepositoryCustom{
     }
 
     @Override
-    public List<Long> findFileIdsByContestIdInTeamSolve(final Long contestId) {
+    public List<Long> findFileIdsByContestIdInTeamSolve(final Long contestId, final TeamSolveType teamSolveType) {
         return queryFactory.select(file.id)
                 .from(file)
                 .join(file.teamSolve, teamSolve)
                 .join(teamSolve.team, team)
                 .join(team.contest, contest)
-                .where(contest.id.eq(contestId))
+                .where(contest.id.eq(contestId),
+                        file.deleted.isFalse(),// 삭제하지 않은 파일
+                        teamSolve.teamSolveType.eq(teamSolveType) // 답안지 제출 유형
+                )
                 .fetch();
     }
 }

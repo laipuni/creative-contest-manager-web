@@ -1,0 +1,11 @@
+.noticeManage-buttonBox {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    justify-content: flex-end;
+    order: 1;
+}
+
+.noticeManage-button {
+    display: flex;
+}
