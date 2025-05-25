@@ -131,6 +131,12 @@ public class Member extends BaseEntity {
         }
     }
 
+    public void changePhoneNumber(final String newPhoneNumber){
+        if(StringUtils.hasText(phoneNumber)){
+            this.phoneNumber = newPhoneNumber;
+        }
+    }
+
     public void update(final MemberUpdateDto dto, final CryptoService cryptoService) {
         Organization organization = createOrganization(
                 dto.getOrganizationName(),
@@ -151,11 +157,17 @@ public class Member extends BaseEntity {
             String newEmail = cryptoService.encryptAES(dto.getEmail());
             changeEmail(newEmail);
         }
+
+        if(StringUtils.hasText(dto.getPhoneNumber())){
+            //새로 바꿀 휴대폰 번호를 암호화
+            String newPhoneNumber = cryptoService.encryptAES(dto.getPhoneNumber());
+            changePhoneNumber(newPhoneNumber);
+        }
+
         this.name = StringUtils.hasText(dto.getName()) ? dto.getName() : this.name;
         this.gender = dto.getGender() != null ? dto.getGender() : this.gender;
         this.birth = dto.getBirth() != null ? dto.getBirth() : this.birth;
         this.address = address;
-        this.phoneNumber = StringUtils.hasText(dto.getPhoneNumber()) ? dto.getPhoneNumber() : this.phoneNumber;
         this.organization = organization;
     }
 
