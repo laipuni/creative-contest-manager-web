@@ -1,9 +1,11 @@
 package com.example.cpsplatform.notice.controller.response;
 
 import com.example.cpsplatform.file.domain.File;
+import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailFileDto;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
 import com.example.cpsplatform.notice.domain.Notice;
+import com.example.cpsplatform.security.encoder.CryptoService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,13 +28,13 @@ public class UserNoticeDetailResponse {
     private String content;
     private List<UserNoticeDetailFileDto> fileList;
 
-    public static UserNoticeDetailResponse of(Notice notice, List<File> files){
+    public static UserNoticeDetailResponse of(Notice notice, List<File> files, CryptoService cryptoService){
         return UserNoticeDetailResponse.builder()
                 .noticeId(notice.getId())
                 .title(notice.getTitle())
                 .viewCount(notice.getViewCount())
                 .writer(notice.getWriter().getName())
-                .writerEmail(notice.getWriter().getEmail())
+                .writerEmail(cryptoService.decryptAES(notice.getWriter().getEmail()))
                 .createAt(notice.getCreatedAt())
                 .updatedAt(notice.getUpdatedAt())
                 .content(notice.getContent())
