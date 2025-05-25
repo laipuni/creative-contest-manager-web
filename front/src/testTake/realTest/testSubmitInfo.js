@@ -9,6 +9,7 @@ import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
 import TeamAnswerList from "../../admin/components/teamAnswerList/teamAnswerList";
 import ContestAnswerList from "../../components/contestAnswerList/contestAnswerList";
+import teamAnswerList from "../../admin/components/teamAnswerList/teamAnswerList";
 
 const TestSubmitInfo = () => {
     const [registerInfo, setRegisterInfo] = useState([]);
@@ -20,6 +21,7 @@ const TestSubmitInfo = () => {
         teamName: null,
         contestId: null,
     });
+    const [isEdited, setIsEdited] = useState(false);
 
     const navigate = useNavigate();
 
@@ -52,7 +54,7 @@ const TestSubmitInfo = () => {
                             alert(err.response.data.message);
                         })
             .catch((err)=>{})
-    }, []);
+    }, [isEdited]);
 
     //대회 참여 버튼
     const handleValidationContest = (isFinal) => {
@@ -67,8 +69,8 @@ const TestSubmitInfo = () => {
                         if (!confirmed) return;
                         apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves/complete`)
                             .then((res)=>{
-                                alert('제출 완료!')
-                                navigate('/test/realTest/info')
+                                alert('제출 완료!');
+                                setIsEdited(!isEdited);
                             })
                             .catch((err)=>{})
                     }
@@ -101,7 +103,7 @@ const TestSubmitInfo = () => {
                                 <div className="registerInfo-bot-title">
                                     <p className="registerInfo-bot-text">제출일시</p>
                                     <div className="registerInfo-bot-line" style={{width: '5%'}}></div>
-                                    <p className="registerInfo-bot-text">제출횟수</p>
+                                    <p className="registerInfo-bot-text">수정횟수</p>
                                     <div className="registerInfo-bot-line" style={{width: '5%'}}></div>
                                     <p className="registerInfo-bot-text">제출된 답안</p>
                                 </div>
@@ -113,7 +115,7 @@ const TestSubmitInfo = () => {
                                         onClose={() => setTeamAnswerModal({ open: false, answers: null, teamName: null, contestId: null })}
                                     />
                                 )}
-                                {submitCnt > 0 ? (
+                                {registerInfo.length > 0 && teamAnswerList.length > 0 ? (
                                     <>
                                         <div className="registerInfo-bot-content">
                                             <p className="registerInfo-bot-text">{formatDate(registerInfo[0].updatedAt)}</p>
