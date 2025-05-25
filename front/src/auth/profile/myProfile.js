@@ -4,11 +4,13 @@ import DaumPostcode from "react-daum-postcode";
 import EmailVerificationModal from "../../components/modals/emailVerificationModal";
 import SchoolSearchModal from "../../components/modals/schoolSearchModal";
 import apiClient from "../../templates/apiClient";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import MainHeader from "../../components/mainHeader/mainHeader";
 
 const MyProfile = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const session = location.state?.session;
     /*--------------이름--------------*/
     const [name, setName] = useState('');
     /*--------------생일--------------*/
@@ -31,6 +33,7 @@ const MyProfile = () => {
 
     /*--------------이메일------------------*/
     const [email, setEmail] = useState('');
+    const [tempEmail, setTempEmail] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     /*--------------직업------------------*/
     const [job, setJob] = useState('');
@@ -51,7 +54,7 @@ const MyProfile = () => {
 
     /*-----------------정보 불러오기-------------*/
     useEffect(() => {
-        apiClient.get('/api/members/my-profile')
+        apiClient.get(`/api/members/my-profile?session=${session}`, {skipErrorHandler: true})
             .then((res) => {
                 const profile = res.data.data;
                 setName(profile.name);
@@ -59,6 +62,7 @@ const MyProfile = () => {
                 setPostcode(profile.zipCode);
                 setAddress(profile.street);
                 setEmail(profile.email);
+                setSido(profile.city);
                 setPrefix(profile.phoneNumber.slice(0,3));
                 setMiddle(profile.phoneNumber.slice(3,7));
                 setLast(profile.phoneNumber.slice(7,11));
@@ -69,7 +73,16 @@ const MyProfile = () => {
                 setSelectedSchool({schoolName: profile.organizationName, region: '', estType: ''});
                 setDetailJob(profile.position);
             })
-            .catch((err)=>{})
+            .catch((err)=>{
+                if(err.response?.status === 401) {
+                    alert('세션이 만료되어 비밀번호 재확인이 필요합니다.')
+                    navigate('/member/profile/auth')
+                }
+                else {
+                    alert(err.response?.data.message);
+                    navigate('/member/profile/auth');
+                }
+            })
     }, []);
 
     /*----------------정보 수정------------------------*/
@@ -101,20 +114,23 @@ const MyProfile = () => {
             return new Date(year, month, day);
         }
 
-        apiClient.post('/api/v1/editProfile', {
+        const payload = {
             name,
             birth: changeBirth(),
             gender,
-            street: postcode,
+            street: address,
             city: sido,
-            zipCode: address,
+            zipCode: postcode,
             detail: detailAddress,
-            phoneNumber : prefix+middle+last,
-            email,
-            organizationType: job.slice(2),
-            organizationName: workPlace,
-            position: detailJob,
-        }, )
+            phoneNumber: prefix + middle + last,
+            organizationType: job,
+            ...(email !== tempEmail && {tempEmail}),
+            ...(workPlace && { organizationName: workPlace }),
+            ...(detailJob && { position: detailJob }),
+            session
+        };
+
+        apiClient.patch('/api/members/my-profile', payload, {skipErrorHandler: true})
             .then((res) => {
                 if(res.data.code === 200){
                     alert('회원정보가 수정되었습니다')
@@ -122,8 +138,11 @@ const MyProfile = () => {
                 }
             })
             .catch((err)=>{
+                alert(err.response?.data.message);
+                if(err.response?.data.message === '세션이 존재하지 않습니다.'){
+                    navigate('/member/profile/auth')
                 }
-            )
+            })
     }
 
     const handleExit = () => {
@@ -195,7 +214,7 @@ const MyProfile = () => {
         cursor: 'pointer',
     };
 
-    /*------------------- 휴대폰번호 기능(post시 prefix, middle, last 합치기) ----------------*/
+    /*------------------- 연락처 기능(post시 prefix, middle, last 합치기) ----------------*/
     const handleMiddleChange = (e) => {
         const value = e.target.value;
         setMiddle(value);
@@ -219,7 +238,7 @@ const MyProfile = () => {
     };
 
     const handleVerifyEmail = (verifiedEmail) => {
-        setEmail(verifiedEmail);
+        setTempEmail(verifiedEmail);
     };
 
 
@@ -355,12 +374,24 @@ const MyProfile = () => {
                                         value={prefix}
                                         onChange={(e) => setPrefix(e.target.value)}
                                         required>
+                                        <option value="064">064</option>
+                                        <option value="063">063</option>
+                                        <option value="062">062</option>
+                                        <option value="061">061</option>
+                                        <option value="055">055</option>
+                                        <option value="054">054</option>
+                                        <option value="053">053</option>
+                                        <option value="052">052</option>
+                                        <option value="051">051</option>
+                                        <option value="044">044</option>
+                                        <option value="043">043</option>
+                                        <option value="042">042</option>
+                                        <option value="041">041</option>
+                                        <option value="033">033</option>
+                                        <option value="032">032</option>
+                                        <option value="031">031</option>
+                                        <option value="02">02</option>
                                         <option value="010">010</option>
-                                        <option value="011">011</option>
-                                        <option value="016">016</option>
-                                        <option value="017">017</option>
-                                        <option value="018">018</option>
-                                        <option value="019">019</option>
                                     </select>
                                     <p className="info-message2">-</p>
                                     <input
@@ -392,8 +423,12 @@ const MyProfile = () => {
                             </div>
                         </div>
                         <div className="join2-main-border">
-                            {isModalOpen && <EmailVerificationModal onClose={handleCloseModal}
-                                                                    onVerify={handleVerifyEmail}/>}
+                            {isModalOpen &&
+                                <EmailVerificationModal
+                                    onClose={handleCloseModal}
+                                    onVerify={handleVerifyEmail}
+                                    isEdit = {true}
+                                />}
                             <div className="join2-main-border-left">
                                 <p className="join2-left-text">* 이메일</p>
                             </div>
@@ -427,7 +462,7 @@ const MyProfile = () => {
                                         <option value="중학생">중학생</option>
                                         <option value="고등학생">고등학생</option>
                                         <option value="대학생">대학생</option>
-                                        <option value="컴퓨터/인터넷">컴퓨터/인터넷</option>
+                                        <option value="컴퓨터">컴퓨터/인터넷</option>
                                         <option value="언론">언론</option>
                                         <option value="공무원">공무원</option>
                                         <option value="군인">군인</option>
@@ -443,7 +478,7 @@ const MyProfile = () => {
                             <div className="join2-main-border-left">
                                 {!job && <p className="join2-left-text">* 학교(소속)</p>}
                                 {isSchool.includes(job) && <p className="join2-left-text">* 학교</p>}
-                                {job && !isSchool.includes(job) && <p className="join2-left-text">* 소속</p>}
+                                {job && !isSchool.includes(job) && <p className="join2-left-text">소속</p>}
                             </div>
                             <div className="join2-main-border-right">
                                 <div className="join2-right-row">
@@ -480,8 +515,7 @@ const MyProfile = () => {
                                             value={workPlace}
                                             onChange={(e) => {
                                                 setWorkPlace(e.target.value)
-                                            }}
-                                            required>
+                                            }}>
                                         </input>}
                                 </div>
                             </div>
@@ -490,7 +524,7 @@ const MyProfile = () => {
                             <div className="join2-main-border-left" style={{borderBottom: 'none'}}>
                                 {!job && <p className="join2-left-text">* 학년(부서)</p>}
                                 {isSchool.includes(job) && <p className="join2-left-text">* 학년</p>}
-                                {job && !isSchool.includes(job) && <p className="join2-left-text">* 부서</p>}
+                                {job && !isSchool.includes(job) && <p className="join2-left-text">부서</p>}
                             </div>
                             <div className="join2-main-border-right" style={{borderBottom: 'none'}}>
                                 <div className="join2-right-row">
@@ -534,7 +568,6 @@ const MyProfile = () => {
                                             type="text"
                                             className="join2-id-input"
                                             value={detailJob}
-                                            required
                                             onChange={(e) => {
                                                 setDetailJob(e.target.value)
                                             }}

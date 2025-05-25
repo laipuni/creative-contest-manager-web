@@ -25,7 +25,7 @@ const TestManage = () => {
     const [tempEndDate, setTempEndDate] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
-    const [isDeleted, setIsDeleted] = useState(false);
+    const [isProblemEdited, setIsProblemEdited] = useState(false);
     const [showRestoreModal, setShowRestoreModal] = useState(false); // 대회 복구 안내
     const [season, setSeason] = useState(null);
     const [showDeletedListModal, setShowDeletedListModal] = useState(false);
@@ -77,7 +77,7 @@ const TestManage = () => {
                     alert(err.response.data.message);
                 }
             })
-    }, [isRegistered], [isDeleted])
+    }, [isRegistered])
 
     //최초 랜더링 or 대회 삭제됐을 때 문제 갱신
     useEffect(()=>{
@@ -98,7 +98,7 @@ const TestManage = () => {
                 setCheckedTypes({ '공통': false, '초/중등': false, '고등/일반': false });
             })
             .catch((err)=>{})
-    }, [latestContest.contestId])
+    }, [latestContest.contestId, isProblemEdited])
 
 
     //일정 등록
@@ -259,43 +259,27 @@ const TestManage = () => {
     }
 
     //일정 복구
-    const handleRestore = (season) => {
-        return apiClient.get('/api/admin/contests/deleted')
-            .then((res) => {
-                const matchedContest = res.data.data.deletedContestList.find(
-                    (contest) => contest.season === Number(season)
-                );
-                const matchedContestId = matchedContest?.contestId;
-                return apiClient.patch(`/api/admin/contests/${matchedContestId}/recover`);
-            })
+    const handleRestore = (contestId) => {
+        return apiClient.patch(`/api/admin/contests/${contestId}/recover`, {skipErrorHandler: true})
             .then(() => {
                 alert('복구 완료');
                 setIsDateModalOpen(false);
                 setShowRestoreModal(false);
                 setIsRegistered(prev => !prev);
-            });
+            })
     };
 
 
+
     //일정 삭제 - hard
-    const handleHardDelete = (season) => {
-        apiClient.get('/api/admin/contests/deleted')
-            .then((res) => {
-                const matchedContest = res.data.data.deletedContestList.find(
-                    (contest) => contest.season === Number(season)
-                );
-                const matchedContestId = matchedContest?.contestId;
-                apiClient.delete('/api/admin/contests/hard', {
-                    data: {contestId: latestContest.contestId},
-                })
-                    .then((res) => {
-                        alert('삭제 완료');
-                        setIsRegistered(!isRegistered);
-                    })
-                    .catch((err) => {
-                    })
+    const handleHardDelete = (contestId) => {
+        return apiClient.delete('/api/admin/contests/hard', {
+                data: {contestId}, skipErrorHandler: true
             })
-            .catch((err)=>{})
+                .then((res) => {
+                    alert('삭제 완료');
+                    setIsRegistered(!isRegistered);
+                })
     }
     //문제 체크박스 선택
     const toggleTypeCheck = (type) => {
@@ -364,6 +348,7 @@ const TestManage = () => {
             await Promise.all(promises);
             setIsRegistered(r => !r);
             alert('문제가 등록되었습니다.');
+            setIsProblemEdited(!isProblemEdited);
             setCheckedTypes({
                 '초/중등': false,
                 '공통': false,
@@ -454,6 +439,7 @@ const TestManage = () => {
 
         try {
             await Promise.all(deletePromises);
+            setIsProblemEdited(!isProblemEdited);
             alert('삭제되었습니다.');
         } catch (error) {
             console.error(error);

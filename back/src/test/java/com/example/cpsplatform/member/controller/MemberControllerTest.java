@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import static com.example.cpsplatform.member.domain.organization.school.StudentType.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -608,7 +609,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @DisplayName("학교(소속) 이름이 비어있을 경우, 예외가 발생한다.")
+    @DisplayName("학생일 때, 학교 이름이 비어있을 경우, 예외가 발생한다.")
     @Test
     void registerWithEmptyOrganizationName() throws Exception {
         //given
@@ -628,11 +629,11 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value("학교(소속) 이름은 필수입니다"))
+                .andExpect(jsonPath("$.message").value("학교 이름은 필수입니다"))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @DisplayName("학년(부서)가 비어있을 경우, 예외가 발생한다.")
+    @DisplayName("학생이 아닐때 학년(부서)가 비어있을 경우, 예외가 발생하지 않는다.")
     @Test
     void registerWithEmptyPosition() throws Exception {
         //given
@@ -651,10 +652,35 @@ class MemberControllerTest {
                                 .content(content)
                 )
                 .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(OK.value()))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @DisplayName("학생일 때 학년이 비어있을 경우, 예외가 발생하지 않는다.")
+    @Test
+    void registerWithEmptyPositionAndStudent() throws Exception {
+        //given
+        MemberRegisterRequest request = getValidMemberRequest();
+        request.setOrganizationType("대학생");
+        request.setOrganizationName("xx학교");
+        request.setPosition(""); // 빈 학년
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        post("/api/v1/members")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
+                                .content(content)
+                )
+                .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value("학년(부서)는 필수입니다"))
+                .andExpect(jsonPath("$.message").value("학년은 필수입니다"))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 

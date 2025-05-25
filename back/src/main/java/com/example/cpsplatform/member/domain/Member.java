@@ -24,7 +24,6 @@ import java.time.Year;
 @Table(name = "member", uniqueConstraints = {
         @UniqueConstraint(name = "uk_member_login_id", columnNames = {"login_id"}),
         @UniqueConstraint(name = "uk_member_email", columnNames = {"email"}),
-        @UniqueConstraint(name = "uk_member_phone_number", columnNames = {"phone_number"}),
         @UniqueConstraint(name = "uk_member_organization_id", columnNames = {"organization_id"})
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -94,10 +93,12 @@ public class Member extends BaseEntity {
         String encodedPhoneNumber = cryptoService.encryptAES(phoneNumber);
         //비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(password);
+        //이메일 암호화
+        String encodedEmail = cryptoService.encryptAES(email);
 
         return Member.builder()
                 .loginId(loginId)
-                .email(email)
+                .email(encodedEmail)
                 .password(encodedPassword)
                 .gender(gender)
                 .birth(birth)
@@ -130,6 +131,12 @@ public class Member extends BaseEntity {
         }
     }
 
+    public void changePhoneNumber(final String newPhoneNumber){
+        if(StringUtils.hasText(phoneNumber)){
+            this.phoneNumber = newPhoneNumber;
+        }
+    }
+
     public void update(final MemberUpdateDto dto, final CryptoService cryptoService) {
         Organization organization = createOrganization(
                 dto.getOrganizationName(),
@@ -145,12 +152,22 @@ public class Member extends BaseEntity {
                 cryptoService
         );
 
-        changeEmail(dto.getEmail());
+        if(StringUtils.hasText(dto.getEmail())){
+            //새로 바꿀 이메일을 암호화
+            String newEmail = cryptoService.encryptAES(dto.getEmail());
+            changeEmail(newEmail);
+        }
+
+        if(StringUtils.hasText(dto.getPhoneNumber())){
+            //새로 바꿀 휴대폰 번호를 암호화
+            String newPhoneNumber = cryptoService.encryptAES(dto.getPhoneNumber());
+            changePhoneNumber(newPhoneNumber);
+        }
+
         this.name = StringUtils.hasText(dto.getName()) ? dto.getName() : this.name;
         this.gender = dto.getGender() != null ? dto.getGender() : this.gender;
         this.birth = dto.getBirth() != null ? dto.getBirth() : this.birth;
         this.address = address;
-        this.phoneNumber = StringUtils.hasText(dto.getPhoneNumber()) ? dto.getPhoneNumber() : this.phoneNumber;
         this.organization = organization;
     }
 

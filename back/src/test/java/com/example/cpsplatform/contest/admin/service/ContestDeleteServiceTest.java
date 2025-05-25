@@ -22,11 +22,13 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamnumber.domain.TeamNumber;
 import com.example.cpsplatform.teamnumber.repository.TeamNumberRepository;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
@@ -111,6 +113,7 @@ class ContestDeleteServiceTest {
                 .registrationEndAt(now().minusDays(1))
                 .startTime(now())
                 .endTime(now().plusDays(1))
+                .deleted(true)
                 .build();
         contestRepository.save(contest);
 
@@ -150,13 +153,22 @@ class ContestDeleteServiceTest {
                 .build();
         problemRepository.saveAll(List.of(commonProblem, elementaryMiddleProblem, highNormalProblem));
 
-        Team team = Team.builder().teamNumber("002").name("팀2").winner(false).leader(member).contest(contest).section(Section.ELEMENTARY_MIDDLE).build();
+        Team team = Team.builder()
+                .teamNumber("002")
+                .name("팀2")
+                .winner(false)
+                .leader(member)
+                .contest(contest)
+                .section(Section.ELEMENTARY_MIDDLE)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .finalSubmitCount(0)
+                .build();
         teamRepository.save(team);
 
         MemberTeam memberTeam = MemberTeam.builder().member(member).team(team).build();
         memberTeamRepository.save(memberTeam);
 
-        TeamSolve teamSolve = TeamSolve.builder().team(team).problem(elementaryMiddleProblem).build();
+        TeamSolve teamSolve = TeamSolve.builder().teamSolveType(TeamSolveType.TEMP).team(team).problem(elementaryMiddleProblem).build();
         teamSolveRepository.save(teamSolve);
 
         String teamSolveFileName = "testFile.pdf";

@@ -16,10 +16,18 @@ export default function DeletedContestList({ onRestore, onHardDelete, onClose })
             });
     }, []);
 
-    const handleRestoreClick = (season) => {
-        onRestore(season).then(() => {
-            setDeletedContests((prev) => prev.filter(c => c.season !== season));
-        });
+    const handleDeleteClick = (contestId) => {
+        onHardDelete(contestId).then(() => {
+            setDeletedContests((prev) => prev.filter(c => c.contestId !== contestId));
+        })
+            .catch((err) => {alert(err.response.data.message)});
+    };
+
+    const handleRestoreClick = (contestId) => {
+        onRestore(contestId).then(() => {
+            setDeletedContests((prev) => prev.filter(c => c.contestId !== contestId));
+        })
+            .catch((err) => {alert(err.response.data.message)});
     };
 
 
@@ -49,7 +57,7 @@ export default function DeletedContestList({ onRestore, onHardDelete, onClose })
                                 <button
                                     onClick={() => {
                                         setIsEdited(!isEdited);
-                                        handleRestoreClick(contest.season)}}
+                                        handleRestoreClick(contest.contestId)}}
                                     className="deletedmodal-restore"
                                 >
                                     복구
@@ -57,7 +65,7 @@ export default function DeletedContestList({ onRestore, onHardDelete, onClose })
                                 <button
                                     onClick={() => {
                                         setIsEdited(!isEdited);
-                                        onHardDelete(contest.contestId)}}
+                                        handleDeleteClick(contest.contestId)}}
                                     className="deletedmodal-delete"
                                 >
                                     영구 삭제

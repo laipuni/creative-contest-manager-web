@@ -52,5 +52,11 @@ public interface MemberTeamRepository extends JpaRepository<MemberTeam, Long> {
 
     @Query("select mt from MemberTeam mt join mt.team t where mt.member.id = :memberId and t.contest.id = :contestId")
     List<MemberTeam> findByMemberIdAndContestId(@Param("memberId") Long memberId, @Param("contestId") Long contestId);
-
+  
+    //네이티브 쿼리로
+    @Query(
+            value = "SELECT * FROM member_team WHERE team_id IN (:teamIds)",
+            nativeQuery = true
+    )
+    List<MemberTeam> findAllByTeamIds(@Param("teamIds") List<Long> teamIds);
 }

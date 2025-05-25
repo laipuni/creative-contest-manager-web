@@ -1,5 +1,6 @@
 package com.example.cpsplatform.member.controller.response;
 
+import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.organization.Organization;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ public class MyProfileResponse {
     private LocalDate birth;
     private String gender;
     private String street;
+    private String city;
     private String zipCode;
     private String detail;
     private String phoneNumber;
@@ -25,6 +27,7 @@ public class MyProfileResponse {
     private String organizationType;
     private String organizationName;
     private String position;
+    private String session;
 
     public static MyProfileResponse of(Member member, CryptoService cryptoService){
 
@@ -32,15 +35,17 @@ public class MyProfileResponse {
 
         String phoneNumber = cryptoService.decryptAES(member.getPhoneNumber());
         String email = cryptoService.decryptAES(member.getEmail());
-        String street = cryptoService.decryptAES(member.getAddress().getStreet());
-        String detail = cryptoService.decryptAES(member.getAddress().getDetail());
+        Address address = member.getAddress();
+        String street = cryptoService.decryptAES(address.getStreet());
+        String detail = cryptoService.decryptAES(address.getDetail());
 
         return MyProfileResponse.builder()
                 .name(member.getName())
                 .birth(member.getBirth())
                 .gender(member.getGender().getDescription())
                 .street(street)
-                .zipCode(member.getAddress().getZipCode())
+                .city(address.getCity())
+                .zipCode(address.getZipCode())
                 .detail(detail)
                 .phoneNumber(phoneNumber)
                 .email(email)
@@ -48,5 +53,9 @@ public class MyProfileResponse {
                 .organizationName(member.getOrganization().getName())
                 .position(organization.getPosition())
                 .build();
+    }
+
+    public void setSession(String session){
+        this.session = session;
     }
 }
