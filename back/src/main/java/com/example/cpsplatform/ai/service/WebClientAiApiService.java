@@ -45,12 +45,14 @@ public class WebClientAiApiService implements AiApiService{
     public FaqResponse getAnswerFromFaqChatBot(FaqRequest request){
         String url = "/qa";
         try {
-            return webClient.post()
+            FaqResponse response = webClient.post()
                     .uri(url)
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(FaqResponse.class)
                     .block();
+
+            return response;
         }catch (WebClientResponseException.BadRequest e){
             throw new ClientRequestException("잘못된 요청입니다.");
         }catch (WebClientResponseException e) {
