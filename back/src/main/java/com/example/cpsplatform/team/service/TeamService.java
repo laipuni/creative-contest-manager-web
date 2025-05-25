@@ -52,6 +52,7 @@ public class TeamService {
                 .orElseThrow(()->new IllegalArgumentException("해당 팀장은 존재하지 않습니다."));
 
         Contest contest = findContestById(createDto.getContestId());
+        log.info("조회된 대회: {} (id: {})", contest.getTitle(), contest.getId());
         //접수하는 시점이 대회의 접수 기간인지 검증
         validateContestJoin(contest);
 
@@ -150,7 +151,9 @@ public class TeamService {
         for (String loginId : memberIds) {
             Member member = memberRepository.findMemberByLoginId(loginId)
                     .orElseThrow(()->new IllegalArgumentException(String.format("%s는 존재하지 않는 계정입니다.",loginId)));
-            boolean result = memberTeamRepository.existsByContestIdAndLoginId(contest.getId(), loginId);
+            boolean result = memberTeamRepository.existsByContestIdAndMemberId(contest.getId(), member.getId());
+            log.info("중복 확인- 대회ID: {}, 멤버ID: {}, 로그인ID: {}, 중복여부: {}",
+                    contest.getId(), member.getId(), loginId, result);
             if(result){
                 //추가할려는 팀원이 같은 대회에 다른 팀에 속해있는 경우
                 throw new ContestJoinException(String.format("%s님은 이미 해당 대회에 소속된 팀이 있습니다.",loginId));

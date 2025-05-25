@@ -148,4 +148,22 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(AiServerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiErrorResponse<Object> handleAiServerException(AiServerException ex) {
+        return ApiErrorResponse.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                null);
+    }
+
+    @ExceptionHandler(ClientRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse<Object> handleClientRequest(ClientRequestException ex) {
+        return ApiErrorResponse.of(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                null
+        );
+    }
 }
