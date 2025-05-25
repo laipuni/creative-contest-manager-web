@@ -26,7 +26,7 @@ public class AiConfig {
     public WebClient webClient() {
         return WebClient.builder()
                 //todo 도커를 사용할 때는 services이름으로 변경해야 함
-                .baseUrl("https://1a4a-34-10-108-159.ngrok-free.app")
+                .baseUrl("http://localhost:5000")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
