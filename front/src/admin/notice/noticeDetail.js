@@ -46,7 +46,7 @@ const NoticeDetail = () => {
             formData.append("files", file);
         });
 
-        apiClient.patch('api/admin/notices', formData, {
+        apiClient.patch('/api/admin/notices', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }})

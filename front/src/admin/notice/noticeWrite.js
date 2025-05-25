@@ -31,7 +31,7 @@ const NoticeWrite = () => {
             formData.append("files", file);
         });
 
-        apiClient.post('api/admin/notices', formData, {
+        apiClient.post('/api/admin/notices', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }})
