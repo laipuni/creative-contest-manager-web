@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './emailVerificationModal.css';
 import apiClient from "../../templates/apiClient";
 
-function EmailVerificationModal({ onClose, onVerify }) {
+function EmailVerificationModal({ onClose, onVerify, isEdit = false }) {
     const [emailInput, setEmailInput] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [isVerificationSent, setIsVerificationSent] = useState(false);
@@ -21,31 +21,73 @@ function EmailVerificationModal({ onClose, onVerify }) {
         }
         setIsSending(true);
         // 인증 메일 전송 로직 (서버 API 호출)
-        apiClient.post('/api/v1/send-auth-code', {recipient: emailInput, senderType: 'email', strategyType: 'register'})
-            .then((res) => {
-                setIsVerificationSent(true);
-                setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
+        if(isEdit === false) {
+            apiClient.post('/api/v1/send-auth-code', {
+                recipient: emailInput,
+                senderType: 'email',
+                strategyType: 'register'
             })
-            .catch((err) => {})
-            .finally(()=>{
-                setIsSending(false);
+                .then((res) => {
+                    setIsVerificationSent(true);
+                    setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
+                })
+                .catch((err) => {
+                })
+                .finally(() => {
+                    setIsSending(false);
+                })
+        }
+        else{
+            apiClient.post('/api/members/profile/send-update-code', {
+                recipient: emailInput,
+                senderType: 'email',
+                strategyType: 'register'
             })
+                .then((res) => {
+                    setIsVerificationSent(true);
+                    setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
+                })
+                .catch((err) => {
+                })
+                .finally(() => {
+                    setIsSending(false);
+                })
+        }
 
     };
 
     const handleVerify = () => {
         // 인증 코드 확인 로직 (서버 API 호출)
-        apiClient.post('/api/verify-register-code', {recipient: emailInput, authCode: verificationCode, strategyType: 'register'})
-            .then((res)=>{
-                if (res.data.code === 200) {
-                    onVerify(emailInput);
-                    onClose();
-                }
-                else {
-                    setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
-                }
+        if(isEdit === false) {
+            apiClient.post('/api/verify-register-code', {
+                recipient: emailInput,
+                authCode: verificationCode,
+                strategyType: 'register'
             })
-            .catch((err)=>{})
+                .then((res) => {
+                    if (res.data.code === 200) {
+                        onVerify(emailInput);
+                        onClose();
+                    } else {
+                        setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
+                    }
+                })
+                .catch((err) => {
+                })
+        }
+        else {
+            apiClient.post('/api/members/profile/verify-update-code', {recipient: emailInput, authCode: verificationCode, strategyType: 'register'})
+                .then((res)=>{
+                    if (res.data.code === 200) {
+                        onVerify(emailInput);
+                        onClose();
+                    }
+                    else {
+                        setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
+                    }
+                })
+                .catch((err)=>{})
+        }
     };
 
     return (

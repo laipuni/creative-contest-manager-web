@@ -15,10 +15,13 @@ import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailFileDto;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.notice.domain.Notice;
 import com.example.cpsplatform.notice.repository.NoticeRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,7 @@ import static org.mockito.Mockito.doAnswer;
 class NoticeFacadeServiceTest {
 
     @Autowired
-    NoticeFacadeService noticeFacadeService;
+    NoticeAdminFacadeService noticeFacadeService;
 
     @Autowired
     NoticeRepository noticeRepository;
@@ -54,6 +57,9 @@ class NoticeFacadeServiceTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
     @DisplayName("공지사항 제목, 내용과 첨부할 파일을 업로드한다.")
     @Test
@@ -466,6 +472,97 @@ class NoticeFacadeServiceTest {
 
         assertThat(files).isEmpty();
     }
+
+    @DisplayName("공지사항과 해당 첨부파일들을 삭제합니다.")
+    @Test
+    void deleteNotice(){
+        //given
+        Member admin = createAndSaveAdmin("admin");
+        Notice notice = Notice.builder()
+                .content("공지사항 본문")
+                .title("공지사항 제목")
+                .writer(admin)
+                .viewCount(0L)
+                .build();
+
+        noticeRepository.save(notice);
+
+        //삭제할 공지사항 첨부파일
+        File file = File.builder()
+                .name("삭제할_파일1.pdf")
+                .originalName("삭제할_파일1.pdf")
+                .extension(FileExtension.PDF)
+                .mimeType(FileExtension.PDF.getMimeType())
+                .size(100L)
+                .path("/notice/" + FileExtension.PDF.getExtension())
+                .fileType(FileType.NOTICE)
+                .notice(notice)
+                .build();
+
+        fileRepository.save(file);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        noticeFacadeService.deleteNotice(notice.getId());
+
+        entityManager.flush();
+        entityManager.clear();
+        //then
+        List<Notice> notices = noticeRepository.findAll();
+        List<File> files = fileRepository.findAll();
+        assertThat(notices).isEmpty();
+        assertThat(files).isEmpty();
+    }
+
+    @DisplayName("공지사항 ID를 통해 상세 정보를 조회하고, 해당 첨부파일 리스트도 함께 확인한다.")
+    @Test
+    void getNoticeDetail() {
+        //given
+        Member admin = createAndSaveAdmin("admin");
+        Notice notice = noticeRepository.save(
+                Notice.builder()
+                        .title("공지사항 제목")
+                        .content("공지사항 본문")
+                        .writer(admin)
+                        .viewCount(0L)
+                        .build()
+        );
+
+        File file = fileRepository.save(
+                File.builder()
+                        .name("첨부파일.pdf")
+                        .originalName("첨부파일.pdf")
+                        .extension(FileExtension.PDF)
+                        .mimeType(FileExtension.PDF.getMimeType())
+                        .size(1024L)
+                        .path("/notice/pdf")
+                        .fileType(FileType.NOTICE)
+                        .notice(notice)
+                        .build()
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //when
+        NoticeDetailResponse response = noticeFacadeService.getNoticeDetail(notice.getId());
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getNoticeId()).isEqualTo(notice.getId());
+        assertThat(response.getTitle()).isEqualTo("공지사항 제목");
+        assertThat(response.getContent()).isEqualTo("공지사항 본문");
+        assertThat(response.getWriter()).isEqualTo(admin.getName());
+        assertThat(response.getWriterEmail()).isEqualTo(admin.getEmail());
+        assertThat(response.getFileList()).hasSize(1);
+
+        NoticeDetailFileDto fileDto = response.getFileList().get(0);
+        assertThat(fileDto.getFileId()).isEqualTo(file.getId());
+        assertThat(fileDto.getFileName()).isEqualTo("첨부파일.pdf");
+    }
+
 
 
     private Member createAndSaveAdmin(String loginId) {

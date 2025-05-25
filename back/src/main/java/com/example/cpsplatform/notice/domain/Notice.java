@@ -38,9 +38,6 @@ public class Notice extends BaseEntity {
     @Column(name = "view_count", nullable = false)
     private Long viewCount = 0L; // DEFAULT 0, 기본 값은 0으로 설정
 
-    @BatchSize(size = 10)
-    @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<File> files = new HashSet<>();
 
     @Builder
     private Notice(final String title, final String content, final Member writer, final Long viewCount) {
@@ -57,22 +54,6 @@ public class Notice extends BaseEntity {
                 .writer(member)
                 .viewCount(0L) // 조회수 0으로 설정
                 .build();
-    }
-
-    public void addFile(File file){
-        files.add(file);
-    }
-
-    public void removeFile(File file){
-        files.remove(file);
-        file.setNotice(null);
-    }
-
-    public void clearFile(){
-        for (File file : files){
-            file.setNotice(null);
-        }
-        files.clear();
     }
 
     public void modify(final String title, final String content) {

@@ -119,31 +119,31 @@ class TeamSolveRepositoryTest {
         memberRepository.deleteAllInBatch();
         contestRepository.deleteAllInBatch();
     }
-
-    @DisplayName("100명의 쓰레드가 문제 id와 팀 id로 pessimistic lock을 걸어 조회하고 수정횟수를 100까지 증가시킨다.")
-    @Test
-    void findByTeamIdAndProblemId() throws InterruptedException {
-        //given
-        int threadCount = 100;
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch latch = new CountDownLatch(threadCount);
-
-        //when
-        for (int i = 0; i < threadCount; i++) {
-            executorService.submit(() -> {
-                try {
-                    teamSolveTestExecutor.incrementModifyCount(team.getId(), problem.getId());
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        latch.await(); // 모든 쓰레드 완료 대기
-
-        //then
-        List<TeamSolve> result = teamSolveRepository.findAll();
-        assertThat(result.get(0).getModifyCount()).isEqualTo(threadCount);
-    }
+// 운영방식의 변화로 수정횟수를 TeamSolve에서 Team으로 이동함
+//    @DisplayName("100명의 쓰레드가 문제 id와 팀 id로 pessimistic lock을 걸어 조회하고 수정횟수를 100까지 증가시킨다.")
+//    @Test
+//    void findByTeamIdAndProblemId() throws InterruptedException {
+//        //given
+//        int threadCount = 100;
+//        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+//        CountDownLatch latch = new CountDownLatch(threadCount);
+//
+//        //when
+//        for (int i = 0; i < threadCount; i++) {
+//            executorService.submit(() -> {
+//                try {
+//                    teamSolveTestExecutor.incrementModifyCount(team.getId(), problem.getId());
+//                } finally {
+//                    latch.countDown();
+//                }
+//            });
+//        }
+//        latch.await(); // 모든 쓰레드 완료 대기
+//
+//        //then
+//        List<TeamSolve> result = teamSolveRepository.findAll();
+//        assertThat(result.get(0).getModifyCount()).isEqualTo(threadCount);
+//    }
 
 
 }

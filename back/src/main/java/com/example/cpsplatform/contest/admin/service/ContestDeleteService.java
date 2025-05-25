@@ -48,7 +48,7 @@ public class ContestDeleteService {
         log.info("{} 대회(id:{}) 완전 삭제 프로세스 시작", CONTEST_DELETE_LOG, contestId);
         //관련 데이터 조회
         List<Long> teamIds = findTeamIdsByContestId(contestId);
-        List<Long> memberTeamIds = findMemberTeamIdsByContestId(contestId);
+        List<Long> memberTeamIds = findMemberTeamIdsByTeamIds(teamIds);
         List<Long> teamSolveIds = findTeamSolveIdsByTeamIds(teamIds);
         List<Long> teamSolveFileIds = findTeamSolveFileIdsByTeamSolveIds(teamSolveIds);
         List<Long> problemIds = findProblemIdsByContestId(contestId);
@@ -78,12 +78,12 @@ public class ContestDeleteService {
     }
 
     private List<Long> findTeamIdsByContestId(Long contestId) {
-        List<Team> teams = teamRepository.findAllByContestId(contestId);
+        List<Team> teams = teamRepository.findAllByContestIdNative(contestId);
         return teams.stream().map(Team::getId).toList();
     }
 
-    private List<Long> findMemberTeamIdsByContestId(Long contestId) {
-        List<MemberTeam> memberTeams = memberTeamRepository.findAllByContestId(contestId);
+    private List<Long> findMemberTeamIdsByTeamIds(List<Long> teamIds) {
+        List<MemberTeam> memberTeams = memberTeamRepository.findAllByTeamIds(teamIds);
         return memberTeams.stream().map(MemberTeam::getId).toList();
     }
 
@@ -91,7 +91,7 @@ public class ContestDeleteService {
         if (teamIds.isEmpty()) {
             return List.of();
         }
-        List<TeamSolve> teamSolves = teamSolveRepository.findAllByTeam_IdIn(teamIds);
+        List<TeamSolve> teamSolves = teamSolveRepository.findAllByTeam_IdInNative(teamIds);
         return teamSolves.stream().map(TeamSolve::getId).toList();
     }
 
@@ -99,7 +99,7 @@ public class ContestDeleteService {
         if (teamSolveIds.isEmpty()) {
             return List.of();
         }
-        List<File> teamSolveFiles = fileRepository.findAllByTeamSolve_IdIn(teamSolveIds);
+        List<File> teamSolveFiles = fileRepository.findAllByTeamSolve_IdInNative(teamSolveIds);
         return teamSolveFiles.stream().map(File::getId).toList();
     }
 
@@ -107,22 +107,22 @@ public class ContestDeleteService {
         if (problemIds.isEmpty()) {
             return List.of();
         }
-        List<File> problemFiles = fileRepository.findAllByProblem_IdIn(problemIds);
+        List<File> problemFiles = fileRepository.findAllByProblem_IdInNative(problemIds);
         return problemFiles.stream().map(File::getId).toList();
     }
 
     private List<Long> findProblemIdsByContestId(Long contestId) {
-        List<Problem> problems = problemRepository.findAllByContestId(contestId);
+        List<Problem> problems = problemRepository.findAllByContestIdNative(contestId);
         return problems.stream().map(Problem::getId).toList();
     }
 
     private List<Long> findCertificateIdsByContestId(Long contestId) {
-        List<Certificate> certificates = certificateRepository.findAllByContestId(contestId);
+        List<Certificate> certificates = certificateRepository.findAllByContestIdNative(contestId);
         return certificates.stream().map(Certificate::getId).toList();
     }
 
     private Optional<TeamNumber> findTeamNumberByContestId(Long contestId) {
-        return teamNumberRepository.findByContestId(contestId);
+        return teamNumberRepository.findByContestIdNative(contestId);
     }
 
     private void deleteTeamSolveFiles(Long contestId, List<Long> teamSolveFileIds) {
@@ -186,7 +186,7 @@ public class ContestDeleteService {
             TeamNumber teamNumber = optionalTeamNumber.get();
             log.info("{} 대회(id:{})와 관련된 팀 접수 번호 데이터 ID:{} 삭제",
                     CONTEST_DELETE_LOG, contestId, teamNumber.getId());
-            teamNumberRepository.deleteById(teamNumber.getId());
+            teamNumberRepository.deleteAllByIdInBatch(List.of(teamNumber.getId()));
         }
     }
 

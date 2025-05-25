@@ -31,6 +31,8 @@ const RegisterInfo = () => {
     }, []);
 
     const handleDeleteTeam = () => {
+        const confirmed = window.confirm("정말 삭제하시겠습니까?");
+        if (!confirmed) return;
         apiClient.delete('/api/teams', {
             data: {teamId: teamInfo.teamId, contestId: contestInfo.contestId}, skipErrorHandler: true})
             .then((res)=>{
@@ -47,8 +49,7 @@ const RegisterInfo = () => {
                 <div className="testInfo-content-container">
                     <Sidebar/>
                     <div className="testInfo-main-container">
-                        {contestInfo && <CategoryLogo logoTitle={`${contestInfo.season}회차 예선시험 접수`} imgSrc={trophyLogo}/>}
-                        {!contestInfo && <CategoryLogo logoTitle={`예선시험 접수`} imgSrc={trophyLogo}/>}
+                        <CategoryLogo logoTitle={`대회참가 접수`} imgSrc={trophyLogo}/>
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
                                 <p className="registerInfo-top-title">접수 내역</p>

@@ -2,6 +2,7 @@ package com.example.cpsplatform.teamsolve.controller.response;
 
 import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.problem.domain.Section;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,19 +18,21 @@ public class GetTeamAnswerDto {
     private Long teamId;
     private String teamName;
     private Section section;
+    private TeamSolveType teamSolveType;
     private LocalDateTime updatedAt;
-    private int modifyCount;
     private Long fileId;
     private String fileName;
 
-    public GetTeamAnswerDto(final Long teamSolveId,final String content, final Long teamId, final String teamName, final Section section, final LocalDateTime updatedAt, final int modifyCount) {
+    public GetTeamAnswerDto(final Long teamSolveId,final String content, final Long teamId,
+                            final String teamName, final Section section,
+                            final TeamSolveType teamSolveType, final LocalDateTime updatedAt) {
         this.teamSolveId = teamSolveId;
         this.content = content;
         this.teamId = teamId;
         this.teamName = teamName;
+        this.teamSolveType = teamSolveType;
         this.section = section;
         this.updatedAt = updatedAt;
-        this.modifyCount = modifyCount;
     }
 
     public void setFileInfo(File file){

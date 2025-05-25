@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "organization")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "organization_type")

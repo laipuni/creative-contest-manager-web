@@ -15,5 +15,10 @@ public interface TeamNumberRepository extends JpaRepository<TeamNumber, Long> {
     @Query("select tn from TeamNumber tn where tn.contest.id = :contestId")
     Optional<TeamNumber> getLockedNumberForContest(@Param("contestId") Long contestId);
 
-    Optional<TeamNumber> findByContestId(Long contestId);
+    //네이티브 쿼리라서 임시 삭제된 대회의 team_number까지 조회하므로 조심
+    @Query(
+            value = "select * from team_number where contest_id = :contestId"
+            ,nativeQuery = true
+    )
+    Optional<TeamNumber> findByContestIdNative(@Param("contestId")Long contestId);
 }

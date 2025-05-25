@@ -6,6 +6,7 @@ import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.repository.FileRepository;
 import com.example.cpsplatform.file.storage.FileStorage;
 import com.example.cpsplatform.notice.domain.Notice;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class NoticeFileService {
 
     private final FileStorage fileStorage;
     private final FileRepository fileRepository;
+    private final EntityManager entityManager;
 
     /**
      * 공지사항 파일을 올리는 메서드
@@ -104,5 +106,24 @@ public class NoticeFileService {
     private static String getNoticeFilePath(final FileSource fileSource) {
         //ex) "/notice/pdf"
         return "/notice/" + fileSource.getExtension().getExtension();
+    }
+
+    @Transactional
+    public void clearNoticeFiles(final Long noticeId) {
+        List<File> files = fileRepository.findAllByNoticeId(noticeId);
+        List<Long> fileIds = files.stream().map(File::getId).toList();
+        entityManager.flush();
+        entityManager.clear();
+
+        log.info("{} 공지사항(id:{})와 함께 첨부파일들(id:{})도 삭제합니다.", NOTICE_FILE_UPLOAD_LOG,noticeId,fileIds);
+        fileRepository.hardDeleteAllByIdIn(fileIds);
+
+    }
+
+    public List<File> findNoticeFiles(final Long noticeId) {
+        List<File> files = fileRepository.findAllByNoticeId(noticeId);
+        log.info("{} 답안지(id:{})의 첨부파일들(id : {})을 조회합니다.",
+                NOTICE_FILE_UPLOAD_LOG, noticeId, files.stream().map(File::getId).toList());
+        return files;
     }
 }

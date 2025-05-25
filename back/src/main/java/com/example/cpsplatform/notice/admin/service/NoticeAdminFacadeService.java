@@ -1,13 +1,15 @@
 package com.example.cpsplatform.notice.admin.service;
 
 import com.example.cpsplatform.file.decoder.vo.FileSources;
+import com.example.cpsplatform.file.domain.File;
+import com.example.cpsplatform.file.service.FileService;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
+import com.example.cpsplatform.notice.admin.controller.response.NoticeDetailResponse;
 import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +20,9 @@ import java.util.StringJoiner;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class NoticeFacadeService {
+public class NoticeAdminFacadeService {
 
     private final NoticeAdminService noticeAdminService;
     private final NoticeFileService noticeFileService;
@@ -42,7 +45,7 @@ public class NoticeFacadeService {
         return NoticeAddResponse.of(true,message, notice.getId());
     }
 
-    @Modifying
+    @Transactional
     public NoticeModifyResponse modifyNotice(final NoticeModifyDto noticeModifyDto, final FileSources fileSources) {
         Notice notice = noticeAdminService.modify(noticeModifyDto.getNoticeId(),
                 noticeModifyDto.getTitle(),
@@ -130,4 +133,15 @@ public class NoticeFacadeService {
                 totalDeleteCount, deleteFailedFileNames.size(), joiner);
     }
 
+    @Transactional
+    public void deleteNotice(final Long noticeId) {
+        noticeFileService.clearNoticeFiles(noticeId);
+        noticeAdminService.deleteNotice(noticeId);
+    }
+
+    public NoticeDetailResponse getNoticeDetail(final Long noticeId) {
+        List<File> files = noticeFileService.findNoticeFiles(noticeId);
+        Notice notice = noticeAdminService.findByNoticeId(noticeId);
+        return NoticeDetailResponse.of(notice,files);
+    }
 }

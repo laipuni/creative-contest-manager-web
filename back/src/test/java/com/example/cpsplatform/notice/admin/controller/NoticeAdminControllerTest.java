@@ -1,7 +1,6 @@
 package com.example.cpsplatform.notice.admin.controller;
 
 import com.example.cpsplatform.auth.service.RegisterService;
-import com.example.cpsplatform.file.admin.FileAdminController;
 import com.example.cpsplatform.file.decoder.vo.FileSources;
 import com.example.cpsplatform.file.service.download.FileDownloadService;
 import com.example.cpsplatform.member.domain.Member;
@@ -9,9 +8,9 @@ import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeAddRequest;
 import com.example.cpsplatform.notice.admin.controller.request.NoticeModifyRequest;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeAddResponse;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeModifyResponse;
-import com.example.cpsplatform.notice.admin.service.NoticeFacadeService;
+import com.example.cpsplatform.notice.admin.controller.response.*;
+import com.example.cpsplatform.notice.admin.service.NoticeAdminService;
+import com.example.cpsplatform.notice.admin.service.NoticeAdminFacadeService;
 import com.example.cpsplatform.notice.admin.service.dto.NoticeModifyDto;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.domain.SecurityMember;
@@ -19,7 +18,6 @@ import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -29,15 +27,20 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -63,7 +66,10 @@ class NoticeAdminControllerTest {
     FileDownloadService fileDownloadService;
 
     @MockitoBean
-    NoticeFacadeService noticeFacadeService;
+    NoticeAdminFacadeService noticeFacadeService;
+
+    @MockitoBean
+    NoticeAdminService noticeAdminService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -101,7 +107,7 @@ class NoticeAdminControllerTest {
                 .noticeId(noticeId)
                 .build();
 
-        Mockito.when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
+        when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -151,7 +157,7 @@ class NoticeAdminControllerTest {
                 .noticeId(noticeId)
                 .build();
 
-        Mockito.when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
+        when(noticeFacadeService.publishNotice(anyString(),anyString(),anyString(),any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -208,7 +214,7 @@ class NoticeAdminControllerTest {
                 noticeId
         );
 
-        Mockito.when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
+        when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -266,7 +272,7 @@ class NoticeAdminControllerTest {
                 noticeId
         );
 
-        Mockito.when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
+        when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -326,7 +332,7 @@ class NoticeAdminControllerTest {
                 noticeId
         );
 
-        Mockito.when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
+        when(noticeFacadeService.modifyNotice(any(NoticeModifyDto.class), any(FileSources.class)))
                 .thenReturn(response);
 
         //when
@@ -344,6 +350,100 @@ class NoticeAdminControllerTest {
                 .andExpect(jsonPath("$.data.success").value(true))
                 .andExpect(jsonPath("$.data.message").value(expectedMessage))
                 .andExpect(jsonPath("$.data.noticeId").value(noticeId));
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @DisplayName("공지사항 검색 API - 검색 조건 없이 전체 조회")
+    void searchNoticesWithoutKeyword() throws Exception {
+        // given
+        List<NoticeSearchDto> notices = List.of(
+                NoticeSearchDto.builder()
+                        .noticeId(1L)
+                        .title("공지사항 제목")
+                        .viewCount(123L)
+                        .writer("admin")
+                        .createdAt(LocalDateTime.now())
+                        .build()
+        );
+
+        NoticeSearchResponse response = NoticeSearchResponse.builder()
+                .totalPage(1)
+                .page(0)
+                .firstPage(0)
+                .lastPage(1)
+                .size(1)
+                .noticeSearchDtoList(notices)
+                .build();
+
+        //when
+        when(noticeAdminService.searchNotice(any())).thenReturn(response);
+
+        //then
+        mockMvc.perform(get("/api/admin/notices/search")
+                        .param("page", "0")
+                        .param("page_size", "10")
+                        .param("keyword", "")
+                        .param("search_type", "")
+                        .param("order", "desc")
+                        .param("order_type", "createdAt"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.data.totalPage").value(1))
+                .andExpect(jsonPath("$.data.page").value(0))
+                .andExpect(jsonPath("$.data.firstPage").value(0))
+                .andExpect(jsonPath("$.data.lastPage").value(1))
+                .andExpect(jsonPath("$.data.size").value(1))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].noticeId").value(1))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].title").value("공지사항 제목"))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].viewCount").value(123))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].writer").value("admin"))
+                .andExpect(jsonPath("$.data.noticeSearchDtoList[0].createdAt").exists());
+    }
+
+    @WithMockUser(roles = "ADMIN")
+    @Test
+    @DisplayName("공지사항 상세 조회를 성공적으로 수행한다.")
+    void getNoticeDetail_success() throws Exception {
+        // given
+        Long noticeId = 1L;
+        List<NoticeDetailFileDto> fileDtos = List.of(
+                NoticeDetailFileDto.builder()
+                        .fileId(10L)
+                        .fileName("example.pdf")
+                        .build()
+        );
+
+        NoticeDetailResponse response = NoticeDetailResponse.builder()
+                .noticeId(noticeId)
+                .title("공지사항 제목")
+                .viewCount(123L)
+                .writer("관리자")
+                .writerEmail("admin@example.com")
+                .createAt(LocalDateTime.of(2025, 5, 18, 10, 30))
+                .updatedAt(LocalDateTime.of(2025, 5, 18, 11, 0))
+                .content("공지사항 본문")
+                .fileList(fileDtos)
+                .build();
+
+        when(noticeFacadeService.getNoticeDetail(noticeId)).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/admin/notices/{noticeId}", noticeId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andExpect(jsonPath("$.data.noticeId").value(noticeId))
+                .andExpect(jsonPath("$.data.title").value("공지사항 제목"))
+                .andExpect(jsonPath("$.data.viewCount").value(123))
+                .andExpect(jsonPath("$.data.writer").value("관리자"))
+                .andExpect(jsonPath("$.data.writerEmail").value("admin@example.com"))
+                .andExpect(jsonPath("$.data.createAt").value("2025-05-18T10:30:00"))
+                .andExpect(jsonPath("$.data.updatedAt").value("2025-05-18T11:00:00"))
+                .andExpect(jsonPath("$.data.content").value("공지사항 본문"))
+                .andExpect(jsonPath("$.data.fileList[0].fileId").value(10))
+                .andExpect(jsonPath("$.data.fileList[0].fileName").value("example.pdf"));
     }
 
 

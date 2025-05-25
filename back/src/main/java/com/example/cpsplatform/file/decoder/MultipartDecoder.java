@@ -32,7 +32,7 @@ public class MultipartDecoder implements FileDecoder<MultipartFile>{
     public FileSource decode(final MultipartFile file) {
         if(file == null){
             //파일이 존재하지 않을 경우
-            throw new FileNotFoundException("다운로드 파일이 존재하지 않습니다.");
+            return null;
         }
         return convertToFileSource(file);
     }

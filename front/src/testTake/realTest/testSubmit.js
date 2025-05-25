@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import TestQuiz from "../../components/testQuiz/testQuiz";
@@ -11,7 +11,6 @@ const TestSubmit = () => {
     const [file1, setFile1] = useState(null);
     const [text2, setText2] = useState('');
     const [file2, setFile2] = useState(null);
-    const [level, setLevel] = useState('');
     const [quiz1, setQuiz1] = useState(null);
     const [quiz2, setQuiz2] = useState(null);
     const [answer1, setAnswer1] = useState(null);
@@ -49,7 +48,7 @@ const TestSubmit = () => {
     // 문제 가져오기
     useEffect(() => {
         if(teamInfo) {
-            apiClient.get(`/api/problems/team/${teamInfo.teamId}`)
+            apiClient.get(`/api/contests/${contestInfo.contestId}/teams/${teamInfo.teamId}/problems/section`)
                 .then((res) => {
                     const problems = res.data.data;
                     problems.forEach((problem) => {
@@ -57,23 +56,18 @@ const TestSubmit = () => {
                             setQuiz1(problem);
                         } else {
                             setQuiz2(problem);
-                            if(problem.problemType === 'HIGH_NORMAL')
-                                setLevel('고등/일반');
-                            else
-                                setLevel('초/중등');
                         }
                     });
                 })
                 .catch((e) => {
                 });
-            setLevel('초/중등');
         }
     }, [teamInfo])
 
     //답안 가져오기
     useEffect(() => {
         if (teamInfo) {
-            apiClient.get(`/api/contests/${contestInfo.contestId}/team-solves`)
+            apiClient.get(`/api/contests/${contestInfo.contestId}/team-solves`, {params: {submit_type: 'temp'}})
                 .then((res) => {
                     const answerList = res.data.data.teamAnswerList;
                     answerList.forEach((answer) => {
@@ -106,11 +100,6 @@ const TestSubmit = () => {
 
     //답 제출
     const handleSubmitAnswer = () => {
-        // 파일 체크
-        if (!file1 || !file2) {
-            alert('각 답안의 첨부파일을 모두 등록해주세요. (기존에 제출했던 답 있는 경우 덮어쓰기 필요)');
-            return;
-        }
 
         const submitSingleAnswer = (quiz, fileVal, textVal) => {
             const formData = new FormData();
@@ -124,8 +113,8 @@ const TestSubmit = () => {
                 [JSON.stringify(requestData)],
                 { type: "application/json" }
             ));
-
-            formData.append("file", fileVal);
+            if(fileVal)
+                formData.append("file", fileVal);
 
             return apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves`, formData, {
                 headers: {
@@ -140,7 +129,7 @@ const TestSubmit = () => {
             submitSingleAnswer(quiz2, file2, text2)
         ])
             .then(() => {
-                alert('답안이 제출되었습니다.');
+                alert('답안이 임시 저장되었습니다. 마감 기한 내에 최종 제출을 완료해 주세요.');
                 navigate("/test/realTest/info")
             })
             .catch((err) => {
@@ -152,8 +141,6 @@ const TestSubmit = () => {
                 }
             });
     };
-
-
 
     return (
         <div className="testInfo-page-container">
@@ -187,7 +174,7 @@ const TestSubmit = () => {
                         <button className="registerInfo-bot-button"
                                 onClick={handleSubmitAnswer}
                                 style={{cursor: "pointer", alignSelf: "center"}}>
-                            <img src={rocket} alt='rocket' className="submit-rocket-img"/>제출하기
+                            <img src={rocket} alt='rocket' className="submit-rocket-img"/>저장하기
                         </button>
                     </div>
                 </div>
