@@ -1,5 +1,6 @@
 package com.example.cpsplatform.member.service;
 
+import com.example.cpsplatform.auth.config.AuthConfig;
 import com.example.cpsplatform.auth.controller.response.ProfilePasswordVerifyResponse;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.auth.service.SessionService;
@@ -55,7 +56,7 @@ public class ProfileService {
         if(member.isChangedEmail(dto.getEmail())){
             log.info("유저({})가 자신의 이메일을 업데이트합니다.",dto.getLoginId());
             //만약 인증하지 않은 경우, AuthCodeMismatchException 예외가 발생함
-            authService.verifyAuthCode(dto.getEmail(),dto.getEmail(),"profile_update_verify");
+            authService.verifyAuthCode(dto.getEmail(),dto.getEmail(), AuthConfig.PROFILE_UPDATE_VERIFY_AUTH);
         }
 
         //if)추후 핸드폰 번호가 바뀌었을 경우, 핸드폰 검증이 필요한 경우도 추가

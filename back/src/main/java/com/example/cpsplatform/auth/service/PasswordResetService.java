@@ -1,5 +1,6 @@
 package com.example.cpsplatform.auth.service;
 
+import com.example.cpsplatform.auth.config.AuthConfig;
 import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
 import com.example.cpsplatform.auth.service.dto.PasswordConfirmDto;
 import com.example.cpsplatform.auth.service.dto.PasswordResetDto;
@@ -29,7 +30,7 @@ public class PasswordResetService {
         if(member != null){
             //아이디와 이메일에 해당하는 유저가 존재할 경우
             authService.sendAuthCode(resetCodeDto.getRecipient(),
-                    resetCodeDto.getSenderType(),"password_auth");
+                    resetCodeDto.getSenderType(), AuthConfig.PASSWORD_AUTH);
         }
     }
 
@@ -42,7 +43,7 @@ public class PasswordResetService {
     }
 
     public PasswordConfirmResponse confirmPasswordAuthCode(PasswordConfirmDto confirmDto){
-        authService.verifyAuthCode(confirmDto.getRecipient(), confirmDto.getAuthCode(), "password_auth");
+        authService.verifyAuthCode(confirmDto.getRecipient(), confirmDto.getAuthCode(), AuthConfig.PASSWORD_AUTH);
         String session = sessionService.storeSession(confirmDto.getLoginId(), PASSWORD_RESET);
         return new PasswordConfirmResponse(session);
     }

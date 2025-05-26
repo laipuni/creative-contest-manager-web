@@ -1,5 +1,6 @@
 package com.example.cpsplatform.auth.service;
 
+import com.example.cpsplatform.auth.config.AuthConfig;
 import com.example.cpsplatform.auth.controller.response.FindIdResponse;
 import com.example.cpsplatform.exception.DuplicateDataException;
 import com.example.cpsplatform.exception.PasswordMismatchException;
@@ -31,7 +32,7 @@ public class RegisterService {
         }
 
         boolean result = authService.verifyAuthCode(
-                request.getEmail(), request.getEmail(), "signup_verify");
+                request.getEmail(), request.getEmail(), AuthConfig.SIGNUP_VERIFY_AUTH);
 
         if(result){
             memberService.save(request.toMemberSaveDto());
@@ -39,7 +40,7 @@ public class RegisterService {
     }
 
     public FindIdResponse findId(FindIdDto findIdDto) {
-        boolean result = authService.verifyAuthCode(findIdDto.getRecipient(), findIdDto.getAuthCode(), "findId");
+        boolean result = authService.verifyAuthCode(findIdDto.getRecipient(), findIdDto.getAuthCode(), AuthConfig.FIND_ID_AUTH);
         if(!result){
             return null;
         }

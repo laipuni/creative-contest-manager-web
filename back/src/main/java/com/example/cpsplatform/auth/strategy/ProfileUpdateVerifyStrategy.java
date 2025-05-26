@@ -1,4 +1,4 @@
-package com.example.cpsplatform.auth.config;
+package com.example.cpsplatform.auth.strategy;
 
 import com.example.cpsplatform.auth.strategy.AuthCodeStrategy;
 
