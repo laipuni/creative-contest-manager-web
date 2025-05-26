@@ -19,7 +19,11 @@ public class DataAnalysisController {
     private final OrganizationStatisticService organizationStatisticService;
     private final MemberStatisticService memberStatisticService;
 
-
+    /**
+     * 전체 회원의 소속(학교, 기관 등)별 분포를 조회합니다.
+     *
+     * @return OrganizationDistributionResponse - 조직(소속)별 회원 수 정보를 담은 응답
+     */
     @AdminLog
     @GetMapping("/organization")
     public ApiResponse<OrganizationDistributionResponse> getOrganizationDistribution(){
@@ -27,6 +31,11 @@ public class DataAnalysisController {
         return ApiResponse.ok(response);
     }
 
+    /**
+     * 전체 회원의 거주 도시별 분포를 조회합니다.
+     *
+     * @return CityDistributionResponse - 도시별 회원 수 정보를 담은 응답
+     */
     @AdminLog
     @GetMapping("/members/city")
     public ApiResponse<CityDistributionResponse> getCityDistribution(){
