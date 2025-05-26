@@ -1,7 +1,10 @@
 package com.example.cpsplatform.admin.analysis;
 
+import com.example.cpsplatform.admin.analysis.response.CityDistributionDto;
+import com.example.cpsplatform.admin.analysis.response.CityDistributionResponse;
 import com.example.cpsplatform.admin.analysis.response.OrganizationDistributionDto;
 import com.example.cpsplatform.admin.analysis.response.OrganizationDistributionResponse;
+import com.example.cpsplatform.admin.analysis.service.MemberStatisticService;
 import com.example.cpsplatform.admin.analysis.service.OrganizationStatisticService;
 import com.example.cpsplatform.auth.service.AuthService;
 import com.example.cpsplatform.certificate.admin.controller.CertificateAdminController;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -57,6 +61,9 @@ class DataAnalysisControllerTest {
 
     @MockitoBean
     OrganizationStatisticService organizationStatisticService;
+
+    @MockitoBean
+    MemberStatisticService memberStatisticService;
 
     @WithMockUser(roles = "ADMIN")
     @DisplayName("조직 분포도 데이터 분석 요청 테스트")
@@ -166,5 +173,36 @@ class DataAnalysisControllerTest {
                 .andExpect(jsonPath("$.data.distributionList[11].count").value(15));
     }
 
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("도시별 회원 분포를 반환한다")
+    @Test
+    void getCityDistribution() throws Exception {
+        List<CityDistributionDto> dtoList = List.of(
+                new CityDistributionDto("대구", 3L),
+                new CityDistributionDto("수원", 3L),
+                new CityDistributionDto("서울", 2L),
+                new CityDistributionDto("인천", 2L),
+                new CityDistributionDto("대전", 2L),
+                new CityDistributionDto("부산", 1L),
+                new CityDistributionDto("광주", 1L),
+                new CityDistributionDto("울산", 1L),
+                new CityDistributionDto("창원", 1L),
+                new CityDistributionDto("청주", 1L)
+        );
+        CityDistributionResponse response = CityDistributionResponse.of(dtoList);
+        Mockito.when(memberStatisticService.getCityOrganization()).thenReturn(response);
+
+        //when
+        //then
+        mockMvc.perform(get("/api/admin/statistics/members/city")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("OK"))
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.data.cityDistributionDtoList[0].city").value("대구"))
+                .andExpect(jsonPath("$.data.cityDistributionDtoList[0].count").value(3))
+                .andExpect(jsonPath("$.data.cityDistributionDtoList[1].city").value("수원"))
+                .andExpect(jsonPath("$.data.cityDistributionDtoList[1].count").value(3));
+    }
 
 }
