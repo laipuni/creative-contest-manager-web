@@ -8,16 +8,10 @@ import './qna.css'
 import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
 
-//출력 예시
-const exampleData = "예시답변"
-const exampleQuestion = [{type: "answer", text: "궁금한 점을 질문해보세요!"},
-    {type: "answer", text: "답변 생성 중"},
-    {type: "answer", text: "답변을 생성하지 못했습니다. 다시 시도해주세요"}]
-
 
 const QnA = () => {
     const [question, setQuestion] = useState('');
-    const [chatList, setChatList] = useState(exampleQuestion);
+    const [chatList, setChatList] = useState([]);
     const [showScrollButton, setShowScrollButton] = useState(false); //아래 내리기 버튼
     const endRef = useRef(null);  // 마지막 요소 참조
 
@@ -48,14 +42,13 @@ const QnA = () => {
         const loadingMessage = { type: "answer", text: "답변 생성 중" };
         setChatList(prev => [...prev, loadingMessage]);
 
-        /*
         // 3. 실제 API 요청
-        apiClient.get('/api/certificate/info', { params: { question } })
+        apiClient.post('/api/questions', {question})
             .then((res) => {
                 // "답변 생성 중..." → 실제 답변으로 교체
                 setChatList(prev => {
                     const updated = [...prev];
-                    updated[updated.length - 1] = { type: "answer", text: res.data.answer };
+                    updated[updated.length - 1] = { type: "answer", text: res.data.data.response };
                     return updated;
                 });
             })
@@ -70,14 +63,6 @@ const QnA = () => {
                     return updated;
                 });
             });
-         */
-        setChatList(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-                type: "answer", text: exampleData
-            };
-            return updated;
-        });
 
     }
 
