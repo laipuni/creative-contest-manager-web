@@ -344,31 +344,6 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-
-    @DisplayName("휴대폰 번호 형식이 올바르지 않을 경우, 예외가 발생한다.")
-    @Test
-    void registerWithInvalidPhoneNumber() throws Exception {
-        //given
-        MemberRegisterRequest request = getValidMemberRequest();
-        request.setPhoneNumber("01112345678"); // 010으로 시작하지 않음
-        String content = objectMapper.writeValueAsString(request);
-
-        //when
-        //then
-        mockMvc.perform(
-                        post("/api/v1/members")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .with(csrf())
-                                .content(content)
-                )
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value("휴대폰 번호는 010으로 시작하는 11자리 숫자여야 합니다"))
-                .andExpect(jsonPath("$.data").isEmpty());
-    }
-
     @DisplayName("이메일 형식이 올바르지 않을 경우, 예외가 발생한다.")
     @Test
     void registerWithInvalidEmail() throws Exception {

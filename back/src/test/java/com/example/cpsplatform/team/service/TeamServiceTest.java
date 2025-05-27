@@ -18,6 +18,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.encoder.CryptoService;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
@@ -193,6 +194,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
 
@@ -240,6 +242,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
 
@@ -284,6 +287,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
 
@@ -369,6 +373,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
 
@@ -389,6 +394,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("004")
                 .section(Section.HIGH_NORMAL)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team1);
 
@@ -434,7 +440,14 @@ class TeamServiceTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("이팀").winner(false).leader(member).teamNumber("003").contest(contest).build();
+        Team team = Team.builder()
+                .name("이팀")
+                .winner(false)
+                .leader(member)
+                .teamNumber("003")
+                .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .build();
         teamRepository.save(team);
 
         String loginId2 = "kim";
@@ -536,6 +549,7 @@ class TeamServiceTest {
                 .leader(member)
                 .teamNumber("001")
                 .contest(contest17)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team17);
         memberTeamRepository.save(MemberTeam.of(member, team17));

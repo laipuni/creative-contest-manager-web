@@ -198,7 +198,7 @@ class CertificateControllerTest {
         //when
         //then
         mockMvc.perform(
-                        get("/api/certificate/{certificateId}",1L)
+                        get("/api/certificates/{certificateId}",1L)
                                 .with(csrf())
                                 .contentType(APPLICATION_JSON)
                 )

@@ -114,7 +114,7 @@ class ContestProblemAdminServiceIntegrationTest {
         List<FileSource> fileSourceList = List.of(fileSource1, fileSource2);
         FileSources fileSources = FileSources.of(fileSourceList);
 
-        String expectedPath = "/contest/16회/공통/3번/";
+        String expectedPath = "/contest/16회/공통/3번";
 
         // when
         contestProblemAdminService.addContestProblem(addProblemDto, fileSources);
@@ -338,7 +338,7 @@ class ContestProblemAdminServiceIntegrationTest {
         Problem savedProblem = problemRepository.save(problem);
 
         //기존 파일 생성
-        String path = "/contest/16회/공통/1번/";
+        String path = "/contest/16회/공통/1번";
         String originalFilename1 = "기존파일1.pdf";
         String originalFilename2 = "기존파일2.pdf";
 
@@ -395,7 +395,7 @@ class ContestProblemAdminServiceIntegrationTest {
                 FileExtension.PDF,
                 300L
         );
-        String expectedPath = "/contest/16회/고등-일반/2번/";
+        String expectedPath = "/contest/16회/고등-일반/2번";
         FileSources fileSources = FileSources.of(List.of(newFileSource));
 
         //when
@@ -445,7 +445,7 @@ class ContestProblemAdminServiceIntegrationTest {
 
         Problem savedProblem = problemRepository.save(problem);
 
-        String path = "/contest/16회/공통/1번/";
+        String path = "/contest/16회/공통/1번";
 
         //두 개의 파일 생성
         File file1 = File.builder()
@@ -489,7 +489,7 @@ class ContestProblemAdminServiceIntegrationTest {
         //빈 파일 소스 (새 파일 없음)
         FileSources emptyFileSources = FileSources.of(Collections.emptyList());
 
-        String expectedPath = "/contest/16회/공통/1번/";
+        String expectedPath = "/contest/16회/공통/1번";
 
         //when
         contestProblemAdminService.updateContestProblem(updateProblemDto, emptyFileSources);
@@ -563,7 +563,7 @@ class ContestProblemAdminServiceIntegrationTest {
 
         FileSources fileSources = FileSources.of(List.of(newFileSource1, newFileSource2));
 
-        String expectedPath = "/contest/16회/공통/1번/";
+        String expectedPath = "/contest/16회/공통/1번";
 
         // when
         contestProblemAdminService.updateContestProblem(updateProblemDto, fileSources);
@@ -614,7 +614,7 @@ class ContestProblemAdminServiceIntegrationTest {
         Problem savedProblem = problemRepository.save(problem);
 
         //기존 파일 경로
-        String originalPath = "/contest/16회/공통/1번/";
+        String originalPath = "/contest/16회/공통/1번";
 
         //기존 파일 생성
         File file = File.builder()
@@ -655,7 +655,7 @@ class ContestProblemAdminServiceIntegrationTest {
         FileSources fileSources = FileSources.of(List.of(newFileSource));
 
         //경로 변경 (공통/1번 -> 초등-중등/3번)
-        String expectedPath = "/contest/16회/초등-중등/3번/";
+        String expectedPath = "/contest/16회/초등-중등/3번";
 
         //when
         contestProblemAdminService.updateContestProblem(updateProblemDto, fileSources);
@@ -749,7 +749,7 @@ class ContestProblemAdminServiceIntegrationTest {
 
         Problem savedProblem = problemRepository.save(problem);
 
-        String path = "/contest/16회/공통/1번/";
+        String path = "/contest/16회/공통/1번";
 
         //두 개의 파일 생성
         File file1 = File.builder()

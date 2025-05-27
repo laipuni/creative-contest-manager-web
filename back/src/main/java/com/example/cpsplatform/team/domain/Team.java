@@ -3,6 +3,9 @@ package com.example.cpsplatform.team.domain;
 import com.example.cpsplatform.BaseEntity;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.member.domain.Member;
+import com.example.cpsplatform.member.domain.organization.Organization;
+import com.example.cpsplatform.member.domain.organization.school.School;
+import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.problem.domain.Section;
 import jakarta.persistence.*;
 
@@ -41,6 +44,10 @@ public class Team extends BaseEntity {
     private String teamNumber;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Division division;
+
+    @Enumerated(EnumType.STRING)
     private Section section;
 
     @Enumerated(EnumType.STRING)
@@ -53,19 +60,24 @@ public class Team extends BaseEntity {
     @Builder
     private Team(final String name, final Boolean winner, final Member leader,
                  final Contest contest, final String teamNumber, final Section section,
-                 final int finalSubmitCount, final SubmitStatus status){
+                 final Division division,final int finalSubmitCount, final SubmitStatus status){
         this.name = name;
         this.winner = winner;
         this.leader = leader;
         this.contest = contest;
         this.teamNumber = teamNumber;
+        this.division = division;
         this.section = section;
         this.finalSubmitCount = finalSubmitCount;
         this.status = status;
     }
 
     public static Team of(final String name, final Boolean winner, final Member leader,
-                          final Contest contest, final String teamNumber, final Section section){
+                          final Contest contest, final String teamNumber){
+
+        Section section = determineSection(leader);
+        Division division = determineDivision(leader);
+
         return Team.builder()
                 .name(name)
                 .winner(winner)
@@ -73,8 +85,45 @@ public class Team extends BaseEntity {
                 .contest(contest)
                 .teamNumber(teamNumber)
                 .section(section)
+                .division(division)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
+    }
+
+    //팀이 받는 문제 난이도를 팀장을 기준으로 정한다.
+    private static Section determineSection(Member leader) {
+        Organization organization = leader.getOrganization();
+
+        if (organization instanceof School school) {
+            StudentType studentType = school.getStudentType();
+
+            if (studentType == StudentType.ELEMENTARY || studentType == StudentType.MIDDLE) {
+                return Section.ELEMENTARY_MIDDLE;
+            } else if (studentType == StudentType.HIGH) {
+                return Section.HIGH_NORMAL;
+            }
+        }
+        return Section.HIGH_NORMAL;
+    }
+
+    //팀이 받는 부문을 팀장을 기준으로 정한다.
+    private static Division determineDivision(Member leader) {
+        Organization organization = leader.getOrganization();
+
+        if (organization instanceof School school) {
+            StudentType studentType = school.getStudentType();
+            if (studentType.equals(StudentType.ELEMENTARY)) {
+                return Division.ELEMENTARY;
+            } else if (studentType.equals(StudentType.MIDDLE)) {
+                return Division.MIDDLE;
+            } else if (studentType.equals(StudentType.HIGH)) {
+                return Division.HIGH;
+            }else if (studentType.equals(StudentType.COLLEGE)) {
+                return Division.COLLEGE_GENERAL;
+            }
+        }
+
+        return Division.COLLEGE_GENERAL;
     }
 
     public boolean isWinner(){

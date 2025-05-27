@@ -21,6 +21,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import jakarta.transaction.Transactional;
@@ -90,7 +91,7 @@ class ProblemServiceTest {
         LocalDateTime now = LocalDateTime.now();
         Contest contest = Contest.builder()
                 .title("테스트 대회")
-                .season(1)
+                .season(15)
                 .registrationStartAt(now.minusDays(5))
                 .registrationEndAt(now.minusDays(2))
                 .startTime(now.minusHours(1))
@@ -105,6 +106,7 @@ class ProblemServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.ELEMENTARY_MIDDLE)
+                .status(SubmitStatus.TEMPORARY)
                 .build();
         teamRepository.save(team);
 

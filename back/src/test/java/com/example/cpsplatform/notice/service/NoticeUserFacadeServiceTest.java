@@ -13,6 +13,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.notice.domain.Notice;
 import com.example.cpsplatform.notice.repository.NoticeRepository;
+import com.example.cpsplatform.security.encoder.CryptoService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,13 +50,20 @@ class NoticeUserFacadeServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    CryptoService cryptoService;
+
     Notice notice;
     File file;
     @BeforeEach
     @Transactional
     void tearUp(){
         String loginId = "admin";
-        Address address = new Address("street", "city", "zipCode", "detail");
+        Address address = new Address(
+                cryptoService.encryptAES("street"),
+                "city",
+                "zipCode",
+                cryptoService.encryptAES("detail"));
         School school = new School("xx대학교", StudentType.COLLEGE, 4);
         String phoneNumber = "010" + UUID.randomUUID().toString().replaceAll("[^0-9]", "").substring(0, 8);
         Member admin = Member.builder()
@@ -63,10 +71,10 @@ class NoticeUserFacadeServiceTest {
                 .password("1234")
                 .role(Role.ADMIN)
                 .birth(LocalDate.now())
-                .email(loginId + "@email.com")
+                .email(cryptoService.encryptAES(loginId + "@email.com"))
                 .address(address)
                 .gender(Gender.MAN)
-                .phoneNumber(phoneNumber)
+                .phoneNumber(cryptoService.encryptAES(phoneNumber))
                 .name("리더")
                 .organization(school)
                 .build();

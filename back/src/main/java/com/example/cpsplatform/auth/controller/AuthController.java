@@ -1,6 +1,7 @@
 package com.example.cpsplatform.auth.controller;
 
 import com.example.cpsplatform.ApiResponse;
+import com.example.cpsplatform.auth.config.AuthConfig;
 import com.example.cpsplatform.auth.controller.request.ProfileCodeVerifyRequest;
 import com.example.cpsplatform.auth.controller.response.PasswordConfirmResponse;
 import com.example.cpsplatform.auth.controller.response.ProfilePasswordVerifyResponse;
@@ -42,7 +43,7 @@ public class AuthController {
 
     @PostMapping("/api/verify-register-code")
     public ApiResponse<Object> verifyRegisterAuthCode(@Valid @RequestBody AuthCodeVerifyRequest request){
-        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(),"signup_verify");
+        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(), AuthConfig.SIGNUP_VERIFY_AUTH);
         return ApiResponse.ok(null);
     }
 

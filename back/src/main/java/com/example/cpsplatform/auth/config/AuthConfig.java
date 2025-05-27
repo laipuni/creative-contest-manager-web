@@ -24,6 +24,12 @@ import java.util.Map;
 public class AuthConfig {
 
     public static final String REGISTER_AUTH = "register";
+    public static final String FIND_ID_AUTH = "findId";
+    public static final String PASSWORD_AUTH = "password_auth";
+    public static final String SIGNUP_VERIFY_AUTH = "signup_verify";
+    public static final String PROFILE_UPDATE_AUTH = "profile_update";
+    public static final String PROFILE_UPDATE_VERIFY_AUTH = "profile_update_verify";
+
 
     @Autowired
     RedisRepository redisRepository;
@@ -55,12 +61,12 @@ public class AuthConfig {
     @Bean
     public Map<String,AuthCodeStrategy> authCodeStrategy(){
         Map<String, AuthCodeStrategy> strategyMap = new HashMap<>();
-        strategyMap.put("register",new RegisterAuthCodeStrategy());
-        strategyMap.put("findId",new FindIdAuthCodeStrategy());
-        strategyMap.put("password_auth",new PasswordAuthCodeStrategy());
-        strategyMap.put("signup_verify",new SignUpVerifyStrategy());
-        strategyMap.put("profile_update",new ProfileUpdateAuthCodeStrategy());
-        strategyMap.put("profile_update_verify",new ProfileUpdateVerifyStrategy());
+        strategyMap.put(REGISTER_AUTH, new RegisterAuthCodeStrategy());
+        strategyMap.put(FIND_ID_AUTH, new FindIdAuthCodeStrategy());
+        strategyMap.put(PASSWORD_AUTH, new PasswordAuthCodeStrategy());
+        strategyMap.put(SIGNUP_VERIFY_AUTH, new SignUpVerifyStrategy());
+        strategyMap.put(PROFILE_UPDATE_AUTH, new ProfileUpdateAuthCodeStrategy());
+        strategyMap.put(PROFILE_UPDATE_VERIFY_AUTH, new ProfileUpdateVerifyStrategy());
         return strategyMap;
     }
 

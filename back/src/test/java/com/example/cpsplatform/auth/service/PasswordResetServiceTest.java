@@ -65,7 +65,7 @@ class PasswordResetServiceTest {
         //then
         Assertions.assertThatThrownBy(() -> passwordResetService.resetPassword(passwordResetDto))
                 .isInstanceOf(InvalidSessionException.class)
-                .hasMessageMatching("세션이 만료되었습니다.");
+                .hasMessageMatching("세션이 만료되었거나 유효하지 않습니다.");
     }
 
     @DisplayName("비밀번호를 재설정할 때, 비밀번호 재설정과 비밀번호 확인이 일치하지 않으면 예외가 발생한다.")

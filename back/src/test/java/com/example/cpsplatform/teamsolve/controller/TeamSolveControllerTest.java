@@ -208,7 +208,7 @@ class TeamSolveControllerTest {
         GetTeamAnswerResponse response = new GetTeamAnswerResponse(0, SubmitStatus.TEMPORARY,List.of(dto1));
 
         //서비스 모의 설정
-        when(answerSubmitService.getAnswer(anyLong(), anyString(), any(TeamSolveType.class))).thenReturn(response);
+        when(answerSubmitService.getAnswer(anyLong(), anyString(), any())).thenReturn(response);
 
         //When
         //Then
@@ -218,11 +218,11 @@ class TeamSolveControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.teamAnswerList").isArray())
+                .andExpect(jsonPath("$.data.finalSubmitCount").value(0))
+                .andExpect(jsonPath("$.data.status").value("TEMPORARY"))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].teamSolveId").value(1L))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].teamName").value("팀A"))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].section").value("ELEMENTARY_MIDDLE"))
-                .andExpect(jsonPath("$.data.teamAnswerList[0].modifyCount").value(2))
                 .andExpect(jsonPath("$.data.teamAnswerList[0].fileName").value("문제1_1.pdf"));
     }
 

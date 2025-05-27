@@ -1,6 +1,7 @@
 package com.example.cpsplatform.member.controller;
 
 import com.example.cpsplatform.ApiResponse;
+import com.example.cpsplatform.auth.config.AuthConfig;
 import com.example.cpsplatform.auth.controller.request.ProfileCodeSendRequest;
 import com.example.cpsplatform.auth.controller.request.ProfileCodeVerifyRequest;
 import com.example.cpsplatform.auth.controller.request.ProfilePasswordVerifyRequest;
@@ -31,7 +32,7 @@ public class ProfileController {
      */
     @PostMapping("/api/members/profile/send-update-code")
     public ApiResponse<Object> sendProfileUpdateCode(@Valid @RequestBody ProfileCodeSendRequest request){
-        authService.sendAuthCode(request.getRecipient(), request.getSenderType(), request.getStrategyType());
+        authService.sendAuthCode(request.getRecipient(), request.getSenderType(), AuthConfig.PROFILE_UPDATE_AUTH);
         return ApiResponse.ok(null);
     }
 
@@ -42,7 +43,7 @@ public class ProfileController {
      */
     @PostMapping("/api/members/profile/verify-update-code")
     public ApiResponse<Object> sendProfileUpdateCode(@Valid @RequestBody ProfileCodeVerifyRequest request){
-        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(),"profile_update_verify");
+        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(), AuthConfig.PROFILE_UPDATE_VERIFY_AUTH);
         return ApiResponse.ok(null);
     }
 

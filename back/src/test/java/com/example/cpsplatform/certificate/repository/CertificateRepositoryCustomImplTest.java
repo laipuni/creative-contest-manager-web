@@ -19,6 +19,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import jakarta.persistence.EntityManager;
@@ -446,6 +447,7 @@ class CertificateRepositoryCustomImplTest {
                 .winner(false)
                 .leader(leader)
                 .teamNumber(teamNumber)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .contest(contest)
                 .build();
         Team savedTeam = teamRepository.save(team);
@@ -496,6 +498,7 @@ class CertificateRepositoryCustomImplTest {
                 .leader(leader)
                 .teamNumber("001")
                 .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         Team savedTeam = teamRepository.save(team);
 

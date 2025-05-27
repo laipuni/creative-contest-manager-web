@@ -16,6 +16,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -86,8 +87,22 @@ class TeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team1 = Team.builder().name("one").winner(false).teamNumber("001").leader(member).contest(contest).build();
-        Team team2 = Team.builder().name("two").winner(false).teamNumber("002").leader(member).contest(contest).build();
+        Team team1 = Team.builder()
+                .name("one")
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .build();
+        Team team2 = Team.builder()
+                .name("two")
+                .winner(false)
+                .teamNumber("002")
+                .leader(member)
+                .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .build();
         teamRepository.saveAll(List.of(team1, team2));
 
         memberTeamRepository.save(MemberTeam.of(member, team1));
@@ -135,7 +150,14 @@ class TeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("팀 이름")
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .build();
         teamRepository.save(team);
         //when
         Team result = teamRepository.findTeamByContestIdAndLeaderIdWithLock(contest.getId(), member.getLoginId()).get();
@@ -175,7 +197,14 @@ class TeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("팀 이름")
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .contest(contest)
+                .build();
         teamRepository.save(team);
         MemberTeam memberTeam = MemberTeam.builder().team(team).member(member).build();
         memberTeamRepository.save(memberTeam);

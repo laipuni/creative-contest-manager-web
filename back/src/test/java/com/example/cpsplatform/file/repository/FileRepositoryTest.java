@@ -16,9 +16,11 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
+import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -181,7 +183,14 @@ class FileRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("팀 이름")
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .contest(contest)
+                .status(SubmitStatus.TEMPORARY)
+                .build();
         teamRepository.save(team);
 
         Problem problem1 = Problem.builder()
@@ -207,10 +216,12 @@ class FileRepositoryTest {
         TeamSolve teamSolve1 = TeamSolve.builder()
                 .team(team)
                 .problem(problem1)
+                .teamSolveType(TeamSolveType.TEMP)
                 .build();
         TeamSolve teamSolve2 = TeamSolve.builder()
                 .team(team)
                 .problem(problem2)
+                .teamSolveType(TeamSolveType.TEMP)
                 .build();
         teamSolveRepository.saveAll(List.of(teamSolve1, teamSolve2));
 
@@ -276,7 +287,14 @@ class FileRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("팀 이름").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("팀 이름")
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .contest(contest)
+                .status(SubmitStatus.TEMPORARY)
+                .build();
         teamRepository.save(team);
 
         Problem problem = Problem.builder()
@@ -292,6 +310,7 @@ class FileRepositoryTest {
 
         TeamSolve teamSolve = TeamSolve.builder()
                 .team(team)
+                .teamSolveType(TeamSolveType.TEMP)
                 .problem(problem)
                 .build();
         teamSolveRepository.save(teamSolve);

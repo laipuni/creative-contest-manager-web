@@ -68,7 +68,7 @@ class MemberServiceTest {
         String encodedStreet = cryptoService.encryptAES(street);
         String encodedDetail = cryptoService.encryptAES(detail);
         String encodedPhoneNumber = cryptoService.encryptAES(phoneNumber);
-
+        String encodedEmail = cryptoService.encryptAES(email);
 
         //when
         memberService.save(saveDto);
@@ -77,7 +77,7 @@ class MemberServiceTest {
         assertThat(result.get(0)).isNotNull()
                 .extracting("loginId","name",
                         "birth","gender","phoneNumber","email","organization")
-                .containsExactly(loginId,name, birth,gender,encodedPhoneNumber,email,school);
+                .containsExactly(loginId,name, birth,gender,encodedPhoneNumber,encodedEmail,school);
         assertThat(passwordEncoder.matches(password,result.get(0).getPassword())).isTrue();
         assertThat(result.get(0).getAddress()).isNotNull()
                 .extracting("street","city","zipCode","detail")
