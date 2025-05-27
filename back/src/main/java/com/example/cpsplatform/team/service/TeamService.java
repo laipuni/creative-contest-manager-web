@@ -100,6 +100,7 @@ public class TeamService {
         memberTeamRepository.deleteAllByTeamExceptLeader(team, team.getLeader());
         //팀원들의 확인증 제거
         certificateRepository.deleteAllByTeamId(team.getId());
+        certificateRepository.flush();
         //팀장의 확인증 재생성
         createAndSaveCertificate(team,contest,leader);
         //팀원 재생성
