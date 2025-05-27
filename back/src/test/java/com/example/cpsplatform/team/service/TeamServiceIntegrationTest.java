@@ -2,6 +2,7 @@ package com.example.cpsplatform.team.service;
 
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
@@ -13,6 +14,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.encoder.CryptoService;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -35,8 +37,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @SpringBootTest
@@ -188,8 +189,9 @@ class TeamServiceIntegrationTest {
                 .leader(member)
                 .teamNumber("003")
                 .status(SubmitStatus.NOT_SUBMITTED)
-                .contest(contest).
-                build();
+                .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
+                .build();
         teamRepository.save(team);
 
         String loginId2 = "kim";
@@ -297,6 +299,7 @@ class TeamServiceIntegrationTest {
                 .leader(leader)
                 .teamNumber("003")
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -321,4 +324,275 @@ class TeamServiceIntegrationTest {
         List<MemberTeam> memberTeams = memberTeamRepository.findAll();
         assertThat(memberTeams).hasSize(3);
     }
+
+    @DisplayName("팀을 생성할 때, 해당팀에 맞지 않는 부문에 팀원이 있을 경우 예외가 발생한다.")
+    @Test
+    void createTeamWithMismatchElementaryTeammate(){
+        //given
+        String loginId = "elementary";
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx초등학교", StudentType.ELEMENTARY,4);
+        Member elementaryLeader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("elementaryLeader@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01099999999")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        String loginId1 = "college";
+        Address address1 = new Address("street","city","zipCode","detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member notElementaryMember = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("college@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01033334444")
+                .name("사람 이름2")
+                .organization(school1)
+                .build();
+
+        memberRepository.saveAll(List.of(elementaryLeader,notElementaryMember));
+
+        Contest contest = Contest.builder()
+                .title("테스트대회")
+                .season(2025)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        TeamNumber teamNumber = TeamNumber.builder()
+                .lastTeamNumber(0)
+                .contest(contest)
+                .build();
+
+        teamNumberRepository.save(teamNumber);
+
+        TeamCreateDto dto = new TeamCreateDto("초등부 팀", contest.getId(), List.of(notElementaryMember.getLoginId()));
+
+
+        //when
+        //then
+        assertThatThrownBy(()->teamService.createTeam(elementaryLeader.getLoginId(), dto))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageMatching(String.format(
+                        "%s님은 %s에 들어갈 수 없습니다.",
+                        notElementaryMember.getLoginId(), Division.ELEMENTARY.getDescription()
+                ));
+    }
+
+
+    @DisplayName("팀을 생성할 때, 해당팀에 맞지 않는 부문에 팀원이 있을 경우 예외가 발생한다.")
+    @Test
+    void createTeamWithMismatchTeammate(){
+        //given
+        String loginId = "middle";
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx중학교", StudentType.MIDDLE,4);
+        Member middleLeader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("middle@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01099999999")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        String loginId1 = "college";
+        Address address1 = new Address("street","city","zipCode","detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE,4);
+        Member notMiddleMember = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("college@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01033334444")
+                .name("사람 이름2")
+                .organization(school1)
+                .build();
+
+        memberRepository.saveAll(List.of(middleLeader,notMiddleMember));
+
+        Contest contest = Contest.builder()
+                .title("테스트대회")
+                .season(2025)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        TeamNumber teamNumber = TeamNumber.builder()
+                .lastTeamNumber(0)
+                .contest(contest)
+                .build();
+
+        teamNumberRepository.save(teamNumber);
+
+        TeamCreateDto dto = new TeamCreateDto("중등부 팀", contest.getId(), List.of(notMiddleMember.getLoginId()));
+
+        //when
+        //then
+        assertThatThrownBy(()->teamService.createTeam(middleLeader.getLoginId(), dto))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageMatching(String.format(
+                        "%s님은 %s에 들어갈 수 없습니다.",
+                        notMiddleMember.getLoginId(), Division.MIDDLE.getDescription()
+                ));
+    }
+
+    @DisplayName("팀을 생성할 때, 고등부 팀에 대학생이 팀원으로 있으면 예외가 발생한다.")
+    @Test
+    void createTeamWithMismatchHighSchoolTeammate() {
+        //given
+        String loginId = "high";
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx고등학교", StudentType.HIGH, 2);
+        Member highLeader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("high@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01088889999")
+                .name("고등부 리더")
+                .organization(school)
+                .build();
+
+        String loginId1 = "college";
+        Address address1 = new Address("street", "city", "zipCode", "detail");
+        School school1 = new School("xx대학교", StudentType.COLLEGE, 1);
+        Member collegeMember = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("college@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01011112222")
+                .name("대학생")
+                .organization(school1)
+                .build();
+
+        memberRepository.saveAll(List.of(highLeader, collegeMember));
+
+        Contest contest = Contest.builder()
+                .title("테스트대회")
+                .season(2025)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        TeamNumber teamNumber = TeamNumber.builder()
+                .lastTeamNumber(0)
+                .contest(contest)
+                .build();
+
+        teamNumberRepository.save(teamNumber);
+
+        TeamCreateDto dto = new TeamCreateDto("고등부 팀", contest.getId(), List.of(collegeMember.getLoginId()));
+
+        //when
+        //then
+        assertThatThrownBy(() -> teamService.createTeam(highLeader.getLoginId(), dto))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageMatching(String.format(
+                        "%s님은 %s에 들어갈 수 없습니다.",
+                        collegeMember.getLoginId(), Division.HIGH.getDescription()
+                ));
+    }
+
+    @DisplayName("팀을 생성할 때, 대학/일반부 팀에 초등학생이 팀원으로 있으면 예외가 발생한다.")
+    @Test
+    void createTeamWithMismatchCommonDivisionTeammate() {
+        // given
+        String loginId = "college";
+        Address address = new Address("street", "city", "zipCode", "detail");
+        School school = new School("xx대학교", StudentType.COLLEGE, 3);
+        Member collegeLeader = Member.builder()
+                .loginId(loginId)
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("collegeLeader@email.com")
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012345678")
+                .name("대학생 리더")
+                .organization(school)
+                .build();
+
+        String loginId1 = "elementary";
+        Address address1 = new Address("street", "city", "zipCode", "detail");
+        School school1 = new School("xx초등학교", StudentType.ELEMENTARY, 5);
+        Member elementaryMember = Member.builder()
+                .loginId(loginId1)
+                .password(passwordEncoder.encode("1235"))
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email("elementary@email.com")
+                .address(address1)
+                .gender(Gender.MAN)
+                .phoneNumber("01055556666")
+                .name("초등학생")
+                .organization(school1)
+                .build();
+
+        memberRepository.saveAll(List.of(collegeLeader, elementaryMember));
+
+        Contest contest = Contest.builder()
+                .title("테스트대회")
+                .season(2025)
+                .registrationStartAt(LocalDate.now().atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().atStartOfDay())
+                .endTime(LocalDate.now().plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.save(contest);
+
+        TeamNumber teamNumber = TeamNumber.builder()
+                .lastTeamNumber(0)
+                .contest(contest)
+                .build();
+
+        teamNumberRepository.save(teamNumber);
+
+        TeamCreateDto dto = new TeamCreateDto("대학/일반부 팀", contest.getId(), List.of(elementaryMember.getLoginId()));
+
+        //when
+        //then
+        assertThatThrownBy(() -> teamService.createTeam(collegeLeader.getLoginId(), dto))
+                .isInstanceOf(ContestJoinException.class)
+                .hasMessageMatching(String.format(
+                        "%s님은 %s에 들어갈 수 없습니다.",
+                        elementaryMember.getLoginId(), Division.COLLEGE_GENERAL.getDescription()
+                ));
+    }
+
 }
