@@ -23,6 +23,7 @@ import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import jakarta.persistence.EntityManager;
@@ -226,7 +227,7 @@ class ContestAdminServiceTest {
                 .password(passwordEncoder.encode("password"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
-                .email("email@email.com")
+                .email(loginId + "@email.com")
                 .address(address)
                 .gender(Gender.MAN)
                 .phoneNumber("01012341234")
@@ -258,6 +259,7 @@ class ContestAdminServiceTest {
                 .leader(leader)
                 .contest(contest)
                 .teamNumber("003")
+                .status(SubmitStatus.FINAL)
                 .section(Section.ELEMENTARY_MIDDLE)
                 .build();
         teamRepository.save(team);
@@ -268,6 +270,7 @@ class ContestAdminServiceTest {
                 .leader(leader1)
                 .contest(contest)
                 .teamNumber("004")
+                .status(SubmitStatus.FINAL)
                 .section(Section.ELEMENTARY_MIDDLE)
                 .build();
         teamRepository.save(team1);
@@ -548,10 +551,12 @@ class ContestAdminServiceTest {
 
     private Team createAndSaveTeam(Member leader, Contest contest, String teamNumber, boolean isWinner) {
         Team team = Team.builder()
-                .name("팀 이름")
+                .name("팀" + teamNumber)
                 .winner(isWinner)
                 .leader(leader)
                 .teamNumber(teamNumber)
+                .status(SubmitStatus.FINAL)
+                .status(SubmitStatus.FINAL)
                 .contest(contest)
                 .build();
         Team savedTeam = teamRepository.save(team);

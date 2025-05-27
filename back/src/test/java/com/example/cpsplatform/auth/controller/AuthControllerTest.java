@@ -9,6 +9,7 @@ import com.example.cpsplatform.auth.service.dto.PasswordConfirmDto;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.auth.service.RegisterService;
 import com.example.cpsplatform.auth.service.dto.FindIdDto;
+import com.example.cpsplatform.member.service.ProfileService;
 import com.example.cpsplatform.security.config.SecurityConfig;
 import com.example.cpsplatform.security.service.LoginFailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +54,9 @@ class AuthControllerTest {
 
     @MockitoBean
     LoginFailService loginFailService;
+
+    @MockitoBean
+    ProfileService profileService;
 
     @MockitoBean
     RegisterService registerService;

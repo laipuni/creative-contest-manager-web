@@ -14,6 +14,7 @@ import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import jakarta.transaction.Transactional;
@@ -102,7 +103,14 @@ class MemberTeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("one").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("one")
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .contest(contest)
+                .build();
         teamRepository.save(team);
 
         memberTeamRepository.save(MemberTeam.of(member, team));
@@ -164,7 +172,14 @@ class MemberTeamRepositoryTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("one").winner(false).teamNumber("001").leader(leader).contest(contest).build();
+        Team team = Team.builder()
+                .name("one")
+                .winner(false)
+                .teamNumber("001")
+                .leader(leader)
+                .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .build();
         teamRepository.save(team);
 
         memberTeamRepository.save(MemberTeam.of(leader, team));
@@ -238,6 +253,7 @@ class MemberTeamRepositoryTest {
                 .winner(false)
                 .leader(leader)
                 .teamNumber("001")
+                .status(SubmitStatus.TEMPORARY)
                 .contest(contest)
                 .build();
 
@@ -307,6 +323,7 @@ class MemberTeamRepositoryTest {
                 .leader(leader)
                 .teamNumber("001")
                 .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
 
@@ -370,6 +387,7 @@ class MemberTeamRepositoryTest {
                 .leader(leader)
                 .teamNumber("001")
                 .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
         //when
@@ -416,6 +434,7 @@ class MemberTeamRepositoryTest {
                 .leader(leader)
                 .teamNumber("001")
                 .contest(contest)
+                .status(SubmitStatus.TEMPORARY)
                 .build();
         teamRepository.save(team);
 
@@ -470,6 +489,7 @@ class MemberTeamRepositoryTest {
                 .leader(leader)
                 .teamNumber("001")
                 .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
 

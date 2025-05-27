@@ -13,6 +13,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.encoder.CryptoService;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.team.service.dto.MyTeamInfoByContestDto;
@@ -181,7 +182,14 @@ class TeamServiceIntegrationTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("이팀").winner(false).leader(member).teamNumber("003").contest(contest).build();
+        Team team = Team.builder()
+                .name("이팀")
+                .winner(false)
+                .leader(member)
+                .teamNumber("003")
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .contest(contest).
+                build();
         teamRepository.save(team);
 
         String loginId2 = "kim";
@@ -283,7 +291,14 @@ class TeamServiceIntegrationTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("이팀").winner(false).leader(leader).teamNumber("003").contest(contest).build();
+        Team team = Team.builder()
+                .name("이팀")
+                .winner(false)
+                .leader(leader)
+                .teamNumber("003")
+                .contest(contest)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .build();
         teamRepository.save(team);
 
         //미리 팀을 구성

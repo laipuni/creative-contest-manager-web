@@ -101,11 +101,11 @@ class AnswerSubmitServiceTest {
         Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
         member = Member.builder()
-                .loginId("loginId")
+                .loginId("AnswerSubmit")
                 .password(passwordEncoder.encode("1234"))
                 .role(Role.USER)
                 .birth(LocalDate.now())
-                .email("email@email.com")
+                .email("AnswerSubmit@email.com")
                 .address(address)
                 .gender(Gender.MAN)
                 .phoneNumber("01012344321")
@@ -118,7 +118,7 @@ class AnswerSubmitServiceTest {
         //테스트 시간 - 1 ~ 테스트 시간 ~ 테스트 시간 + 1 으로 대회시간 설정
         contest = Contest.builder()
                 .title("테스트 대회")
-                .season(16)
+                .season(100)
                 .registrationStartAt(now.minusDays(3))
                 .registrationEndAt(now.minusDays(1))
                 .startTime(now.minusHours(1))
@@ -145,12 +145,12 @@ class AnswerSubmitServiceTest {
         memberTeamRepository.save(memberTeam);
 
         problem = Problem.builder()
-                .title("문제 제목")
+                .title("테스트 문제 제목")
                 .contest(contest)
                 .section(Section.HIGH_NORMAL)
                 .problemOrder(1)
                 .problemType(ProblemType.CONTEST)
-                .content("문제 설명")
+                .content("테스트 문제 설명")
                 .build();
         problemRepository.save(problem);
 

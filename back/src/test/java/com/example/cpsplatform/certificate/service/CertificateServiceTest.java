@@ -13,6 +13,7 @@ import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.template.exporter.CertificateExporter;
@@ -87,7 +88,14 @@ class CertificateServiceTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("one").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("one")
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .contest(contest)
+                .build();
         teamRepository.save(team);
 
         Certificate certificate = Certificate.builder()
@@ -151,7 +159,14 @@ class CertificateServiceTest {
                 .build();
         contestRepository.save(contest);
 
-        Team team = Team.builder().name("one").winner(false).teamNumber("001").leader(member).contest(contest).build();
+        Team team = Team.builder()
+                .name("one")
+                .winner(false)
+                .teamNumber("001")
+                .leader(member)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .contest(contest)
+                .build();
         teamRepository.save(team);
 
         Certificate certificate = Certificate.builder()

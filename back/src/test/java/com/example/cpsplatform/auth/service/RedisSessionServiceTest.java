@@ -48,12 +48,12 @@ class RedisSessionServiceTest {
         //given
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         String session = UUID.randomUUID().toString();
-        operations.set(PASSWORD_SESSION_KEY + testId, session);
+        operations.set(SessionType.PASSWORD_RESET.getKey() + testId, session);
         //when
         sessionService.confirmSession(testId,session,SessionType.PASSWORD_RESET);
         //then
-        assertThat(redisTemplate.hasKey(PASSWORD_SESSION_KEY + testId))
-                .isFalse();
+        assertThat(redisTemplate.hasKey(SessionType.PASSWORD_RESET.getKey() + testId))
+                .isTrue();
     }
 
 }

@@ -111,8 +111,8 @@ class ProfileServiceTest {
                         profileDto.getName(),
                         profileDto.getBirth(),
                         profileDto.getGender(),
-                        profileDto.getPhoneNumber(),
-                        profileDto.getEmail()
+                        cryptoService.encryptAES(profileDto.getPhoneNumber()),
+                        cryptoService.encryptAES(profileDto.getEmail())
                 );
         Assertions.assertThat(result.getAddress())
                 .extracting("street","city","zipCode","detail")

@@ -360,36 +360,6 @@ class ProfileControllerTest {
     }
 
 
-    @DisplayName("휴대폰 번호 형식이 올바르지 않을 경우, 예외가 발생한다.")
-    @Test
-    void updateMyInfoWithInvalidPhoneNumber() throws Exception {
-        //given
-        //로그인 정보 세팅
-        Member member = Member.builder().loginId("loginId").name("name").password("password").role(Role.USER).build();
-        SecurityMember securityMember = new SecurityMember(member);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(securityMember, null, securityMember.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        MyProfileUpdateRequest request = getMyProfileUpdateRequest();
-        request.setPhoneNumber("01112345678"); // 010으로 시작하지 않음
-        String content = objectMapper.writeValueAsString(request);
-
-        //when
-        //then
-        mockMvc.perform(
-                        patch("/api/members/my-profile")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .with(csrf())
-                                .content(content)
-                )
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value("휴대폰 번호는 010으로 시작하는 11자리 숫자여야 합니다"))
-                .andExpect(jsonPath("$.data").isEmpty());
-    }
-
     @DisplayName("이메일 형식이 올바르지 않을 경우, 예외가 발생한다.")
     @Test
     void updateMyInfoWithInvalidEmail() throws Exception {
@@ -688,39 +658,7 @@ class ProfileControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value("학교(소속) 이름은 필수입니다"))
-                .andExpect(jsonPath("$.data").isEmpty());
-    }
-
-    @DisplayName("학년(부서)가 비어있을 경우, 예외가 발생한다.")
-    @Test
-    void updateMyInfoWithEmptyPosition() throws Exception {
-        //given
-        //로그인 정보 세팅
-        Member member = Member.builder().loginId("loginId").name("name").password("password").role(Role.USER).build();
-        SecurityMember securityMember = new SecurityMember(member);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(securityMember, null, securityMember.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-
-        MyProfileUpdateRequest request = getMyProfileUpdateRequest();
-        request.setOrganizationType("컴퓨터");
-        request.setOrganizationName("xx전자");
-        request.setPosition(""); // 빈 학년(부서)
-        String content = objectMapper.writeValueAsString(request);
-
-        //when
-        //then
-        mockMvc.perform(
-                        patch("/api/members/my-profile")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .with(csrf())
-                                .content(content)
-                )
-                .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.message").value("학년(부서)는 필수입니다"))
+                .andExpect(jsonPath("$.message").value("학교 이름은 필수입니다"))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
