@@ -7,12 +7,14 @@ import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.ContestJoinException;
 import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.organization.Organization;
+import com.example.cpsplatform.member.domain.organization.company.Company;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.policy.TeamJoinEligibilityPolicy;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -60,8 +62,7 @@ public class TeamService {
                 .orElseThrow(() -> new IllegalArgumentException("팀 접수 번호를 생성하는데, 문제가 발생했습니다."));
 
         String teamIdNumber = teamNumber.getNextTeamNumber();
-        Section teamSection = determineSection(leader);
-        Team team = buildTeam(createDto, leader, teamIdNumber, teamSection,contest);
+        Team team = Team.of(createDto.getTeamName(), false, leader, contest, teamIdNumber);
 
         teamRepository.save(team);
         memberTeamRepository.save(MemberTeam.of(leader, team));
@@ -158,6 +159,8 @@ public class TeamService {
                 //추가할려는 팀원이 같은 대회에 다른 팀에 속해있는 경우
                 throw new ContestJoinException(String.format("%s님은 이미 해당 대회에 소속된 팀이 있습니다.",loginId));
             }
+            //초등부/중등부/고등부/대학일반부에 따라 가입이 가능한지 아닌지 검증 함
+            validateMemberDivision(team,member);
             teamJoinEligibilityPolicy.validate(member); //팀에 가입할 정책에 준수하는 유저인가(현재 : 매년 회원가입 정책)
             memberTeams.add(MemberTeam.of(member, team));
             createAndSaveCertificate(team, contest, member);//팀원의 확인증 만들기
@@ -165,38 +168,46 @@ public class TeamService {
         memberTeamRepository.saveAll(memberTeams);
     }
 
+    private void validateMemberDivision(final Team team, final Member member) {
+        Organization organization = member.getOrganization();
+
+        Division teamDivision = team.getDivision();
+        StudentType studentType = null;
+
+        if (organization instanceof School school) {
+            studentType = school.getStudentType();
+
+            Division expectedDivision = switch (studentType) {
+                case ELEMENTARY -> Division.ELEMENTARY;//초등학생은 초등부
+                case MIDDLE -> Division.MIDDLE;//중학생은 중등부
+                case HIGH -> Division.HIGH;//고등학생은 고등부
+                case COLLEGE -> Division.COLLEGE_GENERAL;//대학생은 대학 일반부
+            };
+
+            if (!teamDivision.equals(expectedDivision)) {
+                throw new ContestJoinException(String.format(
+                        "%s님은 %s에 들어갈 수 없습니다.",
+                        member.getLoginId(), teamDivision.getDescription()
+                ));
+            }
+        } else {
+            // 직장인인 경우, 대학일반부만 가능
+            if (!teamDivision.equals(Division.COLLEGE_GENERAL)) {
+                throw new ContestJoinException(String.format(
+                        "%s님은 대학일반부에 들어갈 수 없습니다.",
+                        member.getLoginId()
+                ));
+            }
+        }
+    }
+
+
     private void createAndSaveCertificate(final Team team, final Contest contest, final Member member) {
         //팀원의 확인증 만들어 저장하기
         Certificate certificate = Certificate.createPreliminaryCertificate(UUID.randomUUID().toString(), contest, member, team);
         Certificate save = certificateRepository.save(certificate);
         log.info("[TeamService] {} 대회(id:{}) 참가한 팀(id:{})의 팀원({})의 \"{}\" 확인증을 저장",
                 contest.getTitle(),contest.getId(),team.getId(),member.getLoginId(),save.getTitle());
-    }
-
-    private Section determineSection(Member leader) {
-        Organization organization = leader.getOrganization();
-
-        if (organization instanceof School school) {
-            StudentType studentType = school.getStudentType();
-
-            if (studentType == StudentType.ELEMENTARY || studentType == StudentType.MIDDLE) {
-                return Section.ELEMENTARY_MIDDLE;
-            } else if (studentType == StudentType.HIGH) {
-                return Section.HIGH_NORMAL;
-            }
-        }
-        return Section.HIGH_NORMAL;
-    }
-
-
-    private Team buildTeam(TeamCreateDto createDto, Member leader, String teamIdNumber, Section section, Contest contest) {
-        return Team.of(
-                createDto.getTeamName(),
-                false,
-                leader,
-                contest,
-                teamIdNumber,
-                section);
     }
 
     private void validateTeamSize(List<String> memberIds) {
