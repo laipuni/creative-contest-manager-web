@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.example.cpsplatform.utils.TimeConvertUtils.*;
+
 
 /**
  * 예선 참가확인증, 접수증을 추출하는 구현체
@@ -55,44 +57,13 @@ public class PreliminaryCertificateExporter implements CertificateExporter{
         map.put("teamNumber",team.getTeamNumber());
         map.put("registrationDate",convertDateTimeToString(team.getCreatedAt()));
         map.put("title", contest.getTitle());
-        map.put("date", getContestDateTime(contest));
+        map.put("date", getContestDateTime(contest.getStartTime(),contest.getEndTime()));
         map.put("createdDate",convertDateToString(LocalDate.from(certificate.getCreatedAt())));
         map.put("serialNumber", certificate.getSerialNumber());
         return map;
     }
 
-    private String getContestDateTime(final Contest contest) {
-        //ex)2025년 05월 06일 18:00 ~ 20:00
-        return convertDateToString(LocalDate.from(contest.getStartTime())) + " " + convertTimeToString(contest.getStartTime()) + "~" + convertTimeToString(contest.getEndTime());
-    }
 
-    private String convertDateToString(LocalDate localDate) {
-        //ex)2025년 05월 06일
-        return String.format("%d년 %02d월 %02d일",
-                localDate.getYear(),
-                localDate.getMonthValue(),
-                localDate.getDayOfMonth()
-        );
-    }
-
-    private String convertDateTimeToString(LocalDateTime localDateTime) {
-        //ex)2025년 05월 06일 15:00
-        return String.format("%d년 %02d월 %02d일 %02d:%02d",
-                localDateTime.getYear(),
-                localDateTime.getMonthValue(),
-                localDateTime.getDayOfMonth(),
-                localDateTime.getHour(),
-                localDateTime.getMinute()
-        );
-    }
-
-    private String convertTimeToString(LocalDateTime localDateTime){
-        //ex)18:00
-        return String.format("%02d:%02d",
-                localDateTime.getHour(),
-                localDateTime.getMinute()
-        );
-    }
 }
 
 

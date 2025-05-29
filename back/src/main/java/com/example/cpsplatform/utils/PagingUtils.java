@@ -1,4 +1,4 @@
-package com.example.cpsplatform;
+package com.example.cpsplatform.utils;
 
 /**
  * 페이징에 필요한 시작 페이지와 끝 페이지를 계산하는 유틸리티 클래스입니다.

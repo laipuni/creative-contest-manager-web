@@ -1,8 +1,6 @@
 package com.example.cpsplatform.notice.controller.response;
 
-import com.example.cpsplatform.PagingUtils;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchDto;
-import com.example.cpsplatform.notice.admin.controller.response.NoticeSearchResponse;
+import com.example.cpsplatform.utils.PagingUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

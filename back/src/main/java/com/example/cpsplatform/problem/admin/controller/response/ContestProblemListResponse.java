@@ -1,7 +1,6 @@
 package com.example.cpsplatform.problem.admin.controller.response;
 
-import com.example.cpsplatform.PagingUtils;
-import com.example.cpsplatform.problem.admin.service.ContestProblemAdminService;
+import com.example.cpsplatform.utils.PagingUtils;
 import com.example.cpsplatform.problem.domain.Problem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

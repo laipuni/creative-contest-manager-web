@@ -1,8 +1,6 @@
 package com.example.cpsplatform.notice.admin.controller.response;
 
-import com.example.cpsplatform.PagingUtils;
-import com.example.cpsplatform.certificate.repository.dto.AdminSearchCertificateDto;
-import com.example.cpsplatform.certificate.repository.dto.AdminSearchCertificateResponse;
+import com.example.cpsplatform.utils.PagingUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
