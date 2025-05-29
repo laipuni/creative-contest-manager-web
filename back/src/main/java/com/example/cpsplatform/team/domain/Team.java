@@ -17,8 +17,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "team",uniqueConstraints = {
-    @UniqueConstraint(name = "uk_team_contestid_number",columnNames = {"contest_id", "team_number"}),
-    @UniqueConstraint(name = "uk_contestid_team_name",columnNames = {"name","contest_id"})
+        @UniqueConstraint(name = "uk_team_contestid_number",columnNames = {"contest_id", "team_number"}),
+        @UniqueConstraint(name = "uk_contestid_team_name",columnNames = {"name","contest_id"}),
+        //해당 대회에 팀을 1개 이상 만들 수 없다.
+        @UniqueConstraint(name = "uk_contestid_team_leader",columnNames = {"contest_id","leader_id"})
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Team extends BaseEntity {
