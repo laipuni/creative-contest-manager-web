@@ -10,17 +10,26 @@ import java.time.LocalDateTime;
  */
 public class TimeConvertUtils {
 
+
     /**
      * 대회 시작 시간과 종료 시간을 받아 포맷된 문자열을 반환
      * ex) "2025년 05월 06일 18:00~20:00"
+     * null이 포함된 경우 "미정" 또는 "대회 일정 미정" 반환
      *
      * @param startTime 대회 시작 시간
      * @param endTime   대회 종료 시간
      * @return 포맷된 대회 시간 문자열
      */
-    public static String getContestDateTime(final LocalDateTime startTime, final LocalDateTime endTime) {
-        //ex)2025년 05월 06일 18:00 ~ 20:00
-        return convertDateToString(LocalDate.from(startTime)) + " " + convertTimeToString(startTime) + "~" + convertTimeToString(endTime);
+    public static String getRangeDateTime(final LocalDateTime startTime, final LocalDateTime endTime) {
+        if (startTime == null && endTime == null) {
+            return "일정 미정";
+        }
+
+        String date = (startTime != null) ? convertDateToString(startTime.toLocalDate()) : "";
+        String start = (startTime != null) ? convertTimeToString(startTime) : "미정";
+        String end = (endTime != null) ? convertTimeToString(endTime) : "미정";
+
+        return date + " " + start + "~" + end;
     }
 
     /**
@@ -31,7 +40,7 @@ public class TimeConvertUtils {
      * @return 포맷된 날짜 문자열
      */
     public static String convertDateToString(LocalDate localDate) {
-        //ex)2025년 05월 06일`
+        if (localDate == null) return "날짜 미정";
         return String.format("%d년 %02d월 %02d일",
                 localDate.getYear(),
                 localDate.getMonthValue(),
@@ -47,7 +56,7 @@ public class TimeConvertUtils {
      * @return 포맷된 날짜+시간 문자열
      */
     public static String convertDateTimeToString(LocalDateTime localDateTime) {
-        //ex)2025년 05월 06일 15:00
+        if (localDateTime == null) return "일시 미정";
         return String.format("%d년 %02d월 %02d일 %02d:%02d",
                 localDateTime.getYear(),
                 localDateTime.getMonthValue(),
@@ -65,11 +74,10 @@ public class TimeConvertUtils {
      * @return 포맷된 시간 문자열
      */
     public static String convertTimeToString(LocalDateTime localDateTime){
-        //ex)18:00
+        if (localDateTime == null) return "미정";
         return String.format("%02d:%02d",
                 localDateTime.getHour(),
                 localDateTime.getMinute()
         );
     }
-
 }
