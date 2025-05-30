@@ -52,13 +52,22 @@ public class ContestAdminService {
 
     @Transactional
     public void updateContest(final ContestUpdateDto updateDto) {
+        log.info("{} '{}' 대회(id: {})를 수정했습니다.", ADMIN_CONTEST_LOG, updateDto.getTitle(), updateDto.getContestId());
+
         Contest contest = contestRepository.findById(updateDto.getContestId())
                 .orElseThrow(() -> new IllegalArgumentException("수정할 대회가 존재하지 않습니다."));
+        //본선 내용 수정
+        contest.getFinalContest().update(
+                updateDto.getFinalContestTitle(), updateDto.getFinalContestLocation(),
+                updateDto.getFinalContestStartTime(),updateDto.getFinalContestEndTime()
+        );
 
+        //예선 내용 수정
         contest.updateContest(
                     updateDto.getTitle(), updateDto.getDescription(),updateDto.getSeason(),
                     updateDto.getRegistrationStartAt(),updateDto.getRegistrationEndAt(),
                     updateDto.getContestStartAt(),updateDto.getContestEndAt()
+
         );
 
         log.info("{} '{}' 대회(id: {})를 수정했습니다.", ADMIN_CONTEST_LOG, contest.getTitle(), contest.getId());
@@ -70,7 +79,6 @@ public class ContestAdminService {
                 .orElseThrow(() -> new IllegalArgumentException("삭제할 대회가 존재하지 않습니다."));
         contestRepository.deleteById(deleteDto.getContestId());
         log.info("{} '{}' 대회(id: {})를 삭제했습니다.", ADMIN_CONTEST_LOG, contest.getTitle(), contest.getId());
-
     }
 
     public ContestListResponse searchContestList(final int page) {

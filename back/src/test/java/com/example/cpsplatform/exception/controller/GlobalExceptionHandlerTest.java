@@ -111,7 +111,11 @@ class GlobalExceptionHandlerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(3),
-                now.plusDays(4)
+                now.plusDays(4),
+                "16회 창의력 경진 대회 본선",
+                "대한민국 xxx시 xx호텔 xxx호",
+                now.plusDays(8),
+                now.plusDays(8).plusHours(2)
         );
 
         String content = objectMapper.writeValueAsString(request);

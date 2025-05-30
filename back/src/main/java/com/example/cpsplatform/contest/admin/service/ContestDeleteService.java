@@ -7,6 +7,8 @@ import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.repository.FileRepository;
+import com.example.cpsplatform.finalcontest.FinalContest;
+import com.example.cpsplatform.finalcontest.repository.FinalContestRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Problem;
@@ -41,6 +43,7 @@ public class ContestDeleteService {
     private final FileRepository fileRepository;
     private final MemberTeamRepository memberTeamRepository;
     private final ProblemRepository problemRepository;
+    private final FinalContestRepository finalContestRepository;
     private final EntityManager entityManager;
 
     @Transactional
@@ -55,6 +58,7 @@ public class ContestDeleteService {
         List<Long> problemFileIds = findProblemFileIdsByProblemIds(problemIds);
         List<Long> certificateIds = findCertificateIdsByContestId(contestId);
         Optional<TeamNumber> optionalTeamNumber = findTeamNumberByContestId(contestId);
+        FinalContest finalContest = findFinalContest(contestId);
 
         //deleteAllInBatch()는 영속성 컨텍스트를 무시하고 삭제하기에, 영속성 컨텍스트를 비우고 삭제
         entityManager.flush();
@@ -73,8 +77,21 @@ public class ContestDeleteService {
         //강제하지 않으면 네이티브 쿼리 하드 삭제로 contest가 가장먼저 삭제되는 일이 발생함
         //따라서 참조 무결성 제약조건 위반을 막기 위해 강제함
         deleteContest(contestId);
+        deleteFinalContest(finalContest);
 
         log.info("{} 대회(id:{}) 완전 삭제 프로세스 종료", CONTEST_DELETE_LOG, contestId);
+    }
+
+    private void deleteFinalContest(final FinalContest finalContest) {
+        if(finalContest != null){
+            log.info("{} 본선 대회 정보(id:{}) 삭제", CONTEST_DELETE_LOG,finalContest.getId());
+            finalContestRepository.deleteById(finalContest.getId());
+        }
+    }
+
+    private FinalContest findFinalContest(final Long contestId) {
+        Optional<Contest> contest = contestRepository.findDeletedContestById(contestId);
+        return contest.map(Contest::getFinalContest).orElse(null);
     }
 
     private List<Long> findTeamIdsByContestId(Long contestId) {

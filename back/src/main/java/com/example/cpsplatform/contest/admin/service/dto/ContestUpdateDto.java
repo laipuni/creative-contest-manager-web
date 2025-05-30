@@ -18,5 +18,20 @@ public class ContestUpdateDto {
     private LocalDateTime registrationEndAt;
     private LocalDateTime contestStartAt;
     private LocalDateTime contestEndAt;
+    private String finalContestTitle;
+    private String finalContestLocation;
+    private LocalDateTime finalContestStartTime;
+    private LocalDateTime finalContestEndTime;
 
+
+    public ContestUpdateDto(final Long contestId, final String title, final int season, final String description, final LocalDateTime registrationStartAt, final LocalDateTime registrationEndAt, final LocalDateTime contestStartAt, final LocalDateTime contestEndAt) {
+        this.contestId = contestId;
+        this.title = title;
+        this.season = season;
+        this.description = description;
+        this.registrationStartAt = registrationStartAt;
+        this.registrationEndAt = registrationEndAt;
+        this.contestStartAt = contestStartAt;
+        this.contestEndAt = contestEndAt;
+    }
 }
