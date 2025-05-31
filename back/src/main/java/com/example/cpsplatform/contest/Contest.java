@@ -1,7 +1,9 @@
 package com.example.cpsplatform.contest;
 
 import com.example.cpsplatform.BaseEntity;
+import com.example.cpsplatform.finalcontest.FinalContest;
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -50,9 +52,14 @@ public class Contest extends BaseEntity {
 
     private boolean deleted;
 
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "final_contest_id")
+    private FinalContest finalContest;
+
     @Builder
     private Contest(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
-                   final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime,final boolean deleted) {
+                    final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime,final boolean deleted,
+                    final FinalContest finalContest) {
         this.title = title;
         this.description = description;
         this.season = season;
@@ -61,10 +68,12 @@ public class Contest extends BaseEntity {
         this.startTime = startTime;
         this.endTime = endTime;
         this.deleted = deleted;
+        this.finalContest = finalContest;
     }
 
     public static Contest of(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
-                             final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime){
+                             final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime,
+                             final FinalContest finalContest){
         validRegistrationAt(registrationEndAt,registrationStartAt);
         validStartAndEndAt(startTime, endTime);
 
@@ -76,6 +85,7 @@ public class Contest extends BaseEntity {
                 .registrationEndAt(registrationEndAt)
                 .startTime(startTime)
                 .endTime(endTime)
+                .finalContest(finalContest)
                 .deleted(false)
                 .build();
     }

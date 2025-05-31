@@ -2,8 +2,7 @@ package com.example.cpsplatform.contest.admin.controller.response;
 
 import static com.example.cpsplatform.contest.admin.service.ContestAdminService.CONTEST_PAGE_SIZE;
 
-import com.example.cpsplatform.PagingUtils;
-import com.example.cpsplatform.contest.Contest;
+import com.example.cpsplatform.utils.PagingUtils;
 import com.example.cpsplatform.team.domain.Team;
 import java.util.List;
 import lombok.AllArgsConstructor;

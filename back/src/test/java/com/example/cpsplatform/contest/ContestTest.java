@@ -1,7 +1,6 @@
 package com.example.cpsplatform.contest;
 
-import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
-import jakarta.persistence.Column;
+import com.example.cpsplatform.finalcontest.FinalContest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +28,15 @@ class ContestTest {
 
         //when
         //then
+        FinalContest finalContest = FinalContest.builder()
+                .title("본선 대회")
+                .location("장소")
+                .startTime(now.plusDays(4))
+                .endTime(now.plusDays(5))
+                .build();
+
         Contest contest = Contest.of(title,description,season,registrationStartAt,
-                registrationEndAt,contestStartAt,contestEndAt);
+                registrationEndAt,contestStartAt,contestEndAt,finalContest);
 
         //then
         assertThat(contest)
@@ -54,10 +60,17 @@ class ContestTest {
         LocalDateTime contestStartAt = now.plusDays(4);
         LocalDateTime contestEndAt = now.plusDays(3); //대회 마감시간이 시작보다 앞이도록 설정
 
+        FinalContest finalContest = FinalContest.builder()
+                .title("본선 대회")
+                .location("장소")
+                .startTime(now.plusDays(4))
+                .endTime(now.plusDays(5))
+                .build();
+
         //when
         //then
         assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
-                registrationEndAt,contestStartAt,contestEndAt))
+                registrationEndAt,contestStartAt,contestEndAt,finalContest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
     }
@@ -76,10 +89,17 @@ class ContestTest {
         LocalDateTime contestStartAt = now.plusDays(3);
         LocalDateTime contestEndAt = now.plusDays(4); //대회 마감시간이 시작보다 앞이도록 설정
 
+        FinalContest finalContest = FinalContest.builder()
+                .title("본선 대회")
+                .location("장소")
+                .startTime(now.plusDays(4))
+                .endTime(now.plusDays(5))
+                .build();
+
         //when
         //then
         assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
-                registrationEndAt,contestStartAt,contestEndAt))
+                registrationEndAt,contestStartAt,contestEndAt,finalContest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageMatching("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
     }

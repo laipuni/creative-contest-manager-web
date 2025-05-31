@@ -3,16 +3,15 @@ package com.example.cpsplatform.problem.domain;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.admin.service.dto.ContestCreateDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.finalcontest.FinalContest;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -48,9 +47,18 @@ class ProblemTest {
         LocalDateTime registrationEndAt= now.plusDays(2);
         LocalDateTime contestStartAt = now.plusDays(3);
         LocalDateTime contestEndAt = now.plusDays(4);
+
+        FinalContest finalContest = FinalContest.builder()
+                .title("본선 대회")
+                .location("장소")
+                .startTime(now.plusDays(4))
+                .endTime(now.plusDays(5))
+                .build();
+
         Contest contest = Contest.of(
                 title,description,season,registrationStartAt
-                ,registrationEndAt, contestStartAt,contestEndAt
+                ,registrationEndAt, contestStartAt,contestEndAt,
+                finalContest
         );
 
         contestRepository.save(contest);
@@ -111,9 +119,18 @@ class ProblemTest {
         LocalDateTime registrationEndAt= now.plusDays(2);
         LocalDateTime contestStartAt = now.plusDays(3);
         LocalDateTime contestEndAt = now.plusDays(4);
+
+        FinalContest finalContest = FinalContest.builder()
+                .title("본선 대회")
+                .location("장소")
+                .startTime(now.plusDays(4))
+                .endTime(now.plusDays(5))
+                .build();
+
         Contest contest = Contest.of(
                 title,description,season,registrationStartAt
-                ,registrationEndAt, contestStartAt,contestEndAt
+                ,registrationEndAt, contestStartAt,contestEndAt,
+                finalContest
         );
         //when
         //then

@@ -45,6 +45,7 @@ public class Certificate extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "preliminary_contest_id")
     private Contest contest;
+
     @Builder
     public Certificate(final String serialNumber, final CertificateType certificateType,final String title, final Member member, final Team team, final Contest contest) {
         this.serialNumber = serialNumber;
@@ -82,7 +83,7 @@ public class Certificate extends BaseEntity {
     }
 
     private static String getFinalCertificateTitle(final int season){
-        return String.format("%d회 예선 참가 확인증",season);
+        return String.format("%d회 본선 참가 확인증",season);
     }
 
     public boolean isOwner(final String loginId){

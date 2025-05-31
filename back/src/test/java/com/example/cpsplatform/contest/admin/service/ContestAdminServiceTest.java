@@ -13,6 +13,8 @@ import com.example.cpsplatform.contest.admin.service.dto.ContestUpdateDto;
 import com.example.cpsplatform.contest.admin.service.dto.WinnerTeamsDto;
 import com.example.cpsplatform.contest.repository.ContestRepository;
 import com.example.cpsplatform.exception.DuplicateDataException;
+import com.example.cpsplatform.finalcontest.FinalContest;
+import com.example.cpsplatform.finalcontest.repository.FinalContestRepository;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
@@ -23,22 +25,16 @@ import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +43,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.example.cpsplatform.certificate.domain.CertificateType.FINAL;
+import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -74,6 +70,9 @@ class ContestAdminServiceTest {
 
     @Autowired
     CertificateRepository certificateRepository;
+
+    @Autowired
+    FinalContestRepository finalContestRepository;
 
     @Autowired
     EntityManager entityManager;
@@ -104,6 +103,47 @@ class ContestAdminServiceTest {
                         registrationEndAt,contestStartAt,contestEndAt);
     }
 
+    @DisplayName("예선 대회의 정보와 본선대회의 정보를 받아서 예선,본선 대회를 생성 및 저장한다.")
+    @Test
+    void createContestWithFinalContest(){
+        //given
+        String title = "title";
+        int season = 1;
+        String description ="대회 설명";
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.plusDays(1);
+        LocalDateTime registrationEndAt= now.plusDays(2);
+        LocalDateTime contestStartAt = now.plusDays(3);
+        LocalDateTime contestEndAt = now.plusDays(4);
+        String finalContestTitle = "본선 대회";
+        String finalContestLocation = "대한민국";
+        LocalDateTime finalContestStartTime = now.plusDays(5);
+        LocalDateTime finalContestEndTime = now.plusDays(5).plusHours(2);
+
+        ContestCreateDto contestCreateDto = new ContestCreateDto(title,season,description,
+                registrationStartAt,registrationEndAt,contestStartAt,contestEndAt,
+                finalContestTitle,finalContestLocation,finalContestStartTime,finalContestEndTime
+                );
+        //when
+        contestAdminService.createContest(contestCreateDto);
+        List<Contest> result = contestRepository.findAll();
+        List<FinalContest> finalContests = finalContestRepository.findAll();
+        //then
+        assertThat(result.get(0))
+                .extracting("title", "season", "description", "registrationStartAt", "registrationEndAt",
+                        "startTime","endTime")
+                .containsExactly(title,season,description,registrationStartAt,
+                        registrationEndAt,contestStartAt,contestEndAt);
+        assertThat(finalContests.get(0))
+                .extracting("title", "location", "startTime", "endTime")
+                .containsExactly(
+                        finalContestTitle,
+                        finalContestLocation,
+                        finalContestStartTime,
+                        finalContestEndTime
+                );
+    }
+
     @DisplayName("수정할 대회가 존재하지 않으면 예외가 발생한다.")
     @Test
     void updateContestWithNotExistContest(){
@@ -126,7 +166,71 @@ class ContestAdminServiceTest {
                 .hasMessageMatching("수정할 대회가 존재하지 않습니다.");
     }
 
-    @Transactional
+    @DisplayName("예선 대회와 본선 대회의 정보를 수정한다.")
+    @Test
+    void updateContestWithModifyingFinalContest(){
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        //대회 생성
+        FinalContest finalContest = FinalContest.builder()
+                .title("테스트 본선 대회")
+                .location("대한민국")
+                .startTime(now().plusDays(10))
+                .endTime(now().plusDays(10).plusHours(1))
+                .build();
+
+        Contest contest = Contest.builder()
+                .title("16회 창의력 경진 대회 본선")
+                .description("테스트 대회 설명")
+                .season(16)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().plusHours(1))
+                .startTime(now())
+                .endTime(now().plusHours(2))
+                .finalContest(finalContest)
+                .build();
+
+        contestRepository.save(contest);
+
+        //수정할 예선 대회 정보
+        String updatedTitle = "updatedTitle";
+        int updatedSeason = 2;
+        String updatedDescription ="수정된 대회 설명";
+        LocalDateTime updatedRegistrationStartAt = now.plusDays(2);
+        LocalDateTime updatedRegistrationEndAt= now.plusDays(3);
+        LocalDateTime updatedContestStartAt = now.plusDays(4);
+        LocalDateTime updatedContestEndAt = now.plusDays(5);
+
+        //수정할 본선 대회 정보
+        String finalContestTitle = "수정된 본선 대회 제목";
+        String finalContestLocation = "수정된 장소";
+        LocalDateTime finalContestStartTime = now.plusDays(7);
+        LocalDateTime finalContestEndTime = now.plusDays(7).plusHours(2);
+
+        ContestUpdateDto updateDto = new ContestUpdateDto(contest.getId(),updatedTitle,updatedSeason,updatedDescription,
+                updatedRegistrationStartAt,updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt,
+                finalContestTitle,finalContestLocation,finalContestStartTime,finalContestEndTime);
+        //when
+        contestAdminService.updateContest(updateDto);
+        List<Contest> result = contestRepository.findAll();
+        List<FinalContest> finalContests = finalContestRepository.findAll();
+
+        //then
+        assertThat(result.get(0))
+                .extracting("title", "season", "description", "registrationStartAt", "registrationEndAt",
+                        "startTime","endTime")
+                .containsExactly(updatedTitle,updatedSeason,updatedDescription,
+                        updatedRegistrationStartAt,updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt);
+        assertThat(finalContests.get(0))
+                .extracting("title", "location", "startTime", "endTime")
+                .containsExactly(
+                        finalContestTitle,
+                        finalContestLocation,
+                        finalContestStartTime,
+                        finalContestEndTime
+                );
+    }
+
     @DisplayName("수정할 대회가 존재하지 않으면 예외가 발생한다.")
     @Test
     void updateContest(){
@@ -137,6 +241,12 @@ class ContestAdminServiceTest {
         LocalDateTime contestStartAt = now.plusDays(3);
         LocalDateTime contestEndAt = now.plusDays(4);
         //contest 생성
+        FinalContest finalContest = FinalContest.builder()
+                .title("테스트 본선 대회")
+                .location("대한민국")
+                .startTime(now().plusDays(10))
+                .endTime(now().plusDays(10).plusHours(1))
+                .build();
         Contest contest = Contest.builder()
                 .title("title")
                 .description("대회 설명")
@@ -145,6 +255,7 @@ class ContestAdminServiceTest {
                 .registrationEndAt(registrationEndAt)
                 .startTime(contestStartAt)
                 .endTime(contestEndAt)
+                .finalContest(finalContest)
                 .build();
 
         contestRepository.save(contest);
@@ -171,7 +282,6 @@ class ContestAdminServiceTest {
                         updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt);
     }
 
-    @Transactional
     @DisplayName("대회를 임시 삭제한다.")
     @Test
     void deleteContest(){
@@ -182,6 +292,12 @@ class ContestAdminServiceTest {
         LocalDateTime contestStartAt = now.plusDays(3);
         LocalDateTime contestEndAt = now.plusDays(4);
         //contest 생성
+        FinalContest finalContest = FinalContest.builder()
+                .title("테스트 본선 대회")
+                .location("대한민국")
+                .startTime(now().plusDays(10))
+                .endTime(now().plusDays(10).plusHours(1))
+                .build();
         Contest contest = Contest.builder()
                 .title("title")
                 .description("대회 설명")
@@ -190,6 +306,7 @@ class ContestAdminServiceTest {
                 .registrationEndAt(registrationEndAt)
                 .startTime(contestStartAt)
                 .endTime(contestEndAt)
+                .finalContest(finalContest)
                 .build();
 
         contestRepository.save(contest);
@@ -203,7 +320,6 @@ class ContestAdminServiceTest {
         assertThat(result).hasSize(0);
     }
 
-    @Transactional
     @DisplayName("우승팀을 지정하면 해당 팀들의 winner가 true로 변경된다.")
     @Test
     void selectWinnerTeams(){
@@ -260,6 +376,7 @@ class ContestAdminServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .status(SubmitStatus.FINAL)
+                .division(Division.ELEMENTARY)
                 .section(Section.ELEMENTARY_MIDDLE)
                 .build();
         teamRepository.save(team);
@@ -272,6 +389,7 @@ class ContestAdminServiceTest {
                 .teamNumber("004")
                 .status(SubmitStatus.FINAL)
                 .section(Section.ELEMENTARY_MIDDLE)
+                .division(Division.ELEMENTARY)
                 .build();
         teamRepository.save(team1);
 
@@ -556,7 +674,7 @@ class ContestAdminServiceTest {
                 .leader(leader)
                 .teamNumber(teamNumber)
                 .status(SubmitStatus.FINAL)
-                .status(SubmitStatus.FINAL)
+                .division(Division.ELEMENTARY)
                 .contest(contest)
                 .build();
         Team savedTeam = teamRepository.save(team);

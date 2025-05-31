@@ -11,10 +11,13 @@ import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
+import com.example.cpsplatform.memberteam.domain.MemberTeam;
+import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.domain.SecurityMember;
 import com.example.cpsplatform.team.controller.request.CreateTeamRequest;
 import com.example.cpsplatform.team.controller.request.UpdateTeamRequest;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -41,8 +44,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static com.example.cpsplatform.exception.controller.dto.UniqueConstraintMessage.CONTEST_SEASON;
-import static com.example.cpsplatform.exception.controller.dto.UniqueConstraintMessage.TEAM_NAME;
+import static com.example.cpsplatform.exception.controller.dto.UniqueConstraintMessage.*;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -78,6 +80,10 @@ class GlobalExceptionHandlerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    MemberTeamRepository memberTeamRepository;
+
+
     @WithMockUser(roles = {"ADMIN"})
     @DisplayName("중복된 시즌의 대회를 저장할 때, 유니크 제약 위반으로 예외가 발생한다.")
     @Test
@@ -105,7 +111,11 @@ class GlobalExceptionHandlerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(3),
-                now.plusDays(4)
+                now.plusDays(4),
+                "16회 창의력 경진 대회 본선",
+                "대한민국 xxx시 xx호텔 xxx호",
+                now.plusDays(8),
+                now.plusDays(8).plusHours(2)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -352,6 +362,139 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.message").value(TEAM_NAME.getMessage()))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @WithMockUser
+    @DisplayName("해당 대회에 팀을 1개 이상 생성할 경우 예외가 발생한다.")
+    @Test
+    void DuplicateCreatingTeam() throws Exception {
+        //given
+        Address address = new Address("street","city","zipCode","detail");
+        School school = new School("xx대학교", StudentType.COLLEGE,4);
+        String email = "register@email.com";
+        Member leader = Member.builder()
+                .loginId("member")
+                .password("1234")
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email(email)
+                .address(address)
+                .gender(Gender.MAN)
+                .phoneNumber("01012341234")
+                .name("사람 이름")
+                .organization(school)
+                .build();
+
+        Address teammate1Address = new Address("street","city","zipCode","detail");
+        School teammate1School = new School("xx대학교", StudentType.COLLEGE,4);
+        String teammate1Email = "another@email.com";
+        Member teammate1 = Member.builder() // 첫번째 팀의 팀원
+                .loginId("teammate1")
+                .password("1234")
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email(teammate1Email)
+                .address(teammate1Address)
+                .gender(Gender.MAN)
+                .phoneNumber("01011112222")
+                .name("이름")
+                .organization(teammate1School)
+                .build();
+
+        Address teammate2Address = new Address("street","city","zipCode","detail");
+        School teammate2School = new School("xx대학교", StudentType.COLLEGE,4);
+        String teammate2Email = "teammate@email.com";
+        Member teammate2 = Member.builder() // 두번째 팀의 팀원
+                .loginId("teammate2")
+                .password("1234")
+                .role(Role.USER)
+                .birth(LocalDate.now())
+                .email(teammate2Email)
+                .address(teammate2Address)
+                .gender(Gender.MAN)
+                .phoneNumber("01033334444")
+                .name("이름")
+                .organization(teammate2School)
+                .build();
+        memberRepository.saveAll(List.of(leader,teammate1,teammate2));
+
+        Contest contest = Contest.builder()
+                .title("테스트 대회")
+                .description("테스트 대회 설명")
+                .season(16)
+                .registrationStartAt(now().minusDays(5))
+                .registrationEndAt(now().plusDays(1))
+                .startTime(now().plusDays(2))
+                .endTime(now().plusDays(3))
+                .build();
+        contestRepository.save(contest);
+
+        TeamNumber teamNumber = TeamNumber.builder()
+                .contest(contest)
+                .lastTeamNumber(1)
+                .build();
+
+        teamNumberRepository.save(teamNumber);
+
+        String teamName = "A팀";
+        Team team = Team.builder()
+                .contest(contest)
+                .teamNumber("001")
+                .name(teamName)
+                .leader(leader)
+                .division(Division.COLLEGE_GENERAL)
+                .section(Section.ELEMENTARY_MIDDLE)
+                .winner(false)
+                .status(SubmitStatus.NOT_SUBMITTED)
+                .finalSubmitCount(0)
+                .build();
+
+        teamRepository.save(team);
+
+        MemberTeam memberTeam1 = MemberTeam.builder() // 리더의 MemberTeam
+                .team(team)
+                .member(leader)
+                .build();
+
+        MemberTeam memberTeam2 = MemberTeam.builder() // 팀원1의 MemberTeam
+                .team(team)
+                .member(teammate1)
+                .build();
+
+        memberTeamRepository.saveAll(List.of(memberTeam1,memberTeam2));
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //팀 생성 요청 로그인 정보 세팅
+        SecurityMember securityMember = new SecurityMember(leader);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                securityMember, null, securityMember.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        //두번째, 팀 생성 dto 생성
+        String team2Name = "중복생성팀";
+        CreateTeamRequest request = new CreateTeamRequest(
+                team2Name,contest.getId(),List.of(teammate2.getLoginId())
+        );
+
+        String content = objectMapper.writeValueAsString(request);
+
+        //when
+        //then
+        mockMvc.perform(
+                        post("/api/teams")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(content)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value(TEAM_LEADER.getMessage()))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 

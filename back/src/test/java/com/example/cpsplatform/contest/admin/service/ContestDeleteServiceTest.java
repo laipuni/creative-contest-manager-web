@@ -9,6 +9,8 @@ import com.example.cpsplatform.file.domain.File;
 import com.example.cpsplatform.file.domain.FileExtension;
 import com.example.cpsplatform.file.domain.FileType;
 import com.example.cpsplatform.file.repository.FileRepository;
+import com.example.cpsplatform.finalcontest.FinalContest;
+import com.example.cpsplatform.finalcontest.repository.FinalContestRepository;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
@@ -22,6 +24,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -31,7 +34,6 @@ import com.example.cpsplatform.teamsolve.domain.TeamSolve;
 import com.example.cpsplatform.teamsolve.domain.TeamSolveType;
 import com.example.cpsplatform.teamsolve.repository.TeamSolveRepository;
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,6 @@ import java.util.UUID;
 
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ContestDeleteServiceTest {
@@ -78,6 +79,9 @@ class ContestDeleteServiceTest {
     ProblemRepository problemRepository;
 
     @Autowired
+    FinalContestRepository finalContestRepository;
+
+    @Autowired
     EntityManager entityManager;
 
     @Autowired
@@ -105,6 +109,13 @@ class ContestDeleteServiceTest {
         memberRepository.save(member);
 
         //대회 생성
+        FinalContest finalContest = FinalContest.builder()
+                .title("테스트 본선 대회")
+                .location("대한민국")
+                .startTime(now().plusDays(10))
+                .endTime(now().plusDays(10).plusHours(1))
+                .build();
+
         contest = Contest.builder()
                 .title("테스트 대회")
                 .description("테스트 대회 설명")
@@ -114,7 +125,9 @@ class ContestDeleteServiceTest {
                 .startTime(now())
                 .endTime(now().plusDays(1))
                 .deleted(true)
+                .finalContest(finalContest)
                 .build();
+
         contestRepository.save(contest);
 
         //대회 접수 번호 생성
@@ -159,6 +172,7 @@ class ContestDeleteServiceTest {
                 .winner(false)
                 .leader(member)
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .section(Section.ELEMENTARY_MIDDLE)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .finalSubmitCount(0)
@@ -224,8 +238,7 @@ class ContestDeleteServiceTest {
         assertThat(fileRepository.findAll()).isEmpty();
         assertThat(memberTeamRepository.findAll()).isEmpty();
         assertThat(problemRepository.findAll()).isEmpty();
-
-
+        assertThat(finalContestRepository.findAll()).isEmpty();
     }
 
 }

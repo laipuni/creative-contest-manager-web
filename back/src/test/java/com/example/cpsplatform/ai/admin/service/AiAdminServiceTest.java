@@ -73,4 +73,24 @@ class AiAdminServiceTest {
         }
     }
 
+    @Test
+    @DisplayName("AI 서버에서 응답을 정상적으로 받는지 확인한다.(열린문제)")
+    void getAnswerFromFaqChatBot() {
+        // given
+        QuestionGenerateRequest request = new QuestionGenerateRequest("열린문제", "상", 2);
+
+        // when
+        List<QuestionDto> result = aiAdminService.generateQuestions(request);
+
+        // then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        for (QuestionDto dto : result) {
+            System.out.println(dto.getQuestion());
+            System.out.println(dto.getAnswer());
+            assertNotNull(dto.getQuestion());
+            assertEquals("정답: 없음", dto.getAnswer());
+        }
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.example.cpsplatform;
+package com.example.cpsplatform.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.StringUtils;

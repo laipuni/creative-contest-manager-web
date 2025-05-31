@@ -1,9 +1,6 @@
 package com.example.cpsplatform.member.admin.controller.response;
 
-import com.example.cpsplatform.PagingUtils;
-import com.example.cpsplatform.certificate.controller.response.UserSearchCertificateDto;
-import com.example.cpsplatform.certificate.controller.response.UserSearchCertificateResponse;
-import com.example.cpsplatform.member.admin.controller.response.MemberInfoListDto;
+import com.example.cpsplatform.utils.PagingUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
