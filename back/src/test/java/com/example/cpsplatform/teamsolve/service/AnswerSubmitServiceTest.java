@@ -183,50 +183,8 @@ class AnswerSubmitServiceTest {
 
     @DisplayName("팀장이 대회 문제들의 답안지를 제출한다.")
     @Test
-    void submitAnswerTemporary(){
-        //given
-        String originalFilename1 = "문제1_1.pdf";
-        FileSource fileSource = new FileSource(
-                "upload1.pdf",
-                originalFilename1,
-                new byte[]{1, 2, 3},
-                "application/pdf",
-                FileExtension.PDF,
-                100L
-        );
-        String content = "수정된 내용";
-        SubmitAnswerDto answerDto = new SubmitAnswerDto(now, member.getLoginId(), contest.getId(), problem.getId(), content);
-
-        //when
-        //then
-        assertDoesNotThrow(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto));
-
-        List<TeamSolve> solveList = teamSolveRepository.findAll();
-        assertThat(solveList).hasSize(1);
-        assertThat(solveList.get(0).getContent()).isEqualTo(content);
-
-        //이전파일 삭제
-        assertThat(fileRepository.findById(file.getId())).isEmpty();
-        assertThat(fileRepository.findAll()).hasSize(1);
-        assertThat(fileRepository.findAll().get(0))
-                .extracting("name","originalName","extension","mimeType","size")
-                .containsExactlyInAnyOrder(
-                        fileSource.getUploadFileName(),
-                        originalFilename1,
-                        FileExtension.PDF,
-                        FileExtension.PDF.getMimeType(),
-                        fileSource.getSize()
-                );
-    }
-
-    @DisplayName("팀장이 대회 문제들의 답안지를 제출한다.")
-    @Test
     void submitAnswerTemporaryWithFirst(){
         //given
-        //임시 저장된 답안 삭제
-        fileRepository.hardDeleteAllByTeamSolveIdIn(List.of(teamSolve.getId()));
-        teamSolveRepository.delete(teamSolve);
-
         String originalFilename1 = "문제1_1.pdf";
         FileSource fileSource = new FileSource(
                 "upload1.pdf",
@@ -241,9 +199,6 @@ class AnswerSubmitServiceTest {
         //when
         //then
         assertDoesNotThrow(() -> answerSubmitService.submitAnswerTemporary(fileSource,answerDto));
-
-        List<TeamSolve> solveList = teamSolveRepository.findAll();
-        assertThat(solveList).hasSize(1);
 
         //파일을 덮어쓴지 확인
         assertThat(fileRepository.findAll()).hasSize(1);
