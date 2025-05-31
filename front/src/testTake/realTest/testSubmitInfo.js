@@ -136,12 +136,11 @@ const TestSubmitInfo = () => {
                                 )}
                                 <div className="registerInfo-bot-buttonbox">
                                     <div onClick={(e)=>handleValidationContest(false)} className="registerInfo-bot-button"
-                                         style={{cursor: 'pointer', padding: '27px 5px'}}>
+                                         style={{cursor: 'pointer'}}>
                                         문제풀기
                                     </div>
                                     <div onClick={(e)=>handleValidationContest(true)} className="registerInfo-bot-button"
                                          style={{cursor: 'pointer'}}>
-                                        <img src={rocket} alt="rocket" className="submit-rocket-img"/>
                                         최종 제출
                                     </div>
                                 </div>
