@@ -24,7 +24,7 @@
     align-items: center;
     padding: 0px 22px;
     width: 100%;
-    height: 30%;
+    height: 20%;
     background: rgba(0, 0, 0, 0.02);
     border-bottom: 1px solid #DDE1E6;
 }
@@ -51,7 +51,7 @@
 .main-header-menu-item-text {
     font-family: 'Roboto', serif;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 10px;
     line-height: 100%;
     color: #21272A;
     white-space: nowrap;
@@ -112,38 +112,13 @@
     /* Icon Container */
 
     margin: 0;
-    width: 15%;
-    height: 35%;
+    width: 80%;
+    height: 25%;
     object-fit: contain;
     /* Inside auto layout */
     flex: none;
     order: 0;
     flex-grow: 0;
-
-}
-
-.main-logo-text {
-    /* Creative Problem Solving Festival */
-
-    margin: 0;
-    width: 95%;
-    height: fit-content;
-
-    font-family: 'Roboto', serif;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 20px;
-    line-height: 110%;
-    /* or 22px */
-
-    /* CoolGray/60 */
-    color: #697077;
-
-
-    /* Inside auto layout */
-    flex: none;
-    order: 1;
-    flex-grow: 1;
 
 }
 
@@ -192,12 +167,11 @@
     width: fit-content;
     height: fit-content;
     text-decoration: none;
-    font-family: 'BMHanna', serif;
     font-style: normal;
     font-weight: 400;
-    font-size: 22px;
-    line-height: 110%;
-    /* or 26px */
+    font-size: 14px;
+    margin-top: 20px;
+    line-height: 0%;
 
     color: #21272A;
 
@@ -211,9 +185,9 @@
 
 .main-header-bot-circle {
 
-    width: 5px;
-    height: 5px;
-
+    width: 2px;
+    height: 2px;
+    margin-top: 20px;
     background: #21272A;
 
     /* Inside auto layout */
@@ -224,10 +198,10 @@
 .main-header-line {
 
     margin: 0 auto;
-    width: 75%;
+    width: 100%;
     height: 0px;
 
-    border: 1px solid rgba(0, 0, 0, 0.43);
+    border: 1px solid rgba(0, 0, 0, 0.13);
 
     /* Inside auto layout */
     flex: none;
@@ -238,7 +212,7 @@
 .main-header-user-welcome {
     display: flex;
     align-items: center;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     color: #555;
     gap: 6px;
     width: 85%;
