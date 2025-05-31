@@ -8,6 +8,7 @@ import info from "../styles/images/main_profile_certificate.png"
 import practice from "../styles/images/main_practice_test.png"
 import big_logo from "../styles/images/main_big_picture.png"
 import {Link} from "react-router-dom";
+import MainBento from "./mainBento";
 const Main = () => {
 
     useEffect(() => {
@@ -17,8 +18,10 @@ const Main = () => {
         <div className="main-page-container">
             <div className="main-content-container">
                 <MainHeader />
-                <div className="main-content">
-                    <div className="main-content-bento">
+                <div className="main-bento-container">
+                    <MainBento />
+                </div>
+                    {/*<div className="main-content-bento">
                         <div className="bento-top">
                             <Link to="/register/info" className="bento-top-content">
                                 <div className="bento-content-textbox">
@@ -84,8 +87,7 @@ const Main = () => {
                                 <img src={big_logo} alt="big_logo" className="main-image"/>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </div>*/}
             </div>
         </div>
     );
