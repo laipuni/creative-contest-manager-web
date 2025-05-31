@@ -72,7 +72,7 @@ class ContestTest {
         assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
                 registrationEndAt,contestStartAt,contestEndAt,finalContest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
+                .hasMessageMatching("대회 종료 시간은 대회 시작 시간 이후여야 합니다.");
     }
 
     @Transactional
@@ -101,7 +101,7 @@ class ContestTest {
         assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
                 registrationEndAt,contestStartAt,contestEndAt,finalContest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
+                .hasMessageMatching("접수 종료 시간은 접수 시작 시간 이후여야 합니다.");
     }
 
     @Transactional
@@ -213,7 +213,7 @@ class ContestTest {
                 updatedTitle,updatedDescription,updatedSeason,updatedRegistrationStartAt,
                 updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
+                .hasMessageMatching("대회 종료 시간은 대회 시작 시간 이후여야 합니다.");
 
     }
 
@@ -253,7 +253,7 @@ class ContestTest {
                 updatedTitle,updatedDescription,updatedSeason,updatedRegistrationStartAt,
                 updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
+                .hasMessageMatching("접수 종료 시간은 접수 시작 시간 이후여야 합니다.");
     }
 
 
