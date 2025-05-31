@@ -1,0 +1,116 @@
+.cps-wrapper {
+    margin: 0 auto;
+    padding: 80px;
+    display: flex;
+    flex-direction: row;
+}
+
+.cps-slider {
+    position: relative;
+    width: 700px;
+    height: 600px;
+    overflow: hidden;
+}
+
+.cps-slide-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cps-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    width: 50%;
+    height: fit-content;
+    padding: 0px 10px;
+}
+
+.cps-small { font-size: 14px; color: lightgray; text-align: left; }
+.cps-title { font-size: 36px; margin: 5px 0; text-align: left; line-height: 100%}
+.cps-desc { font-size: 11px; line-height: 1.4; text-align: left; color: lightgray}
+
+.cps-controls {
+    position: absolute;
+    top: 0px;
+    right: 3px;
+    display: flex;
+    gap: 5px;
+}
+.cps-controls button {
+    background: darkgray;
+    color: white;
+    border: none;
+    font-size: 12px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.cps-categories {
+    width: 500px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cps-category-row {
+    display: flex;
+    height: 200px;
+}
+
+.cps-category-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.cps-category-row:nth-child(1) .cps-cat-box {
+    background: orange;
+}
+/* 두 번째 박스: 기본 주황색 */
+.cps-category-row:nth-child(2) .cps-cat-box {
+    background: #f7931e;
+}
+/* 세 번째 박스: 더 진한 주황색 */
+.cps-category-row:nth-child(3) .cps-cat-box {
+    background: darkorange;
+}
+
+.cps-category-row:hover .cps-cat-sub,
+.cps-category-row:hover .cps-cat-title {
+    color: #ffffff;
+}
+.cps-cat-box {
+    width: 50%;
+    position: relative;
+    flex: 1;
+    background: #f7931e;
+    color: #fff;
+    padding: 30px 30px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.cps-cat-box::after {
+    content: "";
+    position: absolute;
+    width: 20px; height: 20px;
+    background: #f7931e;
+    transform: rotate(45deg);
+}
+.cps-tail-left::after { top: 20px; left: -10px; }
+.cps-tail-right::after { top: 20px; right: -10px; }
+.cps-tail-bottom::after { bottom: -10px; left: calc(50% - 10px); }
+
+.cps-cat-sub { text-align: left; font-size: 12px; opacity: 0.8; color: saddlebrown; line-height: 100%;}
+.cps-cat-title { text-align: left; font-size: 28px; margin-top: 0px; color: black; line-height: 50%;}
+.cps-cat-text { text-align: left; font-size: 13px; white-space: pre-wrap; margin-top: 40px; color: antiquewhite }
+
+.cps-cat-image {
+    width: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
