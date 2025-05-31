@@ -14,7 +14,7 @@ const Sidebar = () => {
                       className={`sidebar-text ${location.pathname.startsWith("/community/notice") ? "active" : ""}`}>공지사항</Link>
             </div>
             <div className="sidebar-underline"></div>
-            <p className="sidebar-title">시험 정보</p>
+            <p className="sidebar-title">대회 정보</p>
             <div className="sidebar-content">
                 <Link to="/test/info" className={`sidebar-text ${location.pathname === "/test/info" ? "active" : ""}`}>
                     대회참가 안내
