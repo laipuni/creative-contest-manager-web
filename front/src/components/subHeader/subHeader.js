@@ -9,7 +9,6 @@ const SubHeader = () => {
         <div className="main-header-container" style={{height: 'fit-content'}}>
             <div className="main-header-top" style={{height: '35px'}}>
                 <Link to="/" className="sub-header-logo">
-                    <img src={logo} alt="logo" className="main-logo-image" style={{width: '34px', height: '30px'}}/>
                     <p className="main-logo-text"
                        style={{fontSize: 10, width:'fit-content'}}>Creative Problem<br />Solving Festival</p>
                 </Link>
