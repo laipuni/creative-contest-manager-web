@@ -75,7 +75,7 @@ const QnA = () => {
                     <Sidebar/>
                     <div className="testInfo-main-container">
                         <CategoryLogo logoTitle={"챗봇 QnA"} imgSrc={supportLogo}
-                                      backgroundColor={'linear-gradient(90deg, #4000FF 0%, #EFFD85 100%)'}/>
+                                     />
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
                                 <p className="registerInfo-top-title">QnA</p>
