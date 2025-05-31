@@ -94,13 +94,6 @@
     text-decoration: none;
 }
 
-.cps-cat-box::after {
-    content: "";
-    position: absolute;
-    width: 20px; height: 20px;
-    background: #f7931e;
-    transform: rotate(45deg);
-}
 .cps-tail-left::after { top: 20px; left: -10px; }
 .cps-tail-right::after { top: 20px; right: -10px; }
 .cps-tail-bottom::after { bottom: -10px; left: calc(50% - 10px); }
