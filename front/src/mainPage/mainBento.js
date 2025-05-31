@@ -6,6 +6,7 @@ import image1 from "../styles/images/block2_img.jpg"
 import image2 from "../styles/images/block3_img.jpg"
 import image3 from "../styles/images/block4_img.jpg"
 import "./mainBento.css"
+import {Link} from "react-router-dom";
 
 const slides = [
     {
@@ -85,11 +86,30 @@ export default function MainBento() {
                 {categories.map((cat, i) => (
                     <div key={i} className={`cps-category-row ${i % 2 === 0 ? 'normal' : 'reverse'}`}>
                         {/* 텍스트 박스 */}
-                        <div className={`cps-cat-box cps-tail-${cat.tail}`}>
-                            <p className="cps-cat-sub">{cat.subtitle}</p>
-                            <h3 className="cps-cat-title">{cat.title}</h3>
-                            <p className="cps-cat-text">{cat.text}</p>
-                        </div>
+                        { i === 0 ? (
+                            <Link to="/test/info" className={`cps-cat-box cps-tail-${cat.tail}`}>
+                                <p className="cps-cat-sub">{cat.subtitle}</p>
+                                <h3 className="cps-cat-title">{cat.title}</h3>
+                                <p className="cps-cat-text">{cat.text}</p>
+                            </Link>
+                        ) : i === 1 ? (
+                            <div
+                                className={`cps-cat-box cps-tail-${cat.tail}`}
+                                onClick={() => alert("준비 중입니다")}
+                                style={{ cursor: "pointer" }}
+                            >
+                                <p className="cps-cat-sub">{cat.subtitle}</p>
+                                <h3 className="cps-cat-title">{cat.title}</h3>
+                                <p className="cps-cat-text">{cat.text}</p>
+                            </div>
+                        ) : (
+                            <Link to="/register/info" className={`cps-cat-box cps-tail-${cat.tail}`}>
+                                <p className="cps-cat-sub">{cat.subtitle}</p>
+                                <h3 className="cps-cat-title">{cat.title}</h3>
+                                <p className="cps-cat-text">{cat.text}</p>
+                            </Link>
+                        )}
+
                         {/* 이미지 부분 */}
                         <div
                             className="cps-cat-image"

@@ -91,6 +91,7 @@
     padding: 30px 30px;
     overflow: hidden;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .cps-cat-box::after {
