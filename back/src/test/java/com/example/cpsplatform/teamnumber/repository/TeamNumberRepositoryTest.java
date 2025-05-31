@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.example.cpsplatform.certificate.repository.CertificateRepository;
 import com.example.cpsplatform.contest.Contest;
 import com.example.cpsplatform.contest.repository.ContestRepository;
+import com.example.cpsplatform.finalcontest.repository.FinalContestRepository;
 import com.example.cpsplatform.member.domain.Address;
 import com.example.cpsplatform.member.domain.Gender;
 import com.example.cpsplatform.member.domain.Member;
@@ -61,6 +62,9 @@ class TeamNumberRepositoryTest {
     @Autowired
     CertificateRepository certificateRepository;
 
+    @Autowired
+    FinalContestRepository finalContestRepository;
+
     private Long contestId;
 
     @BeforeEach
@@ -87,6 +91,7 @@ class TeamNumberRepositoryTest {
         memberTeamRepository.deleteAllInBatch();
         certificateRepository.deleteAllInBatch();
         teamRepository.deleteAllInBatch();
+        finalContestRepository.deleteAllInBatch();
         contestRepository.deleteAllInBatch();
 
     }

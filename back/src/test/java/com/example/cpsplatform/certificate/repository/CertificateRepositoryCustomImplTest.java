@@ -19,6 +19,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -448,6 +449,7 @@ class CertificateRepositoryCustomImplTest {
                 .leader(leader)
                 .teamNumber(teamNumber)
                 .status(SubmitStatus.NOT_SUBMITTED)
+                .division(Division.COLLEGE_GENERAL)
                 .contest(contest)
                 .build();
         Team savedTeam = teamRepository.save(team);
@@ -498,6 +500,7 @@ class CertificateRepositoryCustomImplTest {
                 .leader(leader)
                 .teamNumber("001")
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         Team savedTeam = teamRepository.save(team);

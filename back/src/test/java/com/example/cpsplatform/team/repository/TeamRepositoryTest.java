@@ -16,6 +16,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import java.time.LocalDate;
@@ -77,22 +78,32 @@ class TeamRepositoryTest {
 
         memberRepository.save(member);
 
-        Contest contest = Contest.builder()
+        Contest contest1 = Contest.builder()
                 .title("테스트대회")
-                .season(2025)
+                .season(16)
                 .registrationStartAt(LocalDate.now().atStartOfDay())
                 .registrationEndAt(LocalDate.now().plusDays(5).atStartOfDay())
                 .startTime(LocalDate.now().atStartOfDay())
                 .endTime(LocalDate.now().plusDays(7).atStartOfDay())
                 .build();
-        contestRepository.save(contest);
+
+        Contest contest2 = Contest.builder()
+                .title("테스트대회")
+                .season(17)
+                .registrationStartAt(LocalDate.now().plusYears(1).atStartOfDay())
+                .registrationEndAt(LocalDate.now().plusYears(1).plusDays(5).atStartOfDay())
+                .startTime(LocalDate.now().plusYears(1).atStartOfDay())
+                .endTime(LocalDate.now().plusYears(1).plusDays(7).atStartOfDay())
+                .build();
+        contestRepository.saveAll(List.of(contest1,contest2));
 
         Team team1 = Team.builder()
                 .name("one")
                 .winner(false)
                 .teamNumber("001")
                 .leader(member)
-                .contest(contest)
+                .contest(contest1)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         Team team2 = Team.builder()
@@ -100,13 +111,16 @@ class TeamRepositoryTest {
                 .winner(false)
                 .teamNumber("002")
                 .leader(member)
-                .contest(contest)
+                .contest(contest2)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.saveAll(List.of(team1, team2));
 
-        memberTeamRepository.save(MemberTeam.of(member, team1));
-        memberTeamRepository.save(MemberTeam.of(member, team2));
+        memberTeamRepository.saveAll(List.of(
+                MemberTeam.of(member, team1),
+                MemberTeam.of(member, team2)
+        ));
 
         // when
         List<Team> result = teamRepository.findTeamByMemberLoginId("yi");
@@ -156,6 +170,7 @@ class TeamRepositoryTest {
                 .teamNumber("001")
                 .leader(member)
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -203,6 +218,7 @@ class TeamRepositoryTest {
                 .winner(false)
                 .teamNumber("001")
                 .leader(member)
+                .division(Division.COLLEGE_GENERAL)
                 .contest(contest)
                 .build();
         teamRepository.save(team);

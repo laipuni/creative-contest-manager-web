@@ -18,6 +18,7 @@ import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.security.encoder.CryptoService;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -194,6 +195,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -242,6 +244,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -287,6 +290,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -373,6 +377,7 @@ class TeamServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.HIGH_NORMAL)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -391,9 +396,10 @@ class TeamServiceTest {
                 .name("two")
                 .winner(false)
                 .leader(member)
-                .contest(contest)
+                .contest(contest1)
                 .teamNumber("004")
                 .section(Section.HIGH_NORMAL)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team1);
@@ -446,6 +452,7 @@ class TeamServiceTest {
                 .leader(member)
                 .teamNumber("003")
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -549,6 +556,7 @@ class TeamServiceTest {
                 .leader(member)
                 .teamNumber("001")
                 .contest(contest17)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team17);

@@ -22,6 +22,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
 import com.example.cpsplatform.teamsolve.domain.TeamSolve;
@@ -129,6 +130,7 @@ class AnswerSubmitServiceDeadLockTest {
                 .winner(false)
                 .name("팀 이름")
                 .section(Section.HIGH_NORMAL)
+                .division(Division.COLLEGE_GENERAL)
                 .build();
         teamRepository.save(team);
 

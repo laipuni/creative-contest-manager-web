@@ -17,6 +17,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -123,6 +124,7 @@ class FileRepositoryCustomImplTest {
                 .teamNumber("001")
                 .finalSubmitCount(0)
                 .status(SubmitStatus.FINAL)
+                .division(Division.COLLEGE_GENERAL)
                 .leader(member)
                 .contest(contest)
                 .build();
@@ -228,6 +230,7 @@ class FileRepositoryCustomImplTest {
                 .finalSubmitCount(0)
                 .status(SubmitStatus.FINAL)
                 .leader(member)
+                .division(Division.COLLEGE_GENERAL)
                 .contest(contest)
                 .build();
         teamRepository.save(team);

@@ -216,6 +216,7 @@ class GlobalExceptionHandlerTest {
                 .leader(member)
                 .section(Section.ELEMENTARY_MIDDLE)
                 .winner(false)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .finalSubmitCount(0)
                 .build();
@@ -314,6 +315,7 @@ class GlobalExceptionHandlerTest {
                 .leader(member)
                 .section(Section.ELEMENTARY_MIDDLE)
                 .winner(false)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .finalSubmitCount(0)
                 .build();
@@ -326,6 +328,7 @@ class GlobalExceptionHandlerTest {
                 .leader(another)
                 .section(Section.ELEMENTARY_MIDDLE)
                 .winner(false)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .finalSubmitCount(0)
                 .build();

@@ -14,6 +14,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -92,6 +93,7 @@ class ContestJoinServiceTest {
                 .teamNumber("001")
                 .leader(leader)
                 .status(SubmitStatus.NOT_SUBMITTED)
+                .division(Division.COLLEGE_GENERAL)
                 .contest(contest)
                 .build();
 
@@ -190,6 +192,7 @@ class ContestJoinServiceTest {
                 .winner(false)
                 .leader(leader)
                 .teamNumber("001")
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .contest(contest)
                 .build();
