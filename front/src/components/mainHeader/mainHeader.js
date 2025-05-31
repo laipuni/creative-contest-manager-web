@@ -7,7 +7,7 @@ import apiClient from "../../templates/apiClient";
 import axios from "axios";
 import {FaUser} from "react-icons/fa";
 import mainLogo from '../../styles/images/logo.gif'
-const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
+const MainHeader = ({underbarWidth = "99.9%", isProfile = 'false'}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("isAuthenticated"));
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
     const [userName, setUserName] = useState(null);
