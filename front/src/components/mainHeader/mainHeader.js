@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom'
 import apiClient from "../../templates/apiClient";
 import axios from "axios";
 import {FaUser} from "react-icons/fa";
-const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
+import mainLogo from '../../styles/images/logo.gif'
+const MainHeader = ({underbarWidth = "99.9%", isProfile = 'false'}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem("isAuthenticated"));
     const [isAdmin, setIsAdmin] = useState(localStorage.getItem("isAdmin"));
     const [userName, setUserName] = useState(null);
@@ -104,8 +105,7 @@ const MainHeader = ({underbarWidth = "75%", isProfile = 'false'}) => {
             {isProfile === 'false' && <>
                 <div className="main-header-bot">
                     <Link to="/" className="main-header-logo">
-                        <img src={logo} alt="logo" className="main-logo-image"/>
-                        <p className="main-logo-text">Creative Problem<br/>Solving Festival</p>
+                        <img src={mainLogo} alt="logo" className="main-logo-image"/>
                     </Link>
                     <div className="main-header-bot-right">
                         <div className="main-header-bot-textbox">

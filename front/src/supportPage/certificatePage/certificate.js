@@ -61,7 +61,6 @@ const Certificate = () => {
                         <CategoryLogo
                             logoTitle={"증명서 발급"}
                             imgSrc={supportLogo}
-                            backgroundColor={'linear-gradient(90deg, #4000FF 0%, #EFFD85 100%)'}
                         />
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
