@@ -23,6 +23,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -114,6 +115,7 @@ class FileAccessServiceTest {
                 .teamNumber("001")
                 .leader(member)
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);
@@ -211,6 +213,7 @@ class FileAccessServiceTest {
                 .teamNumber("001")
                 .leader(member)
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .build();
         teamRepository.save(team);

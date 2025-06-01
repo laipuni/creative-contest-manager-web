@@ -49,6 +49,13 @@
 
 }
 
+.main-bento-container {
+    display: flex;
+    width: 100%;
+    background: #e8f0f6 url('../styles/images/crossword.png') repeat;
+    background-size: contain;
+}
+
 .main-content-bento {
     /* 🍱 Bento */
 

@@ -174,7 +174,7 @@ const TestSubmit = () => {
                         <button className="registerInfo-bot-button"
                                 onClick={handleSubmitAnswer}
                                 style={{cursor: "pointer", alignSelf: "center"}}>
-                            <img src={rocket} alt='rocket' className="submit-rocket-img"/>저장하기
+                           저장
                         </button>
                     </div>
                 </div>

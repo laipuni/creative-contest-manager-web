@@ -1,89 +1,79 @@
 .sidebar-container {
-    /* Sidebar */
+    width: 200px;
+    background: white;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    font-family: 'Noto Sans KR', sans-serif;
+}
 
-    box-sizing: border-box;
+/* 상단 파란 헤더 */
+.sidebar-header {
+    background:  #1C57C0 url('../../styles/images/60-lines.png');
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
 
-    /* Auto layout */
+.sidebar-main-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.sidebar-sub-title {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.3;
+}
+
+/* 카테고리 섹션 */
+.sidebar-section {
+    border-bottom: 1px solid #eee;
+}
+
+.sidebar-category {
+    padding: 15px 20px;
+    background: #f9f9f9;
+    font-weight: bold;
+    font-size: 15px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 15px 15px;
-    gap: 25px;
 
-    width: 12%;
-    height: fit-content;
-
-    background: rgba(95, 164, 255, 0.09);
-    border: 1px solid rgba(0, 0, 0, 0.29);
-    border-radius: 16px;
-
+    align-items: center;
+    transition: background 0.2s;
 }
 
 
-.sidebar-title {
-    /* 시험 정보 */
-
-    width: 100%;
-    height: fit-content;
-    font-family: 'BMHanna';
-    font-weight: 540;
-    font-size: 25px;
-    line-height: 0%;
-    /* identical to box height, or 40px */
-    text-align: left;
-
-    color: #000000;
-
-
-
-}
-
-.sidebar-content {
-    /* Frame 15 */
-
-    /* Auto layout */
+.sidebar-sub-content {
+    background: #ffffff;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 0px;
-    gap: 20px;
-
-    width: fit-content;
-    height: fit-content;
-
-
-
+    padding: 5px 25px 15px;
 }
 
 .sidebar-text {
-    width: fit-content;
-    height: fit-content;
-
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 500;
-    font-size: 13px;
-    line-height: 110%;
-    /* or 22px */
-
-    color: black;
+    text-align: left;
+    padding: 8px 10px;
     text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    transition: color 0.2s;
+}
 
-
+.sidebar-text:hover {
+    color: #1C57C0;
 }
 
 .sidebar-text.active {
-    color: #0004FF;
+    color: #1C57C0;
     font-weight: bold;
 }
 
-.sidebar-underline {
-    /* Line 2 */
+/* 화살표 */
+.arrow {
+    font-size: 12px;
+    transition: transform 0.2s ease-in-out;
+}
 
-    width: 100%;
-    height: 0px;
-
-    border: 1px solid rgba(0, 0, 0, 0.43);
-
+.arrow.open {
+    transform: rotate(180deg);
 }

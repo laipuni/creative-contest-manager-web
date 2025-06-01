@@ -11,7 +11,7 @@
     width: 100%;
     height: fit-content;
 
-    background: linear-gradient(90deg, #0095FF 0%, #85F5FD 100%);
+    background: linear-gradient(to bottom, #5FA4FF, #EAF3FF);
 
     /* Inside auto layout */
     flex: none;
@@ -50,12 +50,12 @@
     width: 100%;
     height: fit-content;
     text-align: left;
-    font-family: 'BMHanna';
+    font-family: 'Noto Sans KR';
     font-style: normal;
-    font-weight: 400;
+    font-weight: bold;
     font-size: 50px;
     line-height: 0%;
-    color: #FFFFFF;
+    color: black;
 
 
     /* Inside auto layout */
@@ -72,15 +72,15 @@
     width: 100%;
     height: fit-content;
 
-    font-family: 'BMHanna';
+    font-family: 'Noto Sans KR';
     font-style: normal;
     text-align: left;
     font-weight: 400;
-    font-size: 15px;
+    font-size: 13px;
     line-height: 110%;
     /* identical to box height, or 22px */
 
-    color: #FFFFFF;
+    color: #555;
 
 
     /* Inside auto layout */

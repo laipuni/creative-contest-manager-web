@@ -14,6 +14,7 @@ import com.example.cpsplatform.member.domain.organization.school.StudentType;
 import com.example.cpsplatform.member.repository.MemberRepository;
 import com.example.cpsplatform.memberteam.domain.MemberTeam;
 import com.example.cpsplatform.memberteam.repository.MemberTeamRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -149,6 +150,7 @@ class CertificateAdminServiceTest {
                 .leader(leader)
                 .status(SubmitStatus.NOT_SUBMITTED)
                 .teamNumber("001")
+                .division(Division.COLLEGE_GENERAL)
                 .contest(contest)
                 .build();
         teamRepository.save(team);
@@ -209,6 +211,7 @@ class CertificateAdminServiceTest {
                 .leader(leader)
                 .teamNumber("001")
                 .status(SubmitStatus.NOT_SUBMITTED)
+                .division(Division.COLLEGE_GENERAL)
                 .contest(contest)
                 .build();
         teamRepository.save(team);

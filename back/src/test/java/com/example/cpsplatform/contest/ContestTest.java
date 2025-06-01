@@ -72,7 +72,7 @@ class ContestTest {
         assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
                 registrationEndAt,contestStartAt,contestEndAt,finalContest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
+                .hasMessageMatching("대회 종료 시간은 대회 시작 시간 이후여야 합니다.");
     }
 
     @Transactional
@@ -101,7 +101,36 @@ class ContestTest {
         assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
                 registrationEndAt,contestStartAt,contestEndAt,finalContest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
+                .hasMessageMatching("접수 종료 시간은 접수 시작 시간 이후여야 합니다.");
+    }
+
+    @Transactional
+    @DisplayName("대회를 생성할 때, 점수 마감 시간이 대회 시작 시간보다 앞일 경우 예외가 발생한다.")
+    @Test
+    void createContestWithRegistrationEndAfterStartTime(){
+        //given
+        String title = "title";
+        int season = 1;
+        String description ="대회 설명";
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime registrationStartAt = now.minusDays(2);
+        LocalDateTime registrationEndAt= now.minusDays(1);
+        LocalDateTime contestStartAt = now.minusDays(2);
+        LocalDateTime contestEndAt = now.plusDays(4); //대회 마감시간이 시작보다 앞이도록 설정
+
+        FinalContest finalContest = FinalContest.builder()
+                .title("본선 대회")
+                .location("장소")
+                .startTime(now.plusDays(4))
+                .endTime(now.plusDays(5))
+                .build();
+
+        //when
+        //then
+        assertThatThrownBy(() -> Contest.of(title,description,season,registrationStartAt,
+                registrationEndAt,contestStartAt,contestEndAt,finalContest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageMatching("대회 시작 시간은 접수 마감 시간 이후여야 합니다.");
     }
 
     @Transactional
@@ -184,7 +213,7 @@ class ContestTest {
                 updatedTitle,updatedDescription,updatedSeason,updatedRegistrationStartAt,
                 updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
+                .hasMessageMatching("대회 종료 시간은 대회 시작 시간 이후여야 합니다.");
 
     }
 
@@ -224,7 +253,7 @@ class ContestTest {
                 updatedTitle,updatedDescription,updatedSeason,updatedRegistrationStartAt,
                 updatedRegistrationEndAt,updatedContestStartAt,updatedContestEndAt))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageMatching("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
+                .hasMessageMatching("접수 종료 시간은 접수 시작 시간 이후여야 합니다.");
     }
 
 

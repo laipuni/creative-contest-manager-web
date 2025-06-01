@@ -87,15 +87,12 @@ const RegisterInfo = () => {
                                 <div className="registerInfo-bot-buttonbox">
                                     {teamInfo &&
                                         <Link to="/register/team" state={{teamInfo}} className="registerInfo-bot-button" >
-                                            <div className="submit-rocket-img" style={{width:'0px'}}/>
-                                            수정하기</Link>}
+                                            수정</Link>}
                                     <Link to="/register/team" className="registerInfo-bot-button">
-                                        <img src={rocket} alt='rocket' className="submit-rocket-img"/>
-                                        접수하기</Link>
+                                        접수</Link>
                                     {teamInfo &&
                                         <div onClick={handleDeleteTeam} className="registerInfo-bot-button" style={{cursor: 'pointer'}}>
-                                            <div className="submit-rocket-img" style={{width: '0px'}}/>
-                                            삭제하기</div>}
+                                            삭제</div>}
                                 </div>
                             </div>
                         </div>

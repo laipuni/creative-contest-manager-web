@@ -17,6 +17,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -99,6 +100,7 @@ class TeamSolveRepositoryCustomImplTest {
                 .contest(contest)
                 .status(SubmitStatus.TEMPORARY)
                 .finalSubmitCount(0)
+                .division(Division.COLLEGE_GENERAL)
                 .build();
         teamRepository.save(team);
 
@@ -221,6 +223,7 @@ class TeamSolveRepositoryCustomImplTest {
                 .leader(member)
                 .contest(contest)
                 .status(SubmitStatus.TEMPORARY)
+                .division(Division.COLLEGE_GENERAL)
                 .finalSubmitCount(0)
                 .build();
         teamRepository.save(team);
