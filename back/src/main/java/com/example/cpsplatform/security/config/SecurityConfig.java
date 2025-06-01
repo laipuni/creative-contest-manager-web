@@ -34,6 +34,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 
@@ -44,6 +45,29 @@ public class SecurityConfig {
     public static final String USERNAME_VALUE = "username";
     public static final String PASSWORD_VALUE = "password";
 
+    //인증 없이 접근 할 수 있는 Post api
+    public static final String[] PERMIT_ALL_POST = {
+            "/api/auth/**",
+            "/api/v1/members",
+            "/api/v1/send-auth-code",
+            "/api/v1/find-id",
+            "/api/password-reset/request","/api/password-reset/confirm",
+            "/api/password-reset",
+            "/api/verify-register-code"
+    };
+
+    //인증 없이 접근 할 수 있는 Get api
+    public static final String[] PERMIT_ALL_GET = {
+            "/video/**",
+            "/images/**",
+            "/api/auth/**",
+            "/api/check-id",
+            "/api/csrf",
+            "/api/contests/latest",
+            "/api/notices/search", // 공지사항 검색 api
+            "/api/notices/*", // 공지사항 상세 api
+            "/api/notices/*/files/*/download" // 공지사항 첨부 파일 다운로드
+    };
 
     @Autowired
     MemberRepository memberRepository;
@@ -60,32 +84,34 @@ public class SecurityConfig {
                         csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // session 기반이라 csrf 체크를 해야함
                                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 )
-                .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers("/api/admin/**").hasRole("ADMIN"); // 어드민만 접근가능
-                })
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .httpBasic(AbstractHttpConfigurer::disable) //
-                .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터로 로그인해서 삭제
+                .httpBasic(AbstractHttpConfigurer::disable) //JSON 기반 필터 로그인이므로 삭제
+                .formLogin(AbstractHttpConfigurer::disable) //JSON 기반 필터 로그인이므로 삭제
                 .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
-                                    "/video/**","/images/**","/api/auth/**", "/api/check-id", "/api/csrf", "/api/contests/latest"
+                    authorize
+                            .requestMatchers(
+                                    "/api/admin/**" // 관리자만 접근가능
+                            )
+                            .hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, //인증 없이 접근 가능한 Get 메소드 url
+                                    PERMIT_ALL_GET
                             ).permitAll()
                             .requestMatchers(HttpMethod.POST,//인증 없이 접근 가능한 Post 메소드 url
-                                    "/api/auth/**", "/api/v1/members","/api/v1/send-auth-code",
-                                    "/api/v1/find-id", "/api/password-reset/request","/api/password-reset/confirm",
-                                    "/api/password-reset","/api/verify-register-code"
+                                    PERMIT_ALL_POST
                             ).permitAll()
-                            .anyRequest().authenticated(); // 나머지 url은 인증 필요
+                            .anyRequest().authenticated(); //나머지 url은 인증 필요
                 })
-                .sessionManagement( session -> session.maximumSessions(1) //동시에 접속 가능한 세션의 수는 1명
-                        .maxSessionsPreventsLogin(true) //현재 로그인 유저는 유지, 새로운 로그인은 차단
+                .sessionManagement(session ->
+                        session
+                                .maximumSessions(1) //동시에 접속 가능한 세션의 수는 1명
+                                .maxSessionsPreventsLogin(true) //현재 로그인 유저는 유지, 새로운 로그인은 차단
                 )
                 .logout(logout ->
                         logout.logoutUrl("/api/auth/logout") // 로그아웃 api url
                                 .logoutSuccessHandler((request, response, authentication) -> {
                                     response.setStatus(HttpServletResponse.SC_OK);
                                 })
-                                .invalidateHttpSession(true)  // 로그아웃 시 저장된 세션을
+                                .invalidateHttpSession(true)  // 로그아웃 시 저장된 세션 제거
                                 .deleteCookies(COOKIES_JSESSIONID) // 브라우저 세션 제거
                 )
                 .exceptionHandling(
@@ -93,8 +119,10 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(authenticationEntryPoint())
                                 .accessDeniedHandler(accessDeniedHandler())
                 )
-                //폼 로그인 필터 앞에 필터를 추가
-                .addFilterBefore(jsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        jsonUsernamePasswordAuthenticationFilter(), //폼 로그인 필터 앞에 필터를 추가
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .build();
     }
 
@@ -133,6 +161,7 @@ public class SecurityConfig {
         return new CustomUserDetailService(memberRepository);
     }
 
+    //Json기반 로그인 필터
     public AbstractAuthenticationProcessingFilter jsonUsernamePasswordAuthenticationFilter(){
         JsonUsernamePasswordAuthenticationFilter jsonLoginFilter = new JsonUsernamePasswordAuthenticationFilter(
                 "/api/auth/login" //api 로그인 주소 설정
