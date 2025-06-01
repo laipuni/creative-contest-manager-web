@@ -14,20 +14,24 @@ import {useNavigate} from "react-router-dom";
 const TestManage = () => {
     // --- 일정 관련 상태 ---
     const [latestContest, setLatestContest] = useState({ season: 15, contestId: null });
-    const [registerStartDate, setRegisterStartDate] = useState('');
-    const [registerEndDate, setRegisterEndDate] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [prelimRegisterStartDate, setPrelimRegisterStartDate] = useState('');
+    const [prelimRegisterEndDate, setPrelimRegisterEndDate] = useState('');
+    const [prelimStartDate, setPrelimStartDate] = useState('');
+    const [prelimEndDate, setPrelimEndDate] = useState('');
+    const [tempFinalStartDate, setTempFinalStartDate] = useState('');
+    const [tempFinalEndDate, setTempFinalEndDate] = useState('');
+    const [finalLocation, setFinalLocation] = useState('');
+
     const [isDateModalOpen, setIsDateModalOpen] = useState(false);
-    const [tempRegisterStartDate, setTempRegisterStartDate] = useState(null);
-    const [tempRegisterEndDate, setTempRegisterEndDate] = useState(null);
-    const [tempStartDate, setTempStartDate] = useState(null);
-    const [tempEndDate, setTempEndDate] = useState(null);
+    const [tempPrelimRegisterStartDate, setTempPrelimRegisterStartDate] = useState(null);
+    const [tempPrelimRegisterEndDate, setTempPrelimRegisterEndDate] = useState(null);
+    const [tempPrelimStartDate, setTempPrelimStartDate] = useState(null);
+    const [tempPrelimEndDate, setTempPrelimEndDate] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
     const [isProblemEdited, setIsProblemEdited] = useState(false);
     const [showRestoreModal, setShowRestoreModal] = useState(false); // 대회 복구 안내
-    const [season, setSeason] = useState(null);
+    const [prelimSeason, setPrelimSeason] = useState(null);
     const [showDeletedListModal, setShowDeletedListModal] = useState(false);
 
     // --- 문제 등록 관련 상태 ---
@@ -52,20 +56,20 @@ const TestManage = () => {
                    setLatestContest({
                        season: res.data.data.season,
                        contestId: res.data.data.contestId});
-                    setRegisterStartDate(formatDate(new Date(res.data.data.registrationStartAt)));
-                    setRegisterEndDate(formatDate(new Date(res.data.data.registrationEndAt)));
-                    setStartDate(formatDate(new Date(res.data.data.startTime)));
-                    setEndDate(formatDate(new Date(res.data.data.endTime)));
+                    setPrelimRegisterStartDate(formatDate(new Date(res.data.data.registrationStartAt)));
+                    setPrelimRegisterEndDate(formatDate(new Date(res.data.data.registrationEndAt)));
+                    setPrelimStartDate(formatDate(new Date(res.data.data.startTime)));
+                    setPrelimEndDate(formatDate(new Date(res.data.data.endTime)));
                 }
                 else{
                     setLatestContest({
                         season: 15,
                         contestId: null
                     })
-                    setRegisterStartDate(null);
-                    setRegisterEndDate(null);
-                    setStartDate(null);
-                    setEndDate(null);
+                    setPrelimRegisterStartDate(null);
+                    setPrelimRegisterEndDate(null);
+                    setPrelimStartDate(null);
+                    setPrelimEndDate(null);
                 }
             })
             .catch((err)=>{
@@ -103,21 +107,24 @@ const TestManage = () => {
 
     //일정 등록
     const handleRegisterDate = () => {
-        if (!tempRegisterStartDate || !tempRegisterEndDate || !tempStartDate || !tempEndDate) {
+        if (!tempPrelimRegisterStartDate || !tempPrelimRegisterEndDate || !tempPrelimStartDate || !tempPrelimEndDate) {
             alert('접수 기간과 대회 기간의 시작일과 종료일을 모두 선택해주세요.');
             return;
         }
 
-        if ((tempRegisterStartDate > tempRegisterEndDate) || (tempStartDate > tempEndDate)) {
+        if ((tempPrelimRegisterStartDate > tempPrelimRegisterEndDate) || (tempPrelimStartDate > tempPrelimEndDate)) {
             alert('종료일이 시작일보다 빠르게 설정되었습니다.');
             return;
         }
 
-        const contestTitle = `${season}회차 cps 경진대회`;
+        const contestTitle = `${prelimSeason}회차 cps 경진대회 예선`;
+        const finalContestTitle = `${prelimSeason}회차 cps 경진대회 본선`;
         apiClient.post('/api/admin/contests', {
-            title: contestTitle, season,
-            registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
-            contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
+            title: contestTitle, season: prelimSeason,
+            registrationStartAt: toISOStringWithUTC9(tempPrelimRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempPrelimRegisterEndDate),
+            contestStartAt: toISOStringWithUTC9(tempPrelimStartDate), contestEndAt: toISOStringWithUTC9(tempPrelimEndDate),
+            finalContestTitle: finalContestTitle, finalContestLocation: finalLocation,
+            finalContestStartTime: toISOStringWithUTC9(tempFinalStartDate), finalContestEndTime: toISOStringWithUTC9(tempFinalEndDate),
         }, {skipErrorHandler: true})
             .then((res) => {
                 setIsDateModalOpen(false);
@@ -129,7 +136,7 @@ const TestManage = () => {
                     apiClient.get('/api/admin/contests/deleted')
                         .then((res) => {
                             const matchedContest = res.data.data.deletedContestList.find(
-                                (contest) => contest.season === Number(season)
+                                (contest) => contest.season === Number(prelimSeason)
                             )
                             if(matchedContest)
                                 setShowRestoreModal(true);
@@ -154,27 +161,30 @@ const TestManage = () => {
         const parseDate = (d) =>
             typeof d === 'string' ? new Date(d.replace(/\./g, '-')) : d;
 
-        setSeason(Number(latestContest.season));
-        setTempRegisterStartDate(parseDate(registerStartDate));
-        setTempRegisterEndDate(parseDate(registerEndDate));
-        setTempStartDate(parseDate(startDate));
-        setTempEndDate(parseDate(endDate));
+        setPrelimSeason(Number(latestContest.season));
+        setTempPrelimRegisterStartDate(parseDate(prelimRegisterStartDate));
+        setTempPrelimRegisterEndDate(parseDate(prelimRegisterEndDate));
+        setTempPrelimStartDate(parseDate(prelimStartDate));
+        setTempPrelimEndDate(parseDate(prelimEndDate));
         setIsEditMode(true);
         setIsDateModalOpen(true);
     };
 
     const handleConfirm = () => {
         if (isEditMode) {
-            if ((tempStartDate > tempEndDate) || (startDate > endDate)) {
+            if ((tempPrelimStartDate > tempPrelimEndDate) || (prelimStartDate > prelimEndDate)) {
                 alert('종료일이 시작일보다 빠르게 설정되었습니다.');
                 return;
             }
 
-            const contestTitle = `${season}회차 cps 경진대회`;
+            const contestTitle = `${prelimSeason}회차 cps 경진대회 예선`;
+            const finalContestTitle = `${prelimSeason}회차 cps 경진대회 본선`;
             apiClient.put('/api/admin/contests', {
-                title: contestTitle, season, contestId: latestContest.contestId,
-                registrationStartAt: toISOStringWithUTC9(tempRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempRegisterEndDate),
-                contestStartAt: toISOStringWithUTC9(tempStartDate), contestEndAt: toISOStringWithUTC9(tempEndDate)
+                title: contestTitle, season: prelimSeason, contestId: latestContest.contestId,
+                registrationStartAt: toISOStringWithUTC9(tempPrelimRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempPrelimRegisterEndDate),
+                contestStartAt: toISOStringWithUTC9(tempPrelimStartDate), contestEndAt: toISOStringWithUTC9(tempPrelimEndDate),
+                finalContestTitle: finalContestTitle, finalContestLocation: finalLocation,
+                finalContestStartTime: toISOStringWithUTC9(tempFinalStartDate), finalContestEndTime: toISOStringWithUTC9(tempFinalEndDate),
             }, {skipErrorHandler: true})
                 .then((res) => {
                     setIsDateModalOpen(false);
@@ -193,11 +203,13 @@ const TestManage = () => {
     const handleCloseModal = () => {
         // 수정 모드일 경우 원래 값 유지
         if (isEditMode) {
-            setSeason('');
-            setTempRegisterStartDate(null);
-            setTempRegisterEndDate(null);
-            setTempStartDate(null);
-            setTempEndDate(null);
+            setPrelimSeason('');
+            setTempPrelimRegisterStartDate(null);
+            setTempPrelimRegisterEndDate(null);
+            setTempPrelimStartDate(null);
+            setTempPrelimEndDate(null);
+            setTempFinalStartDate(null);
+            setTempFinalEndDate(null);
             setIsEditMode(false);
         }
         setIsDateModalOpen(false);
@@ -513,120 +525,108 @@ const TestManage = () => {
                                                     </p>
                                                     <div className="testmanage-restore-modal-buttons">
                                                         <button className="testmanage-restore-modal-button"
-                                                                onClick={(e)=>{handleRestore(season)}}>예
+                                                                onClick={(e)=>{handleRestore(prelimSeason)}}>예
                                                         </button>
                                                         <button className="testmanage-restore-modal-button"
-                                                                onClick={(e)=>{handleHardDelete(season)}}>아니오
+                                                                onClick={(e)=>{handleHardDelete(prelimSeason)}}>아니오
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         )}
-                                                <div className="testManage-modal-box">
-                                                    {/* X 버튼 */}
-                                                    <button className="testManage-modal-close"
-                                                            onClick={handleCloseModal}>X
-                                                    </button>
-                                                    <div className="testManage-modal-content"
-                                                         style={{flexDirection: 'row', gap: '40px'}}>
-                                                        <p className="testManage-label">회차</p>
-                                                        <input
-                                                            style={{alignSelf: 'center', width: '100px'}}
-                                                            value={season}
-                                                            onChange={(e) => {
-                                                                const onlyNums = e.target.value.replace(/[^0-9]/g, '');
-                                                                setSeason(onlyNums);
-                                                            }}
-                                                        />
+                                        <div className="testManage-modal-box">
+                                            <button className="testManage-modal-close" onClick={handleCloseModal}>X
+                                            </button>
 
+                                            {/* ✅ 예선 영역 */}
+                                            <div className="testManage-section">
+                                                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px'}}>
+                                                    <h3 className="testManage-section-title" style={{margin: 0}}>예선</h3>
+                                                    <span style={{color: 'red', fontSize: '14px'}}>(필수선택)</span>
+                                                </div>
+
+                                                <div className="testManage-modal-content">
+                                                    <p className="testManage-label">회차</p>
+                                                    <input value={prelimSeason}
+                                                           onChange={(e) => setPrelimSeason(e.target.value.replace(/[^0-9]/g, ''))}/>
+                                                </div>
+
+                                                <div className="testManage-modal-content">
+                                                    <p className="testManage-label">접수기간</p>
+                                                    <div className="testManage-date-row">
+                                                        <DatePicker selected={tempPrelimRegisterStartDate}
+                                                                    onChange={setTempPrelimRegisterStartDate}
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    showTimeSelect/>
+                                                        <span className="testManage-tilde">~</span>
+                                                        <DatePicker selected={tempPrelimRegisterEndDate}
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    onChange={setTempPrelimRegisterEndDate} showTimeSelect/>
                                                     </div>
+                                                </div>
 
-                                                    {/* 날짜 입력 영역 */}
-                                                    <div className="testManage-modal-content">
-                                                        <div className="testManage-date-group">
-                                                            <p className="testManage-label">접수기간</p>
-                                                            <div className="testManage-date-row">
-                                                                <DatePicker
-                                                                    selected={tempRegisterStartDate}
-                                                                    onChange={(date) => setTempRegisterStartDate(date)}
-                                                                    selectsStart
-                                                                    startDate={tempRegisterStartDate}
-                                                                    endDate={tempRegisterEndDate}
+                                                <div className="testManage-modal-content">
+                                                    <p className="testManage-label">대회기간</p>
+                                                    <div className="testManage-date-row">
+                                                        <DatePicker selected={tempPrelimStartDate}
                                                                     dateFormat="yyyy.MM.dd HH:mm"
-                                                                    showTimeSelect
-                                                                    timeFormat="HH:mm"
-                                                                    timeIntervals={30}
-                                                                    timeCaption="시간"
-                                                                />
-                                                                <span className="testManage-tilde">~</span>
-                                                                <DatePicker
-                                                                    selected={tempRegisterEndDate}
-                                                                    onChange={(date) => setTempRegisterEndDate(date)}
-                                                                    selectsEnd
-                                                                    startDate={tempRegisterStartDate}
-                                                                    endDate={tempRegisterEndDate}
-                                                                    minDate={tempRegisterStartDate}
+                                                                    onChange={setTempPrelimStartDate} showTimeSelect/>
+                                                        <span className="testManage-tilde">~</span>
+                                                        <DatePicker selected={tempPrelimEndDate}
                                                                     dateFormat="yyyy.MM.dd HH:mm"
-                                                                    showTimeSelect
-                                                                    timeFormat="HH:mm"
-                                                                    timeIntervals={30}
-                                                                    timeCaption="시간"
-                                                                />
-                                                            </div>
-                                                        </div>
-
-                                                        <div className="testManage-date-group">
-                                                            <p className="testManage-label">대회기간</p>
-                                                            <div className="testManage-date-row">
-                                                                <DatePicker
-                                                                    selected={tempStartDate}
-                                                                    onChange={(date) => setTempStartDate(date)}
-                                                                    selectsStart
-                                                                    startDate={tempStartDate}
-                                                                    endDate={tempEndDate}
-                                                                    dateFormat="yyyy.MM.dd HH:mm"
-                                                                    showTimeSelect
-                                                                    timeFormat="HH:mm"
-                                                                    timeIntervals={30}
-                                                                    timeCaption="시간"
-                                                                />
-                                                                <span className="testManage-tilde">~</span>
-                                                                <DatePicker
-                                                                    selected={tempEndDate}
-                                                                    onChange={(date) => setTempEndDate(date)}
-                                                                    selectsEnd
-                                                                    startDate={tempStartDate}
-                                                                    endDate={tempEndDate}
-                                                                    minDate={tempStartDate}
-                                                                    dateFormat="yyyy.MM.dd HH:mm"
-                                                                    showTimeSelect
-                                                                    timeFormat="HH:mm"
-                                                                    timeIntervals={30}
-                                                                    timeCaption="시간"
-                                                                />
-                                                            </div>
-                                                        </div>
+                                                                    onChange={setTempPrelimEndDate}
+                                                                    showTimeSelect/>
                                                     </div>
-
-                                                    {/* 확인 버튼 */}
-                                                    <button className="testManage-modal-confirm-btn"
-                                                            onClick={handleConfirm}>
-                                                        확인
-                                                    </button>
                                                 </div>
                                             </div>
-                                        )}
 
-                                        <p className="admin-testManage-detail-text">
-                                        <p style={{color: 'black'}}>접수 기간</p>
-                                    {registerStartDate && registerEndDate
-                                        ? `${registerStartDate} ~ ${registerEndDate}`
+                                            {/* ✅ 구분선 */}
+                                            <hr className="testManage-divider"/>
+
+                                            {/* ✅ 본선 영역 */}
+                                            <div className="testManage-section">
+                                                <h3 className="testManage-section-title">본선</h3>
+
+                                                <div className="testManage-modal-content">
+                                                    <p className="testManage-label">장소</p>
+                                                    <input type="text" value={finalLocation}
+                                                           onChange={(e) => setFinalLocation(e.target.value)}/>
+                                                </div>
+
+
+                                                <div className="testManage-modal-content">
+                                                    <p className="testManage-label">대회기간</p>
+                                                    <div className="testManage-date-row">
+                                                        <DatePicker selected={tempFinalStartDate}
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    onChange={setTempFinalStartDate} showTimeSelect/>
+                                                        <span className="testManage-tilde">~</span>
+                                                        <DatePicker selected={tempFinalEndDate}
+                                                                    dateFormat="yyyy.MM.dd HH:mm"
+                                                                    onChange={setTempFinalEndDate}
+                                                                    showTimeSelect/>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <button className="testManage-modal-confirm-btn"
+                                                    onClick={handleConfirm}>확인
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <p className="admin-testManage-detail-text">
+                                    <p style={{color: 'black'}}>접수 기간</p>
+                                    {prelimRegisterStartDate && prelimRegisterEndDate
+                                        ? `${prelimRegisterStartDate} ~ ${prelimRegisterEndDate}`
                                         : '일정을 등록해주세요'}
                                 </p>
                                 <p className="admin-testManage-detail-text">
                                     <p style={{color: 'black'}}>대회 기간</p>
-                                    {startDate && endDate
-                                        ? `${startDate} ~ ${endDate}`
+                                    {prelimStartDate && prelimEndDate
+                                        ? `${prelimStartDate} ~ ${prelimEndDate}`
                                         : '일정을 등록해주세요'}
                                 </p>
                             </div>
@@ -654,10 +654,11 @@ const TestManage = () => {
                         <img src={testImage} alt="testImage" className="admin-testManage-image"/>
                         <form encType="multipart/form-data" onSubmit={handleRegisterSelectedTypes}>
                             <div className="admin-testManage-detail-bot">
-                                <p className="admin-testManage-detail-text" style={{color: 'black'}}>현재 게시된 문제 (클릭 시 다운로드)</p>
+                                <p className="admin-testManage-detail-text" style={{color: 'black'}}>현재 게시된 문제 (클릭 시
+                                    다운로드)</p>
                                 <div className="admin-testManage-contentbox" style={{padding: '15px', height: '60%'}}>
 
-                                    {/* 공통 문제 섹션 */}
+                                {/* 공통 문제 섹션 */}
                                     <div className="admin-testManage-content">
                                         {/* 체크박스 + 레이블 */}
                                         <input type="checkbox" className="admin-testManage-input"
