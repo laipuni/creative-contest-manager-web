@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './emailVerificationModal.css';
 import apiClient from "../../templates/apiClient";
 
-function EmailVerificationModal({ onVerify, isEdit = false }) {
+function EmailVerificationModal({ onVerify, baseEmail, isEdit = false }) {
     const [emailInput, setEmailInput] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [isVerificationSent, setIsVerificationSent] = useState(false);
@@ -10,23 +10,32 @@ function EmailVerificationModal({ onVerify, isEdit = false }) {
     const [isSending, setIsSending] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     useEffect(() => {
-        setVerificationMessage('');
-        setIsVerificationSent(false);
-        setVerificationCode('');
-        setIsVerified(false);
-        onVerify(null);
-    }, [emailInput])
+        if(baseEmail){
+            onVerify(baseEmail);
+            setIsVerified(true);
+            setEmailInput(baseEmail);
+        }
+    }, [baseEmail]);
 
     useEffect(() => {
-        if(!isSending) return;
+        setVerificationMessage('');
+        setIsVerificationSent(false);
+        setVerificationCode('');
+    }, [emailInput])
+
+
+    const handleSendVerification = () => {
+        if(baseEmail && baseEmail === emailInput) {
+            onVerify(baseEmail);
+            setIsVerified(true)
+            alert('기존 이메일과 동일합니다.');
+            return;
+        }
         setVerificationMessage('');
         setIsVerificationSent(false);
         setVerificationCode('');
         setIsVerified(false);
         onVerify(null);
-    }, [isSending])
-
-    const handleSendVerification = () => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*$/;
         if (!emailRegex.test(emailInput)) {
             setVerificationMessage('유효한 이메일 주소를 입력해주세요.');
