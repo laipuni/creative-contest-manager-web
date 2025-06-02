@@ -2,16 +2,29 @@ import React, {useEffect, useState} from 'react';
 import './emailVerificationModal.css';
 import apiClient from "../../templates/apiClient";
 
-function EmailVerificationModal({ onClose, onVerify, isEdit = false }) {
+function EmailVerificationModal({ onVerify, isEdit = false }) {
     const [emailInput, setEmailInput] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [isVerificationSent, setIsVerificationSent] = useState(false);
     const [verificationMessage, setVerificationMessage] = useState(''); // 인증 결과 메시지 상태 추가
     const [isSending, setIsSending] = useState(false);
-
+    const [isVerified, setIsVerified] = useState(false);
     useEffect(() => {
         setVerificationMessage('');
+        setIsVerificationSent(false);
+        setVerificationCode('');
+        setIsVerified(false);
+        onVerify(null);
     }, [emailInput])
+
+    useEffect(() => {
+        if(!isSending) return;
+        setVerificationMessage('');
+        setIsVerificationSent(false);
+        setVerificationCode('');
+        setIsVerified(false);
+        onVerify(null);
+    }, [isSending])
 
     const handleSendVerification = () => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*$/;
@@ -21,7 +34,7 @@ function EmailVerificationModal({ onClose, onVerify, isEdit = false }) {
         }
         setIsSending(true);
         // 인증 메일 전송 로직 (서버 API 호출)
-        if(isEdit === false) {
+        if (isEdit === false) {
             apiClient.post('/api/v1/send-auth-code', {
                 recipient: emailInput,
                 senderType: 'email',
@@ -29,15 +42,14 @@ function EmailVerificationModal({ onClose, onVerify, isEdit = false }) {
             })
                 .then((res) => {
                     setIsVerificationSent(true);
-                    setVerificationMessage('인증 메일이 전송되었습니다.'); // 성공 메시지 표시
+                    setVerificationMessage('인증 메일이 전송되었습니다. 메일을 확인해주세요.'); // 성공 메시지 표시
                 })
                 .catch((err) => {
                 })
                 .finally(() => {
                     setIsSending(false);
                 })
-        }
-        else{
+        } else {
             apiClient.post('/api/members/profile/send-update-code', {
                 recipient: emailInput,
                 senderType: 'email',
@@ -58,73 +70,95 @@ function EmailVerificationModal({ onClose, onVerify, isEdit = false }) {
 
     const handleVerify = () => {
         // 인증 코드 확인 로직 (서버 API 호출)
-        if(isEdit === false) {
+        if (isEdit === false) {
             apiClient.post('/api/verify-register-code', {
                 recipient: emailInput,
                 authCode: verificationCode,
                 strategyType: 'register'
-            })
+            }, {skipErrorHandler: true})
                 .then((res) => {
-                    if (res.data.code === 200) {
-                        onVerify(emailInput);
-                        onClose();
-                    } else {
-                        setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
-                    }
+                    setIsVerified(true);
+                    onVerify(emailInput);
+                    setIsVerificationSent(false);
+                    setVerificationMessage('');
                 })
                 .catch((err) => {
-                })
-        }
-        else {
-            apiClient.post('/api/members/profile/verify-update-code', {recipient: emailInput, authCode: verificationCode, strategyType: 'register'})
-                .then((res)=>{
-                    if (res.data.code === 200) {
-                        onVerify(emailInput);
-                        onClose();
-                    }
-                    else {
+                    if(err.response.data.message === '유효하지 않은 인증 코드입니다.')
                         setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
-                    }
+                    else alert(err.response.data.message);
                 })
-                .catch((err)=>{})
+        } else {
+            apiClient.post('/api/members/profile/verify-update-code', {
+                recipient: emailInput,
+                authCode: verificationCode,
+                strategyType: 'register'
+            }, {skipErrorHandler: true})
+                .then((res) => {
+                    setIsVerified(true);
+                    onVerify(emailInput);
+                    setIsVerificationSent(false);
+                    setVerificationMessage('');
+                })
+                .catch((err) => {
+                    if(err.response.data.message === '유효하지 않은 인증 코드입니다.')
+                        setVerificationMessage('인증에 실패했습니다. 인증코드를 다시 확인해주세요.');
+                    else alert(err.response.data.message);
+                })
         }
     };
 
     return (
-        <div className="email-modal">
-            <span className="email-modal-close" onClick={onClose}>&times;</span>
-            <h2>이메일 인증</h2>
-            <div className="email-modal-content">
-                <div className="email-inner-container">
-                    <input
-                        type="text"
-                        className="email-input"
-                        value={emailInput}
-                        onChange={(e) => setEmailInput(e.target.value)}
-                        placeholder="이메일 주소를 입력하세요."
-                    />
-                    <button type="button" className="email-button"
-                            onClick={handleSendVerification} disabled={isSending}>{isSending ? (
-                        <span className="spinner" />
-                    ) : (
-                        '인증 메일 받기'
-                    )}</button>
-                </div>
+        <>
+            <div className="join2-right-row" style={{gap: '5px'}}>
+                <input
+                    style={{width: '150px'}}
+                    className="join2-id-input"
+                    type="text"
+                    value={emailInput}
+                    onChange={(e)=>setEmailInput(e.target.value)}
+                    placeholder="이메일 주소를 입력하세요"
+                />
+                <button className="join2-id-button"
+                        type="button"
+                        onClick={handleSendVerification}
+                        disabled={isSending}
+                >
+                    {isSending ? (
+                    <span className="spinner" />
+                ) : (
+                    '인증하기'
+                )}</button>
+                {isVerified === true && <p style={{order: 3}}>✅</p>}
+            </div>
+                {/* 인증 코드 입력창 (메일 발송 후 노출) */}
                 {isVerificationSent && (
-                    <div className="email-inner-container" style={{background: 'lightgray', borderRadius: '10px', width: '300px', height: '50px', padding: '10px 30px'}}>
+                    <div className="join2-right-row" style={{gap: '5px', marginTop: '10px'}}>
                         <input
+                            style={{width: '150px'}}
                             type="text"
-                            className="email-input"
+                            className="join2-id-input"
                             value={verificationCode}
                             onChange={(e) => setVerificationCode(e.target.value)}
                             placeholder="인증 코드를 입력하세요."
                         />
-                        <button type="button" className="email-button" onClick={handleVerify}>인증</button>
+                        <button
+                            type="button"
+                            className="join2-id-button"
+                            onClick={handleVerify}
+                            disabled={isSending}
+                        >
+                            확인
+                        </button>
                     </div>
                 )}
-                {verificationMessage && <p className="verification-message">{verificationMessage}</p>}
-            </div>
-        </div>
+
+                {/* 인증 메시지 표시 */}
+                {verificationMessage && (
+                    <p className="verification-message" style={{marginTop: '8px'}}>
+                        {verificationMessage}
+                    </p>
+                )}
+            </>
     );
 }
 
