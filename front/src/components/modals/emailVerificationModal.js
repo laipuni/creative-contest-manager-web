@@ -62,7 +62,7 @@ function EmailVerificationModal({ onVerify, baseEmail, isEdit = false }) {
             apiClient.post('/api/members/profile/send-update-code', {
                 recipient: emailInput,
                 senderType: 'email',
-                strategyType: 'register'
+                strategyType: 'profile_update'
             })
                 .then((res) => {
                     setIsVerificationSent(true);
@@ -100,7 +100,7 @@ function EmailVerificationModal({ onVerify, baseEmail, isEdit = false }) {
             apiClient.post('/api/members/profile/verify-update-code', {
                 recipient: emailInput,
                 authCode: verificationCode,
-                strategyType: 'register'
+                strategyType: 'profile_update_verify'
             }, {skipErrorHandler: true})
                 .then((res) => {
                     setIsVerified(true);
