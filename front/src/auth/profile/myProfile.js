@@ -87,8 +87,9 @@ const MyProfile = () => {
 
     /*----------------정보 수정------------------------*/
     const handleSignup = (e) => {
+        let tempWorkPlace = workPlace;
         if(isSchool.includes(job)){
-            setWorkPlace(selectedSchool.schoolName);
+            tempWorkPlace = selectedSchool.schoolName;
         }
         e.preventDefault();
 
@@ -111,7 +112,7 @@ const MyProfile = () => {
             const year = parseInt(birthday.slice(0, 4), 10);
             const month = parseInt(birthday.slice(4, 6), 10) - 1;
             const day = parseInt(birthday.slice(6, 8), 10);
-            return new Date(year, month, day);
+            return new Date(year, month, day, 9);
         }
 
         const payload = {
@@ -125,7 +126,7 @@ const MyProfile = () => {
             phoneNumber: prefix + middle + last,
             organizationType: job,
             ...(email !== tempEmail && {tempEmail}),
-            ...(workPlace && { organizationName: workPlace }),
+            ...(tempWorkPlace && { organizationName: tempWorkPlace }),
             ...(detailJob && { position: detailJob }),
             session
         };
