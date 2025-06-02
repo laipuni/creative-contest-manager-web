@@ -124,7 +124,7 @@ const MyProfile = () => {
             detail: detailAddress,
             phoneNumber: prefix + middle + last,
             organizationType: job,
-            ...(email !== tempEmail && tempEmail && {tempEmail}),
+            ...(email !== tempEmail && tempEmail && { email: tempEmail}),
             ...(tempWorkPlace && { organizationName: tempWorkPlace }),
             ...(detailJob && { position: detailJob }),
             session
