@@ -10,7 +10,7 @@ const SubHeader = () => {
             <div className="main-header-top" style={{height: '35px'}}>
                 <Link to="/" className="sub-header-logo">
                     <p className="main-logo-text"
-                       style={{fontSize: 10, width:'fit-content'}}>Creative Problem<br />Solving Festival</p>
+                       style={{fontSize: 10, width:'fit-content', color: 'black'}}>Creative Problem<br />Solving Festival</p>
                 </Link>
                 <div className="main-header-menu" style={{justifyContent: 'flex-end'}}>
                     <div className="main-header-menu-item">

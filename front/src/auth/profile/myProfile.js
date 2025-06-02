@@ -34,7 +34,6 @@ const MyProfile = () => {
     /*--------------이메일------------------*/
     const [email, setEmail] = useState('');
     const [tempEmail, setTempEmail] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
     /*--------------직업------------------*/
     const [job, setJob] = useState('');
     const isSchool = ["초등학생", "중학생", "고등학생", "대학생"];
@@ -87,8 +86,9 @@ const MyProfile = () => {
 
     /*----------------정보 수정------------------------*/
     const handleSignup = (e) => {
+        let tempWorkPlace = workPlace;
         if(isSchool.includes(job)){
-            setWorkPlace(selectedSchool.schoolName);
+            tempWorkPlace = selectedSchool.schoolName;
         }
         e.preventDefault();
 
@@ -102,8 +102,8 @@ const MyProfile = () => {
             return;
         }
 
-        if(!email){
-            alert('인증을 통해 이메일을 등록해주세요.')
+        if(!tempEmail){
+            alert('이메일 인증을 완료해주세요.')
             return;
         }
 
@@ -111,7 +111,7 @@ const MyProfile = () => {
             const year = parseInt(birthday.slice(0, 4), 10);
             const month = parseInt(birthday.slice(4, 6), 10) - 1;
             const day = parseInt(birthday.slice(6, 8), 10);
-            return new Date(year, month, day);
+            return new Date(year, month, day, 9);
         }
 
         const payload = {
@@ -124,8 +124,8 @@ const MyProfile = () => {
             detail: detailAddress,
             phoneNumber: prefix + middle + last,
             organizationType: job,
-            ...(email !== tempEmail && {tempEmail}),
-            ...(workPlace && { organizationName: workPlace }),
+            ...(email !== tempEmail && tempEmail && {tempEmail}),
+            ...(tempWorkPlace && { organizationName: tempWorkPlace }),
             ...(detailJob && { position: detailJob }),
             session
         };
@@ -225,20 +225,6 @@ const MyProfile = () => {
 
     const handleLastChange = (e) => {
         setLast(e.target.value);
-    };
-
-    /*------------------- 이메일 기능 ----------------*/
-
-    const handleEmailCheck = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleVerifyEmail = (verifiedEmail) => {
-        setTempEmail(verifiedEmail);
     };
 
 
@@ -423,27 +409,15 @@ const MyProfile = () => {
                             </div>
                         </div>
                         <div className="join2-main-border">
-                            {isModalOpen &&
-                                <EmailVerificationModal
-                                    onClose={handleCloseModal}
-                                    onVerify={handleVerifyEmail}
-                                    isEdit = {true}
-                                />}
                             <div className="join2-main-border-left">
                                 <p className="join2-left-text">* 이메일</p>
                             </div>
                             <div className="join2-main-border-right">
-                                <div className="join2-right-row" style={{gap: '5px'}}>
-                                    <input
-                                        className="join2-id-input"
-                                        type="text"
-                                        value={email}
-                                        readOnly
-                                    />
-                                    <button className="join2-id-button" type="button" onClick={handleEmailCheck}>
-                                        인증하기
-                                    </button>
-                                </div>
+                                <EmailVerificationModal
+                                    baseEmail={email}
+                                    onVerify={setTempEmail}
+                                    isEdit = {true}
+                                />
                             </div>
                         </div>
                         <div className="join2-main-border">

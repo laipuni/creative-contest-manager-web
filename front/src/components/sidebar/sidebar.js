@@ -24,7 +24,10 @@ const Sidebar = () => {
                 <div className="sidebar-category">문제 풀기</div>
                 <div className="sidebar-sub-content">
                     <Link to="/test/realTest/info" className={`sidebar-text ${location.pathname.startsWith("/test/realTest") ? "active" : ""}`}>예선문제 풀기</Link>
-                    <Link to="/test/pastTest" className={`sidebar-text ${location.pathname === "/test/pastTest" ? "active" : ""}`}>연습문제 풀기</Link>
+                    <div
+                        style={{cursor: 'pointer'}}
+                        onClick={()=>alert('준비 중입니다')}
+                        className={`sidebar-text ${location.pathname === "/test/pastTest" ? "active" : ""}`}>연습문제 풀기</div>
                 </div>
             </div>
 
