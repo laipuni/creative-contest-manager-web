@@ -65,8 +65,9 @@ const Join2 = () => {
 
     /*------------------- 회원가입 & 나가기 버튼 기능----------------*/
     const handleSignup = (e) => {
+        let tempWorkPlace = workPlace;
         if(job.startsWith('s')){
-            setWorkPlace(selectedSchool.schoolName);
+            tempWorkPlace = selectedSchool.schoolName;
         }
         e.preventDefault();
         if(isDuplicate) {
@@ -114,7 +115,7 @@ const Join2 = () => {
             phoneNumber: prefix + middle + last,
             email,
             organizationType: job.slice(2),
-            ...(workPlace && { organizationName: workPlace }),
+            ...(tempWorkPlace && { organizationName: tempWorkPlace }),
             ...(detailJob && { position: detailJob }),
         };
 
@@ -146,10 +147,10 @@ const Join2 = () => {
     }
 
     const handleIdCheck = () => {
-        const idRegex = /^[a-zA-Z][a-zA-Z0-9]{3,9}$/;
+        const idRegex = /^[a-zA-Z][a-zA-Z0-9]{3,11}$/;
         if (!idRegex.test(userId)) {
             setIsDuplicate(true);
-            setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~10자리로 입력해야 합니다.');
+            setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~12자리로 입력해야 합니다.');
         }
         else {
             apiClient.get('/api/check-id', {
