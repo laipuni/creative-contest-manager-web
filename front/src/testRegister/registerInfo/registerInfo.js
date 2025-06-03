@@ -4,7 +4,7 @@ import MainHeader from "../../components/mainHeader/mainHeader";
 import Sidebar from "../../components/sidebar/sidebar";
 import CategoryLogo from "../../components/categoryLogo/categoryLogo";
 import trophyLogo from "../../styles/images/test_info_logo.png";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {format} from 'date-fns'
 import apiClient from "../../templates/apiClient";
 import rocket from "../../styles/images/solve_icon.png";
@@ -12,6 +12,7 @@ import rocket from "../../styles/images/solve_icon.png";
 const RegisterInfo = () => {
     const [teamInfo, setTeamInfo] = useState(null)
     const [contestInfo, setContestInfo] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         apiClient.get('/api/contests/latest')
@@ -41,6 +42,13 @@ const RegisterInfo = () => {
             .catch((err)=>{alert(err.response.data.message)});
     }
 
+    const handleRegisterTeam = () => {
+        if(!contestInfo) {
+            alert('개최된 대회가 없습니다.');
+            return;
+        }
+        navigate('/register/team');
+    }
 
     return (
         <div className="testInfo-page-container">
@@ -88,8 +96,10 @@ const RegisterInfo = () => {
                                     {teamInfo &&
                                         <Link to="/register/team" state={{teamInfo}} className="registerInfo-bot-button" >
                                             수정</Link>}
-                                    <Link to="/register/team" className="registerInfo-bot-button">
-                                        접수</Link>
+                                    <div
+                                        onClick={handleRegisterTeam}
+                                        className="registerInfo-bot-button">
+                                        접수</div>
                                     {teamInfo &&
                                         <div onClick={handleDeleteTeam} className="registerInfo-bot-button" style={{cursor: 'pointer'}}>
                                             삭제</div>}

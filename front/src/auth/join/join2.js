@@ -45,8 +45,7 @@ const Join2 = () => {
     const lastInputRef = useRef(null);
 
     /*--------------이메일------------------*/
-    const [email, setEmail] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [verifiedEmail, setVerifiedEmail] = useState(null);
     /*--------------직업------------------*/
     const [job, setJob] = useState('');
     //
@@ -65,8 +64,9 @@ const Join2 = () => {
 
     /*------------------- 회원가입 & 나가기 버튼 기능----------------*/
     const handleSignup = (e) => {
+        let tempWorkPlace = workPlace;
         if(job.startsWith('s')){
-            setWorkPlace(selectedSchool.schoolName);
+            tempWorkPlace = selectedSchool.schoolName;
         }
         e.preventDefault();
         if(isDuplicate) {
@@ -88,8 +88,8 @@ const Join2 = () => {
             return;
         }
 
-        if(!email){
-            alert('인증을 통해 이메일을 등록해주세요.')
+        if(!verifiedEmail){
+            alert('이메일 인증이 필요합니다.')
             return;
         }
 
@@ -112,9 +112,9 @@ const Join2 = () => {
             zipCode: postcode,
             detail: detailAddress,
             phoneNumber: prefix + middle + last,
-            email,
+            email: verifiedEmail,
             organizationType: job.slice(2),
-            ...(workPlace && { organizationName: workPlace }),
+            ...(tempWorkPlace && { organizationName: tempWorkPlace }),
             ...(detailJob && { position: detailJob }),
         };
 
@@ -146,10 +146,10 @@ const Join2 = () => {
     }
 
     const handleIdCheck = () => {
-        const idRegex = /^[a-zA-Z][a-zA-Z0-9]{3,9}$/;
+        const idRegex = /^[a-zA-Z][a-zA-Z0-9]{3,11}$/;
         if (!idRegex.test(userId)) {
             setIsDuplicate(true);
-            setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~10자리로 입력해야 합니다.');
+            setIdErrorMessage('아이디는 영어로 시작하고\n영어와 숫자만 4~12자리로 입력해야 합니다.');
         }
         else {
             apiClient.get('/api/check-id', {
@@ -265,22 +265,6 @@ const Join2 = () => {
     const handleLastChange = (e) => {
         setLast(e.target.value);
     };
-
-    /*------------------- 이메일 기능 ----------------*/
-
-    const handleEmailCheck = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleVerifyEmail = (verifiedEmail) => {
-        setEmail(verifiedEmail);
-    };
-
-
 
     return (
         <div className="join2-page-container">
@@ -537,23 +521,11 @@ const Join2 = () => {
                             </div>
                         </div>
                         <div className="join2-main-border">
-                            {isModalOpen && <EmailVerificationModal onClose={handleCloseModal}
-                            onVerify={handleVerifyEmail}/>}
                             <div className="join2-main-border-left">
                                 <p className="join2-left-text">* 이메일</p>
                             </div>
                             <div className="join2-main-border-right">
-                                <div className="join2-right-row" style={{gap: '5px'}}>
-                                    <input
-                                        className="join2-id-input"
-                                        type="text"
-                                        value={email}
-                                        readOnly
-                                    />
-                                    <button className="join2-id-button" type="button" onClick={handleEmailCheck}>
-                                        인증하기
-                                    </button>
-                                </div>
+                                <EmailVerificationModal onVerify={setVerifiedEmail}/>
                             </div>
                         </div>
                         <div className="join2-main-border">
