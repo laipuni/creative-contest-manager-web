@@ -115,7 +115,7 @@ const QnA = () => {
                                       onKeyDown={(e) => {
                                           if (e.key === "Enter" && !e.shiftKey) {
                                               e.preventDefault();
-                                              if(question.trim()) {
+                                              if(question.trim() && !chatList.some(chat => chat.type === "answer" && chat.text === "답변 생성 중")) {
                                                   handleSubmit(question);
                                                   setQuestion("");
                                               }
@@ -126,6 +126,7 @@ const QnA = () => {
                                   />
                                 <button
                                     className="chat-button"
+                                    disabled={chatList.some(chat => chat.type === "answer" && chat.text === "답변 생성 중")}
                                     onClick={() => {
                                         if (question.trim()) {
                                             handleSubmit(question);
