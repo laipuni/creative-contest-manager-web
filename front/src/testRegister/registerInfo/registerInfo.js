@@ -98,6 +98,7 @@ const RegisterInfo = () => {
                                             수정</Link>}
                                     <div
                                         onClick={handleRegisterTeam}
+                                        style={{cursor: 'pointer'}}
                                         className="registerInfo-bot-button">
                                         접수</div>
                                     {teamInfo &&
