@@ -151,6 +151,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AiServerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiErrorResponse<Object> handleAiServerException(AiServerException ex) {
+        log.error("{}",ex.getMessage(),ex);
         return ApiErrorResponse.of(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 ex.getMessage(),

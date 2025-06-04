@@ -33,6 +33,17 @@ services:
     ports:
       - "3306:3306"
 
+  ai:
+    build:
+      context: ./AI
+      dockerfile: Dockerfile
+    volumes:
+      - ./ai/models:/app/models
+    container_name: ai
+    ports:
+      - "5000:5000"
+    restart: always
+
   redis:
     image: redis:7-alpine
     restart: always
