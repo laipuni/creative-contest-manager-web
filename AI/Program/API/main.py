@@ -253,9 +253,6 @@ def response(prompt):
     generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True).replace("@ ", "@")
     return generated_text.split("답변:")[1].strip()
 
-# 7. FastAPI app 설정
-app = FastAPI()
-
 class QARequest(BaseModel):
     question: str
 
