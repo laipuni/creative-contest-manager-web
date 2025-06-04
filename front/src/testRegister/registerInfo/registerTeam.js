@@ -94,7 +94,7 @@ const RegisterTeam = () => {
                 <div className="testInfo-content-container">
                     <Sidebar/>
                     <div className="testInfo-main-container">
-                        <CategoryLogo logoTitle={"예선시험 접수"} imgSrc={trophyLogo}/>
+                        <CategoryLogo logoTitle={"대회참가 접수"} imgSrc={trophyLogo}/>
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
                                 <p className="registerInfo-top-title">예선 접수</p>
