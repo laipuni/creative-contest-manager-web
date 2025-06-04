@@ -6,7 +6,7 @@ import apiClient from "../../templates/apiClient";
 const QuizAI = () => {
     const [topic, setTopic] = useState('논리형');
     const [level, setLevel] = useState('상');
-    const [count, setCount] = useState(null);
+    const [count, setCount] = useState(0);
     const [chatList, setChatList] = useState([]);
     const [showScrollButton, setShowScrollButton] = useState(false); //아래 내리기 버튼
     const endRef = useRef(null);  // 마지막 요소 참조
