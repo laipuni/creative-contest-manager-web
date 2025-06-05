@@ -1,14 +1,12 @@
 package com.example.cpsplatform.certificate.controller.response;
 
-import com.example.cpsplatform.PagingUtils;
+import com.example.cpsplatform.utils.PagingUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
-
-import static com.example.cpsplatform.contest.admin.service.ContestAdminService.CONTEST_PAGE_SIZE;
 
 @Getter
 @Builder

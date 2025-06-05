@@ -1,6 +1,6 @@
 package com.example.cpsplatform.security;
 
-import com.example.cpsplatform.ClientIpUtils;
+import com.example.cpsplatform.utils.ClientIpUtils;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -12,7 +12,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 public class CustomEntryPoint implements AuthenticationEntryPoint {

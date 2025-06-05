@@ -54,11 +54,11 @@ public class WebClientAiApiService implements AiApiService{
 
             return response;
         }catch (WebClientResponseException.BadRequest e){
-            throw new ClientRequestException("잘못된 요청입니다.");
+            throw new ClientRequestException("잘못된 요청입니다.",e);
         }catch (WebClientResponseException e) {
-            throw new AiServerException("AI 서비스 호출에 실패하였습니다.");
+            throw new AiServerException("AI 서비스 호출에 실패하였습니다.",e);
         }catch (Exception e) {
-            throw new AiServerException("AI 서비스 시스템 처리 중 오류가 발생했습니다.");
+            throw new AiServerException("AI 서비스 시스템 처리 중 오류가 발생했습니다.",e);
         }
     }
 }

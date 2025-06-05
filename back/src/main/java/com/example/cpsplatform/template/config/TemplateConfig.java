@@ -2,6 +2,7 @@ package com.example.cpsplatform.template.config;
 
 import com.example.cpsplatform.certificate.domain.CertificateType;
 import com.example.cpsplatform.template.exporter.CertificateExporter;
+import com.example.cpsplatform.template.exporter.FinalCertificateExporter;
 import com.example.cpsplatform.template.exporter.PreliminaryCertificateExporter;
 import com.example.cpsplatform.template.generator.CertificateGenerator;
 import com.example.cpsplatform.template.generator.PdfCertificateGenerator;
@@ -37,6 +38,10 @@ public class TemplateConfig {
         certificateExporterMap.put(
                 CertificateType.PRELIMINARY, //예선 참가 확인증(접수증)
                 new PreliminaryCertificateExporter(certificateGenerator(), templateRenderer())
+        );
+        certificateExporterMap.put(
+                CertificateType.FINAL,//본선 진출 확인증
+                new FinalCertificateExporter(certificateGenerator(), templateRenderer())
         );
         return certificateExporterMap;
     }

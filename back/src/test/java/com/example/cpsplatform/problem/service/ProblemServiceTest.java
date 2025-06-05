@@ -21,6 +21,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -106,6 +107,7 @@ class ProblemServiceTest {
                 .contest(contest)
                 .teamNumber("003")
                 .section(Section.ELEMENTARY_MIDDLE)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.TEMPORARY)
                 .build();
         teamRepository.save(team);

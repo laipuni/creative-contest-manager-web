@@ -196,7 +196,11 @@ class ContestAdminControllerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(3),
-                now.plusDays(4)
+                now.plusDays(4),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -229,7 +233,11 @@ class ContestAdminControllerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(3),
-                now.plusDays(4)
+                now.plusDays(4),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -261,7 +269,11 @@ class ContestAdminControllerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(3),
-                now.plusDays(4)
+                now.plusDays(4),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -294,7 +306,11 @@ class ContestAdminControllerTest {
                 null,
                 now.plusDays(2),
                 now.plusDays(3),
-                now.plusDays(4)
+                now.plusDays(4),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -314,38 +330,6 @@ class ContestAdminControllerTest {
     }
 
     @WithMockUser(roles = {"ADMIN"})
-    @DisplayName("대회를 생성할 때, 접수 날짜가 과거인 경우 예외를 반환한다.")
-    @Test
-    void createContestFailWithPastDate() throws Exception {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        CreateContestRequest request = new CreateContestRequest(
-                "테스트 대회",
-                1,
-                "테스트 대회 설명",
-                now.minusDays(2),
-                now.minusDays(1), // 과거 날짜
-                now.plusDays(3),
-                now.plusDays(4)
-        );
-
-        String content = objectMapper.writeValueAsString(request);
-
-        // when & then
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/admin/contests")
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(content)
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.message").value("예선 접수 마감 시간은 미래 날짜여야 합니다."));
-    }
-
-    @WithMockUser(roles = {"ADMIN"})
     @DisplayName("대회를 생성할 때, 접수 시작이 접수 마감보다 늦은 경우 예외를 반환한다.")
     @Test
     void createContestFailWithInvalidDateOrder1() throws Exception {
@@ -358,7 +342,11 @@ class ContestAdminControllerTest {
                 now.plusDays(3), // 접수 시작이 마감보다 늦음
                 now.plusDays(2),
                 now.plusDays(4),
-                now.plusDays(5)
+                now.plusDays(5),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -390,7 +378,11 @@ class ContestAdminControllerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(5), // 대회 시작이 종료보다 늦음
-                now.plusDays(4)
+                now.plusDays(4),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -423,7 +415,11 @@ class ContestAdminControllerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(5), // 대회 시작이 종료보다 늦음
-                now.plusDays(4)
+                now.plusDays(4),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -456,7 +452,11 @@ class ContestAdminControllerTest {
                 now.plusDays(3), // 등록 시작이 종료보다 늦음
                 now.plusDays(2),
                 now.plusDays(4),
-                now.plusDays(5)
+                now.plusDays(5),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -480,6 +480,7 @@ class ContestAdminControllerTest {
     @Test
     void updateContestFailWithMissingRequiredFields() throws Exception {
         // given
+        LocalDateTime now = LocalDateTime.now();
         UpdateContestRequest request = new UpdateContestRequest(
                 1L,
                 "", // 빈 title
@@ -488,7 +489,11 @@ class ContestAdminControllerTest {
                 null, // null registrationStartAt
                 null, // null registrationEndAt - 필수값 누락
                 null, // null contestStartAt - 필수값 누락
-                null  // null contestEndAt - 필수값 누락
+                null, // null contestEndAt - 필수값 누락
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);
@@ -518,7 +523,11 @@ class ContestAdminControllerTest {
                 now.plusDays(1),
                 now.plusDays(2),
                 now.plusDays(3),
-                now.plusDays(4)
+                now.plusDays(4),
+                "테스트 대회",
+                "테스트 본선 장소",
+                now.plusDays(8),
+                now.plusDays(9)
         );
 
         String content = objectMapper.writeValueAsString(request);

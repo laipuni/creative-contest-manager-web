@@ -43,7 +43,7 @@ public class ProfileController {
      */
     @PostMapping("/api/members/profile/verify-update-code")
     public ApiResponse<Object> sendProfileUpdateCode(@Valid @RequestBody ProfileCodeVerifyRequest request){
-        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), request.getStrategyType(), AuthConfig.PROFILE_UPDATE_VERIFY_AUTH);
+        authService.verifyContactCode(request.getRecipient(), request.getAuthCode(), AuthConfig.PROFILE_UPDATE_AUTH, AuthConfig.PROFILE_UPDATE_VERIFY_AUTH);
         return ApiResponse.ok(null);
     }
 

@@ -16,6 +16,7 @@ import com.example.cpsplatform.problem.domain.Problem;
 import com.example.cpsplatform.problem.domain.ProblemType;
 import com.example.cpsplatform.problem.domain.Section;
 import com.example.cpsplatform.problem.repository.ProblemRepository;
+import com.example.cpsplatform.team.domain.Division;
 import com.example.cpsplatform.team.domain.SubmitStatus;
 import com.example.cpsplatform.team.domain.Team;
 import com.example.cpsplatform.team.repository.TeamRepository;
@@ -189,6 +190,7 @@ class FileRepositoryTest {
                 .teamNumber("001")
                 .leader(member)
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.TEMPORARY)
                 .build();
         teamRepository.save(team);
@@ -293,6 +295,7 @@ class FileRepositoryTest {
                 .teamNumber("001")
                 .leader(member)
                 .contest(contest)
+                .division(Division.COLLEGE_GENERAL)
                 .status(SubmitStatus.TEMPORARY)
                 .build();
         teamRepository.save(team);

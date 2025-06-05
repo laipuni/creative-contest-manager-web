@@ -1,8 +1,7 @@
 package com.example.cpsplatform.contest.admin.controller.response;
 
-import com.example.cpsplatform.PagingUtils;
+import com.example.cpsplatform.utils.PagingUtils;
 import com.example.cpsplatform.contest.Contest;
-import com.example.cpsplatform.problem.admin.controller.response.ContestProblemDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

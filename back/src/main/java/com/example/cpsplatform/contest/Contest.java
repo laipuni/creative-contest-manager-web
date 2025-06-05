@@ -1,7 +1,9 @@
 package com.example.cpsplatform.contest;
 
 import com.example.cpsplatform.BaseEntity;
+import com.example.cpsplatform.finalcontest.FinalContest;
 import io.micrometer.common.util.StringUtils;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -50,9 +52,14 @@ public class Contest extends BaseEntity {
 
     private boolean deleted;
 
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "final_contest_id")
+    private FinalContest finalContest;
+
     @Builder
     private Contest(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
-                   final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime,final boolean deleted) {
+                    final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime,final boolean deleted,
+                    final FinalContest finalContest) {
         this.title = title;
         this.description = description;
         this.season = season;
@@ -61,12 +68,21 @@ public class Contest extends BaseEntity {
         this.startTime = startTime;
         this.endTime = endTime;
         this.deleted = deleted;
+        this.finalContest = finalContest;
     }
 
     public static Contest of(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
-                             final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime){
-        validRegistrationAt(registrationEndAt,registrationStartAt);
+                             final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime,
+                             final FinalContest finalContest) {
+
+        // 접수 시작 < 접수 마감
+        validRegistrationAt(registrationEndAt, registrationStartAt);
+        // 접수 마감 < 대회 시작
+        validRegistrationEndAndStartTimeAt(registrationEndAt, startTime);
+        // 대회 시작 < 대회 종료
         validStartAndEndAt(startTime, endTime);
+
+        // 접수 시작 < 접수 마감 < 대회 시작 < 대회 종료 순으로 시간 설정이 되어야 한다.
 
         return Contest.builder()
                 .title(title)
@@ -76,14 +92,22 @@ public class Contest extends BaseEntity {
                 .registrationEndAt(registrationEndAt)
                 .startTime(startTime)
                 .endTime(endTime)
+                .finalContest(finalContest)
                 .deleted(false)
                 .build();
     }
 
     public void updateContest(final String title, final String description, final int season, final LocalDateTime registrationStartAt,
-                              final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime){
-        validRegistrationAt(registrationEndAt,registrationStartAt);
+                              final LocalDateTime registrationEndAt, final LocalDateTime startTime, final LocalDateTime endTime) {
+
+        // 접수 시작 < 접수 마감
+        validRegistrationAt(registrationEndAt, registrationStartAt);
+        // 접수 마감 < 대회 시작
+        validRegistrationEndAndStartTimeAt(registrationEndAt, startTime);
+        // 대회 시작 < 대회 종료
         validStartAndEndAt(startTime, endTime);
+
+        // 접수 시작 < 접수 마감 < 대회 시작 < 대회 종료 순으로 시간 설정이 되어야 한다.
 
         this.title = StringUtils.isBlank(title) ? this.title : title;
         this.description = StringUtils.isBlank(description) ? this.description : description;
@@ -96,15 +120,22 @@ public class Contest extends BaseEntity {
 
     private static void validStartAndEndAt(LocalDateTime startTime, LocalDateTime endTime) {
         if (endTime.isBefore(startTime)) {
-            throw new IllegalArgumentException("대회 종료 시간은 대회 시작 시간보다 이후여야 합니다.");
+            throw new IllegalArgumentException("대회 종료 시간은 대회 시작 시간 이후여야 합니다.");
         }
     }
 
-    private static void validRegistrationAt(LocalDateTime registrationEndAt,final LocalDateTime registrationStartAt) {
+    private static void validRegistrationAt(LocalDateTime registrationEndAt, final LocalDateTime registrationStartAt) {
         if (registrationEndAt.isBefore(registrationStartAt)) {
-            throw new IllegalArgumentException("접수 종료 기간은 접수 시작 기간보다 이후여야 합니다.");
+            throw new IllegalArgumentException("접수 종료 시간은 접수 시작 시간 이후여야 합니다.");
         }
     }
+
+    private static void validRegistrationEndAndStartTimeAt(LocalDateTime registrationEndAt, final LocalDateTime startTime) {
+        if (startTime.isBefore(registrationEndAt)) {
+            throw new IllegalArgumentException("대회 시작 시간은 접수 마감 시간 이후여야 합니다.");
+        }
+    }
+
 
     public boolean isNotOngoing(final LocalDateTime now){
         return now.isBefore(startTime) || now.isAfter(endTime);

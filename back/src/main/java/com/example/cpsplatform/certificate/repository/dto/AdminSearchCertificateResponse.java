@@ -1,6 +1,6 @@
 package com.example.cpsplatform.certificate.repository.dto;
 
-import com.example.cpsplatform.PagingUtils;
+import com.example.cpsplatform.utils.PagingUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

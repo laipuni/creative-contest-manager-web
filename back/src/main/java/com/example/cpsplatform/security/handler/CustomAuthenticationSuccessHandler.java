@@ -1,6 +1,6 @@
 package com.example.cpsplatform.security.handler;
 
-import com.example.cpsplatform.ClientIpUtils;
+import com.example.cpsplatform.utils.ClientIpUtils;
 import com.example.cpsplatform.exception.controller.dto.ApiErrorResponse;
 import com.example.cpsplatform.security.handler.response.LoginProfile;
 import com.example.cpsplatform.security.service.LoginFailService;

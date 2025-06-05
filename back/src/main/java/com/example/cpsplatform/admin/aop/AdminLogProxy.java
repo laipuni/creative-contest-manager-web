@@ -1,6 +1,6 @@
 package com.example.cpsplatform.admin.aop;
 
-import com.example.cpsplatform.ClientIpUtils;
+import com.example.cpsplatform.utils.ClientIpUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
