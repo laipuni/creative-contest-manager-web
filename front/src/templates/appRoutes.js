@@ -43,6 +43,7 @@ function AppRoutes() {
         const adminPaths = ["/admin/teamList", "/admin/testManage"];
         const isAdminPath = adminPaths.some(path => location.pathname.startsWith(path));
 
+        window.scrollTo(0,0);
         if (!isJoinPath) {
             sessionStorage.removeItem("isChecked");
         }
