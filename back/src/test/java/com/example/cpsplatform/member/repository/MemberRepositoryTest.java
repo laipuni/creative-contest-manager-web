@@ -6,6 +6,7 @@ import com.example.cpsplatform.member.domain.Member;
 import com.example.cpsplatform.member.domain.Role;
 import com.example.cpsplatform.member.domain.organization.school.School;
 import com.example.cpsplatform.member.domain.organization.school.StudentType;
+import com.example.cpsplatform.security.encoder.CryptoService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,9 @@ class MemberRepositoryTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    CryptoService cryptoService;
 
     @BeforeEach
     void tearUp(){
@@ -73,7 +77,7 @@ class MemberRepositoryTest {
         //given
         Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
-        String email = "email@email.com";
+        String email = cryptoService.encryptAES("email@email.com");
         Member member = Member.builder()
                 .loginId("loginId")
                 .password(passwordEncoder.encode("1234"))
@@ -106,7 +110,7 @@ class MemberRepositoryTest {
         //given
         Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
-        String email = "email@email.com";
+        String email = cryptoService.encryptAES("email@email.com");
         String loginId = "loginId";
         Member member = Member.builder()
                 .loginId(loginId)
@@ -140,7 +144,7 @@ class MemberRepositoryTest {
         //given
         Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
-        String email = "email@email.com";
+        String email = cryptoService.encryptAES("email@email.com");
         String loginId = "loginId";
         Member member = Member.builder()
                 .loginId(loginId)
@@ -169,7 +173,7 @@ class MemberRepositoryTest {
         //given
         Address address = new Address("street","city","zipCode","detail");
         School school = new School("xx대학교", StudentType.COLLEGE,4);
-        String email = "email@email.com";
+        String email = cryptoService.encryptAES("email@email.com");
         String loginId = "loginId";
         Member member = Member.builder()
                 .loginId(loginId)
