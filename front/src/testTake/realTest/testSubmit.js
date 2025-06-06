@@ -129,7 +129,7 @@ const TestSubmit = () => {
             submitSingleAnswer(quiz2, file2, text2)
         ])
             .then(() => {
-                alert('답안이 임시 저장되었습니다. 마감 기한 내에 최종 제출을 완료해 주세요.');
+                alert('답안이 임시 저장되었습니다. \n마감 기한 내에 최종 제출을 완료해 주세요.');
             })
             .catch((err) => {
                 const message = err?.response?.data?.message;
