@@ -103,7 +103,7 @@ export default function MainBento() {
                                 <p className="cps-cat-text">{cat.text}</p>
                             </div>
                         ) : (
-                            <Link to="/register/info" className={`cps-cat-box cps-tail-${cat.tail}`}>
+                            <Link to="/test/realTest/info" className={`cps-cat-box cps-tail-${cat.tail}`}>
                                 <p className="cps-cat-sub">{cat.subtitle}</p>
                                 <h3 className="cps-cat-title">{cat.title}</h3>
                                 <p className="cps-cat-text">{cat.text}</p>
