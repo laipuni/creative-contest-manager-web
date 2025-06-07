@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './findIdPage.css';
 import apiClient from '../../../templates/apiClient';
 import SubHeader from "../../../components/subHeader/subHeader";
+import { Link } from 'react-router-dom'
+import { MdContentCopy } from "react-icons/md";
 
 function FindIdPage() {
     const [emailInput, setEmailInput] = useState('');
@@ -11,6 +13,7 @@ function FindIdPage() {
     const [isSending, setIsSending] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     const [findedId, setFindedId] = useState('');
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         setVerificationMessage('');
@@ -60,6 +63,17 @@ function FindIdPage() {
             });
     };
 
+    const handleCopy = () => {
+        navigator.clipboard.writeText(findedId)
+            .then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500); // 1.5초 뒤 복사 알림 사라짐
+            })
+            .catch(err => {
+                console.error("복사 실패:", err);
+            });
+    };
+
     return (
         <div className="login-page-container">
             <SubHeader />
@@ -67,25 +81,29 @@ function FindIdPage() {
                 <div className="login-content-text" style={{width: '500px'}}>
                     <p className="login-title">아이디 찾기</p>
                     <div className="login-body">
-                        <div className="login-input-field">
-                            <p className="login-input-title">이메일</p>
-                            <input
-                                className="login-input-body"
-                                type="text"
-                                value={emailInput}
-                                onChange={(e) => setEmailInput(e.target.value)}
-                                placeholder="이메일 주소를 입력하세요."
-                                disabled={isVerified}
-                            />
-                        </div>
-                        <button
-                            type="button"
-                            className="login-button"
-                            onClick={handleSendVerification}
-                            disabled={isSending}
-                        >
-                            {isSending ? '전송 중...' : '인증 메일 받기'}
-                        </button>
+                        {!isVerified &&
+                            <>
+                                <div className="login-input-field">
+                                    <p className="login-input-title">이메일</p>
+                                    <input
+                                        className="login-input-body"
+                                        type="text"
+                                        value={emailInput}
+                                        onChange={(e) => setEmailInput(e.target.value)}
+                                        placeholder="이메일 주소를 입력하세요."
+                                        disabled={isVerified}
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    className="login-button"
+                                    onClick={handleSendVerification}
+                                    disabled={isSending}
+                                >
+                                    {isSending ? '전송 중...' : '인증 메일 받기'}
+                                </button>
+                        </>
+                        }
 
                         {isVerificationSent && (
                             <>
@@ -110,10 +128,27 @@ function FindIdPage() {
                         )}
 
                         {isVerified && (
-                            <div className="login-input-field">
-                                <p className="login-input-title">아이디</p>
-                                <p className="login-input-body" style={{ color: 'black' }}>{findedId}</p>
-                            </div>
+                            <>
+                                <div className="login-input-field">
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <p style={{ background: 'white', color: 'black', margin: 0 }}>
+                                            회원님의 아이디는 <span style={{color: 'blue'}}>{findedId}</span>입니다
+                                        </p>
+                                        <MdContentCopy
+                                            onClick={handleCopy}
+                                            size={20}
+                                            style={{ cursor: "pointer", color: "#555" }}
+                                            title="클립보드에 복사"
+                                        />
+                                        {copied && <span style={{ color: "green", fontSize: "0.9em" }}>복사됨!</span>}
+                                    </div>
+                                </div>
+                                <Link to="/member/login"
+                                      className="login-button"
+                                      style={{marginTop: '0px', textDecoration: 'none'}}
+                                >확인
+                                </Link>
+                            </>
                         )}
                     </div>
                 </div>

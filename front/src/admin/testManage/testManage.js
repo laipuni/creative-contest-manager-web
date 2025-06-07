@@ -119,13 +119,20 @@ const TestManage = () => {
 
         const contestTitle = `${prelimSeason}회차 cps 경진대회 예선`;
         const finalContestTitle = `${prelimSeason}회차 cps 경진대회 본선`;
-        apiClient.post('/api/admin/contests', {
-            title: contestTitle, season: prelimSeason,
-            registrationStartAt: toISOStringWithUTC9(tempPrelimRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempPrelimRegisterEndDate),
-            contestStartAt: toISOStringWithUTC9(tempPrelimStartDate), contestEndAt: toISOStringWithUTC9(tempPrelimEndDate),
-            finalContestTitle: finalContestTitle, finalContestLocation: finalLocation,
-            finalContestStartTime: toISOStringWithUTC9(tempFinalStartDate), finalContestEndTime: toISOStringWithUTC9(tempFinalEndDate),
-        }, {skipErrorHandler: true})
+        const payload = {
+            title: contestTitle,
+            season: prelimSeason,
+            contestId: latestContest.contestId,
+            registrationStartAt: toISOStringWithUTC9(tempPrelimRegisterStartDate),
+            registrationEndAt: toISOStringWithUTC9(tempPrelimRegisterEndDate),
+            contestStartAt: toISOStringWithUTC9(tempPrelimStartDate),
+            contestEndAt: toISOStringWithUTC9(tempPrelimEndDate),
+            ...(finalContestTitle && { finalContestTitle }),
+            ...(finalLocation && { finalContestLocation: finalLocation }),
+            ...(tempFinalStartDate && { finalContestStartTime: toISOStringWithUTC9(tempFinalStartDate) }),
+            ...(tempFinalEndDate && { finalContestEndTime: toISOStringWithUTC9(tempFinalEndDate) })
+        };
+        apiClient.post('/api/admin/contests', payload, {skipErrorHandler: true})
             .then((res) => {
                 setIsDateModalOpen(false);
                 setIsRegistered(!isRegistered);
@@ -179,13 +186,20 @@ const TestManage = () => {
 
             const contestTitle = `${prelimSeason}회차 cps 경진대회 예선`;
             const finalContestTitle = `${prelimSeason}회차 cps 경진대회 본선`;
-            apiClient.put('/api/admin/contests', {
-                title: contestTitle, season: prelimSeason, contestId: latestContest.contestId,
-                registrationStartAt: toISOStringWithUTC9(tempPrelimRegisterStartDate), registrationEndAt: toISOStringWithUTC9(tempPrelimRegisterEndDate),
-                contestStartAt: toISOStringWithUTC9(tempPrelimStartDate), contestEndAt: toISOStringWithUTC9(tempPrelimEndDate),
-                finalContestTitle: finalContestTitle, finalContestLocation: finalLocation,
-                finalContestStartTime: toISOStringWithUTC9(tempFinalStartDate), finalContestEndTime: toISOStringWithUTC9(tempFinalEndDate),
-            }, {skipErrorHandler: true})
+            const payload = {
+                title: contestTitle,
+                season: prelimSeason,
+                contestId: latestContest.contestId,
+                registrationStartAt: toISOStringWithUTC9(tempPrelimRegisterStartDate),
+                registrationEndAt: toISOStringWithUTC9(tempPrelimRegisterEndDate),
+                contestStartAt: toISOStringWithUTC9(tempPrelimStartDate),
+                contestEndAt: toISOStringWithUTC9(tempPrelimEndDate),
+                ...(finalContestTitle && { finalContestTitle }),
+                ...(finalLocation && { finalContestLocation: finalLocation }),
+                ...(tempFinalStartDate && { finalContestStartTime: toISOStringWithUTC9(tempFinalStartDate) }),
+                ...(tempFinalEndDate && { finalContestEndTime: toISOStringWithUTC9(tempFinalEndDate) })
+            };
+            apiClient.put('/api/admin/contests', payload, {skipErrorHandler: true})
                 .then((res) => {
                     setIsDateModalOpen(false);
                     setIsEditMode(false);
@@ -408,9 +422,9 @@ const TestManage = () => {
     //선택된 문제 삭제하기
     const handleDeleteSelectedTypes = async () => {
         const sectionMap = {
-            '공통': { quiz: commonQuiz, temp: commonTempFile, reset: () => setCommonQuiz([]) },
-            '초/중등': { quiz: easyQuiz, temp: easyTempFile, reset: () => setEasyQuiz([]) },
-            '고등/일반': { quiz: hardQuiz, temp: hardTempFile, reset: () => setHardQuiz([]) },
+            '공통': { quiz: commonQuiz, temp: commonTempFile, reset: () => {setCommonQuiz([]);  setCommonTempFile(null);} },
+            '초/중등': { quiz: easyQuiz, temp: easyTempFile, reset: () => {setEasyQuiz([]);  setCommonTempFile(null);} },
+            '고등/일반': { quiz: hardQuiz, temp: hardTempFile, reset: () => {setHardQuiz([]);  setCommonTempFile(null);} },
         };
 
         const typesToDelete = Object.keys(checkedTypes).filter(type => checkedTypes[type]);
