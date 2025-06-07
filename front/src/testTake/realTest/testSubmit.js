@@ -98,7 +98,7 @@ const TestSubmit = () => {
         setFile(file);
     }
 
-    //답 제출
+    //답 제출(임시저장)
     const handleSubmitAnswer = () => {
 
         const submitSingleAnswer = (quiz, fileVal, textVal) => {
@@ -129,8 +129,7 @@ const TestSubmit = () => {
             submitSingleAnswer(quiz2, file2, text2)
         ])
             .then(() => {
-                alert('답안이 임시 저장되었습니다. 마감 기한 내에 최종 제출을 완료해 주세요.');
-                navigate("/test/realTest/info")
+                alert('답안이 임시 저장되었습니다. \n마감 기한 내에 최종 제출을 완료해 주세요.');
             })
             .catch((err) => {
                 const message = err?.response?.data?.message;
@@ -141,6 +140,17 @@ const TestSubmit = () => {
                 }
             });
     };
+
+    const handleFinalAnswer = () => {
+        const confirmed = window.confirm("최종제출 시 기존 제출된 답안은 사라집니다. 제출하시겠습니까?");
+        if (!confirmed) return;
+        apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves/complete`)
+            .then((res)=>{
+                alert('제출 완료!');
+                navigate("/test/realTest/info");
+            })
+            .catch((err)=>{})
+    }
 
     return (
         <div className="testInfo-page-container">
@@ -171,11 +181,17 @@ const TestSubmit = () => {
                             answer={answer2}
                             teamInfo={teamInfo}
                         />
-                        <button className="registerInfo-bot-button"
-                                onClick={handleSubmitAnswer}
-                                style={{cursor: "pointer", alignSelf: "center"}}>
-                           저장
-                        </button>
+                        <div style={{display: 'flex', width: '100%', justifyContent: 'center', gap: '10px'}}>
+                            <button className="registerInfo-bot-button"
+                                    onClick={handleSubmitAnswer}
+                                    style={{cursor: "pointer"}}>
+                                임시저장
+                            </button>
+                            <button onClick={handleFinalAnswer} className="registerInfo-bot-button"
+                                 style={{cursor: 'pointer'}}>
+                                최종 제출
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

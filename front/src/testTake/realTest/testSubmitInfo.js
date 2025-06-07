@@ -57,24 +57,10 @@ const TestSubmitInfo = () => {
     }, [isEdited]);
 
     //대회 참여 버튼
-    const handleValidationContest = (isFinal) => {
-        console.log(isFinal);
+    const handleValidationContest = () => {
         apiClient.post(`/api/contests/${contestInfo.contestId}/join`)
             .then((res)=>{
-                if(res.status === 200){
-                    if(!isFinal)
-                        navigate('/test/realTest/submit');
-                    else{
-                        const confirmed = window.confirm("최종제출 시 기존 제출된 답안은 사라집니다. 제출하시겠습니까?");
-                        if (!confirmed) return;
-                        apiClient.post(`/api/contests/${contestInfo.contestId}/team-solves/complete`)
-                            .then((res)=>{
-                                alert('제출 완료!');
-                                setIsEdited(!isEdited);
-                            })
-                            .catch((err)=>{})
-                    }
-                }
+                navigate('/test/realTest/submit');
             })
             .catch((err)=>{});
     }
@@ -96,7 +82,7 @@ const TestSubmitInfo = () => {
                         />
                         <div className="registerInfo-body-container">
                             <div className="registerInfo-body-top">
-                                <p className="registerInfo-top-title">제출 내역</p>
+                                <p className="registerInfo-top-title">최종 제출 내역</p>
                                 <div className="registerInfo-underline"></div>
                             </div>
                             <div className="registerInfo-body-bot">
@@ -135,13 +121,9 @@ const TestSubmitInfo = () => {
                                     </>
                                 )}
                                 <div className="registerInfo-bot-buttonbox">
-                                    <div onClick={(e)=>handleValidationContest(false)} className="registerInfo-bot-button"
+                                    <div onClick={handleValidationContest} className="registerInfo-bot-button"
                                          style={{cursor: 'pointer'}}>
                                         문제풀기
-                                    </div>
-                                    <div onClick={(e)=>handleValidationContest(true)} className="registerInfo-bot-button"
-                                         style={{cursor: 'pointer'}}>
-                                        최종 제출
                                     </div>
                                 </div>
                             </div>
