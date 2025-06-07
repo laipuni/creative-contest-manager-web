@@ -21,12 +21,15 @@ const Certificate = () => {
 
     const fetchCertificates = (page) => {
         apiClient.get('/api/v1/certificates', {
-            params: { page: page - 1 } // 백엔드는 0부터 시작
-        }).then(res => {
+            params: { page: page - 1 }, // 백엔드는 0부터 시작
+            skipErrorHandler: true
+        },).then(res => {
             const data = res.data.data;
             setCertificates(data.certificateDtoList);
             setTotalPages(data.totalPage);
         }).catch(err => {
+            if(!err.response.data.message.startsWith('인증되지 않은'))
+                alert(err.response.data.message);
         });
     };
 

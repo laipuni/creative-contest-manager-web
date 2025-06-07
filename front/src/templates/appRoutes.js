@@ -38,7 +38,8 @@ function AppRoutes() {
 
     useEffect(() => {
         const isJoinPath = location.pathname.startsWith("/join");
-        const authenticatedPaths = ["/register/info", "/register/team", "/member/profile", "/test/realTest"];
+        const authenticatedPaths = ["/register/info", "/register/team", "/member/profile", "/test/realTest",
+            "/certificate/info", "/qna"];
         const isAuthenticatedPath = authenticatedPaths.some(path => location.pathname.startsWith(path));
         const adminPaths = ["/admin/teamList", "/admin/testManage"];
         const isAdminPath = adminPaths.some(path => location.pathname.startsWith(path));
